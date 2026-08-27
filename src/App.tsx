@@ -25,7 +25,7 @@ function App() {
             <Route path="/reports" element={<ReportsPage />} />
             <Route path="/chat-settings" element={<ChatSettingsPage />} />
             <Route path="/ai-training" element={<AiTrainingPage />}>
-              <Route index element={<Navigate to="/ai-training/corrections" replace />} />
+              <Route index element={<Navigate to="/ai-training/knowledge-base" replace />} />
               <Route path="knowledge-base" element={<KnowledgeBaseTab />} />
               <Route path="corrections" element={<CorrectionsTab />} />
               <Route path="prompt-tools" element={<PromptToolsTab />} />
