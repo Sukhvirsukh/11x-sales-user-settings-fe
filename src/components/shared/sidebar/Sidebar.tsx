@@ -52,13 +52,13 @@ export function Sidebar() {
             <li key={item.href}>
               <Link
                 to={item.href}
-                className={`flex h-[31px] w-[138px] items-center gap-[11px] rounded-[8px] px-[9px] text-[14px] font-normal leading-none transition-colors ${isActive(item.href)
-                    ? "border border-[#d6d6d9] bg-white text-[#111113]"
-                    : "text-[#222225] hover:bg-white/55"
+                className={`flex py-[10px] items-center gap-[11px] rounded-[8px] px-[9px] text-[14px] font-normal leading-none transition-colors ${isActive(item.href)
+                  ? "border border-[#d6d6d9] bg-white text-[#111113]"
+                  : "text-[#222225] hover:bg-white/55"
                   }`}
               >
                 {item.icon}
-                <span className="truncate">{item.label}</span>
+                <span className="">{item.label}</span>
               </Link>
             </li>
           ))}
