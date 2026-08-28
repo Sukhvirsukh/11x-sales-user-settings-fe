@@ -33,7 +33,7 @@ export function KnowledgeTable({
             <th className="w-12 px-4 py-3">
               <Checkbox
                 checked={allSelected}
-                onChange={(checked) => onSelectAll(checked)}
+                onCheckedChange={(checked) => onSelectAll(!!checked)}
               />
             </th>
             {columns.map((col) => (
@@ -55,14 +55,14 @@ export function KnowledgeTable({
               <td className="px-4 py-3.5">
                 <Checkbox
                   checked={selectedIds.includes(item.id)}
-                  onChange={(checked) => onSelectItem(item.id, checked)}
+                  onCheckedChange={(checked) => onSelectItem(item.id, !!checked)}
                 />
               </td>
               <td className="px-4 py-3.5">
                 <span className="text-sm text-[#1A1A1A]">{item.url}</span>
               </td>
-              <td className="px-4 py-3.5">
-                <Badge variant="success">Active</Badge>
+              <td className="px-4 py-3.5">                  
+                <Badge variant="secondary">Active</Badge>
               </td>
               <td className="px-4 py-3.5">
                 <span className="text-sm text-[#6B6B76]">
