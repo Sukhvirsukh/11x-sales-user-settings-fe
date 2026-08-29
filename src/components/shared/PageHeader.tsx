@@ -1,4 +1,6 @@
 import { type ReactNode } from "react";
+import { Link } from "react-router";
+import { ChevronLeft } from "lucide-react";
 import { ChatBox } from "@/components/shared/chatBox";
 import { SidebarMenuButton } from "@/components/shared/sidebar";
 import { useChatboxStore, type ChatMessageProps } from "@/pages/aiTraining/stores";
@@ -10,6 +12,7 @@ interface PageHeaderProps {
   chatTitle?: string;
   chatPlaceholder?: string;
   onChatMessage?: (message: string) => void;
+  backTo?: string;
   children: ReactNode;
 }
 
@@ -19,6 +22,7 @@ export function PageHeader({
   chatTitle = "Chat",
   chatPlaceholder = "Type a message...",
   onChatMessage,
+  backTo,
   children,
 }: PageHeaderProps) {
   const { isOpen, setIsOpen, messages, setMessages } = useChatboxStore();
@@ -52,8 +56,17 @@ export function PageHeader({
     <div className="flex h-full flex-col">
       {/* Header */}
       <header className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
-        <div className="flex min-w-0 items-start gap-3">
+        <div className="flex min-w-0 items-center gap-3">
           <SidebarMenuButton />
+          {backTo && (
+            <Link
+              to={backTo}
+              aria-label="Go back"
+              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-border bg-card text-foreground transition-colors hover:bg-muted"
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </Link>
+          )}
           <div className="min-w-0">
             <h1 className="text-display font-semibold tracking-normal text-foreground">
               {title}
@@ -79,7 +92,7 @@ export function PageHeader({
 
       {/* Content area with ChatBox */}
       <div className="mt-4 flex min-h-0 w-full min-w-0 flex-1 flex-col gap-4 md:mt-[33px] lg:min-h-0 lg:flex-row lg:items-stretch">
-        <div className="min-w-0 flex-1">
+        <div className="min-w-0 flex-1 flex min-h-0 flex-col">
           {children}
         </div>
 

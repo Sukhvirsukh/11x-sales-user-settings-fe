@@ -17,6 +17,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { SidebarUserCard } from "./SidebarUserCard";
 import { useSidebarStore } from "./sidebarStore";
+import { isSidebarHidden } from "./isSidebarHidden";
 
 interface NavItem {
   icon: ReactNode;
@@ -67,6 +68,10 @@ export function Sidebar() {
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [isMobileOpen, closeMobile]);
+
+  if (isSidebarHidden(location.pathname)) {
+    return null;
+  }
 
   return (
     <>
