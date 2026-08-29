@@ -23,10 +23,10 @@ export default function CrawlSettings() {
     return (
         <CustomSection heading="Crawl Settings">
             {/* Changed items-stretch (default grid behavior) to ensure equal heights */}
-            <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+            <div className="grid min-w-0 grid-cols-1 gap-4 lg:grid-cols-3">
 
                 {/* Left Column (Inputs) */}
-                <div className="flex flex-col justify-between space-y-6 lg:col-span-2 lg:border-r lg:border-border lg:pr-4">
+                <div className="flex min-w-0 flex-col justify-between space-y-6 lg:col-span-2 lg:border-r lg:border-border lg:pr-4">
 
                     {/* Select Stock Products */}
                     <div className="space-y-2">
@@ -73,7 +73,7 @@ export default function CrawlSettings() {
                                 onChange={(e) => setTagInput(e.target.value)}
                                 onKeyDown={handleTagKeyDown}
                                 placeholder={tags.length === 0 ? "Type and press Enter..." : ""}
-                                className="flex-1 min-w-[120px] bg-transparent outline-none text-xs text-foreground py-1"
+                                className="min-w-0 flex-1 bg-transparent py-1 text-xs text-foreground outline-none sm:min-w-[120px]"
                             />
                         </div>
                         <p className="text-micro text-placeholder leading-relaxed">
@@ -84,7 +84,7 @@ export default function CrawlSettings() {
                 </div>
 
                 {/* Right Column - Added `h-full` to stretch container height */}
-                <div className="flex h-full flex-col justify-start space-y-4 rounded-xl border border-border/50 bg-surface-help p-4 text-muted-foreground sm:p-6">
+                <div className="flex min-w-0 flex-col justify-start space-y-4 rounded-xl border border-border/50 bg-surface-help p-3 text-muted-foreground sm:p-6">
                     <h3 className="font-semibold text-foreground text-xs leading-relaxed">
                         We use CSS selectors to identify elements, use the following syntax:
                     </h3>

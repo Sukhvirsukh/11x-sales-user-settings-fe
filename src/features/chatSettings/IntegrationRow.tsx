@@ -22,7 +22,7 @@ export default function IntegrationRow({ icon, iconBg, name, status, description
                 </div>
                 <div className="min-w-0">
                     <div className="flex flex-wrap items-center gap-2">
-                        <span className="text-sm font-medium text-foreground">{name}</span>
+                        <span className="text-body font-medium text-foreground">{name}</span>
                         <span
                             className={`rounded-full px-2 py-0.5 text-micro font-medium ${isConnected
                                 ? "bg-success-muted text-success"
@@ -32,17 +32,17 @@ export default function IntegrationRow({ icon, iconBg, name, status, description
                             {status}
                         </span>
                     </div>
-                    <p className="mt-0.5 text-xs text-muted-foreground">{description}</p>
+                    <p className="mt-0.5 text-caption text-muted-foreground">{description}</p>
                 </div>
             </div>
 
             {isConnected ? (
-                <button className="flex w-fit shrink-0 items-center gap-1.5 rounded-lg border border-border px-3.5 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted">
+                <button className="flex min-h-9 w-full shrink-0 items-center justify-center gap-1.5 rounded-lg border border-border px-3.5 py-1.5 text-caption font-medium text-muted-foreground transition-colors hover:bg-muted sm:w-fit">
                     {action}
                     <RefreshCw className="h-3.5 w-3.5" />
                 </button>
             ) : (
-                <button className="flex w-fit shrink-0 items-center gap-1.5 rounded-lg bg-foreground px-3.5 py-1.5 text-xs font-medium text-primary-foreground transition-colors hover:bg-foreground/80">
+                <button className="flex min-h-9 w-full shrink-0 items-center justify-center gap-1.5 rounded-lg bg-foreground px-3.5 py-1.5 text-caption font-medium text-primary-foreground transition-colors hover:bg-foreground/80 sm:w-fit">
                     {action}
                     <RefreshCw className="h-3.5 w-3.5" />
                 </button>

@@ -225,7 +225,8 @@ ROUTES:
 - `pages/contacts/ContactsPage.tsx` — Contacts management (/contacts)
 - `pages/conversations/ConversationsPage.tsx` — Chat conversations (/conversations)
 - `pages/reports/ReportsPage.tsx` — Analytics and reports (/reports)
-- `pages/chatSettings/ChatSettingsPage.tsx` — Chatbot configuration (/chat-settings) with collapsible sections for Channels, Integration, and Configurations; stacks and tightens padding on small screens
+- `pages/chatSettings/ChatSettingsPage.tsx` — Chatbot configuration (/chat-settings) with collapsible sections; stacked header and full-width actions on mobile, single-column Channels until `lg`
+- `features/chatSettings/SettingsAccordion.tsx` — Shared collapsible section used by Chat Settings
 - `pages/chatSettings/tabs/Channels.tsx` — Channels tab: link, embed code, and QR code display
 - `pages/chatSettings/tabs/Configurations.tsx` — Configurations tab: combines CrawlSettings, TrackingSettings, and Span components
 - `pages/chatSettings/tabs/Integrations.tsx` — Integrations tab: list of integration rows with status

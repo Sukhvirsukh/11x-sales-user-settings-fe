@@ -17,7 +17,7 @@ export default function TrackingSettings() {
                 />
                 <span className="font-semibold text-foreground text-sm">Enable UTM tracking</span>
             </label>
-            <p className="text-xs text-placeholder pl-7">
+            <p className="break-words pl-0 text-caption text-placeholder sm:pl-7">
                 Add UTM parameters to links in chat responses, source links, and follow-up campaigns
             </p>
         </CustomSection>

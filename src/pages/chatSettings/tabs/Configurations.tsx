@@ -6,7 +6,7 @@ export default function Configurations() {
 
 
     return (
-        <div className="w-full text-foreground font-sans text-sm">
+        <div className="w-full min-w-0 font-sans text-body text-foreground">
 
             {/* ---------------- Crawl Settings ---------------- */}
             <CrawlSettings />

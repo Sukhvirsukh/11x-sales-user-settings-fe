@@ -51,7 +51,7 @@ export function PageHeader({
   return (
     <div className="flex h-full flex-col">
       {/* Header */}
-      <header className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+      <header className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
         <div className="flex min-w-0 items-start gap-3">
           <SidebarMenuButton />
           <div className="min-w-0">
@@ -66,10 +66,10 @@ export function PageHeader({
           </div>
         </div>
 
-        <div className="flex shrink-0 items-center gap-[9px] sm:mt-[12px]">
+        <div className="flex w-full flex-wrap items-center gap-[9px] md:mt-[12px] md:w-auto md:shrink-0">
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="flex h-[35px] w-[90px] items-center justify-center rounded-[9px] border border-foreground bg-card text-body font-medium leading-none text-foreground"
+            className="flex h-[35px] min-w-[90px] flex-1 items-center justify-center rounded-[9px] border border-foreground bg-card text-body font-medium leading-none text-foreground md:flex-none"
           >
             Test chat
           </button>
@@ -78,7 +78,7 @@ export function PageHeader({
       </header>
 
       {/* Content area with ChatBox */}
-      <div className="mt-4 flex min-h-0 w-full min-w-0 flex-1 flex-col gap-4 sm:mt-[33px] lg:min-h-[calc(100vh-116px)] lg:flex-row lg:items-stretch">
+      <div className="mt-4 flex min-h-0 w-full min-w-0 flex-1 flex-col gap-4 md:mt-[33px] lg:min-h-0 lg:flex-row lg:items-stretch">
         <div className="min-w-0 flex-1">
           {children}
         </div>
@@ -91,7 +91,7 @@ export function PageHeader({
               aria-label="Close test chat"
               onClick={() => setIsOpen(false)}
             />
-            <div className="fixed inset-x-3 bottom-3 top-3 z-50 overflow-hidden rounded-[8px] border border-border bg-card shadow-md lg:static lg:z-auto lg:w-[min(400px,40%)] lg:shrink-0 lg:self-stretch">
+            <div className="fixed inset-x-3 bottom-3 top-3 z-50 overflow-hidden rounded-[8px] border border-border bg-card shadow-md lg:static lg:inset-auto lg:z-auto lg:w-[min(360px,38%)] lg:max-w-[400px] lg:shrink-0 lg:self-stretch">
               <ChatBox
                 messages={messages}
                 onSendMessage={handleSendMessage}
