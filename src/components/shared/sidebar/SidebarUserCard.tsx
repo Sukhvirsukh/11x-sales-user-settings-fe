@@ -1,7 +1,10 @@
+import { cn } from "@/lib/utils";
+
 interface SidebarUserCardProps {
   name: string;
   email: string;
   avatarUrl?: string;
+  collapsed?: boolean;
 }
 
 function getInitials(name: string): string {
@@ -13,11 +16,16 @@ function getInitials(name: string): string {
     .slice(0, 2);
 }
 
-export function SidebarUserCard({ name, email, avatarUrl }: SidebarUserCardProps) {
+export function SidebarUserCard({ name, email, avatarUrl, collapsed = false }: SidebarUserCardProps) {
   const initials = getInitials(name);
 
   return (
-    <div className="absolute bottom-[14px] left-[14px] flex right-[14px] items-center rounded-[6px] border border-[#e0e0e2] bg-white p-[8px]">
+    <div
+      className={cn(
+        "absolute bottom-[14px] left-[14px] right-[14px] flex items-center rounded-[6px] border border-border bg-card p-[8px]",
+        collapsed && "md:left-2 md:right-2 md:justify-center md:p-1.5 lg:left-[14px] lg:right-[14px] lg:justify-start lg:p-[8px]",
+      )}
+    >
       {avatarUrl ? (
         <img
           src={avatarUrl}
@@ -25,19 +33,26 @@ export function SidebarUserCard({ name, email, avatarUrl }: SidebarUserCardProps
           className="h-[27px] w-[27px] shrink-0 rounded-full object-cover"
         />
       ) : (
-        <div className="flex h-[27px] w-[27px] shrink-0 items-center justify-center rounded-full bg-[#dbeafe] text-[9px] font-semibold text-[#2563eb]">
+        <div className="flex h-[27px] w-[27px] shrink-0 items-center justify-center rounded-full bg-brand-muted text-micro font-semibold text-primary">
           {initials}
         </div>
       )}
-      <div className="ml-[8px] min-w-0 flex-1">
-        <p className="truncate text-[14px] font-normal leading-[16px] text-[#1b1b1f]">
+      <div className={cn("ml-[8px] min-w-0 flex-1", collapsed && "md:hidden lg:block")}>
+        <p className="truncate text-body font-normal leading-[16px] text-foreground">
           {name}
         </p>
-        <p className="truncate text-[11px] leading-[14px] text-[#8b8b94]">
+        <p className="truncate text-micro leading-[14px] text-subtle">
           {email}
         </p>
       </div>
-      <span className="ml-[4px] flex h-[16px] w-[16px] items-center justify-center rounded-full bg-[#f3f3f4] text-[15px] leading-none text-[#8b8b94]">›</span>
+      <span
+        className={cn(
+          "ml-[4px] flex h-[16px] w-[16px] items-center justify-center rounded-full bg-muted text-body leading-none text-subtle",
+          collapsed && "md:hidden lg:flex",
+        )}
+      >
+        ›
+      </span>
     </div>
   );
 }

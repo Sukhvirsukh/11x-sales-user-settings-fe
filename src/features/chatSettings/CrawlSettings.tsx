@@ -23,45 +23,45 @@ export default function CrawlSettings() {
     return (
         <CustomSection heading="Crawl Settings">
             {/* Changed items-stretch (default grid behavior) to ensure equal heights */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
 
                 {/* Left Column (Inputs) */}
-                <div className="lg:col-span-2 space-y-6 lg:pr-4 lg:border-r border-slate-200 flex flex-col justify-between">
+                <div className="flex flex-col justify-between space-y-6 lg:col-span-2 lg:border-r lg:border-border lg:pr-4">
 
                     {/* Select Stock Products */}
                     <div className="space-y-2">
-                        <label className="block text-xs font-semibold text-slate-800">
+                        <label className="block text-xs font-semibold text-foreground">
                             Select stock products to ignore out of crawling
                         </label>
                         <div className="relative">
-                            <select className="w-full h-10 px-3 pr-8 appearance-none bg-white border border-slate-200 rounded-md text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-300 text-xs cursor-pointer">
+                            <select className="w-full h-10 px-3 pr-8 appearance-none bg-card border border-border rounded-md text-placeholder focus:outline-none focus:ring-2 focus:ring-ring/40 text-xs cursor-pointer">
                                 <option value="">Select</option>
                                 <option value="out-of-stock">Out of stock only</option>
                                 <option value="discontinued">Discontinued</option>
                             </select>
-                            <ChevronDown className="absolute right-3 top-3 h-4 w-4 text-slate-400 pointer-events-none" />
+                            <ChevronDown className="absolute right-3 top-3 h-4 w-4 text-placeholder pointer-events-none" />
                         </div>
-                        <p className="text-[11px] text-slate-400">
+                        <p className="text-micro text-placeholder">
                             Vitlab will not take into consideration of any products that are out of stocks
                         </p>
                     </div>
 
                     {/* Tag / Ignore Elements Input */}
                     <div className="space-y-2">
-                        <label className="block text-xs font-semibold text-slate-800">
+                        <label className="block text-xs font-semibold text-foreground">
                             Add or remove your Ignore elements from the pages when crawling
                         </label>
-                        <div className="min-h-[110px] p-2 bg-white border border-slate-200 rounded-md focus-within:ring-2 focus-within:ring-slate-300 flex flex-wrap gap-2 content-start">
+                        <div className="min-h-[110px] p-2 bg-card border border-border rounded-md focus-within:ring-2 focus-within:ring-ring/40 flex flex-wrap gap-2 content-start">
                             {tags.map((tag) => (
                                 <span
                                     key={tag}
-                                    className="inline-flex items-center gap-1.5 bg-slate-100/80 border border-slate-200 text-slate-600 text-xs px-2.5 py-1 rounded-md"
+                                    className="inline-flex items-center gap-1.5 bg-muted/80 border border-border text-muted-foreground text-xs px-2.5 py-1 rounded-md"
                                 >
                                     {tag}
                                     <button
                                         type="button"
                                         onClick={() => handleRemoveTag(tag)}
-                                        className="text-slate-400 hover:text-slate-700"
+                                        className="text-placeholder hover:text-foreground/80"
                                     >
                                         <X className="h-3 w-3" />
                                     </button>
@@ -73,10 +73,10 @@ export default function CrawlSettings() {
                                 onChange={(e) => setTagInput(e.target.value)}
                                 onKeyDown={handleTagKeyDown}
                                 placeholder={tags.length === 0 ? "Type and press Enter..." : ""}
-                                className="flex-1 min-w-[120px] bg-transparent outline-none text-xs text-slate-800 py-1"
+                                className="flex-1 min-w-[120px] bg-transparent outline-none text-xs text-foreground py-1"
                             />
                         </div>
-                        <p className="text-[11px] text-slate-400 leading-relaxed">
+                        <p className="text-micro text-placeholder leading-relaxed">
                             Type to add elements, cross to remove elements that that are irrelrvant to the main content of a page like Headers, Footer, Cross-sell product links, etc
                         </p>
                     </div>
@@ -84,32 +84,32 @@ export default function CrawlSettings() {
                 </div>
 
                 {/* Right Column - Added `h-full` to stretch container height */}
-                <div className="bg-[#eef0f3] rounded-xl p-6 border border-slate-200/50 text-slate-600 space-y-4 h-full flex flex-col justify-start">
-                    <h3 className="font-semibold text-slate-800 text-xs leading-relaxed">
+                <div className="flex h-full flex-col justify-start space-y-4 rounded-xl border border-border/50 bg-surface-help p-4 text-muted-foreground sm:p-6">
+                    <h3 className="font-semibold text-foreground text-xs leading-relaxed">
                         We use CSS selectors to identify elements, use the following syntax:
                     </h3>
                     <ul className="space-y-4 text-xs leading-relaxed pt-1">
                         <li className="flex items-start gap-2.5">
-                            <span className="h-2 w-2 rounded-full bg-slate-400 mt-1 shrink-0" />
+                            <span className="h-2 w-2 rounded-full bg-placeholder mt-1 shrink-0" />
                             <div>
                                 For tags, just use the name of the tag: <br />
-                                <span className="text-slate-500">e.g.:header</span>
+                                <span className="text-muted-foreground">e.g.:header</span>
                             </div>
                         </li>
                         <li className="flex items-start gap-2.5">
-                            <span className="h-2 w-2 rounded-full bg-slate-400 mt-1 shrink-0" />
+                            <span className="h-2 w-2 rounded-full bg-placeholder mt-1 shrink-0" />
                             <div>
                                 For IDs, use brackets: e.g.<br />
-                                <code className="text-slate-700 bg-slate-200/60 px-1 py-0.5 rounded text-[11px]">
+                                <code className="text-foreground/80 bg-border/60 px-1 py-0.5 rounded text-micro">
                                     [id*=&quot;id-name&quot;]
                                 </code>
                             </div>
                         </li>
                         <li className="flex items-start gap-2.5">
-                            <span className="h-2 w-2 rounded-full bg-slate-400 mt-1 shrink-0" />
+                            <span className="h-2 w-2 rounded-full bg-placeholder mt-1 shrink-0" />
                             <div>
                                 For classes, use brackets: e.g.<br />
-                                <code className="text-slate-700 bg-slate-200/60 px-1 py-0.5 rounded text-[11px]">
+                                <code className="text-foreground/80 bg-border/60 px-1 py-0.5 rounded text-micro">
                                     [class*=&quot;class-name&quot;]
                                 </code>
                             </div>

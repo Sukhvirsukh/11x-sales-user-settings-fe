@@ -13,7 +13,7 @@ export function AiTrainingPage() {
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <section className="h-full min-w-0 pt-[11px] text-[#18181b]">
+    <section className="h-full min-w-0 pt-[11px] text-foreground">
       <PageHeader
         title="Ai training"
         subtitle="Train your AI to better understand your business"
@@ -25,9 +25,9 @@ export function AiTrainingPage() {
             <Link
               key={tab.id}
               to={tab.path}
-              className={`flex h-[23px] items-center justify-center rounded-[5px] px-[7px] text-[11px] font-medium leading-none transition-colors ${isActive(tab.path)
-                ? "border border-[#d7d7dc] bg-white text-[#111113] shadow-[0_1px_2px_rgba(0,0,0,0.08)]"
-                : "text-[#111113] hover:text-[#111113]"
+              className={`flex h-[23px] items-center justify-center rounded-[5px] px-[7px] text-micro font-medium leading-none transition-colors ${isActive(tab.path)
+                ? "border border-sidebar-border bg-card text-foreground shadow-sm"
+                : "text-foreground hover:text-foreground"
                 }`}
             >
               {tab.label}

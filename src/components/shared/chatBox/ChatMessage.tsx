@@ -20,7 +20,7 @@ export function ChatMessage({
     >
       {/* Bot avatar */}
       {!isUser && (
-        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#E6E6E8]">
+        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-border">
           {avatar ? (
             <img
               src={avatar}
@@ -29,7 +29,7 @@ export function ChatMessage({
             />
           ) : (
             <svg
-              className="h-4 w-4 text-[#6D6D76]"
+              className="h-4 w-4 text-muted-foreground"
               fill="currentColor"
               viewBox="0 0 24 24"
             >
@@ -43,15 +43,15 @@ export function ChatMessage({
       <div
         className={`max-w-[70%] rounded-2xl px-4 py-3 ${
           isUser
-            ? "bg-[#CEBEE3] text-[#111113]"
-            : "bg-white text-[#111113] shadow-sm"
+            ? "bg-chat-muted text-foreground"
+            : "bg-card text-foreground shadow-sm"
         }`}
       >
         <p className="text-sm leading-relaxed whitespace-pre-wrap">{content}</p>
         {timestamp && (
           <p
             className={`mt-1 text-xs ${
-              isUser ? "text-[#8A7BA3]" : "text-[#A5A5AD]"
+              isUser ? "text-chat-foreground" : "text-placeholder"
             }`}
           >
             {timestamp.toLocaleTimeString([], {
@@ -64,7 +64,7 @@ export function ChatMessage({
 
       {/* User avatar */}
       {isUser && (
-        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#CEBEE3]">
+        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-chat-muted">
           {avatar ? (
             <img
               src={avatar}
@@ -73,7 +73,7 @@ export function ChatMessage({
             />
           ) : (
             <svg
-              className="h-4 w-4 text-[#6B5B8A]"
+              className="h-4 w-4 text-chat-foreground"
               fill="currentColor"
               viewBox="0 0 24 24"
             >

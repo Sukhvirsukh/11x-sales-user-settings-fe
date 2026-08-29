@@ -31,16 +31,16 @@ export function ChatBox({
 
   return (
     <div
-      className={`flex h-full flex-col bg-white ${className}`}
+      className={`flex h-full flex-col bg-card ${className}`}
     >
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-[#E6E6E8] px-4 py-3">
-        <h3 className="text-sm font-semibold text-[#111113]">{title}</h3>
+      <div className="flex items-center justify-between border-b border-border px-4 py-3">
+        <h3 className="text-sm font-semibold text-foreground">{title}</h3>
         {onClose && (
           <button
             type="button"
             onClick={onClose}
-            className="flex h-6 w-6 items-center justify-center rounded-md text-[#6d6d76] hover:bg-[#f3f3f5] transition-colors"
+            className="flex h-6 w-6 items-center justify-center rounded-md text-muted-foreground hover:bg-muted transition-colors"
           >
             <XIcon className="h-4 w-4" />
           </button>
@@ -52,9 +52,9 @@ export function ChatBox({
         <div className="space-y-4">
           {messages.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 text-center">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#F3F3F5]">
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-muted">
                 <svg
-                  className="h-6 w-6 text-[#A5A5AD]"
+                  className="h-6 w-6 text-placeholder"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -67,10 +67,10 @@ export function ChatBox({
                   />
                 </svg>
               </div>
-              <p className="mt-3 text-sm font-medium text-[#111113]">
+              <p className="mt-3 text-sm font-medium text-foreground">
                 Start a conversation
               </p>
-              <p className="mt-1 text-xs text-[#A5A5AD]">
+              <p className="mt-1 text-xs text-placeholder">
                 Ask questions about your data
               </p>
             </div>
@@ -84,7 +84,7 @@ export function ChatBox({
       </div>
 
       {/* Input area */}
-      <div className="border-t border-[#E6E6E8] px-4 py-3">
+      <div className="border-t border-border px-4 py-3">
         <ChatInput
           onSend={onSendMessage}
           placeholder={placeholder}

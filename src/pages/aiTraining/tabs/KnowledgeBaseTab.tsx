@@ -50,10 +50,10 @@ export function KnowledgeBaseTab() {
             <button
               key={tab}
               onClick={() => setActiveSubTab(tab)}
-              className={`pb-[6px] text-[14px] font-medium transition-colors ${
+              className={`pb-[6px] text-body font-medium transition-colors ${
                 activeSubTab === tab
-                  ? "border-b-2 border-[#111113] text-[#111113]"
-                  : "text-[#6d6d76] hover:text-[#111113]"
+                  ? "border-b-2 border-foreground text-foreground"
+                  : "text-muted-foreground hover:text-foreground"
               }`}
             >
               {tab}
@@ -62,31 +62,31 @@ export function KnowledgeBaseTab() {
         </div>
 
         {/* Table card */}
-        <div className="mt-[15px] w-full overflow-x-auto rounded-[8px] border border-[#eef3ff] bg-[#fbfbff] shadow-[0_11px_24px_rgba(88,122,184,0.14)]">
+        <div className="mt-[15px] w-full overflow-x-auto rounded-[8px] border border-brand-muted bg-surface-raised shadow-card">
           {/* Header */}
           <div className="flex h-[62px] items-center justify-between px-[14px]">
-            <h2 className="text-[16px] font-normal leading-none text-[#111113]">
+            <h2 className="text-title font-normal leading-none text-foreground">
               {activeSubTab === "All" ? "All knowledge bank" : activeSubTab}
             </h2>
 
             <div className="flex items-center gap-[12px]">
-              <label className="flex h-[35px] w-[191px] items-center rounded-[8px] border border-[#c7c7cc] bg-white px-[11px]">
-                <Search className="h-[15px] w-[15px] shrink-0 text-[#b8b8bf]" />
+              <label className="flex h-[35px] w-[191px] items-center rounded-[8px] border border-border-strong bg-card px-[11px]">
+                <Search className="h-[15px] w-[15px] shrink-0 text-placeholder" />
                 <input
                   value={searchQuery}
                   onChange={(event) => setSearchQuery(event.target.value)}
                   placeholder="Search"
-                  className="ml-[10px] min-w-0 flex-1 bg-transparent text-[14px] leading-none text-[#1f1f23] outline-none placeholder:text-[#a5a5ad]"
+                  className="ml-[10px] min-w-0 flex-1 bg-transparent text-body leading-none text-foreground outline-none placeholder:text-placeholder"
                 />
-                <SlidersHorizontal className="h-[12px] w-[12px] shrink-0 text-[#a7a7af]" />
+                <SlidersHorizontal className="h-[12px] w-[12px] shrink-0 text-placeholder" />
               </label>  
 
               <Button
                 onClick={() => setModalOpen(true)}
-                className="h-[35px] gap-[8px] rounded-[8px] bg-[#2f6df3] px-[16px] text-[14px] font-medium leading-none text-white hover:bg-[#2558c4]"
+                className="h-[35px] gap-[8px] rounded-[8px] bg-primary px-[16px] text-body font-medium leading-none text-primary-foreground hover:bg-primary-hover"
               >
                 Knowledge
-                <span className="flex h-[16px] w-[16px] items-center justify-center rounded-full bg-white/20 text-[14px] leading-none">
+                <span className="flex h-[16px] w-[16px] items-center justify-center rounded-full bg-primary-foreground/20 text-body leading-none">
                   +
                 </span>
               </Button>
@@ -96,13 +96,13 @@ export function KnowledgeBaseTab() {
           {/* Table or Empty State */}
           {filteredItems.length === 0 ? (
             <div className="flex w-full flex-col items-center justify-center py-[60px]">
-              <div className="flex h-[48px] w-[48px] items-center justify-center rounded-full bg-[#f3f3f4]">
-                <FileText className="h-[24px] w-[24px] text-[#a5a5ad]" />
+              <div className="flex h-[48px] w-[48px] items-center justify-center rounded-full bg-muted">
+                <FileText className="h-[24px] w-[24px] text-placeholder" />
               </div>
-              <p className="mt-[12px] text-[14px] font-medium text-[#111113]">
+              <p className="mt-[12px] text-body font-medium text-foreground">
                 No items found
               </p>
-              <p className="mt-[4px] text-[13px] text-[#6d6d76]">
+              <p className="mt-[4px] text-body-sm text-muted-foreground">
                 {searchQuery
                   ? "Try adjusting your search query"
                   : `No ${activeSubTab.toLowerCase()} added yet`}
@@ -119,7 +119,7 @@ export function KnowledgeBaseTab() {
                 <col className="w-[80px]" />
               </colgroup>
               <thead>
-                <tr className="h-[34px] bg-[#f6f6f7] text-left text-[11px] font-normal leading-none text-[#111113]">
+                <tr className="h-[34px] bg-surface-muted text-left text-micro font-normal leading-none text-foreground">
                   <th className="rounded-tl-[8px] pl-[19px]">
                     <Checkbox
                       checked={allSelected}
@@ -137,7 +137,7 @@ export function KnowledgeBaseTab() {
                 {filteredItems.map((item, index) => (
                   <tr
                     key={item.id}
-                    className="h-[41px] bg-[#f3f3f4] text-[14px] font-normal leading-none text-[#111113]"
+                    className="h-[41px] bg-muted text-body font-normal leading-none text-foreground"
                   >
                     <td className={`pl-[10px] ${index === filteredItems.length - 1 ? "rounded-bl-[8px]" : ""}`}>
                       <Checkbox
@@ -148,16 +148,16 @@ export function KnowledgeBaseTab() {
                     <td className="truncate pr-[28px]">{item.url}</td>
                     <td>
                       <span
-                        className={`inline-flex h-[28px] min-w-[73px] items-center justify-center gap-[6px] rounded-full px-[10px] text-[12px] font-normal leading-none ${
+                        className={`inline-flex h-[28px] min-w-[73px] items-center justify-center gap-[6px] rounded-full px-[10px] text-caption font-normal leading-none ${
                           item.status === "Active"
-                            ? "bg-[#e2ffd9] text-[#84a982]"
-                            : "bg-[#f3f3f4] text-[#a5a5ad]"
+                            ? "bg-success-muted text-success-foreground"
+                            : "bg-muted text-placeholder"
                         }`}
                       >
                         {item.status}
                         <span
                           className={`h-[6px] w-[6px] rounded-full ${
-                            item.status === "Active" ? "bg-[#12884f]" : "bg-[#a5a5ad]"
+                            item.status === "Active" ? "bg-success" : "bg-placeholder"
                           }`}
                         />
                       </span>

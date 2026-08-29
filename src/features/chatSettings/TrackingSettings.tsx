@@ -13,11 +13,11 @@ export default function TrackingSettings() {
                     type="checkbox"
                     checked={enableUtm}
                     onChange={(e) => setEnableUtm(e.target.checked)}
-                    className="h-4 w-4 rounded border-slate-300 text-slate-900 focus:ring-slate-400 cursor-pointer accent-slate-900"
+                    className="h-4 w-4 rounded border-border-strong text-foreground focus:ring-ring/50 cursor-pointer accent-foreground"
                 />
-                <span className="font-semibold text-slate-900 text-sm">Enable UTM tracking</span>
+                <span className="font-semibold text-foreground text-sm">Enable UTM tracking</span>
             </label>
-            <p className="text-xs text-slate-400 pl-7">
+            <p className="text-xs text-placeholder pl-7">
                 Add UTM parameters to links in chat responses, source links, and follow-up campaigns
             </p>
         </CustomSection>

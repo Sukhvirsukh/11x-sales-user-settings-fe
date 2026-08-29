@@ -29,7 +29,7 @@ export function ChatInput({
   }
 
   return (
-    <div className="flex items-end gap-2 rounded-xl border border-[#E6E6E8] bg-[#F3F3F5] px-3 py-2">
+    <div className="flex items-end gap-2 rounded-xl border border-border bg-muted px-3 py-2">
       <textarea
         value={value}
         onChange={(e) => setValue(e.target.value)}
@@ -37,13 +37,13 @@ export function ChatInput({
         placeholder={placeholder}
         disabled={disabled}
         rows={1}
-        className="max-h-32 min-h-[36px] flex-1 resize-none bg-transparent text-sm text-[#111113] placeholder:text-[#A5A5AD] focus:outline-none"
+        className="max-h-32 min-h-[36px] flex-1 resize-none bg-transparent text-sm text-foreground placeholder:text-placeholder focus:outline-none"
       />
       <button
         type="button"
         onClick={handleSend}
         disabled={disabled || !value.trim()}
-        className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#9A7FC8] text-white transition-colors hover:bg-[#8A6FB8] disabled:opacity-40 disabled:cursor-not-allowed"
+        className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-chat text-primary-foreground transition-colors hover:bg-chat-hover disabled:opacity-40 disabled:cursor-not-allowed"
       >
         <SendIcon className="h-4 w-4" />
       </button>

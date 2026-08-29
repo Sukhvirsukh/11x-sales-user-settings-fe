@@ -11,9 +11,9 @@ export default function Span() {
                     </label>
                     <input
                         type="text"
-                        className="w-full h-10 px-3 bg-white border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-400 text-sm text-slate-800"
+                        className="w-full h-10 px-3 bg-card border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-ring/50 text-sm text-foreground"
                     />
-                    <p className="text-xs text-slate-400">
+                    <p className="text-xs text-placeholder">
                         Limit the number of messages a user can send during a period time
                     </p>
                 </div>
@@ -25,7 +25,7 @@ export default function Span() {
                     </label>
                     <input
                         type="text"
-                        className="w-full h-10 px-3 bg-white border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-400 text-sm text-slate-800"
+                        className="w-full h-10 px-3 bg-card border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-ring/50 text-sm text-foreground"
                     />
                 </div>
 
@@ -36,7 +36,7 @@ export default function Span() {
                     </label>
                     <input
                         type="text"
-                        className="w-full h-10 px-3 bg-white border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-400 text-sm text-slate-800"
+                        className="w-full h-10 px-3 bg-card border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-ring/50 text-sm text-foreground"
                     />
                 </div>
             </div>

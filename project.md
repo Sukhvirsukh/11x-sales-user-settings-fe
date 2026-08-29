@@ -75,6 +75,9 @@ ROUTES:
 │   │   │   │   └── index.ts
 │   │   │   ├── sidebar/
 │   │   │   │   ├── Sidebar.tsx
+│   │   │   │   ├── SidebarMenuButton.tsx
+│   │   │   │   ├── SidebarUserCard.tsx
+│   │   │   │   ├── sidebarStore.ts
 │   │   │   │   └── index.ts
 │   │   │   └── userProfile/
 │   │   │       ├── UserProfile.tsx
@@ -166,7 +169,7 @@ ROUTES:
 
 - `src/App.tsx` — Root component with BrowserRouter, Sidebar layout, and route definitions
 - `src/main.tsx` — Entry point, renders App into DOM
-- `src/index.css` — Global styles, design tokens (CSS variables), Tailwind imports
+- `src/index.css` — Vitalb design template: color tokens and a responsive type scale (`text-display`, `text-title`, `text-subtitle`, `text-body`, `text-body-sm`, `text-caption`, `text-micro`) that changes at mobile, tablet (`768px`), and desktop (`1024px`).
 
 ## Features
 
@@ -209,7 +212,10 @@ ROUTES:
 - `chatBox/ChatMessage.tsx` — Individual message bubble (user: right-aligned purple, bot: left-aligned white)
 - `chatBox/ChatInput.tsx` — Message input with textarea and purple send button
 - `CopyField.tsx` — Copy-to-clipboard field with value display and copy button
-- `sidebar/Sidebar.tsx` — Left navigation sidebar with logo, nav items, bottom nav
+- `sidebar/Sidebar.tsx` — Left navigation: mobile drawer, tablet icon-collapse, desktop expanded
+- `sidebar/SidebarMenuButton.tsx` — Mobile hamburger that opens the sidebar drawer
+- `sidebar/SidebarUserCard.tsx` — Bottom user card; compact on collapsed tablet sidebar
+- `sidebar/sidebarStore.ts` — Mobile open and tablet collapsed state
 - `userProfile/UserProfile.tsx` — User profile display with avatar image or initials fallback
 - `pageHeader/PageHeader.tsx` — Page title, subtitle, and action buttons layout
 
@@ -219,7 +225,7 @@ ROUTES:
 - `pages/contacts/ContactsPage.tsx` — Contacts management (/contacts)
 - `pages/conversations/ConversationsPage.tsx` — Chat conversations (/conversations)
 - `pages/reports/ReportsPage.tsx` — Analytics and reports (/reports)
-- `pages/chatSettings/ChatSettingsPage.tsx` — Chatbot configuration (/chat-settings) with collapsible sections for Channels, Integration, and Configurations
+- `pages/chatSettings/ChatSettingsPage.tsx` — Chatbot configuration (/chat-settings) with collapsible sections for Channels, Integration, and Configurations; stacks and tightens padding on small screens
 - `pages/chatSettings/tabs/Channels.tsx` — Channels tab: link, embed code, and QR code display
 - `pages/chatSettings/tabs/Configurations.tsx` — Configurations tab: combines CrawlSettings, TrackingSettings, and Span components
 - `pages/chatSettings/tabs/Integrations.tsx` — Integrations tab: list of integration rows with status

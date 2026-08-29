@@ -26,8 +26,6 @@ interface KnowledgeModalProps {
   onOpenChange: (open: boolean) => void;
 }
 
-const ACCENT = "#3576F3";
-
 const knowledgeOptions: {
   id: KnowledgeType;
   label: string;
@@ -124,17 +122,17 @@ export function KnowledgeModal({ open, onOpenChange }: KnowledgeModalProps) {
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent
         showCloseButton={false}
-        className="max-w-[calc(100%-2rem)] gap-0 rounded-xl border-0 outline-none ring-0 bg-white p-0 shadow-lg sm:max-w-[420px]"
+        className="max-w-[calc(100%-2rem)] gap-0 rounded-xl border-0 outline-none ring-0 bg-card p-0 shadow-lg sm:max-w-[420px]"
       >
-        <DialogHeader className="flex bg-[#F1F1F1] flex-row items-center justify-between px-4 py-2 mb-3 rounded-t-lg">
-          <DialogTitle className="text-[15px] font-semibold text-[#111113]">
+        <DialogHeader className="flex bg-surface-inset flex-row items-center justify-between px-4 py-2 mb-3 rounded-t-lg">
+          <DialogTitle className="text-body font-semibold text-foreground">
             Add Knowledge
           </DialogTitle>
           <DialogClose
             render={
               <button
                 type="button"
-                className="flex h-7 w-7 items-center justify-center rounded-md border-0 bg-transparent text-[#8A8A94] shadow-none transition-colors hover:bg-[#f5f5f5]"
+                className="flex h-7 w-7 items-center justify-center rounded-md border-0 bg-transparent text-subtle shadow-none transition-colors hover:bg-muted"
               />
             }
           >
@@ -156,10 +154,10 @@ export function KnowledgeModal({ open, onOpenChange }: KnowledgeModalProps) {
                     setName("");
                     setValue("");
                   }}
-                  className="flex w-full cursor-pointer items-center gap-2.5 rounded-lg border border-[#E4E4E7] bg-white px-3 py-2.5 text-left transition-colors hover:bg-[#FAFAFB]"
+                  className="flex w-full cursor-pointer items-center gap-2.5 rounded-lg border border-border bg-card px-3 py-2.5 text-left transition-colors hover:bg-muted"
                 >
                   <RadioDot checked={false} />
-                  <span className="select-none text-[13px] font-medium text-[#6B6B76]">
+                  <span className="select-none text-body-sm font-medium text-muted-foreground">
                     {option.label}
                   </span>
                 </button>
@@ -169,33 +167,31 @@ export function KnowledgeModal({ open, onOpenChange }: KnowledgeModalProps) {
             return (
               <div
                 key={option.id}
-                className="overflow-hidden rounded-lg border-2"
-                style={{ borderColor: ACCENT }}
+                className="overflow-hidden rounded-lg border-2 border-primary"
               >
                 <div className="flex">
                   <div
-                    className="flex w-10 shrink-0 items-start justify-center pt-3"
-                    style={{ backgroundColor: ACCENT }}
+                    className="flex w-10 shrink-0 items-start justify-center bg-primary pt-3"
                   >
                     <RadioDot checked onAccent />
                   </div>
                   <div className="min-w-0 flex-1 space-y-2.5 p-3">
-                    <p className="text-[13px] font-medium text-[#6B6B76]">
+                    <p className="text-body-sm font-medium text-muted-foreground">
                       {option.label}
                     </p>
                     <div className="space-y-1">
-                      <Label className="text-[12px] font-normal text-[#8A8A94]">
+                      <Label className="text-caption font-normal text-subtle">
                         Give name to your data source
                       </Label>
                       <Input
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                         placeholder="https://example.com"
-                        className="h-8 rounded-md border-[#E4E4E7] text-[13px] placeholder:text-[#A5A5AD]"
+                        className="h-8 rounded-md border-border text-body-sm placeholder:text-placeholder"
                       />
                     </div>
                     <div className="space-y-1">
-                      <Label className="text-[12px] font-normal text-[#8A8A94]">
+                      <Label className="text-caption font-normal text-subtle">
                         {option.fieldLabel}
                       </Label>
                       <Input
@@ -203,10 +199,10 @@ export function KnowledgeModal({ open, onOpenChange }: KnowledgeModalProps) {
                         value={value}
                         onChange={(e) => setValue(e.target.value)}
                         placeholder={option.placeholder}
-                        className="h-8 rounded-md border-[#E4E4E7] text-[13px] placeholder:text-[#A5A5AD]"
+                        className="h-8 rounded-md border-border text-body-sm placeholder:text-placeholder"
                       />
                       {option.id === "custom-text" && (
-                        <p className="pt-0.5 text-[11px] leading-snug text-[#8A8A94]">
+                        <p className="pt-0.5 text-micro leading-snug text-subtle">
                           This text would be added to the knowledge of Vitalb,
                           add it carefully
                         </p>
@@ -216,8 +212,7 @@ export function KnowledgeModal({ open, onOpenChange }: KnowledgeModalProps) {
                       <Button
                         type="submit"
                         size="sm"
-                        className="h-7 rounded-md px-3 text-[12px] font-medium text-white hover:opacity-90"
-                        style={{ backgroundColor: ACCENT }}
+                        className="h-7 rounded-md bg-primary px-3 text-caption font-medium text-primary-foreground hover:bg-primary-hover"
                       >
                         Add
                       </Button>
@@ -225,7 +220,7 @@ export function KnowledgeModal({ open, onOpenChange }: KnowledgeModalProps) {
                         type="button"
                         variant="outline"
                         size="sm"
-                        className="h-7 rounded-md border-[#E4E4E7] px-3 text-[12px] font-medium text-[#6B6B76]"
+                        className="h-7 rounded-md border-border px-3 text-caption font-medium text-muted-foreground"
                         onClick={() => handleOpenChange(false)}
                       >
                         Cancel
@@ -254,14 +249,14 @@ function RadioDot({
       <span
         className={cn(
           "h-[14px] w-[14px] rounded-full border bg-transparent",
-          onAccent ? "border-white" : "border-[#C7C7CC]",
+          onAccent ? "border-primary-foreground" : "border-border-strong",
         )}
       />
       {checked && (
         <span
           className={cn(
             "absolute h-[6px] w-[6px] rounded-full",
-            onAccent ? "bg-white" : "bg-[#3576F3]",
+            onAccent ? "bg-primary-foreground" : "bg-primary",
           )}
         />
       )}

@@ -1,81 +1,74 @@
 import CopyField from "@/components/shared/CopyField";
-import { ChevronUp, QrCode } from "lucide-react";
-import { useState } from "react";
+import { QrCode } from "lucide-react";
 
 export default function Channels() {
-    const [open, setOpen] = useState(true);
     const chatLink = "<iframe=src'hhpss....=";
     const embedCode = "<iframe=src'hhpss....=";
 
     return (
-        <div className="">
-            {/* Channel row */}
-            <div className="flex items-center justify-between bg-white rounded-lg border border-gray-200 px-4 py-3">
-                <div className="flex items-center gap-3">
-                    <div className="relative flex h-9 w-9 items-center justify-center rounded-full bg-gray-900">
-                        <span className="text-xs font-semibold text-white">V</span>
-                        <span className="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full border-2 border-white bg-green-500" />
+        <div className="min-w-0">
+            <div className="flex flex-col gap-3 rounded-lg border border-border bg-card px-3 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-4">
+                <div className="flex min-w-0 items-center gap-3">
+                    <div className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-foreground">
+                        <span className="text-xs font-semibold text-primary-foreground">V</span>
+                        <span className="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full border-2 border-primary-foreground bg-success-strong" />
                     </div>
-                    <div>
-                        <p className="text-sm font-medium text-gray-900">Vita chat</p>
-                        <p className="text-xs text-gray-500">
+                    <div className="min-w-0">
+                        <p className="text-sm font-medium text-foreground">Vita chat</p>
+                        <p className="text-xs text-muted-foreground">
                             Talk to Vita lab directly on site
                         </p>
                     </div>
                 </div>
-                <div className="flex items-center gap-2">
-                    <button className="rounded-lg bg-gray-900 px-3.5 py-1.5 text-xs font-medium text-white hover:bg-gray-800 transition-colors">
+                <div className="flex shrink-0 items-center gap-2">
+                    <button className="rounded-lg bg-foreground px-3.5 py-1.5 text-xs font-medium text-primary-foreground transition-colors hover:bg-foreground/80">
                         Visibility
                     </button>
-                    <button className="rounded-lg border border-gray-200 px-3.5 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50 transition-colors">
+                    <button className="rounded-lg border border-border px-3.5 py-1.5 text-xs font-medium text-foreground/80 transition-colors hover:bg-muted">
                         Edit
                     </button>
                 </div>
             </div>
 
-            {/* Content grid */}
-            <div className="mt-5 grid grid-cols-1 gap-8 md:grid-cols-[1fr_auto_1fr] rounded-lg bg-white px-4 py-3   ">
-                {/* Left column: links */}
-                <div className="flex flex-col gap-5">
-                    <div>
-                        <p className="text-sm font-semibold text-gray-900">
+            <div className="mt-5 grid grid-cols-1 gap-6 rounded-lg bg-card px-3 py-3 md:grid-cols-[1fr_auto_1fr] md:gap-8 sm:px-4">
+                <div className="flex min-w-0 flex-col gap-5">
+                    <div className="min-w-0">
+                        <p className="text-sm font-semibold text-foreground">
                             Link to chat
                         </p>
-                        <p className="mt-0.5 text-xs text-gray-500">
+                        <p className="mt-0.5 text-xs text-muted-foreground">
                             Use the following link to the standalone chat page
                         </p>
-                        <div className="relative mt-2">
+                        <div className="relative mt-2 min-w-0">
                             <CopyField value={chatLink} />
                         </div>
                     </div>
 
-                    <div>
-                        <p className="text-sm font-semibold text-gray-900">
+                    <div className="min-w-0">
+                        <p className="text-sm font-semibold text-foreground">
                             Embedded chat (iframe)
                         </p>
-                        <p className="mt-0.5 text-xs text-gray-500">
+                        <p className="mt-0.5 text-xs text-muted-foreground">
                             Add the following code into the HTML code of your page
                         </p>
-                        <div className="relative mt-2">
+                        <div className="relative mt-2 min-w-0">
                             <CopyField value={embedCode} />
                         </div>
                     </div>
                 </div>
 
-                {/* Divider */}
-                <div className="hidden md:block w-px bg-gray-200" />
+                <div className="hidden w-px bg-border md:block" />
 
-                {/* Right column: QR code */}
                 <div>
-                    <p className="text-sm font-semibold text-gray-900">QR code</p>
-                    <p className="mt-0.5 text-xs text-gray-500">
+                    <p className="text-sm font-semibold text-foreground">QR code</p>
+                    <p className="mt-0.5 text-xs text-muted-foreground">
                         Scanning this QR code will lead customers to a standalone
                         chat page
                     </p>
-                    <div className="mt-3 flex h-24 w-24 items-center justify-center rounded-lg border border-gray-200 bg-white">
-                        <QrCode className="h-16 w-16 text-gray-900" strokeWidth={1.2} />
+                    <div className="mt-3 flex h-24 w-24 items-center justify-center rounded-lg border border-border bg-card">
+                        <QrCode className="h-16 w-16 text-foreground" strokeWidth={1.2} />
                     </div>
-                    <button className="mt-3 rounded-lg border border-gray-200 px-3.5 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50 transition-colors">
+                    <button className="mt-3 rounded-lg border border-border px-3.5 py-1.5 text-xs font-medium text-foreground/80 transition-colors hover:bg-muted">
                         Download QR
                     </button>
                 </div>

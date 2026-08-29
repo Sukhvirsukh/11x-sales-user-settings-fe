@@ -25,7 +25,7 @@ export function StoreDropdown({
 }: StoreDropdownProps) {
   return (
     <Select defaultValue={defaultValue} onValueChange={onValueChange}>
-      <SelectTrigger className="h-[35px] w-[97px] rounded-[9px] border-[#a4a4ab] text-[14px] font-medium text-[#6d6d76]">
+      <SelectTrigger className="h-[35px] w-[97px] rounded-[9px] border-subtle text-body font-medium text-muted-foreground">
         <SelectValue />
       </SelectTrigger>
       <SelectContent>

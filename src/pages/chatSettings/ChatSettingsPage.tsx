@@ -19,64 +19,64 @@ export function ChatSettingsPage() {
   };
 
   return (
-    <div className="flex-1 overflow-y-auto">
+    <div className="min-w-0 flex-1 overflow-y-auto">
       <PageHeader
         title="Chat settings"
         subtitle="Configure your chatbot"
         chatTitle="Settings Chat"
         chatPlaceholder="Ask about chat settings..."
       >
-        <div className="mt-4 rounded-md border border-[#E6E6E8] bg-white">
-          <Collapsible open={openSection === "channels"} className="border-b border-[#E6E6E8] mx-4">
+        <div className="mt-4 overflow-hidden rounded-md border border-border bg-card">
+          <Collapsible open={openSection === "channels"} className="mx-2 border-b border-border sm:mx-4">
             <CollapsibleTrigger
               onClick={() => handleToggle("channels")}
-              className="flex w-full items-center justify-between px-4 py-3 text-left text-sm font-medium text-[#111113] cursor-pointer"
+              className="flex w-full cursor-pointer items-center justify-between px-2 py-3 text-left text-sm font-medium text-foreground sm:px-4"
             >
               Channels
               <ChevronDownIcon
                 className={cn(
-                  "h-4 w-4 text-[#6D6D76] transition-transform duration-200",
+                  "h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200",
                   openSection === "channels" && "rotate-180"
                 )}
               />
             </CollapsibleTrigger>
-            <CollapsibleContent className="bg-[#F1F1F1] mb-4 p-4 rounded-md">
+            <CollapsibleContent className="mb-4 rounded-md bg-surface-inset p-2 sm:p-4">
               <Channels />
             </CollapsibleContent>
           </Collapsible>
 
-          <Collapsible open={openSection === "integration"} className="border-b border-[#E6E6E8] mx-4">
+          <Collapsible open={openSection === "integration"} className="mx-2 border-b border-border sm:mx-4">
             <CollapsibleTrigger
               onClick={() => handleToggle("integration")}
-              className="flex w-full items-center justify-between px-4 py-3 text-left text-sm font-medium text-[#111113] cursor-pointer"
+              className="flex w-full cursor-pointer items-center justify-between px-2 py-3 text-left text-sm font-medium text-foreground sm:px-4"
             >
               Integration
               <ChevronDownIcon
                 className={cn(
-                  "h-4 w-4 text-[#6D6D76] transition-transform duration-200",
+                  "h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200",
                   openSection === "integration" && "rotate-180"
                 )}
               />
             </CollapsibleTrigger>
-            <CollapsibleContent className="bg-[#F1F1F1] mb-4 p-4 rounded-md">
+            <CollapsibleContent className="mb-4 rounded-md bg-surface-inset p-2 sm:p-4">
               <Integrations />
             </CollapsibleContent>
           </Collapsible>
 
-          <Collapsible open={openSection === "configurations"} className="mx-4">
+          <Collapsible open={openSection === "configurations"} className="mx-2 sm:mx-4">
             <CollapsibleTrigger
               onClick={() => handleToggle("configurations")}
-              className="flex w-full items-center justify-between px-4 py-3 text-left text-sm font-medium text-[#111113] cursor-pointer"
+              className="flex w-full cursor-pointer items-center justify-between px-2 py-3 text-left text-sm font-medium text-foreground sm:px-4"
             >
               Configurations
               <ChevronDownIcon
                 className={cn(
-                  "h-4 w-4 text-[#6D6D76] transition-transform duration-200",
+                  "h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200",
                   openSection === "configurations" && "rotate-180"
                 )}
               />
             </CollapsibleTrigger>
-            <CollapsibleContent className="bg-[#F1F1F1] mb-4 p-4 rounded-md">
+            <CollapsibleContent className="mb-4 rounded-md bg-surface-inset p-2 sm:p-4">
               <Configurations />
             </CollapsibleContent>
           </Collapsible>

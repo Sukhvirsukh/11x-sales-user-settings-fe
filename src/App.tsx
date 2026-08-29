@@ -15,7 +15,7 @@ import { PromptToolsTab } from "@/pages/aiTraining/tabs/PromptToolsTab";
 function App() {
   return (
     <BrowserRouter>
-      <div className="flex h-screen gap-[19px] overflow-hidden bg-[#f7f7f8] pb-[11px] pl-[18px] pr-[18px] pt-[19px]">
+      <div className="flex h-screen gap-0 overflow-hidden bg-background px-3 pb-[11px] pt-3 md:gap-[19px] md:px-[18px] md:pt-[19px]">
         <Sidebar />
         <main className="min-w-0 flex-1 flex flex-col overflow-y-auto">
           <Routes>
