@@ -69,6 +69,7 @@ ROUTES:
 │   │   │   │   ├── ChatMessage.tsx
 │   │   │   │   ├── ChatInput.tsx
 │   │   │   │   └── index.ts
+│   │   │   ├── CopyField.tsx
 │   │   │   ├── pageHeader/
 │   │   │   │   ├── PageHeader.tsx
 │   │   │   │   └── index.ts
@@ -88,13 +89,20 @@ ROUTES:
 │   │       ├── checkbox/
 │   │       │   ├── Checkbox.tsx
 │   │       │   └── index.ts
+│   │       ├── collapsible.tsx
 │   │       ├── searchInput/
 │   │       │   ├── SearchInput.tsx
 │   │       │   └── index.ts
 │   │       └── tabs/
-│   │           ├── Tabs.tsx
-│   │           └── index.ts
+│   │       ├── Tabs.tsx
+│   │       └── index.ts
 │   ├── features/
+│   │   ├── chatSettings/
+│   │   │   ├── CrawlSettings.tsx
+│   │   │   ├── CustomSection.tsx
+│   │   │   ├── IntegrationRow.tsx
+│   │   │   ├── Span.tsx
+│   │   │   └── TrackingSettings.tsx
 │   │   └── knowledgeBase/
 │   │       ├── components/
 │   │       │   ├── KnowledgeTable.tsx
@@ -119,7 +127,11 @@ ROUTES:
 │   │   │   └── index.ts
 │   │   ├── chatSettings/
 │   │   │   ├── ChatSettingsPage.tsx
-│   │   │   └── index.ts
+│   │   │   ├── index.ts
+│   │   │   tabs/
+│   │   │   ├── Channels.tsx
+│   │   │   ├── Configurations.tsx
+│   │   │   └── Integrations.tsx
 │   │   ├── contacts/
 │   │   │   ├── ContactsPage.tsx
 │   │   │   └── index.ts
@@ -158,6 +170,14 @@ ROUTES:
 
 ## Features
 
+### features/chatSettings/
+
+- `CrawlSettings.tsx` — Crawl settings panel with stock products selector, tag-based ignore elements input, and CSS selector syntax reference
+- `CustomSection.tsx` — Reusable section wrapper with heading and white background
+- `IntegrationRow.tsx` — Integration row card with icon, status badge, description, and action button
+- `Span.tsx` — Spam filter settings with rate limit, period, and message fields
+- `TrackingSettings.tsx` — UTM tracking toggle with description
+
 ### features/knowledgeBase/
 
 - `components/KnowledgeTable.tsx` — Table displaying knowledge items with checkboxes, status badges, and formatted dates
@@ -173,6 +193,7 @@ ROUTES:
 - `badge.tsx` — Status badge with variants: default, secondary, destructive, outline, ghost, link
 - `tabs.tsx` — Underline-style tab navigation component
 - `checkbox.tsx` — Checkbox input using @base-ui/react primitives
+- `collapsible.tsx` — Collapsible panel using @base-ui/react primitives
 - `dialog.tsx` — Modal dialog using @base-ui/react primitives
 - `input.tsx` — Text input using @base-ui/react primitives
 - `label.tsx` — Form label component
@@ -187,6 +208,7 @@ ROUTES:
 - `chatBox/ChatBox.tsx` — Reusable chat container with message list and auto-scroll
 - `chatBox/ChatMessage.tsx` — Individual message bubble (user: right-aligned purple, bot: left-aligned white)
 - `chatBox/ChatInput.tsx` — Message input with textarea and purple send button
+- `CopyField.tsx` — Copy-to-clipboard field with value display and copy button
 - `sidebar/Sidebar.tsx` — Left navigation sidebar with logo, nav items, bottom nav
 - `userProfile/UserProfile.tsx` — User profile display with avatar image or initials fallback
 - `pageHeader/PageHeader.tsx` — Page title, subtitle, and action buttons layout
@@ -197,7 +219,10 @@ ROUTES:
 - `pages/contacts/ContactsPage.tsx` — Contacts management (/contacts)
 - `pages/conversations/ConversationsPage.tsx` — Chat conversations (/conversations)
 - `pages/reports/ReportsPage.tsx` — Analytics and reports (/reports)
-- `pages/chatSettings/ChatSettingsPage.tsx` — Chatbot configuration (/chat-settings)
+- `pages/chatSettings/ChatSettingsPage.tsx` — Chatbot configuration (/chat-settings) with collapsible sections for Channels, Integration, and Configurations
+- `pages/chatSettings/tabs/Channels.tsx` — Channels tab: link, embed code, and QR code display
+- `pages/chatSettings/tabs/Configurations.tsx` — Configurations tab: combines CrawlSettings, TrackingSettings, and Span components
+- `pages/chatSettings/tabs/Integrations.tsx` — Integrations tab: list of integration rows with status
 - `pages/aiTraining/AiTrainingPage.tsx` — AI Training: knowledge base table (/ai-training)
 - `pages/aiTraining/tabs/KnowledgeBaseTab.tsx` — Knowledge base table with search, sub-tabs, and Knowledge button
 
