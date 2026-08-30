@@ -1,7 +1,7 @@
 import { FieldGroup, Field } from "@/components/ui/field";
 import { Checkbox } from "@/components/ui/checkbox";
 import { CustomFormGroup, CustomLabel } from "@/components/custom";
-import { useVisibilityStore } from "@/pages/chatSettings/store/chatVisibility";
+import { useVisibilityStore } from "@/pages/chatSettings/store/chatVisibilityStore";
 
 function WhatsAppIcon({ className }: { className?: string }) {
   return (
@@ -30,44 +30,43 @@ function InstagramIcon({ className }: { className?: string }) {
 }
 
 export default function SocialButton() {
-    const connectWhatsApp = useVisibilityStore((s) => s.fields.connectWhatsApp);
-    const connectInstagram = useVisibilityStore((s) => s.fields.connectInstagram);
-    const setField = useVisibilityStore((s) => s.setField);
+  const fields = useVisibilityStore((s) => s.fields);
+  const setField = useVisibilityStore((s) => s.setField);
 
-    return (
-        <CustomFormGroup>
-            <CustomLabel>
-                Reach your customers on your favourite platform
-            </CustomLabel>
+  return (
+    <CustomFormGroup>
+      <CustomLabel>
+        Reach your customers on your favourite platform
+      </CustomLabel>
 
-            <FieldGroup>
-                <Field orientation="horizontal" className="gap-3">
-                    <WhatsAppIcon className="h-5 w-5 shrink-0 text-[#25D366]" />
-                    <CustomLabel htmlFor="connect-whatsapp" className="font-normal text-muted-foreground">
-                        Connect WhatsApp
-                    </CustomLabel>
-                    <Checkbox
-                        id="connect-whatsapp"
-                        name="connect-whatsapp"
-                        checked={connectWhatsApp}
-                        onCheckedChange={(checked) => setField("connectWhatsApp", checked === true)}
-                        className="ml-auto"
-                    />
-                </Field>
-                <Field orientation="horizontal" className="gap-3">
-                    <InstagramIcon className="h-5 w-5 shrink-0 text-[#E4405F]" />
-                    <CustomLabel htmlFor="connect-instagram" className="font-normal text-muted-foreground">
-                        Connect Instagram
-                    </CustomLabel>
-                    <Checkbox
-                        id="connect-instagram"
-                        name="connect-instagram"
-                        checked={connectInstagram}
-                        onCheckedChange={(checked) => setField("connectInstagram", checked === true)}
-                        className="ml-auto"
-                    />
-                </Field>
-            </FieldGroup>
-        </CustomFormGroup>
-    );
+      <FieldGroup>
+        <Field orientation="horizontal" className="gap-3">
+          <WhatsAppIcon className="h-5 w-5 shrink-0 text-[#25D366]" />
+          <CustomLabel htmlFor="connect-whatsapp" className="font-normal text-muted-foreground">
+            Connect WhatsApp
+          </CustomLabel>
+          <Checkbox
+            id="connect-whatsapp"
+            name="connect-whatsapp"
+            checked={fields.connectWhatsApp}
+            onCheckedChange={(checked) => setField("connectWhatsApp", checked === true)}
+            className="ml-auto"
+          />
+        </Field>
+        <Field orientation="horizontal" className="gap-3">
+          <InstagramIcon className="h-5 w-5 shrink-0 text-[#E4405F]" />
+          <CustomLabel htmlFor="connect-instagram" className="font-normal text-muted-foreground">
+            Connect Instagram
+          </CustomLabel>
+          <Checkbox
+            id="connect-instagram"
+            name="connect-instagram"
+            checked={fields.connectInstagram}
+            onCheckedChange={(checked) => setField("connectInstagram", checked === true)}
+            className="ml-auto"
+          />
+        </Field>
+      </FieldGroup>
+    </CustomFormGroup>
+  );
 }

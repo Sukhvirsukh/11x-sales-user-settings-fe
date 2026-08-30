@@ -1,55 +1,145 @@
-import { useRef, useEffect } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { XIcon } from "lucide-react";
+import { useVisibilityStore } from "@/pages/chatSettings/store/chatVisibilityStore";
 import { ChatMessage, type ChatMessageProps } from "./ChatMessage";
 import { ChatInput } from "./ChatInput";
 
 interface ChatBoxProps {
-  messages: ChatMessageProps[];
-  onSendMessage: (message: string) => void;
-  placeholder?: string;
-  className?: string;
-  disabled?: boolean;
-  title?: string;
   onClose?: () => void;
+  className?: string;
 }
 
-export function ChatBox({
-  messages,
-  onSendMessage,
-  placeholder = "Type a message...",
-  className = "",
-  disabled = false,
-  title = "Chat",
-  onClose,
-}: ChatBoxProps) {
+function useChatFaceUrl(chatFace: File | string | null | undefined) {
+  return useMemo(() => {
+    if (!chatFace) return null;
+    if (typeof chatFace === "string") return chatFace;
+    return URL.createObjectURL(chatFace);
+  }, [chatFace]);
+}
+
+function createWelcomeMessage(content: string): ChatMessageProps {
+  return {
+    id: "welcome",
+    content,
+    sender: "bot",
+    timestamp: new Date(),
+  };
+}
+
+export function ChatBox({ onClose, className = "" }: ChatBoxProps) {
+  const fields = useVisibilityStore((s) => s.fields);
+
+  const {
+    agentName,
+    chatFace,
+    welcomeMessage,
+    predefinedMessages,
+    placeholderMessage,
+    primaryColor,
+    notificationColor,
+  } = fields;
+
+  const avatarUrl = useChatFaceUrl(chatFace);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const [messages, setMessages] = useState<ChatMessageProps[]>(() =>
+    welcomeMessage ? [createWelcomeMessage(welcomeMessage)] : [],
+  );
+
+  useEffect(() => {
+    return () => {
+      if (chatFace instanceof File && avatarUrl) {
+        URL.revokeObjectURL(avatarUrl);
+      }
+    };
+  }, [avatarUrl, chatFace]);
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+  function handleSend(content: string) {
+    const userMessage: ChatMessageProps = {
+      id: crypto.randomUUID(),
+      content,
+      sender: "user",
+      timestamp: new Date(),
+    };
+    setMessages((prev) => [...prev, userMessage]);
+
+    window.setTimeout(() => {
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: crypto.randomUUID(),
+          content: "Thanks for your message! How else can I help?",
+          sender: "bot",
+          timestamp: new Date(),
+          avatar: avatarUrl ?? undefined,
+        },
+      ]);
+    }, 500);
+  }
+
+  function handleClear() {
+    setMessages(
+      welcomeMessage ? [createWelcomeMessage(welcomeMessage)] : [],
+    );
+  }
+
+  function handleCorrect(messageId: string, correctedContent: string) {
+    setMessages((prev) =>
+      prev.map((m) =>
+        m.id === messageId ? { ...m, content: correctedContent } : m,
+      ),
+    );
+  }
+
+  function handleLike(messageId: string) {
+    console.log("Liked message:", messageId);
+  }
+
+  function handleDislike(messageId: string) {
+    console.log("Disliked message:", messageId);
+  }
+
   return (
-    <div
-      className={`flex h-full flex-col bg-card ${className}`}
-    >
+    <div className={`flex h-full flex-col overflow-hidden rounded-lg border border-border bg-white/95 shadow-xl backdrop-blur-sm ${className}`}>
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-border px-4 py-3">
-        <h3 className="text-sm font-semibold text-foreground">{title}</h3>
+      <div
+        className="flex shrink-0 items-center justify-between gap-2 px-3 py-2.5"
+        style={{ backgroundColor: `${primaryColor}22` }}
+      >
+        <div className="flex min-w-0 items-center gap-2">
+          <div className="min-w-0 flex gap-2">
+            <p className="truncate text-body-sm font-semibold text-foreground">
+              {agentName}
+            </p>
+            <span className="inline-flex items-center gap-1 rounded-full bg-success-muted px-1.5 py-0.5 text-micro font-medium text-success-strong">
+              <span
+                className="size-1.5 rounded-full"
+                style={{ backgroundColor: notificationColor }}
+              />
+              Active
+            </span>
+          </div>
+        </div>
         {onClose && (
           <button
             type="button"
+            aria-label="Close chat"
             onClick={onClose}
-            className="flex h-6 w-6 items-center justify-center rounded-md text-muted-foreground hover:bg-muted transition-colors"
+            className="flex size-7 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-black/5 hover:text-foreground"
           >
-            <XIcon className="h-4 w-4" />
+            <XIcon className="size-4" />
           </button>
         )}
       </div>
 
-      {/* Messages area */}
-      <div className="flex-1 overflow-y-auto px-4 py-4">
-        <div className="space-y-4">
+      {/* Messages */}
+      <div className="min-h-0 flex-1 overflow-y-auto bg-muted/30 px-3 py-3">
+        <div className="space-y-3">
           {messages.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 text-center">
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-muted">
@@ -76,21 +166,75 @@ export function ChatBox({
             </div>
           ) : (
             messages.map((message) => (
-              <ChatMessage key={message.id} {...message} />
+              <div key={message.id}>
+                <ChatMessage
+                  {...message}
+                  avatar={
+                    message.sender === "bot"
+                      ? (message.avatar ?? avatarUrl ?? undefined)
+                      : message.avatar
+                  }
+                  primaryColor={primaryColor}
+                  onCorrect={
+                    message.sender === "bot" ? handleCorrect : undefined
+                  }
+                  onLike={message.sender === "bot" ? handleLike : undefined}
+                  onDislike={
+                    message.sender === "bot" ? handleDislike : undefined
+                  }
+                />
+              </div>
             ))
           )}
           <div ref={messagesEndRef} />
         </div>
       </div>
 
-      {/* Input area */}
-      <div className="border-t border-border px-4 py-3">
+      {/* Quick replies */}
+      {predefinedMessages.length > 0 && (
+        <div className="flex shrink-0 flex-wrap gap-1.5 border-t border-border/60 px-3 py-2">
+          {predefinedMessages.map((reply) => (
+            <button
+              key={reply}
+              type="button"
+              onClick={() => handleSend(reply)}
+              className="rounded-full border border-border bg-background px-2.5 py-1 text-caption text-foreground transition-colors hover:bg-muted"
+            >
+              {reply}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {/* Input */}
+      <div className="shrink-0 border-t border-border px-3 py-2.5">
         <ChatInput
-          onSend={onSendMessage}
-          placeholder={placeholder}
-          disabled={disabled}
+          placeholder={placeholderMessage}
+          primaryColor={primaryColor}
+          onSend={handleSend}
         />
       </div>
+
+      {/* Admin actions (only shown when onClose is provided) */}
+      {onClose && (
+        <div className="flex shrink-0 gap-2 border-t border-border px-3 py-2.5">
+          <button
+            type="button"
+            className="rounded-lg px-3 py-1.5 text-body-sm font-medium text-white transition-opacity hover:opacity-90"
+            style={{ backgroundColor: primaryColor }}
+            onClick={onClose}
+          >
+            Save
+          </button>
+          <button
+            type="button"
+            onClick={handleClear}
+            className="rounded-lg border border-border bg-card px-3 py-1.5 text-body-sm font-medium text-foreground transition-colors hover:bg-muted"
+          >
+            Clear Chat
+          </button>
+        </div>
+      )}
     </div>
   );
 }

@@ -159,7 +159,7 @@ ROUTES:
 │   │   │   │   ├── Visibility.tsx
 │   │   │   │   └── index.ts
 │   │   │   ├── store/
-│   │   │   │   └── chatVisibility.ts
+│   │   │   │   └── chatVisibilityStore.tsx
 │   │   │   tabs/
 │   │   │   ├── Channels.tsx
 │   │   │   ├── Configurations.tsx
@@ -281,7 +281,10 @@ ROUTES:
 - `pages/reports/ReportsPage.tsx` — Analytics and reports (/reports)
 - `pages/chatSettings/ChatSettingsPage.tsx` — Chatbot configuration (/chat-settings) with shadcn Accordion sections
 - `pages/chatSettings/chat/Visibility.tsx` — Chat visibility page: layout (accordion + Preview shell); accordion items come from AllAccordions; dirty save/discard via `useVisibilityStore`
-- `pages/chatSettings/store/chatVisibility.ts` — Zustand store for all visibility fields, `isDirty`, `save`, `discard` (last saved), `resetToDefault`
+- `pages/chatSettings/chat/Preview.tsx` — Faded site background + floating chat trigger; opens PreviewChatPanel
+- `pages/chatSettings/chat/PreviewChatPanel.tsx` — Preview chat widget driven by visibility store settings
+- `pages/chatSettings/chat/ChatBubbleButtons.tsx` — Type / Compact / Classic / Custom chat open buttons for the preview
+- `pages/chatSettings/store/chatVisibilityStore.tsx` — Zustand store for all visibility fields, `isDirty`, `save`, `discard` (last saved), `resetToDefault`
 - `pages/chatSettings/tabs/Channels.tsx` — Channels tab: link, embed code, QR, and Visibility link to `/chat-settings/visibility`
 - `pages/chatSettings/tabs/Configurations.tsx` — Configurations tab: combines CrawlSettings, TrackingSettings, and Span components
 - `pages/chatSettings/tabs/Integrations.tsx` — Integrations tab: list of integration rows with status

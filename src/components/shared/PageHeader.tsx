@@ -3,15 +3,12 @@ import { Link } from "react-router";
 import { ChevronLeft } from "lucide-react";
 import { ChatBox } from "@/components/shared/chatBox";
 import { SidebarMenuButton } from "@/components/shared/sidebar";
-import { useChatboxStore, type ChatMessageProps } from "@/pages/aiTraining/stores";
+import { useChatboxStore } from "@/pages/aiTraining/stores";
 import { StoreDropdown } from "./StoreDropdown";
 
 interface PageHeaderProps {
   title: string;
   subtitle?: string;
-  chatTitle?: string;
-  chatPlaceholder?: string;
-  onChatMessage?: (message: string) => void;
   backTo?: string;
   children: ReactNode;
 }
@@ -19,38 +16,10 @@ interface PageHeaderProps {
 export function PageHeader({
   title,
   subtitle,
-  chatTitle = "Chat",
-  chatPlaceholder = "Type a message...",
-  onChatMessage,
   backTo,
   children,
 }: PageHeaderProps) {
-  const { isOpen, setIsOpen, messages, setMessages } = useChatboxStore();
-
-  function handleSendMessage(content: string) {
-    if (onChatMessage) {
-      onChatMessage(content);
-      return;
-    }
-
-    const userMessage: ChatMessageProps = {
-      id: crypto.randomUUID(),
-      content,
-      sender: "user",
-      timestamp: new Date(),
-    };
-    setMessages(userMessage);
-
-    setTimeout(() => {
-      const botMessage: ChatMessageProps = {
-        id: crypto.randomUUID(),
-        content: "I'm analyzing your knowledge base. How can I help you with this data?",
-        sender: "bot",
-        timestamp: new Date(),
-      };
-      setMessages(botMessage);
-    }, 1000);
-  }
+  const { isOpen, setIsOpen } = useChatboxStore();
 
   return (
     <div className="flex h-full flex-col">
@@ -106,11 +75,8 @@ export function PageHeader({
             />
             <div className="fixed inset-x-3 bottom-3 top-3 z-50 overflow-hidden rounded-[8px] border border-border bg-card shadow-md lg:static lg:inset-auto lg:z-auto lg:w-[min(360px,38%)] lg:max-w-[400px] lg:shrink-0 lg:self-stretch">
               <ChatBox
-                messages={messages}
-                onSendMessage={handleSendMessage}
-                title={chatTitle}
                 onClose={() => setIsOpen(false)}
-                placeholder={chatPlaceholder}
+                className="h-full"
               />
             </div>
           </>

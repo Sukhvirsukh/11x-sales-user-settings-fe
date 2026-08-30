@@ -51,7 +51,7 @@ export function UnSavedChangesBar({
           className={cn(
             "z-40 flex shrink-0 flex-col gap-3 border-t border-border bg-card px-4 py-3 sm:flex-row sm:items-center sm:justify-between",
             placement === "fixed" &&
-              "fixed inset-x-0 bottom-0 pb-[max(0.75rem,env(safe-area-inset-bottom))] shadow-lg",
+              "fixed inset-x-0 top-0 pt-[max(0.75rem,env(safe-area-inset-top))] shadow-lg",
             className,
           )}
         >
