@@ -1,3 +1,4 @@
+import { Link } from "react-router";
 import CopyField from "@/components/shared/CopyField";
 import { QrCode } from "lucide-react";
 
@@ -21,9 +22,12 @@ export default function Channels() {
                     </div>
                 </div>
                 <div className="flex w-full shrink-0 flex-wrap items-center gap-2 sm:w-auto">
-                    <button className="min-h-9 flex-1 rounded-lg bg-foreground px-3.5 py-1.5 text-caption font-medium text-primary-foreground transition-colors hover:bg-foreground/80 sm:flex-none">
+                    <Link
+                        to="/chat-settings/visibility"
+                        className="inline-flex min-h-9 flex-1 items-center justify-center rounded-lg bg-foreground px-3.5 py-1.5 text-caption font-medium text-primary-foreground transition-colors hover:bg-foreground/80 sm:flex-none"
+                    >
                         Visibility
-                    </button>
+                    </Link>
                     <button className="min-h-9 flex-1 rounded-lg border border-border px-3.5 py-1.5 text-caption font-medium text-foreground/80 transition-colors hover:bg-muted sm:flex-none">
                         Edit
                     </button>

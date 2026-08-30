@@ -1,28 +1,13 @@
-import React, { useState } from "react";
-import { X, ChevronDown } from "lucide-react";
+import { useState } from "react";
+import { ChevronDown } from "lucide-react";
+import { CustomMultiTextField } from "@/components/custom";
 import CustomSection from "./CustomSection";
 
 export default function CrawlSettings() {
     const [tags, setTags] = useState<string[]>(["Footer", "miniature", "keychain"]);
-    const [tagInput, setTagInput] = useState("");
-
-    const handleRemoveTag = (tagToRemove: string) => {
-        setTags(tags.filter((tag) => tag !== tagToRemove));
-    };
-
-    const handleTagKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === "Enter" && tagInput.trim()) {
-            e.preventDefault();
-            if (!tags.includes(tagInput.trim())) {
-                setTags([...tags, tagInput.trim()]);
-            }
-            setTagInput("");
-        }
-    };
 
     return (
         <CustomSection heading="Crawl Settings">
-            {/* Changed items-stretch (default grid behavior) to ensure equal heights */}
             <div className="grid min-w-0 grid-cols-1 gap-4 lg:grid-cols-3">
 
                 {/* Left Column (Inputs) */}
@@ -47,39 +32,12 @@ export default function CrawlSettings() {
                     </div>
 
                     {/* Tag / Ignore Elements Input */}
-                    <div className="space-y-2">
-                        <label className="block text-xs font-semibold text-foreground">
-                            Add or remove your Ignore elements from the pages when crawling
-                        </label>
-                        <div className="min-h-[110px] p-2 bg-card border border-border rounded-md focus-within:ring-2 focus-within:ring-ring/40 flex flex-wrap gap-2 content-start">
-                            {tags.map((tag) => (
-                                <span
-                                    key={tag}
-                                    className="inline-flex items-center gap-1.5 bg-muted/80 border border-border text-muted-foreground text-xs px-2.5 py-1 rounded-md"
-                                >
-                                    {tag}
-                                    <button
-                                        type="button"
-                                        onClick={() => handleRemoveTag(tag)}
-                                        className="text-placeholder hover:text-foreground/80"
-                                    >
-                                        <X className="h-3 w-3" />
-                                    </button>
-                                </span>
-                            ))}
-                            <input
-                                type="text"
-                                value={tagInput}
-                                onChange={(e) => setTagInput(e.target.value)}
-                                onKeyDown={handleTagKeyDown}
-                                placeholder={tags.length === 0 ? "Type and press Enter..." : ""}
-                                className="min-w-0 flex-1 bg-transparent py-1 text-xs text-foreground outline-none sm:min-w-[120px]"
-                            />
-                        </div>
-                        <p className="text-micro text-placeholder leading-relaxed">
-                            Type to add elements, cross to remove elements that that are irrelrvant to the main content of a page like Headers, Footer, Cross-sell product links, etc
-                        </p>
-                    </div>
+                    <CustomMultiTextField
+                        label="Add or remove your Ignore elements from the pages when crawling"
+                        hint="Type to add elements, cross to remove elements that are irrelevant to the main content of a page like Headers, Footer, Cross-sell product links, etc"
+                        value={tags}
+                        onValueChange={setTags}
+                    />
 
                 </div>
 

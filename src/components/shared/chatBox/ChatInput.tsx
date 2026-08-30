@@ -1,16 +1,18 @@
 import { useState, type KeyboardEvent } from "react";
-import { SendIcon } from "lucide-react";
+import { ArrowUpIcon, ImageIcon, SendIcon } from "lucide-react";
 
 interface ChatInputProps {
   onSend: (message: string) => void;
   placeholder?: string;
   disabled?: boolean;
+  primaryColor?: string;
 }
 
 export function ChatInput({
   onSend,
   placeholder = "Type a message...",
   disabled = false,
+  primaryColor = "blue",
 }: ChatInputProps) {
   const [value, setValue] = useState("");
 
@@ -21,7 +23,7 @@ export function ChatInput({
     setValue("");
   }
 
-  function handleKeyDown(e: KeyboardEvent<HTMLTextAreaElement>) {
+  function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSend();
@@ -29,23 +31,31 @@ export function ChatInput({
   }
 
   return (
-    <div className="flex items-end gap-2 rounded-xl border border-border bg-muted px-3 py-2">
-      <textarea
+    <div className="flex items-center gap-1.5 rounded-xl border border-border bg-background px-2.5 py-1.5">
+      <input
+        type="text"
         value={value}
         onChange={(e) => setValue(e.target.value)}
         onKeyDown={handleKeyDown}
-        placeholder={placeholder}
-        disabled={disabled}
-        rows={1}
-        className="max-h-32 min-h-[36px] flex-1 resize-none bg-transparent text-sm text-foreground placeholder:text-placeholder focus:outline-none"
+        placeholder={placeholder || "Ask AI..."}
+        className="min-w-0 flex-1 bg-transparent text-body-sm text-foreground outline-none placeholder:text-placeholder"
       />
       <button
         type="button"
-        onClick={handleSend}
-        disabled={disabled || !value.trim()}
-        className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-chat text-primary-foreground transition-colors hover:bg-chat-hover disabled:opacity-40 disabled:cursor-not-allowed"
+        aria-label="Attach image"
+        className="flex size-6 shrink-0 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-black/5 hover:text-foreground"
       >
-        <SendIcon className="h-4 w-4" />
+        <ImageIcon className="size-4" />
+      </button>
+      <button
+        type="button"
+        onClick={handleSend}
+        disabled={!value.trim()}
+        aria-label="Send message"
+        className="flex size-7 shrink-0 items-center justify-center rounded-full text-white transition-opacity hover:opacity-90 disabled:opacity-40"
+        style={{ backgroundColor: primaryColor }}
+      >
+        <ArrowUpIcon className="size-3.5" />
       </button>
     </div>
   );
