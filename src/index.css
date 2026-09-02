@@ -1,299 +1,169 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
-@import "@fontsource-variable/geist";
+@import "@fontsource-variable/inter";
 
-@custom-variant dark (&:is(.dark *));
+/* Disable system dark mode (prefers-color-scheme).
+   Tailwind's default dark: uses the OS setting; override so dark: only
+   applies when a .dark class is present on an ancestor. */
+@custom-variant dark (&:where(.dark, .dark *));
 
-/* ============================================
-   BASE STYLES
-   ============================================ */
+@theme {
 
-* {
-  box-sizing: border-box;
-}
+  --font-sans: 'Inter Variable', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    "Helvetica Neue", Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-smoothing: grayscale;
-  font-size: var(--font-size-body);
-  line-height: var(--line-height-body);
-}
+  /* Font Scale Definitions */
+  --text-xs: 0.625rem;
+  /* 10px */
+  --text-xs--line-height: 1.0625rem;
+  /* 17px */
+  --text-sm: 0.75rem;
+  /* 12px */
+  --text-sm--line-height: 1.0625rem;
+  /* 17px */
+  --text-base: 0.875rem;
+  /* 14px - Base size */
+  --text-base--line-height: 1.0625rem;
+  /* 17px */
+  --text-lg: 1rem;
+  /* 16px */
+  --text-lg--line-height: 1.25rem;
+  /* 20px */
+  --text-xl: 1.125rem;
+  /* 18px */
+  --text-xl--line-height: 1.375rem;
+  /* 22px */
+  --text-2xl: 1.25rem;
+  /* 20px */
+  --text-2xl--line-height: 1.5rem;
+  /* 24px */
+  --text-3xl: 1.5rem;
+  /* 24px */
+  --text-3xl--line-height: 1.75rem;
+  /* 28px */
 
-#root {
-  height: 100vh;
-}
-
-@theme inline {
-  --font-heading: var(--font-sans);
-  --font-sans: 'Geist Variable', sans-serif;
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
-  --color-chart-1: var(--chart-1);
-  --color-ring: var(--ring);
-  --color-input: var(--input);
-  --color-border: var(--border);
-  --color-border-strong: var(--border-strong);
-  --color-destructive: var(--destructive);
-  --color-destructive-muted: var(--destructive-muted);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-accent: var(--accent);
-  --color-muted-foreground: var(--muted-foreground);
+  /* Color Mappings */
+  --color-background: var(--background);
+  --color-sidebar: var(--sidebar-bg);
+  --color-card-bg: var(--card-bg);
+  --color-card-nested: var(--card-nested-bg);
   --color-muted: var(--muted);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-secondary: var(--secondary);
-  --color-primary-foreground: var(--primary-foreground);
+  --color-light-gray: var(--light-gray);
+  --color-danger: var(--danger);
+  --colot-success: var(--success);
+
   --color-primary: var(--primary);
   --color-primary-hover: var(--primary-hover);
-  --color-brand-muted: var(--brand-muted);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-popover: var(--popover);
-  --color-card-foreground: var(--card-foreground);
-  --color-card: var(--card);
-  --color-foreground: var(--foreground);
-  --color-background: var(--background);
-  --color-placeholder: var(--placeholder);
-  --color-subtle: var(--subtle);
-  --color-success: var(--success);
-  --color-success-foreground: var(--success-foreground);
-  --color-success-muted: var(--success-muted);
-  --color-success-strong: var(--success-strong);
-  --color-surface-raised: var(--surface-raised);
-  --color-surface-muted: var(--surface-muted);
-  --color-surface-inset: var(--surface-inset);
-  --color-surface-help: var(--surface-help);
-  --color-chat: var(--chat);
-  --color-chat-hover: var(--chat-hover);
-  --color-chat-muted: var(--chat-muted);
-  --color-chat-foreground: var(--chat-foreground);
-  --shadow-card: var(--shadow-card);
-  --text-display: var(--font-size-display);
-  --text-display--line-height: var(--line-height-display);
-  --text-title: var(--font-size-title);
-  --text-title--line-height: var(--line-height-title);
-  --text-subtitle: var(--font-size-subtitle);
-  --text-subtitle--line-height: var(--line-height-subtitle);
-  --text-body: var(--font-size-body);
-  --text-body--line-height: var(--line-height-body);
-  --text-body-sm: var(--font-size-body-sm);
-  --text-body-sm--line-height: var(--line-height-body-sm);
-  --text-caption: var(--font-size-caption);
-  --text-caption--line-height: var(--line-height-caption);
-  --text-micro: var(--font-size-micro);
-  --text-micro--line-height: var(--line-height-micro);
-  --text-2xl: var(--font-size-display);
-  --text-2xl--line-height: var(--line-height-display);
-  --text-xl: var(--font-size-title);
-  --text-xl--line-height: var(--line-height-title);
-  --text-lg: var(--font-size-title);
-  --text-lg--line-height: var(--line-height-title);
-  --text-base: var(--font-size-body);
-  --text-base--line-height: var(--line-height-body);
-  --text-sm: var(--font-size-body);
-  --text-sm--line-height: var(--line-height-body);
-  --text-xs: var(--font-size-caption);
-  --text-xs--line-height: var(--line-height-caption);
-  --radius-sm: calc(var(--radius) * 0.6);
-  --radius-md: calc(var(--radius) * 0.8);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) * 1.4);
-  --radius-2xl: calc(var(--radius) * 1.8);
-  --radius-3xl: calc(var(--radius) * 2.2);
-  --radius-4xl: calc(var(--radius) * 2.6);
-}
+  --color-primary-fg: var(--primary-foreground);
 
-/*
-  Vitalb design template — colors + type.
-  Use semantic classes (bg-background, text-display, text-body, …) instead of raw hex or px.
-  Font sizes change at mobile (<768), tablet (768), and desktop (1024).
-*/
-:root {
-  --background: #f7f7f8;
-  --foreground: #111113;
-  --card: #ffffff;
-  --card-foreground: #111113;
-  --popover: #ffffff;
-  --popover-foreground: #111113;
+  --color-border-subtle: var(--border-subtle);
+  --color-border-blue: var(--border-blue);
+  --color-border: var(--border);
+  --color-border-light: #e6e6e8;
+  --color-border-soft: var(--border-soft);
+  --color-border-tab: var(--border-tab);
+  --color-input: var(--input);
+  --color-black: var(--black);
 
-  --primary: #2f6df3;
-  --primary-foreground: #ffffff;
-  --primary-hover: #2558c4;
-  --brand-muted: #dbeafe;
+  --color-label: var(--label-text);
 
-  --secondary: #f3f3f4;
-  --secondary-foreground: #111113;
-  --muted: #f3f3f4;
-  --muted-foreground: #6d6d76;
-  --accent: #f1f1f1;
-  --accent-foreground: #111113;
+  --color-active-bg: var(--active-item-bg);
+  --color-active-border: var(--active-item-border);
 
-  --placeholder: #a5a5ad;
-  --subtle: #8a8a94;
+  --color-badge-active-bg: var(--badge-active-bg);
+  --color-badge-active-text: var(--badge-active-text);
+  --color-badge-active-dot: var(--badge-active-dot);
+  --color-status-online: var(--status-online);
+  --color-badge-inactive-bg: var(--badge-inactive-bg);
 
-  --destructive: #dc2626;
-  --destructive-muted: #fee2e2;
+  --color-border-gray: var(--gray);
+  --color-border-tab: var(--border-tab);
+  --color-gray: var(--gray);
+  --color-ghost: var(--ghost);
+  --color-chat-bg: var(--chat-bg);
 
-  --success: #12884f;
-  --success-foreground: #84a982;
-  --success-muted: #e2ffd9;
-  --success-strong: #22c55e;
-
-  --border: #e6e6e8;
-  --border-strong: #c7c7cc;
-  --input: #c7c7cc;
-  --ring: #2f6df3;
-
-  --chart-1: #2f6df3;
-  --chart-2: #9a7fc8;
-  --chart-3: #12884f;
-  --chart-4: #6d6d76;
-  --chart-5: #111113;
-
-  --sidebar: #e9e9eb;
-  --sidebar-foreground: #222225;
-  --sidebar-primary: #2f6df3;
-  --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #ffffff;
-  --sidebar-accent-foreground: #111113;
-  --sidebar-border: #d6d6d9;
-  --sidebar-ring: #2f6df3;
-
-  --surface-raised: #fbfbff;
-  --surface-muted: #f6f6f7;
-  --surface-inset: #f1f1f1;
-  --surface-help: #eef0f3;
-
-  --chat: #9a7fc8;
-  --chat-hover: #8a6fb8;
-  --chat-muted: #cebee3;
-  --chat-foreground: #6b5b8a;
-
-  --shadow-card: 0 11px 24px rgb(88 122 184 / 0.14);
-  --radius: 0.625rem;
-
-  /* Type — mobile */
-  --font-size-display: 1.25rem;
-  --line-height-display: 1.35;
-  --font-size-title: 0.9375rem;
-  --line-height-title: 1.3;
-  --font-size-subtitle: 0.8125rem;
-  --line-height-subtitle: 1.4;
-  --font-size-body: 0.8125rem;
-  --line-height-body: 1.5;
-  --font-size-body-sm: 0.75rem;
-  --line-height-body-sm: 1.4;
-  --font-size-caption: 0.6875rem;
-  --line-height-caption: 1.35;
-  --font-size-micro: 0.625rem;
-  --line-height-micro: 1.3;
-}
-
-@media (min-width: 768px) {
-  :root {
-    --font-size-display: 1.375rem;
-    --line-height-display: 1.3;
-    --font-size-title: 1rem;
-    --line-height-title: 1.25;
-    --font-size-subtitle: 0.875rem;
-    --line-height-subtitle: 1.3;
-    --font-size-body: 0.875rem;
-    --line-height-body: 1.5;
-    --font-size-body-sm: 0.8125rem;
-    --line-height-body-sm: 1.4;
-    --font-size-caption: 0.75rem;
-    --line-height-caption: 1.35;
-    --font-size-micro: 0.6875rem;
-    --line-height-micro: 1.3;
-  }
-}
-
-@media (min-width: 1024px) {
-  :root {
-    --font-size-display: 1.5rem;
-    --line-height-display: 1.21;
-    --font-size-title: 1rem;
-    --line-height-title: 1.25;
-    --font-size-subtitle: 0.875rem;
-    --line-height-subtitle: 1.21;
-    --font-size-body: 0.875rem;
-    --line-height-body: 1.5;
-    --font-size-body-sm: 0.8125rem;
-    --line-height-body-sm: 1.38;
-    --font-size-caption: 0.75rem;
-    --line-height-caption: 1.35;
-    --font-size-micro: 0.6875rem;
-    --line-height-micro: 1.27;
-  }
-}
-
-.dark {
-  --background: #111113;
-  --foreground: #f7f7f8;
-  --card: #1b1b1f;
-  --card-foreground: #f7f7f8;
-  --popover: #1b1b1f;
-  --popover-foreground: #f7f7f8;
-  --primary: #2f6df3;
-  --primary-foreground: #ffffff;
-  --primary-hover: #4d82f5;
-  --brand-muted: #1e3a8a;
-  --secondary: #222225;
-  --secondary-foreground: #f7f7f8;
-  --muted: #222225;
-  --muted-foreground: #a5a5ad;
-  --accent: #222225;
-  --accent-foreground: #f7f7f8;
-  --placeholder: #8a8a94;
-  --subtle: #a5a5ad;
-  --destructive: #f87171;
-  --destructive-muted: #7f1d1d;
-  --success: #22c55e;
-  --success-foreground: #86efac;
-  --success-muted: #14532d;
-  --success-strong: #4ade80;
-  --border: #2a2a2e;
-  --border-strong: #3f3f46;
-  --input: #3f3f46;
-  --ring: #2f6df3;
-  --sidebar: #1b1b1f;
-  --sidebar-foreground: #f7f7f8;
-  --sidebar-primary: #2f6df3;
-  --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #222225;
-  --sidebar-accent-foreground: #f7f7f8;
-  --sidebar-border: #2a2a2e;
-  --sidebar-ring: #2f6df3;
-  --surface-raised: #1b1b1f;
-  --surface-muted: #222225;
-  --surface-inset: #18181b;
-  --surface-help: #222225;
-  --chat: #9a7fc8;
-  --chat-hover: #b49ad6;
-  --chat-muted: #3d3350;
-  --chat-foreground: #cebee3;
+  /* Shadows */
+  --shadow-blue: 0 2px 6px rgba(55, 118, 243, 0.15), 0 6px 18px rgba(55, 118, 243, 0.10);
+  /* Auth card — soft bluish shadow under the card only */
+  --shadow-auth:
+    0 10px 24px rgba(53, 118, 243, 0.08),
+    0 20px 40px rgba(53, 118, 243, 0.10);
+  --shadow-panel:
+    0 1px 3px rgba(0, 0, 0, 0.03),
+    0 8px 24px rgba(0, 0, 0, 0.04);
 }
 
 @layer base {
-  * {
-    @apply border-border outline-ring/50;
+  :root {
+    /* Main Layout & Backgrounds */
+    --background: #FFF;
+    --sidebar-bg: #ffffff;
+    --card-bg: #f8fafd;
+    --card-nested-bg: #ffffff;
+    --muted: #F1F1F1;
+    --light-gray: #F7F7F7;
+    --danger: #FF7B7E;
+    --success: #47941E;
+
+    /* Brand Primary Colors */
+    --primary: #3576F3;
+    --primary-hover: #236efa;
+    --primary-foreground: #ffffff;
+
+    /* Borders */
+    --border: #e2e8f0;
+    --border-light: #e6e6e8;
+    --border-soft: rgba(0, 0, 0, 0.21);
+    --input: #c7c7cc;
+    --border-subtle: #edf2f7;
+    --border-blue: #dbeafe;
+    --border-gray: #808080;
+    --ring: #2f6df3;
+    --border-strong: #c7c7cc;
+
+    /* Typography / Text Colors */
+    --foreground: #0f172a;
+    --muted-foreground: #64748b;
+    --label-text: #94a3b8;
+
+    /* Active Nav Item & Tab States */
+    --active-item-bg: #f0f7ff;
+    --active-item-border: #dbeafe;
+    --active-tab-bg: #ffffff;
+    --active-tab-border: #e2e8f0;
+
+    /* Badges & Status Indicators */
+    --badge-active-bg: #CDFEE1;
+    --badge-inactive-bg: #FFDBDB;
+    --badge-active-text: #166534;
+    --badge-active-dot: #16a34a;
+    --status-online: #D1EFC0;
+
+    /* Secondary Action Items */
+    --secondary-button-bg: #e2e8f0;
+    --secondary-button-hover: #cbd5e1;
+
+    /* Tab border */
+    --border-tab: #DADADA;
+
+    /* Chat */
+    --chat-bg: #EEEEEE;
+
+    /* black */
+    --black: #000;
+    --gray: #808080;
+    --ghost: #808080;
   }
+
+  /* Set default font size (14px) and family globally */
   body {
-    @apply bg-background text-foreground;
-  }
-  html {
-    @apply font-sans;
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+    /* 14px */
+    line-height: 1.0625rem;
+    /* 17px */
+    font-weight: 400;
+    color: var(--foreground);
+    background-color: var(--background);
   }
 }

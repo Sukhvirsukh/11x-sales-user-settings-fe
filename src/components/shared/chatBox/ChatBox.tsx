@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { XIcon } from "lucide-react";
-import { useVisibilityStore } from "@/pages/chatSettings/store/chatVisibilityStore";
+import { useVisibilityStore } from "@/components/shared/chatBox/store/chatVisibilityStore";
 import { ChatMessage, type ChatMessageProps } from "./ChatMessage";
 import { ChatInput } from "./ChatInput";
 
@@ -105,18 +105,18 @@ export function ChatBox({ onClose, className = "" }: ChatBoxProps) {
   }
 
   return (
-    <div className={`flex h-full flex-col overflow-hidden rounded-lg border border-border bg-white/95 shadow-xl backdrop-blur-sm ${className}`}>
+    <div className={`flex h-full flex-col overflow-hidden rounded-[10px] border border-border bg-white shadow-xl backdrop-blur-sm ${className}`}>
       {/* Header */}
       <div
-        className="flex shrink-0 items-center justify-between gap-2 px-3 py-2.5"
+        className="flex shrink-0 items-center justify-between gap-2 p-5"
         style={{ backgroundColor: `${primaryColor}22` }}
       >
         <div className="flex min-w-0 items-center gap-2">
           <div className="min-w-0 flex gap-2">
-            <p className="truncate text-body-sm font-semibold text-foreground">
+            <p className="truncate text-lg font-semibold">
               {agentName}
             </p>
-            <span className="inline-flex items-center gap-1 rounded-full bg-success-muted px-1.5 py-0.5 text-micro font-medium text-success-strong">
+            <span className="inline-flex items-center gap-1 rounded-[44px] bg-status-online! px-1.5 py-0.75 text-xs font-medium text-success-strong">
               <span
                 className="size-1.5 rounded-full"
                 style={{ backgroundColor: notificationColor }}
@@ -138,7 +138,7 @@ export function ChatBox({ onClose, className = "" }: ChatBoxProps) {
       </div>
 
       {/* Messages */}
-      <div className="min-h-0 flex-1 overflow-y-auto bg-muted/30 px-3 py-3">
+      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-3 py-3">
         <div className="space-y-3">
           {messages.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 text-center">
@@ -192,49 +192,51 @@ export function ChatBox({ onClose, className = "" }: ChatBoxProps) {
 
       {/* Quick replies */}
       {predefinedMessages.length > 0 && (
-        <div className="flex shrink-0 flex-wrap gap-1.5 border-t border-border/60 px-3 py-2">
-          {predefinedMessages.map((reply) => (
-            <button
-              key={reply}
-              type="button"
-              onClick={() => handleSend(reply)}
-              className="rounded-full border border-border bg-background px-2.5 py-1 text-caption text-foreground transition-colors hover:bg-muted"
-            >
-              {reply}
-            </button>
-          ))}
+        <div className="min-h-0 max-h-[30%] shrink overflow-y-auto border-t border-border/60 px-3 py-2">
+          <div className="flex flex-wrap gap-1.5">
+            {predefinedMessages.map((reply) => (
+              <button
+                key={reply}
+                type="button"
+                title={reply}
+                onClick={() => handleSend(reply)}
+                className="max-w-full truncate rounded-full border border-border bg-background px-2.5 py-1 text-left text-caption text-foreground transition-colors hover:bg-muted"
+              >
+                {reply}
+              </button>
+            ))}
+          </div>
         </div>
       )}
 
-      {/* Input */}
-      <div className="shrink-0 border-t border-border px-3 py-2.5">
+      {/* Bottom: input + actions */}
+      <div className="flex shrink-0 flex-col gap-2.5 border-t border-border p-5">
         <ChatInput
           placeholder={placeholderMessage}
           primaryColor={primaryColor}
           onSend={handleSend}
         />
-      </div>
 
-      {/* Admin actions (only shown when onClose is provided) */}
-      {onClose && (
-        <div className="flex shrink-0 gap-2 border-t border-border px-3 py-2.5">
-          <button
-            type="button"
-            className="rounded-lg px-3 py-1.5 text-body-sm font-medium text-white transition-opacity hover:opacity-90"
-            style={{ backgroundColor: primaryColor }}
-            onClick={onClose}
-          >
-            Save
-          </button>
-          <button
-            type="button"
-            onClick={handleClear}
-            className="rounded-lg border border-border bg-card px-3 py-1.5 text-body-sm font-medium text-foreground transition-colors hover:bg-muted"
-          >
-            Clear Chat
-          </button>
-        </div>
-      )}
+        {onClose && (
+          <div className="flex gap-2">
+            <button
+              type="button"
+              className="rounded-lg px-3 py-1.5 text-body-sm font-medium text-white transition-opacity hover:opacity-90"
+              style={{ backgroundColor: primaryColor }}
+              onClick={onClose}
+            >
+              Save
+            </button>
+            <button
+              type="button"
+              onClick={handleClear}
+              className="rounded-lg border border-border bg-card px-3 py-1.5 text-body-sm font-medium text-foreground transition-colors hover:bg-muted"
+            >
+              Clear Chat
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

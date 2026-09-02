@@ -24,7 +24,7 @@ function AccordionItem({
       data-variant={variant}
       className={cn(
         "h-fit min-w-0",
-        variant === "inset" && "not-last:border-b not-last:border-border",
+        variant === "inset" && "not-last:border-b not-last:border-border-light",
         variant === "card" && "rounded-[10px] border border-border bg-card px-4",
         className
       )}
@@ -43,7 +43,7 @@ function AccordionTrigger({
       <AccordionPrimitive.Trigger
         data-slot="accordion-trigger"
         className={cn(
-          "group/accordion-trigger flex min-h-11 w-full flex-1 cursor-pointer items-center justify-between py-4 text-left text-body font-medium text-foreground outline-none transition-colors hover:no-underline focus-visible:ring-3 focus-visible:ring-ring/50 aria-disabled:pointer-events-none aria-disabled:opacity-50",
+          "group/accordion-trigger flex min-h-11 w-full flex-1 cursor-pointer items-center justify-between py-5 text-left text-body font-medium text-foreground bg-transparent outline-none transition-colors hover:no-underline focus-visible:ring-3 focus-visible:ring-ring/50 aria-disabled:pointer-events-none aria-disabled:opacity-50 md:text-lg md:font-semibold",
           className
         )}
         {...props}
@@ -71,9 +71,9 @@ function AccordionContent({
     >
       <div
         className={cn(
-          "min-w-0 pt-0",
-          "in-data-[variant=inset]:rounded-md in-data-[variant=inset]:bg-background in-data-[variant=inset]:p-2 sm:in-data-[variant=inset]:p-4",
-          "in-data-[variant=card]:pb-3",
+          "min-w-0",
+          "in-data-[variant=inset]:mb-4 in-data-[variant=inset]:rounded-[10px] in-data-[variant=inset]:bg-muted in-data-[variant=inset]:p-2.5 md:in-data-[variant=inset]:p-4",
+          "in-data-[variant=card]:bg-muted in-data-[variant=card]:pb-3",
           className
         )}
       >
