@@ -7,19 +7,20 @@ type ApiErrorResponse = {
 
 type AuthApiResponse = {
     accessToken?: string;
-    access_token?: string;
-    token?: string;
-    jwt?: string;
     user?: AuthApiUser;
-    data?: AuthApiResponse;
+    success?: boolean;
+    message?: string;
 };
 
 type AuthApiUser = {
     id?: string;
-    _id?: string;
+    name?: string | null;
+    email?: string;
+    role?: string;
+};
+
+type AuthRequestValues = {
     name?: string;
-    fullName?: string;
-    username?: string;
     email?: string;
 };
 
@@ -27,6 +28,7 @@ export interface AuthUser {
     id?: string;
     name: string;
     email?: string;
+    role?: string;
 }
 
 export interface AuthResponse {
@@ -46,27 +48,32 @@ export function clearAuthToken() {
     localStorage.removeItem(AUTH_TOKEN_STORAGE_KEY);
 }
 
-function getAccessToken(response: AuthApiResponse) {
-    return (
-        response.accessToken ??
-        response.access_token ??
-        response.token ??
-        response.jwt ??
-        (response.data ? getAccessToken(response.data) : undefined)
-    );
-}
+function getUser(
+    response: AuthApiResponse,
+    values?: AuthRequestValues,
+): AuthUser | undefined {
+    const user = response.user;
+    const fallbackName = values?.name?.trim() || values?.email?.trim();
 
-function getUser(response: AuthApiResponse): AuthUser | undefined {
-    const user = response.user ?? response.data?.user;
-    if (!user) return undefined;
+    if (!user) {
+        return fallbackName
+            ? {
+                name: fallbackName,
+                email: values?.email,
+            }
+            : undefined;
+    }
 
-    const name = user.name ?? user.fullName ?? user.username;
-    if (!name) return undefined;
+    const name =
+        user.name?.trim() ||
+        fallbackName ||
+        "Account";
 
     return {
-        id: user.id ?? user._id,
+        id: user.id,
         name,
         email: user.email,
+        role: user.role,
     };
 }
 
@@ -97,10 +104,13 @@ export async function authRequest<TValues>(
         );
     }
 
-    const accessToken = getAccessToken(body as AuthApiResponse);
-    if (!accessToken) {
+    const authBody = body as AuthApiResponse;
+    if (!authBody.accessToken) {
         throw new Error("Authentication response did not include a JWT.");
     }
 
-    return { accessToken, user: getUser(body as AuthApiResponse) };
+    return {
+        accessToken: authBody.accessToken,
+        user: getUser(authBody, values as AuthRequestValues),
+    };
 }
