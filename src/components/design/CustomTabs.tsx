@@ -1,4 +1,4 @@
-import { type ReactNode } from "react"
+import { useState, type ReactNode } from "react"
 import { cn } from "@/lib/utils"
 import {
     Tabs,
@@ -19,9 +19,11 @@ export interface CustomTabsProps {
     /** Array of tab definitions */
     tabs: CustomTabItem[]
     /** Currently active tab id (controlled) */
-    value: string
+    value?: string
+    /** Tab id to open initially when the component is uncontrolled */
+    defaultTab?: string
     /** Called when the user clicks a tab */
-    onValueChange: (value: string) => void
+    onValueChange?: (value: string) => void
     /** Content to render for each tab (keyed by tab id) */
     children: ReactNode
     /** Optional class on the outermost wrapper */
@@ -48,6 +50,7 @@ export interface CustomTabsProps {
 export function CustomTabs({
     tabs,
     value,
+    defaultTab,
     onValueChange,
     children,
     className,
@@ -55,10 +58,22 @@ export function CustomTabs({
     triggerClassName,
     contentClassName,
 }: CustomTabsProps) {
+    const [uncontrolledValue, setUncontrolledValue] = useState(
+        () => defaultTab ?? tabs[0]?.id ?? "",
+    )
+    const activeValue = value ?? uncontrolledValue
+
+    function handleValueChange(nextValue: string) {
+        if (value === undefined) {
+            setUncontrolledValue(nextValue)
+        }
+        onValueChange?.(nextValue)
+    }
+
     return (
         <Tabs
-            value={value}
-            onValueChange={onValueChange}
+            value={activeValue}
+            onValueChange={handleValueChange}
             className={cn("flex flex-col gap-4", className)}
         >
             {/* ── Tab bar ── */}
@@ -95,7 +110,7 @@ export function CustomTabs({
 
             {/* ── Panels ── */}
             <TabsContent
-                value={value}
+                value={activeValue}
                 className={cn("flex-1 text-sm outline-none", contentClassName)}
             >
                 {children}

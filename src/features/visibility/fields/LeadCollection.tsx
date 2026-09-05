@@ -1,16 +1,11 @@
 import { InputField } from "@/components/design/InputField";
 import { FormGroup } from "@/components/design/FormGroup";
 import { GroupRadioField } from "@/components/design/GroupRadioField";
-import {
-  useVisibilityStore,
-  type LeadStatus,
-  type MarketingConsent,
-  type ConsentCheckboxDefault,
-} from "@/components/shared/chatBox/store/chatVisibilityStore";
+import type { LeadStatus, MarketingConsent, ConsentCheckboxDefault } from "@/components/shared/chatBox/type";
+import { useVisibilityForm } from "../VisibilityFormContext";
 
 export default function LeadCollection() {
-  const fields = useVisibilityStore((s) => s.fields);
-  const setField = useVisibilityStore((s) => s.setField);
+  const { fields, setField } = useVisibilityForm();
 
   return (
     <FormGroup>

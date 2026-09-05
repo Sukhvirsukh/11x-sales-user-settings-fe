@@ -13,6 +13,7 @@ export interface InputFieldProps extends InputProps {
     startIcon?: React.ReactNode
     endIcon?: React.ReactNode
     containerClassName?: string
+    labelClassName?: string
 }
 
 const InputField = React.forwardRef<HTMLInputElement, InputFieldProps>(
@@ -25,6 +26,7 @@ const InputField = React.forwardRef<HTMLInputElement, InputFieldProps>(
             endIcon,
             containerClassName,
             className,
+            labelClassName,
             id,
             ...props
         },
@@ -36,7 +38,7 @@ const InputField = React.forwardRef<HTMLInputElement, InputFieldProps>(
 
         return (
             <div className="flex w-full flex-col gap-2">
-                {label ? <Label htmlFor={inputId}>{label}</Label> : null}
+                {label ? <Label className={labelClassName} htmlFor={inputId}>{label}</Label> : null}
 
                 {/* Input Outer Container (Handles borders, icons, pill background) */}
                 <div

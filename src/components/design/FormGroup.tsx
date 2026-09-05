@@ -6,7 +6,8 @@ import { FieldGroup } from "@/components/ui/field";
 const formGroupVariants = cva("", {
     variants: {
         gap: {
-            sm: "gap-2", //8px
+            xs: "gap-2", //8px
+            sm: "gap-2.5", //10px
             md: "gap-4", //16px
             lg: "gap-5", //20px
             xl: "gap-7", //28px

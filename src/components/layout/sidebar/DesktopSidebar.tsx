@@ -3,9 +3,12 @@ import { NavLink } from "react-router"
 import { NAV_ITEMS } from "./sideNav"
 import SidebarUserCard from "./SidebarUserCard"
 import { isSidebarHidden } from "./isSidebarHidden"
+import { useAuthStore } from "@/features/auth"
 
 export default function DesktopSidebar() {
   const [isCollapsed, setIsCollapsed] = useState(false)
+  const name = useAuthStore((state) => state.name)
+  const email = useAuthStore((state) => state.email)
 
   if (isSidebarHidden(location.pathname)) {
     return null;
@@ -65,8 +68,8 @@ export default function DesktopSidebar() {
 
       {/* Bottom Profile Section */}
       <SidebarUserCard
-        name="Racheal karl"
-        email="Alex@jco.com"
+        name={name ?? "Account"}
+        email={email ?? ""}
         isCollapsed={isCollapsed}
       />
     </aside>

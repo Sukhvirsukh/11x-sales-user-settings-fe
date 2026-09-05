@@ -4,11 +4,8 @@ import { SliderField } from "@/components/design/SliderField";
 import { SelectField } from "@/components/design/SelectField";
 import { GroupRadioField } from "@/components/design/GroupRadioField";
 import { GroupCheckboxField } from "@/components/design/GroupCheckboxField";
-import {
-  useVisibilityStore,
-  type BubblePosition,
-  type PageVisibilityMode,
-} from "@/components/shared/chatBox/store/chatVisibilityStore";
+import type { BubblePosition, PageVisibilityMode } from "@/components/shared/chatBox/type";
+import { useVisibilityForm } from "../VisibilityFormContext";
 
 const POSITION_OPTIONS = [
   { label: "Left", value: "left" },
@@ -16,8 +13,7 @@ const POSITION_OPTIONS = [
 ];
 
 export default function Position() {
-  const fields = useVisibilityStore((s) => s.fields);
-  const setField = useVisibilityStore((s) => s.setField);
+  const { fields, setField } = useVisibilityForm();
 
   return (
     <FormGroup>

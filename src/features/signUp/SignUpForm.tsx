@@ -1,29 +1,58 @@
 import { useState } from "react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { AlertTriangle, Eye, EyeOff, Mail, User } from "lucide-react";
+import { useMutation } from "@tanstack/react-query";
+import { Eye, EyeOff, Mail, User } from "lucide-react";
 import { AuthForm, authInputClassName } from "@/features/auth";
 import { InputField } from "@/components/design/InputField";
 import { Button } from "@/components/ui/button";
+import { toast } from "@/components/ui/toast";
 import { signUpSchema, type SignUpFormValues } from "./schema";
-
-async function signUp(values: SignUpFormValues) {
-    // TODO: call sign-up API
-    await Promise.resolve(values);
-}
+import { signUpRequest } from "./queries/auth";
+import { storeAuthToken } from "@/features/auth/authRequest";
+import { useAuthStore } from "@/features/auth/storeAuth";
 
 export default function SignUpForm() {
     const [showPassword, setShowPassword] = useState(false);
+    const navigate = useNavigate();
+    const setUser = useAuthStore((state) => state.setUser);
+    const signUpMutation = useMutation({
+        mutationFn: signUpRequest,
+        onSuccess: (auth) => {
+            storeAuthToken(auth.accessToken);
+            setUser(auth.user);
+            toast.add({
+                type: "success",
+                title: "Account created",
+                description: "Your Vitalb account is ready to use.",
+            });
+            navigate("/");
+        },
+        onError: (error) => {
+            toast.add({
+                type: "error",
+                title: "Sign-up failed",
+                description:
+                    error instanceof Error
+                        ? error.message
+                        : "Unable to create the account. Please try again.",
+            });
+        },
+    });
 
     const {
         register,
         handleSubmit,
-        formState: { errors, isSubmitting },
+        formState: { errors },
     } = useForm<SignUpFormValues>({
         resolver: zodResolver(signUpSchema),
         defaultValues: { name: "", email: "", password: "" },
     });
+
+    function signUp(values: SignUpFormValues) {
+        signUpMutation.mutate(values);
+    }
 
     return (
         <AuthForm
@@ -98,9 +127,9 @@ export default function SignUpForm() {
                 <Button
                     type="submit"
                     className="mt-7.5 w-full"
-                    disabled={isSubmitting}
+                    disabled={signUpMutation.isPending}
                 >
-                    {isSubmitting ? "Creating account..." : "Proceed"}
+                    {signUpMutation.isPending ? "Creating account..." : "Proceed"}
                 </Button>
             </form>
         </AuthForm>

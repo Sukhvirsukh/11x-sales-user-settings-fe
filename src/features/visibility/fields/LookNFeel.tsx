@@ -1,3 +1,5 @@
+import { useState } from "react";
+import { z } from "zod";
 import { FormGroup } from "@/components/design/FormGroup";
 import { InputField } from "@/components/design/InputField";
 import ImageUploader from "@/components/design/ImageUploader";
@@ -5,11 +7,24 @@ import { MultiTextField } from "@/components/design/MultiTextField";
 import { ColorSelector } from "@/components/design/ColorSelector";
 import { ChatBubbleTypeSelector } from "@/components/design/ChatBubbleTypeSelector";
 import { TextAreaField } from "@/components/design/TextAreaField";
-import { useVisibilityStore } from "@/components/shared/chatBox/store/chatVisibilityStore";
+import { useVisibilityForm } from "../VisibilityFormContext";
+import { requiredFieldsSchema } from "./validations";
+
+
+type RequiredField = keyof z.infer<typeof requiredFieldsSchema>;
 
 export default function LookNFeel() {
-  const fields = useVisibilityStore((s) => s.fields);
-  const setField = useVisibilityStore((s) => s.setField);
+  const { fields, setField } = useVisibilityForm();
+  const [errors, setErrors] = useState<Partial<Record<RequiredField, string>>>({});
+
+  function updateRequiredField(key: RequiredField, value: string) {
+    const result = requiredFieldsSchema.shape[key].safeParse(value);
+    setErrors((current) => ({
+      ...current,
+      [key]: result.success ? undefined : result.error.issues[0]?.message,
+    }));
+    setField(key, value);
+  }
 
   return (
     <FormGroup>
@@ -17,7 +32,8 @@ export default function LookNFeel() {
         label="Name of AI Agent"
         placeholder="Enter name of AI agent"
         value={fields.agentName}
-        onChange={(e) => setField("agentName", e.target.value)}
+        error={errors.agentName}
+        onChange={(e) => updateRequiredField("agentName", e.target.value)}
       />
 
       <ImageUploader
@@ -33,7 +49,8 @@ export default function LookNFeel() {
         label="Welcome message"
         placeholder="Enter welcome message"
         value={fields.welcomeMessage}
-        onChange={(e) => setField("welcomeMessage", e.target.value)}
+        error={errors.welcomeMessage}
+        onChange={(e) => updateRequiredField("welcomeMessage", e.target.value)}
       />
 
       <MultiTextField
@@ -48,24 +65,13 @@ export default function LookNFeel() {
         label="Placeholder message"
         placeholder="Enter placeholder text"
         value={fields.placeholderMessage}
-        onChange={(e) => setField("placeholderMessage", e.target.value)}
+        error={errors.placeholderMessage}
+        onChange={(e) => updateRequiredField("placeholderMessage", e.target.value)}
       />
 
-      <ColorSelector
-        label="Primary color"
-        hint="Choose the primary color for the chat widget"
-        value={fields.primaryColor}
-        onValueChange={(color) => setField("primaryColor", color)}
-        showPresets={false}
-      />
+      <ColorSelector label="Primary color" hint="Choose the primary color for the chat widget" value={fields.primaryColor} error={errors.primaryColor} onValueChange={(color) => updateRequiredField("primaryColor", color)} showPresets={false} />
 
-      <ColorSelector
-        label="Notification color"
-        hint="Choose the color for notification badges"
-        value={fields.notificationColor}
-        onValueChange={(color) => setField("notificationColor", color)}
-        showPresets={false}
-      />
+      <ColorSelector label="Notification color" hint="Choose the color for notification badges" value={fields.notificationColor} error={errors.notificationColor} onValueChange={(color) => updateRequiredField("notificationColor", color)} showPresets={false} />
 
       <TextAreaField
         label="Desclaimer message"

@@ -11,9 +11,13 @@ import KnowledgeBaseTab from "@/pages/aiTraining/tabs/KnowledgeBaseTab";
 import CorrectionsTab from "@/pages/aiTraining/tabs/CorrectionsTab";
 import PromptToolsTab from "@/pages/aiTraining/tabs/PromptToolsTab";
 import ChatSettingsPage from "@/pages/chatSettings/ChatSettingsPage";
-import Visibility from "@/pages/chatSettings/Visibility";
+import VisibilityPage from "@/pages/chatSettings/VisibilityPage";
 import AskMePage from "@/pages/AskMePage";
 import SettingsPage from "@/pages/SettingsPage";
+import { RoleAndAccess } from "@/features/settings/roleAndAccess";
+import { Plan } from "@/features/settings/plan";
+import { Payments } from "@/features/settings/payments";
+import { Store } from "@/features/settings/store";
 
 export const router = createBrowserRouter([
   { path: "/sign-in", element: <SignInPage /> },
@@ -26,7 +30,7 @@ export const router = createBrowserRouter([
       { path: "/conversations", element: <ConversationsPage /> },
       { path: "/reports", element: <ReportsPage /> },
       { path: "/chat-settings", element: <ChatSettingsPage /> },
-      { path: "/chat-settings/visibility", element: <Visibility /> },
+      { path: "/chat-settings/visibility", element: <VisibilityPage /> },
       {
         path: "/ai-training",
         element: <AiTrainingPage />,
@@ -41,7 +45,20 @@ export const router = createBrowserRouter([
         ],
       },
       { path: "/ask-me", element: <AskMePage /> },
-      { path: "/settings", element: <SettingsPage /> },
+      {
+        path: "/settings",
+        element: <SettingsPage />,
+        children: [
+          {
+            index: true,
+            element: <Navigate to="role-n-access" replace />,
+          },
+          { path: "role-n-access", element: <RoleAndAccess /> },
+          { path: "plan", element: <Plan /> },
+          { path: "payments", element: <Payments /> },
+          { path: "store", element: <Store /> },
+        ],
+      },
     ],
   },
 ]);

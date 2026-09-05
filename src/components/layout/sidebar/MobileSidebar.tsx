@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from "react-router";
 import { NAV_ITEMS } from "./sideNav";
 import SidebarUserCard from "./SidebarUserCard";
 import { useMobileSidebarStore } from "@/stores/mobileSidebarStore";
+import { useAuthStore } from "@/features/auth";
 
 const MD_BREAKPOINT = 768;
 
@@ -12,6 +13,8 @@ export default function MobileSidebar() {
     const close = useMobileSidebarStore((state) => state.close);
     const navigate = useNavigate();
     const location = useLocation();
+    const name = useAuthStore((state) => state.name);
+    const email = useAuthStore((state) => state.email);
 
     // Close when switching to desktop widths
     useEffect(() => {
@@ -99,8 +102,8 @@ export default function MobileSidebar() {
                 {/* Profile */}
                 <div className="pt-2.5 sm:pt-4">
                     <SidebarUserCard
-                        name="Racheal karl"
-                        email="Alex@co.com"
+                        name={name ?? "Account"}
+                        email={email ?? ""}
                         isCollapsed={false}
                     />
                 </div>

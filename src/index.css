@@ -9,6 +9,7 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
+  --font-geist: var(--font-geist);
 
   --font-sans: 'Inter Variable', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 
@@ -50,9 +51,13 @@
   --color-muted: var(--muted);
   --color-light-gray: var(--light-gray);
   --color-danger: var(--danger);
-  --colot-success: var(--success);
+  --color-success: var(--success);
+  --color-danger-light: var(--danger-light);
+  --color-danger-dark: var(--danger-dark);
+  --color-success-light: var(--success-light);
+  --color-light: var(--light);
 
-  --color-primary: var(--primary);
+  --color-primary: color-mix(in srgb, var(--primary) calc(100% * var(--tw-bg-opacity, 1)), transparent);
   --color-primary-hover: var(--primary-hover);
   --color-primary-fg: var(--primary-foreground);
 
@@ -82,6 +87,11 @@
   --color-ghost: var(--ghost);
   --color-chat-bg: var(--chat-bg);
 
+  --color-section-border: var(--section-border);
+  --color-section-bg: var(--section-bg);
+
+  --color-table-header: var(--table-header);
+
   /* Shadows */
   --shadow-blue: 0 2px 6px rgba(55, 118, 243, 0.15), 0 6px 18px rgba(55, 118, 243, 0.10);
   /* Auth card — soft bluish shadow under the card only */
@@ -98,12 +108,16 @@
     /* Main Layout & Backgrounds */
     --background: #FFF;
     --sidebar-bg: #ffffff;
+    --light: #F7F8FB;
     --card-bg: #f8fafd;
     --card-nested-bg: #ffffff;
     --muted: #F1F1F1;
     --light-gray: #F7F7F7;
     --danger: #FF7B7E;
+    --danger-light:  #FFDBDB;
+    --danger-dark: #FF0000;
     --success: #47941E;
+    --success-light: #E4F5E6;
 
     /* Brand Primary Colors */
     --primary: #3576F3;
@@ -146,13 +160,20 @@
     /* Tab border */
     --border-tab: #DADADA;
 
-    /* Chat */
-    --chat-bg: #EEEEEE;
+  /* Chat */
+  --chat-bg: #EEEEEE;
 
-    /* black */
-    --black: #000;
-    --gray: #808080;
-    --ghost: #808080;
+  /* Section */
+  --section-border: rgba(53, 118, 243, 0.20);
+  --section-bg: rgba(232, 238, 251, 0.50);
+
+  /* black */
+  --black: #000;
+  --gray: #808080;
+  --ghost: #808080;
+
+  /* Table color */
+  --table-header: #E8EEFB
   }
 
   /* Set default font size (14px) and family globally */

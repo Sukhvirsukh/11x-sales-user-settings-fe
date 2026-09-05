@@ -1,6 +1,6 @@
 import previewBackground from "@/assets/chatSettings/preview-background.png";
 import { ChatBox } from "@/components/shared/chatBox";
-import { useVisibilityStore } from "@/components/shared/chatBox/store/chatVisibilityStore";
+import { useVisibilityForm } from "../VisibilityFormContext";
 import { Button } from "@/components/ui/button";
 import { Maximize2, Minimize2, PanelLeft, PanelLeftClose } from "lucide-react";
 import { useState } from "react";
@@ -19,9 +19,9 @@ export default function Preview({
     isSettingsOpen,
     onToggleSettings,
 }: PreviewProps) {
-    const fields = useVisibilityStore((s) => s.fields);
+    const { fields } = useVisibilityForm();
 
-    const [isChatOpen, setIsChatOpen] = useState(false);
+    const [isChatOpen, setIsChatOpen] = useState(true);
 
     const onClose = () => {
         setIsChatOpen(false);
@@ -94,7 +94,11 @@ export default function Preview({
                                     : { right: edge }),
                             }}
                         >
-                            <ChatBox onClose={onClose} className="h-full" />
+                            <ChatBox
+                                fields={fields}
+                                onClose={onClose}
+                                className="h-full"
+                            />
                         </div>
                     )}
 

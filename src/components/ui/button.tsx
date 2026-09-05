@@ -32,6 +32,11 @@ const buttonVariants = cva(
         // Simple Link
         link:
           "text-blue-600 underline-offset-4 hover:underline dark:text-blue-400",
+
+        // destructive
+        destructive:
+          "bg-danger text-white hover:bg-danger-dark",
+
       },
       size: {
         sm: "p-[8px] text-sm rounded-[10px]",

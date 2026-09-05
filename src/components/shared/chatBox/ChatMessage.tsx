@@ -1,5 +1,5 @@
-import { useState } from "react";
 import { PencilIcon, ThumbsDownIcon, ThumbsUpIcon } from "lucide-react";
+import { useState } from "react";
 
 export interface ChatMessageProps {
   id: string;
@@ -17,8 +17,6 @@ export function ChatMessage({
   id,
   content,
   sender,
-  timestamp,
-  avatar,
   primaryColor = "blue",
   onCorrect,
   onLike,
@@ -40,34 +38,18 @@ export function ChatMessage({
   }
 
   return (
-    <div
-      className={`flex ${isUser ? "justify-end" : "justify-start"} gap-3`}
-    >
-      {/* Bot avatar */}
-      {!isUser && avatar && (
-        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-border">
-          <img
-            src={avatar}
-            alt="Bot avatar"
-            className="h-8 w-8 rounded-full object-cover"
-          />
-        </div>
-      )}
-
-      <div className="min-w-0 max-w-full">
+    <div className={`flex w-full ${isUser ? "justify-end" : "justify-start"}`}>
+      <div className={isUser ? "max-w-[227px]" : "w-full"}>
         {/* Message bubble */}
         <div
-          className={`w-auto max-w-full rounded-[10px] p-2.5 ${isUser
-            ? "bg-chat-bg text-foreground"
-            : "bg-chat-bg text-foreground"
-            }`}
+          className={`max-w-full rounded-[10px] p-2.5 ${isUser ? "bg-[#E2E2E2]" : "bg-[#EEE]"}`}
         >
-          <p className="text-base font-medium leading-relaxed whitespace-pre-wrap">{content}</p>
+          <p className="text-sm leading-none whitespace-pre-wrap text-black">{content}</p>
         </div>
 
         {/* Feedback row for bot messages */}
         {!isUser && (
-          <div className="mt-1 flex items-center justify-between">
+          <div className="mt-2 flex items-center justify-between">
             {/* {timestamp && (
               <span className="text-micro text-placeholder">
                 {timestamp.toLocaleTimeString([], {
@@ -83,10 +65,10 @@ export function ChatMessage({
                   setCorrectionDraft(content);
                   setIsEditing(!isEditing);
                 }}
-                className="flex items-center justify-center rounded text-muted-foreground transition-colors hover:bg-black/5 hover:text-foreground"
+                className="flex items-center gap-1 rounded text-xs leading-none text-black transition-colors hover:bg-black/5"
                 aria-label="Edit correction"
               >
-                <PencilIcon className="size-3 mr-1" /> Correction
+                <PencilIcon className="size-3 mr-1" /> Create correction
               </button>
             )}
             <div className="flex items-center gap-1">
@@ -94,7 +76,7 @@ export function ChatMessage({
                 <button
                   type="button"
                   onClick={() => onLike(id)}
-                  className="flex size-5 items-center justify-center rounded text-muted-foreground transition-colors hover:bg-black/5 hover:text-success-strong"
+                  className="flex size-3.5 items-center justify-center rounded text-sm text-black transition-colors hover:bg-black/5"
                   aria-label="Good response"
                 >
                   <ThumbsUpIcon className="size-3.5" />
@@ -104,7 +86,7 @@ export function ChatMessage({
                 <button
                   type="button"
                   onClick={() => onDislike(id)}
-                  className="flex size-5 items-center justify-center rounded text-muted-foreground transition-colors hover:bg-black/5 hover:text-destructive"
+                  className="flex size-3.5 items-center justify-center rounded text-sm text-black transition-colors hover:bg-black/5"
                   aria-label="Bad response"
                 >
                   <ThumbsDownIcon className="size-3.5" />
@@ -112,20 +94,6 @@ export function ChatMessage({
               )}
 
             </div>
-          </div>
-        )}
-
-        {/* Feedback row for user messages */}
-        {isUser && (
-          <div className="mt-1 flex items-center justify-end gap-2 pr-1">
-            {timestamp && (
-              <span className="text-micro text-chat-foreground">
-                {timestamp.toLocaleTimeString([], {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}
-              </span>
-            )}
           </div>
         )}
 
@@ -160,16 +128,6 @@ export function ChatMessage({
         )}
       </div>
 
-      {/* User avatar */}
-      {isUser && avatar && (
-        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-chat-muted">
-          <img
-            src={avatar}
-            alt="User avatar"
-            className="h-8 w-8 rounded-full object-cover"
-          />
-        </div>
-      )}
     </div>
   );
 }

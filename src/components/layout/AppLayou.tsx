@@ -5,9 +5,10 @@ import {
 } from "react-router";
 import Sidebar from "./sidebar";
 import MobileTopbar from "./MobileTopbar";
+import { getAuthToken } from "@/features/auth/authRequest";
 
 function AppLayout() {
-    const isAuthenticated = Boolean(localStorage.getItem("authToken")) || true;
+    const isAuthenticated = Boolean(getAuthToken());
     const location = useLocation();
 
     if (!isAuthenticated) {

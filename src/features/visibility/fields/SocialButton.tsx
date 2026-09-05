@@ -1,6 +1,6 @@
 import { Checkbox } from "@/components/ui/checkbox";
 import Label from "@/components/design/Label";
-import { useVisibilityStore } from "@/components/shared/chatBox/store/chatVisibilityStore";
+import { useVisibilityForm } from "../VisibilityFormContext";
 
 function WhatsAppIcon({ className }: { className?: string }) {
   return (
@@ -29,8 +29,7 @@ function InstagramIcon({ className }: { className?: string }) {
 }
 
 export default function SocialButton() {
-  const fields = useVisibilityStore((s) => s.fields);
-  const setField = useVisibilityStore((s) => s.setField);
+  const { fields, setField } = useVisibilityForm();
 
   return (
     <div className="flex w-full flex-col gap-3">

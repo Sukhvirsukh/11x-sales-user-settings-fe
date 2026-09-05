@@ -1,29 +1,58 @@
 import { useState } from "react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
 import { Eye, EyeOff, Mail, User } from "lucide-react";
 import { AuthForm, authInputClassName } from "@/features/auth";
 import { InputField } from "@/components/design/InputField";
 import { Button } from "@/components/ui/button";
+import { toast } from "@/components/ui/toast";
 import { signInSchema, type SignInFormValues } from "./schema";
-
-async function signIn(values: SignInFormValues) {
-    // TODO: call sign-in API
-    await Promise.resolve(values);
-}
+import { signInRequest } from "./queries/auth";
+import { storeAuthToken } from "@/features/auth/authRequest";
+import { useAuthStore } from "@/features/auth/storeAuth";
 
 export default function SignInForm() {
     const [showPassword, setShowPassword] = useState(false);
+    const navigate = useNavigate();
+    const setUser = useAuthStore((state) => state.setUser);
+    const signInMutation = useMutation({
+        mutationFn: signInRequest,
+        onSuccess: (auth) => {
+            storeAuthToken(auth.accessToken);
+            setUser(auth.user);
+            toast.add({
+                type: "success",
+                title: "Signed in successfully",
+                description: "Welcome back to Vitalb.",
+            });
+            navigate("/");
+        },
+        onError: (error) => {
+            toast.add({
+                type: "error",
+                title: "Sign-in failed",
+                description:
+                    error instanceof Error
+                        ? error.message
+                        : "Unable to sign in. Please try again.",
+            });
+        },
+    });
 
     const {
         register,
         handleSubmit,
-        formState: { errors, isSubmitting },
+        formState: { errors },
     } = useForm<SignInFormValues>({
         resolver: zodResolver(signInSchema),
         defaultValues: { email: "", password: "" },
     });
+
+    function signIn(values: SignInFormValues) {
+        signInMutation.mutate(values);
+    }
 
     return (
         <AuthForm
@@ -88,9 +117,9 @@ export default function SignInForm() {
                 <Button
                     type="submit"
                     className="mt-7.5 w-full"
-                    disabled={isSubmitting}
+                    disabled={signInMutation.isPending}
                 >
-                    {isSubmitting ? "Signing in..." : "Proceed"}
+                    {signInMutation.isPending ? "Signing in..." : "Proceed"}
                 </Button>
             </form>
         </AuthForm>
