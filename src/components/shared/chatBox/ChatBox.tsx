@@ -1,12 +1,15 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { XIcon } from "lucide-react";
-import { useVisibilityStore } from "@/pages/chatSettings/store/chatVisibilityStore";
 import { ChatMessage, type ChatMessageProps } from "./ChatMessage";
 import { ChatInput } from "./ChatInput";
+import { useChatVisibilityQuery } from "@/features/visibility/queries/visibilityQuery";
+import { XIcon } from "lucide-react";
+import { Spinner } from "@/components/ui/spinner";
+import type { VisibilityFields } from "@/components/shared/chatBox/type";
 
 interface ChatBoxProps {
   onClose?: () => void;
   className?: string;
+  fields?: VisibilityFields;
 }
 
 function useChatFaceUrl(chatFace: File | string | null | undefined) {
@@ -26,8 +29,22 @@ function createWelcomeMessage(content: string): ChatMessageProps {
   };
 }
 
-export function ChatBox({ onClose, className = "" }: ChatBoxProps) {
-  const fields = useVisibilityStore((s) => s.fields);
+export function ChatBox({ onClose, className = "", fields: previewFields }: ChatBoxProps) {
+  const { data: cachedFields } = useChatVisibilityQuery();
+  const fields = previewFields ?? cachedFields;
+
+  if (!fields) {
+    return (
+      <div className={`flex h-full items-center justify-center overflow-hidden rounded-[10px] bg-white shadow-xl ${className}`}>
+        <Spinner className="size-6 text-primary" />
+      </div>
+    );
+  }
+
+  return <LoadedChatBox fields={fields} onClose={onClose} className={className} />;
+}
+
+function LoadedChatBox({ fields, onClose, className = "" }: ChatBoxProps & { fields: VisibilityFields }) {
 
   const {
     agentName,
@@ -45,6 +62,20 @@ export function ChatBox({ onClose, className = "" }: ChatBoxProps) {
   const [messages, setMessages] = useState<ChatMessageProps[]>(() =>
     welcomeMessage ? [createWelcomeMessage(welcomeMessage)] : [],
   );
+
+  useEffect(() => {
+    setMessages((current) => {
+      const welcome = current.find((message) => message.id === "welcome");
+      if (welcome) {
+        return current.map((message) =>
+          message.id === "welcome"
+            ? { ...message, content: welcomeMessage }
+            : message,
+        );
+      }
+      return welcomeMessage ? [createWelcomeMessage(welcomeMessage), ...current] : current;
+    });
+  }, [welcomeMessage]);
 
   useEffect(() => {
     return () => {
@@ -105,18 +136,18 @@ export function ChatBox({ onClose, className = "" }: ChatBoxProps) {
   }
 
   return (
-    <div className={`flex h-full flex-col overflow-hidden rounded-lg border border-border bg-white/95 shadow-xl backdrop-blur-sm ${className}`}>
+    <div className={`flex  h-full flex-col overflow-hidden rounded-[10px] bg-white shadow-xl ${className}`}>
       {/* Header */}
       <div
-        className="flex shrink-0 items-center justify-between gap-2 px-3 py-2.5"
+        className="flex shrink-0 items-center justify-between gap-2 px-5 pb-[15px] pt-[25px]"
         style={{ backgroundColor: `${primaryColor}22` }}
       >
         <div className="flex min-w-0 items-center gap-2">
-          <div className="min-w-0 flex gap-2">
-            <p className="truncate text-body-sm font-semibold text-foreground">
+          <div className="min-w-0 flex items-center gap-2.5">
+            <p className="truncate text-base font-semibold tracking-[0.02em]">
               {agentName}
             </p>
-            <span className="inline-flex items-center gap-1 rounded-full bg-success-muted px-1.5 py-0.5 text-micro font-medium text-success-strong">
+            <span className="inline-flex items-center gap-[7px] rounded-[44px] bg-status-online! px-1.5 py-[3px] text-[10px] font-medium tracking-[0.04em] text-success-strong">
               <span
                 className="size-1.5 rounded-full"
                 style={{ backgroundColor: notificationColor }}
@@ -130,7 +161,7 @@ export function ChatBox({ onClose, className = "" }: ChatBoxProps) {
             type="button"
             aria-label="Close chat"
             onClick={onClose}
-            className="flex size-7 shrink-0 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-black/5 hover:text-foreground"
+            className="flex size-5 shrink-0 items-center justify-center text-2xl leading-none text-[#808080] transition-colors hover:text-foreground"
           >
             <XIcon className="size-4" />
           </button>
@@ -138,33 +169,9 @@ export function ChatBox({ onClose, className = "" }: ChatBoxProps) {
       </div>
 
       {/* Messages */}
-      <div className="min-h-0 flex-1 overflow-y-auto bg-muted/30 px-3 py-3">
-        <div className="space-y-3">
-          {messages.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-12 text-center">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-muted">
-                <svg
-                  className="h-6 w-6 text-placeholder"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={1.5}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M8.625 12a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 0 1-2.555-.337A5.972 5.972 0 0 1 5.41 20.97a5.969 5.969 0 0 1-.474-.065 4.48 4.48 0 0 0 .978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25Z"
-                  />
-                </svg>
-              </div>
-              <p className="mt-3 text-sm font-medium text-foreground">
-                Start a conversation
-              </p>
-              <p className="mt-1 text-xs text-placeholder">
-                Ask questions about your data
-              </p>
-            </div>
-          ) : (
+      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-[18px] py-2.5">
+        <div className="space-y-2">
+          {messages.length > 0 && (
             messages.map((message) => (
               <div key={message.id}>
                 <ChatMessage
@@ -192,49 +199,51 @@ export function ChatBox({ onClose, className = "" }: ChatBoxProps) {
 
       {/* Quick replies */}
       {predefinedMessages.length > 0 && (
-        <div className="flex shrink-0 flex-wrap gap-1.5 border-t border-border/60 px-3 py-2">
-          {predefinedMessages.map((reply) => (
-            <button
-              key={reply}
-              type="button"
-              onClick={() => handleSend(reply)}
-              className="rounded-full border border-border bg-background px-2.5 py-1 text-caption text-foreground transition-colors hover:bg-muted"
-            >
-              {reply}
-            </button>
-          ))}
+        <div className="min-h-0 max-h-[30%] shrink overflow-y-auto border-t border-border/60 px-4.5 py-2">
+          <div className="flex flex-wrap gap-1.5">
+            {predefinedMessages.map((reply) => (
+              <button
+                key={reply}
+                type="button"
+                title={reply}
+                onClick={() => handleSend(reply)}
+                className="max-w-full truncate rounded-full border border-border bg-background px-2.5 py-1 text-left text-caption text-foreground transition-colors hover:bg-muted"
+              >
+                {reply}
+              </button>
+            ))}
+          </div>
         </div>
       )}
 
-      {/* Input */}
-      <div className="shrink-0 border-t border-border px-3 py-2.5">
+      {/* Bottom: input + actions */}
+      <div className="flex shrink-0 flex-col gap-3 px-[18px] pb-6 pt-0">
         <ChatInput
           placeholder={placeholderMessage}
           primaryColor={primaryColor}
           onSend={handleSend}
         />
-      </div>
 
-      {/* Admin actions (only shown when onClose is provided) */}
-      {onClose && (
-        <div className="flex shrink-0 gap-2 border-t border-border px-3 py-2.5">
-          <button
-            type="button"
-            className="rounded-lg px-3 py-1.5 text-body-sm font-medium text-white transition-opacity hover:opacity-90"
-            style={{ backgroundColor: primaryColor }}
-            onClick={onClose}
-          >
-            Save
-          </button>
-          <button
-            type="button"
-            onClick={handleClear}
-            className="rounded-lg border border-border bg-card px-3 py-1.5 text-body-sm font-medium text-foreground transition-colors hover:bg-muted"
-          >
-            Clear Chat
-          </button>
-        </div>
-      )}
+        {onClose && (
+          <div className="flex gap-2">
+            <button
+              type="button"
+              className="h-[38px] rounded-[10.4px] px-2.5 py-2.5 text-sm font-medium text-white transition-opacity hover:opacity-90"
+              style={{ backgroundColor: primaryColor }}
+              onClick={onClose}
+            >
+              Save
+            </button>
+            <button
+              type="button"
+              onClick={handleClear}
+              className="h-[38px] rounded-[10.4px] border-[1.23px] border-[#808080] bg-card px-2.5 py-2.5 text-sm font-medium text-[#808080] transition-colors hover:bg-muted"
+            >
+              Clear Chat
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

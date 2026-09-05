@@ -1,5 +1,5 @@
-import { useState, type KeyboardEvent } from "react";
-import { ArrowUpIcon, ImageIcon, SendIcon } from "lucide-react";
+import { ArrowUpIcon, ImageIcon } from "lucide-react";
+import { useState } from "react";
 
 interface ChatInputProps {
   onSend: (message: string) => void;
@@ -31,19 +31,19 @@ export function ChatInput({
   }
 
   return (
-    <div className="flex items-center gap-1.5 rounded-xl border border-border bg-background px-2.5 py-1.5">
+    <div className="flex items-center justify-between rounded-[10px] border border-[rgba(0,0,0,0.21)] bg-[#F7F7F7] px-[19px] py-2">
       <input
         type="text"
         value={value}
         onChange={(e) => setValue(e.target.value)}
         onKeyDown={handleKeyDown}
         placeholder={placeholder || "Ask AI..."}
-        className="min-w-0 flex-1 bg-transparent text-body-sm text-foreground outline-none placeholder:text-placeholder"
+        className="min-w-0 flex-1 bg-transparent text-xs tracking-[0.02em] text-foreground outline-none placeholder:text-[#808080]"
       />
       <button
         type="button"
         aria-label="Attach image"
-        className="flex size-6 shrink-0 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-black/5 hover:text-foreground"
+        className="relative flex size-5 shrink-0 items-center justify-center rounded-[3px] border border-[#808080] text-[0px] transition-colors hover:bg-black/5"
       >
         <ImageIcon className="size-4" />
       </button>
@@ -52,7 +52,7 @@ export function ChatInput({
         onClick={handleSend}
         disabled={!value.trim()}
         aria-label="Send message"
-        className="flex size-7 shrink-0 items-center justify-center rounded-full text-white transition-opacity hover:opacity-90 disabled:opacity-40"
+        className="ml-[9px] flex size-[22px] shrink-0 items-center justify-center rounded-full text-sm leading-none text-white transition-opacity hover:opacity-90 disabled:opacity-40"
         style={{ backgroundColor: primaryColor }}
       >
         <ArrowUpIcon className="size-3.5" />

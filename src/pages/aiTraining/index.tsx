@@ -1,0 +1,1 @@
+export { AiTrainingPage } from "./AITrainingPage";

@@ -1,306 +1,269 @@
-# Project Map
+# Project Navigation Map
 
-> Read this file before exploring the codebase. Update it whenever files are added, moved, or removed.
+## Stack
 
----
+- React 19.2.8 + TypeScript 6.0.2 + Vite 8.2.2
+- Tailwind CSS v4.3.3
+- shadcn/ui v4.19.0
+- @base-ui/react v1.7.0
+- Lucide React v1.37.0
+- React Router v8.3.1 (browser router)
+- TanStack Query v5.102.8
+- React Hook Form v7.87.0 + Zod v4.5.4 (forms & validation)
+- Zustand v5.0.15 (state management)
+- Inter & Geist fonts
+- tw-animate-css v1.4.0
 
-## App Map
+## Project Name
 
-```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                              VITALB DASHBOARD                               │
-├─────────────────────────────────────────────────────────────────────────────┤
-│                                                                             │
-│  ┌──────────────┐    ┌──────────────────────────────────────────────────┐   │
-│  │              │    │                                                  │   │
-│  │   SIDEBAR    │    │              MAIN CONTENT AREA                   │   │
-│  │              │    │                                                  │   │
-│  │  ┌────────┐  │    │  ┌────────────────────────────────────────────┐  │   │
-│  │  │Vitalb  │  │    │  │  Page Header (title, subtitle, actions)   │  │   │
-│  │  └────────┘  │    │  └────────────────────────────────────────────┘  │   │
-│  │              │    │                                                  │   │
-│  │  ──────────  │    │  ┌────────────────────────────────────────────┐  │   │
-│  │              │    │  │  Tabs / Sub-tabs                          │  │   │
-│  │  Overview  ──┼────┤  └────────────────────────────────────────────┘  │   │
-│  │  Contacts  ──┤    │                                                  │   │
-│  │  Conversa… ──┤    │  ┌────────────────────────────────────────────┐  │   │
-│  │  Reports   ──┤    │  │  Content Card / Table                     │  │   │
-│  │  Chat Set… ──┤    │  │                                            │  │   │
-│  │  AI Train… ──┤    │  │  • Knowledge Bank Table                   │  │   │
-│  │              │    │  │  • Search + Filters                       │  │   │
-│  │  ──────────  │    │  │  • Status Badges                          │  │   │
-│  │              │    │  │                                            │  │   │
-│  │  Help & S… ──┤    │  └────────────────────────────────────────────┘  │   │
-│  │  Ask me A… ──┤    │                                                  │   │
-│  │              │    └──────────────────────────────────────────────────┘   │
-│  │  ──────────  │                                                           │
-│  │  [Avatar]    │                                                           │
-│  │  Racheal K   │                                                           │
-│  └──────────────┘                                                           │
-│                                                                             │
-└─────────────────────────────────────────────────────────────────────────────┘
+`admin` — Admin dashboard for a chat/AI training platform (brand: Vitalb).
 
-ROUTES:
-  /                    → OverviewPage
-  /contacts            → ContactsPage
-  /conversations       → ConversationsPage
-  /reports             → ReportsPage
-  /chat-settings       → ChatSettingsPage
-  /chat-settings/visibility → Visibility
-  /ai-training         → AiTrainingPage (MAIN PAGE)
-  /help                → HelpPage
-  /ask                 → AskPage
-```
+## Routes
 
-## Directory Tree
+| Path | Page Component | Notes |
+| ----------------------- | ----------------- | ------------------------- |
+| `/` | OverviewPage | Dashboard overview |
+| `/contacts` | ContactsPage | Contact management |
+| `/conversations` | ConversationsPage | Conversation management |
+| `/reports` | ReportsPage | Reports & analytics |
+| `/sign-in` | SignInPage | Auth page (outside layout) |
+| `/sign-up` | SignUpPage | Registration page (outside layout) |
+| `/chat-settings` | ChatSettingsPage | Chat configuration |
+| `/chat-settings/visibility` | VisibilityPage | Chat visibility settings |
+| `/ai-training` | AiTrainingPage | AI training hub with tabs |
+| `/ai-training/knowledge-base` | KnowledgeBaseTab | Knowledge base management |
+| `/ai-training/corrections` | CorrectionsTab | Corrections management |
+| `/ai-training/prompt-tools` | PromptToolsTab | Prompt tools management |
+| `/ask-me` | AskMePage | Ask me page |
+| `/settings` | SettingsPage | Settings page (nested routes) |
+| `/settings/role-n-access` | RoleAndAccess | Role & access management |
+| `/settings/plan` | Plan | Plan management |
+| `/settings/payments` | Payments | Payments management |
+| `/settings/store` | Store | Store management |
+
+Protected routes use `AppLayout` (requires `authToken` in localStorage).
+
+## Folder Structure
 
 ```
-├── public/
-│   ├── favicon.svg
-│   └── icons.svg
-├── src/
-│   ├── assets/
-│   │   ├── hero.png
-│   │   ├── react.svg
-│   │   └── vite.svg
-│   ├── components/
-│   │   ├── custom/
-│   │   │   ├── CustomColorSelector.tsx
-│   │   │   ├── CustomFormGroup.tsx
-│   │   │   ├── CustomImageUploader.tsx
-│   │   │   ├── CustomInput.tsx
-│   │   │   ├── CustomLabel.tsx
-│   │   │   ├── CustomMultiTextField.tsx
-│   │   │   ├── CustomSelect.tsx
-│   │   │   ├── CustomSlider.tsx
-│   │   │   └── index.ts
-│   │   ├── shared/
-│   │   │   ├── chatBox/
-│   │   │   │   ├── ChatBox.tsx
-│   │   │   │   ├── ChatMessage.tsx
-│   │   │   │   ├── ChatInput.tsx
-│   │   │   │   └── index.ts
-│   │   │   ├── CopyField.tsx
-│   │   │   ├── unSavedChanges/
-│   │   │   │   ├── UnSavedChangesBar.tsx
-│   │   │   │   ├── useUnSavedChanges.ts
-│   │   │   │   └── index.ts
-│   │   │   ├── pageHeader/
-│   │   │   │   ├── PageHeader.tsx
-│   │   │   │   └── index.ts
-│   │   │   ├── sidebar/
-│   │   │   │   ├── Sidebar.tsx
-│   │   │   │   ├── SidebarMenuButton.tsx
-│   │   │   │   ├── SidebarUserCard.tsx
-│   │   │   │   ├── sidebarStore.ts
-│   │   │   │   └── index.ts
-│   │   │   └── userProfile/
-│   │   │       ├── UserProfile.tsx
-│   │   │       └── index.ts
-│   │   └── ui/
-│   │       ├── badge/
-│   │       │   ├── Badge.tsx
-│   │       │   └── index.ts
-│   │       ├── button/
-│   │       │   ├── Button.tsx
-│   │       │   └── index.ts
-│   │       ├── checkbox/
-│   │       │   ├── Checkbox.tsx
-│   │       │   └── index.ts
-│   │       ├── collapsible.tsx
-│   │       ├── field.tsx
-│   │       ├── searchInput/
-│   │       │   ├── SearchInput.tsx
-│   │       │   └── index.ts
-│   │       └── tabs/
-│   │       ├── Tabs.tsx
-│   │       └── index.ts
-│   ├── features/
-│   │   ├── chatSettings/
-│   │   │   ├── CrawlSettings.tsx
-│   │   │   ├── CustomSection.tsx
-│   │   │   ├── IntegrationRow.tsx
-│   │   │   ├── Span.tsx
-│   │   │   ├── TrackingSettings.tsx
-│   │   │   └── visibility/
-│   │   │       ├── AllAccordions.tsx
-│   │   │       └── fields/
-│   │   │           ├── ChatBubbleTypeSelector.tsx
-│   │   │           ├── LookNFeel.tsx
-│   │   │           ├── Position.tsx
-│   │   │           ├── SocialButton.tsx
-│   │   │           └── LeadCollection.tsx
-│   │   └── knowledgeBase/
-│   │       ├── components/
-│   │       │   ├── KnowledgeTable.tsx
-│   │       │   └── KnowledgeModal.tsx
-│   │       ├── types.ts
-│   │       └── index.ts
-│   ├── pages/
-│   │   ├── aiTraining/
-│   │   │   ├── AiTrainingPage.tsx
-│   │   │   └── index.ts
-│   │   │   tabs/
-│   │   │   ├── KnowledgeBaseTab.tsx
-│   │   │   ├── CorrectionsTab.tsx
-│   │   │   └── PromptToolsTab.tsx
-│   │   │   stores/
-│   │   │   ├── knowledgeBaseStore.ts
-│   │   │   ├── correctionsStore.ts
-│   │   │   ├── promptToolsStore.ts
-│   │   │   └── index.ts
-│   │   ├── ask/
-│   │   │   ├── AskPage.tsx
-│   │   │   └── index.ts
-│   │   ├── chatSettings/
-│   │   │   ├── ChatSettingsPage.tsx
-│   │   │   ├── index.ts
-│   │   │   ├── chat/
-│   │   │   │   ├── Visibility.tsx
-│   │   │   │   └── index.ts
-│   │   │   ├── store/
-│   │   │   │   └── chatVisibilityStore.tsx
-│   │   │   tabs/
-│   │   │   ├── Channels.tsx
-│   │   │   ├── Configurations.tsx
-│   │   │   └── Integrations.tsx
-│   │   ├── contacts/
-│   │   │   ├── ContactsPage.tsx
-│   │   │   └── index.ts
-│   │   ├── conversations/
-│   │   │   ├── ConversationsPage.tsx
-│   │   │   └── index.ts
-│   │   ├── help/
-│   │   │   ├── HelpPage.tsx
-│   │   │   └── index.ts
-│   │   ├── overview/
-│   │   │   ├── OverviewPage.tsx
-│   │   │   └── index.ts
-│   │   └── reports/
-│   │       ├── ReportsPage.tsx
-│   │       └── index.ts
-│   ├── App.tsx
-│   ├── index.css
-│   └── main.tsx
-├── .gitignore
-├── README.md
-├── eslint.config.js
-├── index.html
-├── package.json
-├── pnpm-lock.yaml
-├── project.md
-└── vite.config.ts
+src/
+├── components/
+│   ├── ui/                          # shadcn primitives
+│   │   ├── accordion.tsx
+│   │   ├── badge.tsx
+│   │   ├── button.tsx
+│   │   ├── checkbox.tsx
+│   │   ├── dialog.tsx
+│   │   ├── field.tsx
+│   │   ├── input.tsx
+│   │   ├── label.tsx
+│   │   ├── radio-group.tsx
+│   │   ├── select.tsx
+│   │   ├── separator.tsx
+│   │   ├── slider.tsx
+│   │   ├── spinner.tsx
+│   │   ├── tabs.tsx
+│   │   ├── textarea.tsx
+│   │   └── toast.tsx
+│   ├── layout/
+│   │   ├── AppLayou.tsx             # Root layout (auth guard + Sidebar + Outlet)
+│   │   ├── Header.tsx               # Header component
+│   │   ├── PageContainer.tsx        # Page container wrapper
+│   │   ├── MobileTopbar.tsx         # Mobile top bar
+│   │   └── sidebar/
+│   │       ├── index.tsx            # Sidebar (renders Desktop + Mobile)
+│   │       ├── DesktopSidebar.tsx   # Collapsible desktop sidebar
+│   │       ├── MobileSidebar.tsx    # Full-screen mobile sidebar overlay
+│   │       ├── SidebarUserCard.tsx  # User profile card at bottom of sidebar
+│   │       ├── sideNav.ts           # NAV_ITEMS constant (icon + label + link)
+│   │       └── isSidebarHidden.ts   # Sidebar hidden state utility
+│   ├── shared/
+│   │   ├── StoreDropdown.tsx        # Store selection dropdown
+│   │   ├── SectionHeader.tsx        # Section header component
+│   │   ├── ActionCard.tsx           # Action card component
+│   │   ├── CopyField.tsx            # Copy field component
+│   │   ├── PageHeader.tsx           # Page header component
+│   │   ├── ErrorDialog.tsx          # Error dialog component
+│   │   ├── chatBox/                 # Reusable chat box component
+│   │   │   ├── ChatBox.tsx          # Main chat box container
+│   │   │   ├── ChatInput.tsx        # Chat input component
+│   │   │   ├── ChatMessage.tsx      # Chat message component
+│   │   │   ├── type.ts              # Chat box type definitions
+│   │   │   └── index.ts             # Chat box exports
+│   │   └── unsavedChangesBar/       # Unsaved changes warning system
+│   │       ├── UnSavedChangesBar.tsx # Unsaved changes bar UI
+│   │       ├── useUnsavedChangesWarning.ts # Warning hook
+│   │       ├── useUnSavedChanges.ts # State hook
+│   │       ├── UnsavedChangesDialog.tsx # Confirmation dialog
+│   │       └── index.ts             # Exports
+│   └── design/                      # Design system components
+│       ├── HelperText.tsx           # Helper text component
+│       ├── AppCard.tsx              # App card component
+│       ├── AppSectoin.tsx           # App section component
+│       ├── ColorSelector.tsx        # Color selector component
+│       ├── Label.tsx                # Label component
+│       ├── TextAreaField.tsx        # Text area field component
+│       ├── CustomTabs.tsx           # Custom tabs component
+│       ├── ChatBubbleTypeSelector.tsx # Chat bubble type selector
+│       ├── SliderField.tsx          # Slider field component
+│       ├── GroupRadioField.tsx       # Group radio field component
+│       ├── InputField.tsx           # Input field component
+│       ├── SelectField.tsx          # Select field component
+│       ├── Heading.tsx              # Heading component
+│       ├── GroupCheckboxField.tsx   # Group checkbox field component
+│       ├── MultiTextField.tsx       # Multi-text field component
+│       ├── ImageUploader.tsx        # Image uploader component
+│       └── FormGroup.tsx            # Form group component
+├── features/
+│   ├── auth/
+│   │   ├── index.tsx                # Auth exports
+│   │   ├── AuthForm.tsx             # Auth form component
+│   │   ├── Background.tsx           # Auth background component
+│   │   ├── mockAuthApi.ts           # Mock auth API for development
+│   │   └── storeAuth.ts            # Auth state management
+│   ├── signIn/
+│   │   ├── index.ts                 # Sign-in exports
+│   │   ├── SignInForm.tsx           # Sign-in form component
+│   │   └── schema.ts               # Sign-in validation schema
+│   ├── signUp/
+│   │   ├── index.ts                 # Sign-up exports
+│   │   ├── SignUpForm.tsx           # Sign-up form component
+│   │   └── schema.ts               # Sign-up validation schema
+│   ├── dashboard/                   # Empty - feature logic not yet created
+│   ├── knowledgeBase/               # Empty - feature logic not yet created
+│   ├── chatbox/                     # Empty - feature logic not yet created
+│   ├── visibility/
+│   │   ├── AllAccordions.tsx        # All accordions component
+│   │   ├── VisibilityFormContext.tsx # Visibility form context
+│   │   ├── Visibility.tsx           # Visibility main component
+│   │   ├── preview/
+│   │   │   ├── Preview.tsx          # Preview component
+│   │   │   └── ChatButton.tsx       # Chat button component
+│   │   ├── fields/
+│   │   │   ├── Position.tsx         # Position field
+│   │   │   ├── LookNFeel.tsx        # Look & feel field
+│   │   │   ├── SocialButton.tsx     # Social button field
+│   │   │   ├── LeadCollection.tsx   # Lead collection field
+│   │   │   └── validations.ts      # Field validation schemas
+│   │   └── queries/
+│   │       └── visibilityQuery.ts   # Visibility API queries
+│   ├── chatSettings/
+│   │   ├── Integrations.tsx         # Integrations component
+│   │   ├── Channels.tsx             # Channels component
+│   │   └── configurations/
+│   │       ├── index.tsx            # Configurations exports
+│   │       ├── Configurations.tsx   # Main configurations component
+│   │       ├── SpamFilter.tsx       # Spam filter settings
+│   │       ├── TrackingSettings.tsx # Tracking settings
+│   │       ├── CrawlSettings.tsx    # Crawl settings
+│   │       └── fieldStyles.ts      # Field styles
+│   └── settings/
+│       ├── Settings.tsx             # Settings main component
+│       ├── index.ts                 # Settings exports
+│       ├── roleAndAccess/
+│       │   ├── index.ts            # Role & access exports
+│       │   ├── RoleAndAccess.tsx   # Role & access component
+│       │   └── BasicDetails.tsx    # Basic details component
+│       ├── plan/
+│       │   ├── index.ts            # Plan exports
+│       │   └── Plan.tsx            # Plan component
+│       ├── payments/
+│       │   ├── index.ts            # Payments exports
+│       │   └── Payments.tsx        # Payments component
+│       └── store/
+│           ├── index.ts            # Store exports
+│           └── Store.tsx           # Store component
+├── pages/                           # Page-level components (compose features)
+│   ├── OverviewPage.tsx             # Dashboard overview
+│   ├── ContactPage.tsx              # Contact management
+│   ├── ConversationsPage.tsx        # Conversation management
+│   ├── ReportsPage.tsx              # Reports & analytics
+│   ├── SignInPage.tsx               # Sign-in page
+│   ├── SignUpPage.tsx               # Sign-up page
+│   ├── AskMePage.tsx                # Ask me page
+│   ├── SettingsPage.tsx             # Settings page
+│   ├── chatSettings/
+│   │   ├── ChatSettingsPage.tsx     # Chat settings page
+│   │   └── VisibilityPage.tsx       # Chat visibility settings page
+│   └── aiTraining/
+│       ├── index.tsx                # AI training exports
+│       ├── AITrainingPage.tsx       # AI training main page
+│       └── tabs/
+│           ├── KnowledgeBaseTab.tsx # Knowledge base tab
+│           ├── CorrectionsTab.tsx   # Corrections tab
+│           └── PromptToolsTab.tsx   # Prompt tools tab
+├── hooks/                           # Empty
+├── lib/
+│   ├── utils.ts                     # cn() (clsx+twMerge), getInitials()
+│   └── queryClient.ts              # Empty - TanStack Query client not yet configured
+├── config/
+│   └── routes.tsx                   # createBrowserRouter definition
+├── stores/
+│   └── mobileSidebarStore.ts        # Mobile sidebar state management
+├── types/                           # Empty
+├── assets/
+│   ├── hero.png
+│   ├── react.svg
+│   └── vite.svg
+├── App.tsx                          # RouterProvider
+├── main.tsx                         # React root mount
+└── index.css                        # Tailwind v4 imports, CSS variables (design tokens)
 ```
 
----
+## Design Tokens (index.css)
 
-## App Shell
+Custom CSS variables mapped to Tailwind v4 theme:
 
-- `src/App.tsx` — Root component with createBrowserRouter (data router), Sidebar layout, and route definitions
-- `src/main.tsx` — Entry point, renders App into DOM
-- `src/index.css` — Vitalb design template: color tokens and a responsive type scale (`text-display`, `text-title`, `text-subtitle`, `text-body`, `text-body-sm`, `text-caption`, `text-micro`) that changes at mobile, tablet (`768px`), and desktop (`1024px`).
+- **Backgrounds**: `--background` (#FFF), `--sidebar-bg` (#ffffff), `--card-bg` (#f8fafd), `--card-nested-bg` (#ffffff)
+- **Primary**: `--primary` (#3576F3), `--primary-hover` (#236efa), `--primary-foreground` (#ffffff)
+- **Borders**: `--border` (#e2e8f0), `--border-subtle` (#edf2f7), `--border-blue` (#dbeafe), `--border-light` (#e6e6e8), `--border-soft` (rgba(0,0,0,0.21)), `--border-strong` (#c7c7cc)
+- **Text**: `--foreground` (#0f172a), `--muted-foreground` (#64748b), `--label-text` (#94a3b8)
+- **Active states**: `--active-item-bg` (#f0f7ff), `--active-item-border` (#dbeafe), `--active-tab-bg` (#ffffff), `--active-tab-border` (#e2e8f0)
+- **Badges**: `--badge-active-bg` (#CDFEE1), `--badge-active-text` (#166534), `--badge-active-dot` (#16a34a), `--badge-inactive-bg` (#FFDBDB)
+- **Status**: `--status-online` (#D1EFC0), `--danger` (#FF7B7E), `--success` (#47941E)
+- **Muted**: `--muted` (#F1F1F1), `--light-gray` (#F7F7F7)
+- **Secondary**: `--secondary-button-bg` (#e2e8f0), `--secondary-button-hover` (#cbd5e1)
+- **Chat**: `--chat-bg` (#EEEEEE)
+- **Shadows**: `--shadow-blue`, `--shadow-auth`, `--shadow-panel`
 
-## Features
+Use these tokens via Tailwind classes (e.g. `bg-background`, `text-primary`, `border-border-subtle`) rather than hardcoded hex values.
 
-### features/chatSettings/
+## Navigation Items
 
-- `CrawlSettings.tsx` — Crawl settings panel with stock products selector, tag-based ignore elements input (uses CustomMultiTextField), and CSS selector syntax reference
-- `CustomSection.tsx` — Reusable section wrapper with heading and white background
-- `IntegrationRow.tsx` — Integration row card with icon, status badge, description, and action button
-- `Span.tsx` — Spam filter settings with rate limit, period, and message fields
-- `TrackingSettings.tsx` — UTM tracking toggle with description
-- `visibility/AllAccordions.tsx` — Tab config (id, label, content) for the Chat visibility accordion
-- `visibility/fields/ChatBubbleTypeSelector.tsx` — Radio group with visual previews for chat bubble styles (type bar, compact, classic, custom)
-- `visibility/fields/LookNFeel.tsx` — Chat look & feel fields (agent name, chat face image, welcome message, pre-defined messages, placeholder, chat bubble type, primary color, notification color)
-- `visibility/fields/Position.tsx` — Widget position fields (page visibility, bubble size, position, z-index)
-- `visibility/fields/SocialButton.tsx` — Social button fields (WhatsApp and Instagram connect options with checkboxes)
-- `visibility/fields/LeadCollection.tsx` — Lead collection fields (email collection status, title, subtitle, button label, email placeholder, marketing consent options)
+Defined in `src/components/layout/sidebar/sideNav.ts`:
 
-### features/knowledgeBase/
+1. Overview (`/`) — OverviewIcon
+2. Contacts (`/contacts`) — ContactsIcon
+3. Conversations (`/conversations`) — ConversationsIcon
+4. Reports (`/reports`) — ReportsIcon
+5. Chat configure (`/chat-settings`) — ChatConfigurationIcon
+6. AI training (`/ai-training`) — AiTrainingIcon
+7. Settings (`/settings`) — SettingsIcon
+8. Ask me (`/ask-me`) — AskMeIcon
 
-- `components/KnowledgeTable.tsx` — Table displaying knowledge items with checkboxes, status badges, and formatted dates
-- `components/KnowledgeModal.tsx` — Add Knowledge modal: 6 bordered option cards, none selected by default; selected card uses a blue left bar + name/URL (or Content) fields, helper copy for Custom text
-- `types.ts` — KnowledgeItem interface (id, name, url, status, dates, format)
-- `index.ts` — Public exports: KnowledgeTable, KnowledgeModal, KnowledgeItem
+## Architecture Notes
 
-## Shared
+- Authentication requests use `VITE_AUTH_API_BASE_URL` from the root `.env` file. Restart the Vite dev server after changing it.
+- **Pages** are thin wrappers — they should compose feature-specific components, not contain business logic.
+- **Features** contain domain-specific logic organized as `components/`, `hooks/`, `api/`, `types/`.
+- **Components** are split into `ui/` (shadcn primitives), `layout/` (app shell), `shared/` (reusable app components), `design/` (design system components).
+- Most pages and shared components are currently **stubs** — implementation is pending.
+- The sidebar supports both desktop (collapsible, `w-[187px]` ↔ `w-[72px]`) and mobile (full-screen overlay).
+- Auth check uses `localStorage.getItem("authToken")` with a hardcoded `true` fallback (dev mode).
+- Zustand is used for mobile sidebar state management (`src/stores/mobileSidebarStore.ts`).
+- AI Training page uses nested routes with tabs for knowledge base, corrections, and prompt tools.
+- Chat Settings page includes integrations, channels, configuration, and visibility sub-routes.
+- Settings page uses nested routes for role-n-access, plan, payments, and store management.
+- The `unsavedChangesBar` shared component provides a warning system for unsaved changes.
 
-### components/ui/ (shadcn/ui)
+## Key Conventions
 
-- `button.tsx` — Reusable button with variants: default, outline, secondary, ghost, destructive, link
-- `badge.tsx` — Status badge with variants: default, secondary, destructive, outline, ghost, link
-- `tabs.tsx` — Underline-style tab navigation component
-- `checkbox.tsx` — Checkbox input using @base-ui/react primitives
-- `accordion.tsx` — Accordion using @base-ui/react; `inset` (default) matches Chat Settings sections, `card` matches Chat visibility tabs
-- `collapsible.tsx` — Collapsible panel using @base-ui/react primitives
-- `dialog.tsx` — Modal dialog using @base-ui/react primitives
-- `field.tsx` — Field components (Field, FieldLabel, FieldDescription, FieldError, FieldGroup) for form layouts
-- `input.tsx` — Text input using @base-ui/react primitives
-- `label.tsx` — Form label component
-- `radio-group.tsx` — Radio group and radio group item using @base-ui/react primitives
-- `select.tsx` — Select dropdown using @base-ui/react primitives
-- `separator.tsx` — Visual separator/divider component
-- `slider.tsx` — Slider input using @base-ui/react primitives
-
-### components/custom/ (app wrappers on shadcn)
-
-- `CustomColorSelector.tsx` — Color picker with hex input, native color selector, and preset palette; supports controlled/uncontrolled modes
-- `CustomFormGroup.tsx` — Vertical stack for form fields; gap `sm` | `md` (default) | `lg`
-- `CustomImageUploader.tsx` — Image upload with drag-and-drop, file type/size validation, preview; supports controlled/uncontrolled modes
-- `CustomInput.tsx` — Label + shadcn Input: small semibold label, white rounded-xl field; optional red error text and hint
-- `CustomLabel.tsx` — Styled shadcn Label (semibold, body-sm); used by CustomInput and standalone fields
-- `CustomMultiTextField.tsx` — Multi-tag input field; add tags with Enter, remove with X; supports controlled/uncontrolled modes, paste support, hint text
-- `CustomSelect.tsx` — Label + shadcn Select; same field chrome as CustomInput
-- `CustomSlider.tsx` — Label + shadcn Slider with live value (optional unit) and hint
-
-### lib/
-
-- `utils.ts` — cn() class merging utility (clsx + tailwind-merge)
-
-### components/shared/
-
-- `chatBox/ChatBox.tsx` — Reusable chat container with message list and auto-scroll
-- `chatBox/ChatMessage.tsx` — Individual message bubble (user: right-aligned purple, bot: left-aligned white)
-- `chatBox/ChatInput.tsx` — Message input with textarea and purple send button
-- `CopyField.tsx` — Copy-to-clipboard field with value display and copy button
-- `unSavedChanges/UnSavedChangesBar.tsx` — Dirty footer (Save/Discard) plus leave dialog via `useBlocker`; only this component is needed on a page
-- `unSavedChanges/useUnSavedChanges.ts` — Hook to manage form dirty state, save, and discard functionality
-- `sidebar/Sidebar.tsx` — Left navigation: mobile drawer, tablet icon-collapse, desktop expanded; hidden on `/chat-settings/visibility`
-- `sidebar/isSidebarHidden.ts` — Routes where the dashboard sidebar is not shown
-- `sidebar/SidebarMenuButton.tsx` — Mobile hamburger that opens the sidebar drawer
-- `sidebar/SidebarUserCard.tsx` — Bottom user card; compact on collapsed tablet sidebar
-- `sidebar/sidebarStore.ts` — Mobile open and tablet collapsed state
-- `userProfile/UserProfile.tsx` — User profile display with avatar image or initials fallback
-- `pageHeader/PageHeader.tsx` — Page title, subtitle, and action buttons layout
-
-## Pages
-
-- `pages/overview/OverviewPage.tsx` — Dashboard overview (/)
-- `pages/contacts/ContactsPage.tsx` — Contacts management (/contacts)
-- `pages/conversations/ConversationsPage.tsx` — Chat conversations (/conversations)
-- `pages/reports/ReportsPage.tsx` — Analytics and reports (/reports)
-- `pages/chatSettings/ChatSettingsPage.tsx` — Chatbot configuration (/chat-settings) with shadcn Accordion sections
-- `pages/chatSettings/chat/Visibility.tsx` — Chat visibility page: layout (accordion + Preview shell); accordion items come from AllAccordions; dirty save/discard via `useVisibilityStore`
-- `pages/chatSettings/chat/Preview.tsx` — Faded site background + floating chat trigger; opens PreviewChatPanel
-- `pages/chatSettings/chat/PreviewChatPanel.tsx` — Preview chat widget driven by visibility store settings
-- `pages/chatSettings/chat/ChatBubbleButtons.tsx` — Type / Compact / Classic / Custom chat open buttons for the preview
-- `pages/chatSettings/store/chatVisibilityStore.tsx` — Zustand store for all visibility fields, `isDirty`, `save`, `discard` (last saved), `resetToDefault`
-- `pages/chatSettings/tabs/Channels.tsx` — Channels tab: link, embed code, QR, and Visibility link to `/chat-settings/visibility`
-- `pages/chatSettings/tabs/Configurations.tsx` — Configurations tab: combines CrawlSettings, TrackingSettings, and Span components
-- `pages/chatSettings/tabs/Integrations.tsx` — Integrations tab: list of integration rows with status
-- `pages/aiTraining/AiTrainingPage.tsx` — AI Training: knowledge base table (/ai-training)
-- `pages/aiTraining/tabs/KnowledgeBaseTab.tsx` — Knowledge base table with search, sub-tabs, and Knowledge button
-- `pages/aiTraining/tabs/CorrectionsTab.tsx` — Corrections/questions bank tab
-- `pages/aiTraining/tabs/PromptToolsTab.tsx` — Prompt tools/behavior settings tab
-- `pages/help/HelpPage.tsx` — Help & support (/help)
-- `pages/ask/AskPage.tsx` — AI assistant (/ask)
-
-## Config
-
-- `vite.config.ts` — Vite config with React, Tailwind, and @ path alias
-- `tsconfig.app.json` — TypeScript config with path aliases
-- `package.json` — Dependencies: react, react-dom, react-router, tailwindcss, lucide-react
-
-## Open TODOs
-
-- (none yet)
+- Use `cn()` from `src/lib/utils.ts` for conditional Tailwind classes.
+- Prefer semantic design tokens (`bg-background`, `text-primary`) over hardcoded colors.
+- Use PascalCase for components, camelCase with `use` prefix for hooks.
+- Use kebab-case for folder names.
+- Route definitions live in `src/config/routes.tsx`.
+- All shadcn UI primitives go in `src/components/ui/`.
+- Design system components go in `src/components/design/`.
+- Feature-specific business logic goes in `src/features/`.
+- Pages compose features and should not contain business logic directly.

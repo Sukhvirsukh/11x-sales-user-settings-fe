@@ -1,5 +1,5 @@
-import { useState } from "react";
 import { PencilIcon, ThumbsDownIcon, ThumbsUpIcon } from "lucide-react";
+import { useState } from "react";
 
 export interface ChatMessageProps {
   id: string;
@@ -17,8 +17,6 @@ export function ChatMessage({
   id,
   content,
   sender,
-  timestamp,
-  avatar,
   primaryColor = "blue",
   onCorrect,
   onLike,
@@ -40,52 +38,26 @@ export function ChatMessage({
   }
 
   return (
-    <div
-      className={`flex ${isUser ? "justify-end" : "justify-start"} gap-3`}
-    >
-      {/* Bot avatar */}
-      {!isUser && (
-        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-border">
-          {avatar ? (
-            <img
-              src={avatar}
-              alt="Bot avatar"
-              className="h-8 w-8 rounded-full object-cover"
-            />
-          ) : (
-            <svg
-              className="h-4 w-4 text-muted-foreground"
-              fill="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z" />
-            </svg>
-          )}
-        </div>
-      )}
-
-      <div className="min-w-0 max-w-full">
+    <div className={`flex w-full ${isUser ? "justify-end" : "justify-start"}`}>
+      <div className={isUser ? "max-w-[227px]" : "w-full"}>
         {/* Message bubble */}
         <div
-          className={`w-auto max-w-full rounded-lg p-2 ${isUser
-            ? "bg-chat-muted text-foreground"
-            : "bg-card text-foreground shadow-sm"
-            }`}
+          className={`max-w-full rounded-[10px] p-2.5 ${isUser ? "bg-[#E2E2E2]" : "bg-[#EEE]"}`}
         >
-          <p className="text-sm leading-relaxed whitespace-pre-wrap">{content}</p>
+          <p className="text-sm leading-none whitespace-pre-wrap text-black">{content}</p>
         </div>
 
         {/* Feedback row for bot messages */}
         {!isUser && (
-          <div className="mt-1 flex items-center gap-2 pl-1">
-            {timestamp && (
+          <div className="mt-2 flex items-center justify-between">
+            {/* {timestamp && (
               <span className="text-micro text-placeholder">
                 {timestamp.toLocaleTimeString([], {
                   hour: "2-digit",
                   minute: "2-digit",
                 })}
               </span>
-            )}
+            )} */}
             {onCorrect && (
               <button
                 type="button"
@@ -93,46 +65,35 @@ export function ChatMessage({
                   setCorrectionDraft(content);
                   setIsEditing(!isEditing);
                 }}
-                className="flex size-5 items-center justify-center rounded text-muted-foreground transition-colors hover:bg-black/5 hover:text-foreground"
+                className="flex items-center gap-1 rounded text-xs leading-none text-black transition-colors hover:bg-black/5"
                 aria-label="Edit correction"
               >
-                <PencilIcon className="size-3" />
+                <PencilIcon className="size-3 mr-1" /> Create correction
               </button>
             )}
-            {onLike && (
-              <button
-                type="button"
-                onClick={() => onLike(id)}
-                className="flex size-5 items-center justify-center rounded text-muted-foreground transition-colors hover:bg-black/5 hover:text-success-strong"
-                aria-label="Good response"
-              >
-                <ThumbsUpIcon className="size-3.5" />
-              </button>
-            )}
-            {onDislike && (
-              <button
-                type="button"
-                onClick={() => onDislike(id)}
-                className="flex size-5 items-center justify-center rounded text-muted-foreground transition-colors hover:bg-black/5 hover:text-destructive"
-                aria-label="Bad response"
-              >
-                <ThumbsDownIcon className="size-3.5" />
-              </button>
-            )}
-          </div>
-        )}
+            <div className="flex items-center gap-1">
+              {onLike && (
+                <button
+                  type="button"
+                  onClick={() => onLike(id)}
+                  className="flex size-3.5 items-center justify-center rounded text-sm text-black transition-colors hover:bg-black/5"
+                  aria-label="Good response"
+                >
+                  <ThumbsUpIcon className="size-3.5" />
+                </button>
+              )}
+              {onDislike && (
+                <button
+                  type="button"
+                  onClick={() => onDislike(id)}
+                  className="flex size-3.5 items-center justify-center rounded text-sm text-black transition-colors hover:bg-black/5"
+                  aria-label="Bad response"
+                >
+                  <ThumbsDownIcon className="size-3.5" />
+                </button>
+              )}
 
-        {/* Feedback row for user messages */}
-        {isUser && (
-          <div className="mt-1 flex items-center justify-end gap-2 pr-1">
-            {timestamp && (
-              <span className="text-micro text-chat-foreground">
-                {timestamp.toLocaleTimeString([], {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}
-              </span>
-            )}
+            </div>
           </div>
         )}
 
@@ -167,26 +128,6 @@ export function ChatMessage({
         )}
       </div>
 
-      {/* User avatar */}
-      {isUser && (
-        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-chat-muted">
-          {avatar ? (
-            <img
-              src={avatar}
-              alt="User avatar"
-              className="h-8 w-8 rounded-full object-cover"
-            />
-          ) : (
-            <svg
-              className="h-4 w-4 text-chat-foreground"
-              fill="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
-            </svg>
-          )}
-        </div>
-      )}
     </div>
   );
 }

@@ -1,11 +1,19 @@
-import { Copy } from "lucide-react";
+import { Copy, Check } from "lucide-react";
 import { useState } from "react";
+import { InputField } from "@/components/design/InputField";
+import { cn } from "@/lib/utils";
 
 interface CopyFieldProps {
     value: string;
+    className?: string;
+    containerClassName?: string;
 }
 
-export default function CopyField({ value }: CopyFieldProps) {
+export default function CopyField({
+    value,
+    className,
+    containerClassName,
+}: CopyFieldProps) {
     const [copied, setCopied] = useState(false);
 
     const handleCopy = async () => {
@@ -19,18 +27,25 @@ export default function CopyField({ value }: CopyFieldProps) {
     };
 
     return (
-        <div className="flex min-w-0 items-center justify-between gap-2 rounded-lg border border-border bg-muted px-3 py-2">
-            <span className="min-w-0 truncate text-sm text-muted-foreground">{value}</span>
-            <button
-                onClick={handleCopy}
-                className="shrink-0 rounded-md p-1 text-placeholder hover:bg-border hover:text-muted-foreground transition-colors"
-                aria-label="Copy to clipboard"
-            >
-                <Copy className="h-4 w-4" />
-            </button>
-            {copied && (
-                <span className="absolute -mt-8 text-xs text-muted-foreground">Copied</span>
-            )}
-        </div>
+        <InputField
+            value={value}
+            readOnly
+            className={cn("truncate text-muted-foreground", className)}
+            containerClassName={containerClassName}
+            endIcon={
+                <button
+                    type="button"
+                    onClick={handleCopy}
+                    className="flex items-center justify-center text-gray hover:text-foreground transition-colors"
+                    aria-label={copied ? "Copied" : "Copy to clipboard"}
+                >
+                    {copied ? (
+                        <Check className="size-4 text-status-online" />
+                    ) : (
+                        <Copy className="size-4" />
+                    )}
+                </button>
+            }
+        />
     );
 }
