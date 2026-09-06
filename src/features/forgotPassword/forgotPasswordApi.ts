@@ -1,11 +1,8 @@
-
+import { apiFetch } from "@/lib/api";
 
 export function forgotPasswordRequest(email: string) {
-    return fetch("/auth/forgot-password", {
+    return apiFetch<{ message: string }>("/auth/forgot-password", {
         method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
         body: JSON.stringify({ email }),
     });
 }

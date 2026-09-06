@@ -147,9 +147,11 @@ src/
 │   │   ├── signUpApi.ts            # Sign-up backend request
 │   │   └── signUpSchema.ts         # Sign-up validation schema (Zod)
 │   ├── forgotPassword/
-│   │   ├── index.tsx                # Exports ForgotPasswordForm
-│   │   ├── ForgotPasswordForm.tsx   # Forgot password form component
-│   │   └── forgotPasswordQueries.ts # TanStack Query hooks for password reset
+│   │   ├── index.tsx                # Forgot password exports
+│   │   ├── ForgotPasswordForm.tsx   # Forgot password form (react-hook-form + useMutation)
+│   │   ├── forgotPasswordSchema.ts  # Forgot password validation schema (Zod)
+│   │   ├── forgotPasswordTypes.ts   # Forgot password form types
+│   │   └── forgotPasswordApi.ts     # Forgot password API request (apiFetch)
 │   ├── dashboard/                   # Empty - feature logic not yet created
 │   ├── knowledgeBase/               # Empty - feature logic not yet created
 │   ├── visibility/

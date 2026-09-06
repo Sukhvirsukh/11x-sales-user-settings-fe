@@ -1,9 +1,12 @@
+import { type ReactNode } from "react";
+//components
+import BasicDetailsForm from "./BasicDetailsForm";
+//common components
 import AppCard from "@/components/design/AppCard";
 import AppSection from "@/components/design/AppSectoin";
 import Heading from "@/components/design/Heading";
+//utils
 import { getInitials } from "@/lib/utils";
-import { type ReactNode } from "react";
-import BasicDetailsForm from "./BasicDetailsForm";
 
 interface DetailItemProps {
     label: string;

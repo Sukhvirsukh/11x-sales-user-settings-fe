@@ -1,10 +1,42 @@
-import { InputField } from "@/components/design/InputField";
-import { AuthForm, authInputClassName } from "../auth";
-import { Mail } from "lucide-react";
 import { Link } from "react-router";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
+import { Mail } from "lucide-react";
+import { AuthForm, authInputClassName } from "@/features/auth";
+import { InputField } from "@/components/design/InputField";
 import { Button } from "@/components/ui/button";
+import { toast } from "@/components/ui/toast";
+import { forgotPasswordSchema } from "./forgotPasswordSchema";
+import type { ForgotPasswordFormValues } from "./forgotPasswordTypes";
+import { forgotPasswordRequest } from "./forgotPasswordApi";
 
 export function ForgotPasswordForm() {
+    const forgotPasswordMutation = useMutation({
+        mutationFn: ({ email }: ForgotPasswordFormValues) =>
+            forgotPasswordRequest(email),
+        onSuccess: () => {
+            toast.add({
+                type: "success",
+                title: "Email sent",
+                description: "Check your inbox for the password reset link.",
+            });
+        },
+    });
+
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+    } = useForm<ForgotPasswordFormValues>({
+        resolver: zodResolver(forgotPasswordSchema),
+        defaultValues: { email: "" },
+    });
+
+    function onSubmit(values: ForgotPasswordFormValues) {
+        forgotPasswordMutation.mutate(values);
+    }
+
     return (
         <AuthForm
             title="Welcome back to Vitalb"
@@ -12,7 +44,7 @@ export function ForgotPasswordForm() {
             withSocials={false}
         >
             <form
-                // onSubmit={handleSubmit(signIn)}
+                onSubmit={handleSubmit(onSubmit)}
                 className="flex flex-col"
                 noValidate
             >
@@ -21,10 +53,10 @@ export function ForgotPasswordForm() {
                         type="email"
                         placeholder="Email ID"
                         autoComplete="email"
-                        // error={errors.email?.message}
+                        error={errors.email?.message}
                         containerClassName={authInputClassName}
                         startIcon={<Mail className="size-3" />}
-                    // {...register("email")}
+                        {...register("email")}
                     />
 
                     <p className="text-right text-sm text-ghost">
@@ -41,11 +73,13 @@ export function ForgotPasswordForm() {
                 <Button
                     type="submit"
                     className="mt-7.5 w-full"
-                // disabled={signInMutation.isPending}
+                    disabled={forgotPasswordMutation.isPending}
                 >
-                    Forget Password
+                    {forgotPasswordMutation.isPending
+                        ? "Sending..."
+                        : "Forget Password"}
                 </Button>
             </form>
         </AuthForm>
-    )
+    );
 }

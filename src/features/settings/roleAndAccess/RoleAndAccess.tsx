@@ -1,6 +1,4 @@
-import AppSection from "@/components/design/AppSectoin";
 import { BasicDetails } from "./BasicDetails";
-import Heading from "@/components/design/Heading";
 import Permissions from "./Permissions";
 import RoleHistory from "./RoleHistory";
 
