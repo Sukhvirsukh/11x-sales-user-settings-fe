@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ChatMessage, type ChatMessageProps } from "./ChatMessage";
 import { ChatInput } from "./ChatInput";
-import { useChatVisibilityQuery } from "@/features/visibility/queries/visibilityQuery";
+import { useChatVisibilityQuery } from "@/features/visibility/visibilityQuery";
 import { XIcon } from "lucide-react";
 import { Spinner } from "@/components/ui/spinner";
 import type { VisibilityFields } from "@/components/shared/chatBox/type";
+import { Button } from "@/components/ui/button";
 
 interface ChatBoxProps {
   onClose?: () => void;
@@ -30,13 +31,32 @@ function createWelcomeMessage(content: string): ChatMessageProps {
 }
 
 export function ChatBox({ onClose, className = "", fields: previewFields }: ChatBoxProps) {
-  const { data: cachedFields } = useChatVisibilityQuery();
+  const { data: cachedFields, isLoading, error } = useChatVisibilityQuery();
   const fields = previewFields ?? cachedFields;
+
+  if (error) {
+    return (
+      <div className={`flex h-full flex-col items-center justify-center gap-3 overflow-hidden rounded-[10px] bg-white shadow-xl ${className}`}>
+        <Button variant="bare" onClick={onClose}  >
+          <XIcon className="size-8 text-red-500" />
+        </Button>
+        <p className="text-sm text-red-600">Failed to load chat settings.</p>
+      </div>
+    );
+  }
+
+  if (isLoading && !fields) {
+    return (
+      <div className={`flex h-full items-center justify-center overflow-hidden rounded-[10px] bg-white shadow-xl ${className}`}>
+        <Spinner className="size-6 text-primary" />
+      </div>
+    );
+  }
 
   if (!fields) {
     return (
       <div className={`flex h-full items-center justify-center overflow-hidden rounded-[10px] bg-white shadow-xl ${className}`}>
-        <Spinner className="size-6 text-primary" />
+        <p className="text-sm text-zinc-400">No chat configuration found.</p>
       </div>
     );
   }

@@ -12,8 +12,8 @@ import {
 import allAccordions from "./AllAccordions";
 import Preview from "./preview/Preview";
 import { Spinner } from "@/components/ui/spinner";
-import type { VisibilityFields } from "@/components/shared/chatBox/type";
-import { useVisibilityQuery, visibilityQueryKey } from "./queries/visibilityQuery";
+import type { VisibilityFields } from "./visibilityTypes";
+import { useVisibilityQuery, visibilityQueryKey } from "./visibilityQuery";
 import { requiredFieldsSchema } from "./fields/validations";
 
 export default function Visibility() {
@@ -32,6 +32,10 @@ export default function Visibility() {
             setIsFormReady(true);
         }
     }, [form, query.data]);
+
+    if (query.error) {
+        throw query.error
+    }
 
     if (!query.data || !isFormReady) {
         return (

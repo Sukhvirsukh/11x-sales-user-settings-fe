@@ -1,14 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import type { AuthUser } from "./authRequest";
-
-interface AuthStore {
-    user: AuthUser | null;
-    name: string | null;
-    email: string | null;
-    setUser: (user: AuthUser | undefined) => void;
-    clearUser: () => void;
-}
+import type { AuthStore } from "./authTypes";
 
 export const useAuthStore = create<AuthStore>()(
     persist(
@@ -16,13 +8,15 @@ export const useAuthStore = create<AuthStore>()(
             user: null,
             name: null,
             email: null,
+            role: null,
             setUser: (user) =>
                 set({
                     user: user ?? null,
                     name: user?.name ?? null,
                     email: user?.email ?? null,
+                    role: user?.role ?? null,
                 }),
-            clearUser: () => set({ user: null, name: null, email: null }),
+            clearUser: () => set({ user: null, name: null, email: null, role: null }),
         }),
         { name: "vitalb.user" },
     ),

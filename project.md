@@ -8,11 +8,13 @@
 - @base-ui/react v1.7.0
 - Lucide React v1.37.0
 - React Router v8.3.1 (browser router)
-- TanStack Query v5.102.8
+- TanStack Query v5.102.8 + TanStack Table v9.2.4
 - React Hook Form v7.87.0 + Zod v4.5.4 (forms & validation)
+- @hookform/resolvers v5.9.1
 - Zustand v5.0.15 (state management)
 - Inter & Geist fonts
 - tw-animate-css v1.4.0
+- class-variance-authority v0.7.1
 
 ## Project Name
 
@@ -28,20 +30,21 @@
 | `/reports` | ReportsPage | Reports & analytics |
 | `/sign-in` | SignInPage | Auth page (outside layout) |
 | `/sign-up` | SignUpPage | Registration page (outside layout) |
+| `/forgot-password` | ForgotPassword | Password recovery page (outside layout) |
 | `/chat-settings` | ChatSettingsPage | Chat configuration |
 | `/chat-settings/visibility` | VisibilityPage | Chat visibility settings |
-| `/ai-training` | AiTrainingPage | AI training hub with tabs |
+| `/ai-training` | AiTrainingPage | AI training hub (nested routes with index redirect to knowledge-base) |
 | `/ai-training/knowledge-base` | KnowledgeBaseTab | Knowledge base management |
 | `/ai-training/corrections` | CorrectionsTab | Corrections management |
 | `/ai-training/prompt-tools` | PromptToolsTab | Prompt tools management |
 | `/ask-me` | AskMePage | Ask me page |
-| `/settings` | SettingsPage | Settings page (nested routes) |
+| `/settings` | SettingsPage | Settings page (index redirects to role-n-access) |
 | `/settings/role-n-access` | RoleAndAccess | Role & access management |
 | `/settings/plan` | Plan | Plan management |
 | `/settings/payments` | Payments | Payments management |
 | `/settings/store` | Store | Store management |
 
-Protected routes use `AppLayout` (requires `authToken` in localStorage).
+Protected routes use `AppLayout` (requires `vitalb.jwt` token in localStorage).
 
 ## Folder Structure
 
@@ -57,13 +60,16 @@ src/
 │   │   ├── field.tsx
 │   │   ├── input.tsx
 │   │   ├── label.tsx
+│   │   ├── popover.tsx
 │   │   ├── radio-group.tsx
 │   │   ├── select.tsx
 │   │   ├── separator.tsx
 │   │   ├── slider.tsx
 │   │   ├── spinner.tsx
+│   │   ├── table.tsx
 │   │   ├── tabs.tsx
 │   │   ├── textarea.tsx
+│   │   ├── toggle.tsx
 │   │   └── toast.tsx
 │   ├── layout/
 │   │   ├── AppLayou.tsx             # Root layout (auth guard + Sidebar + Outlet)
@@ -84,6 +90,7 @@ src/
 │   │   ├── CopyField.tsx            # Copy field component
 │   │   ├── PageHeader.tsx           # Page header component
 │   │   ├── ErrorDialog.tsx          # Error dialog component
+│   │   ├── RootErrorBoundary.tsx    # Root error boundary (wraps app providers)
 │   │   ├── chatBox/                 # Reusable chat box component
 │   │   │   ├── ChatBox.tsx          # Main chat box container
 │   │   │   ├── ChatInput.tsx        # Chat input component
@@ -113,40 +120,55 @@ src/
 │       ├── GroupCheckboxField.tsx   # Group checkbox field component
 │       ├── MultiTextField.tsx       # Multi-text field component
 │       ├── ImageUploader.tsx        # Image uploader component
-│       └── FormGroup.tsx            # Form group component
+│       ├── FormGroup.tsx            # Form group component
+│       ├── ToggleField.tsx          # Toggle field component
+│       ├── CustomTable.tsx          # Custom table component
+│       ├── ExampleTable.tsx         # Example table component
+│       └── Modal.tsx                # Modal component
 ├── features/
 │   ├── auth/
-│   │   ├── index.tsx                # Auth exports
+│   │   ├── index.ts                 # Auth exports (AuthForm, Background, useAuthStore, authRequest, token helpers, types)
 │   │   ├── AuthForm.tsx             # Auth form component
 │   │   ├── Background.tsx           # Auth background component
-│   │   ├── mockAuthApi.ts           # Mock auth API for development
-│   │   └── storeAuth.ts            # Auth state management
+│   │   ├── authTypes.ts            # Auth response, user, store, and form types
+│   │   ├── authApi.ts              # Auth requests via shared apiFetch
+│   │   ├── authStorage.ts          # JWT storage helpers (vitalb.jwt key)
+│   │   └── authStore.ts            # Persisted auth state (Zustand)
 │   ├── signIn/
 │   │   ├── index.ts                 # Sign-in exports
 │   │   ├── SignInForm.tsx           # Sign-in form component
-│   │   └── schema.ts               # Sign-in validation schema
+│   │   ├── signInTypes.ts          # Sign-in types inferred from schema
+│   │   ├── signInApi.ts            # Sign-in backend request
+│   │   └── signInSchema.ts         # Sign-in validation schema (Zod)
 │   ├── signUp/
 │   │   ├── index.ts                 # Sign-up exports
 │   │   ├── SignUpForm.tsx           # Sign-up form component
-│   │   └── schema.ts               # Sign-up validation schema
+│   │   ├── signUpTypes.ts          # Sign-up types inferred from schema
+│   │   ├── signUpApi.ts            # Sign-up backend request
+│   │   └── signUpSchema.ts         # Sign-up validation schema (Zod)
+│   ├── forgotPassword/
+│   │   ├── index.tsx                # Exports ForgotPasswordForm
+│   │   ├── ForgotPasswordForm.tsx   # Forgot password form component
+│   │   └── forgotPasswordQueries.ts # TanStack Query hooks for password reset
 │   ├── dashboard/                   # Empty - feature logic not yet created
 │   ├── knowledgeBase/               # Empty - feature logic not yet created
-│   ├── chatbox/                     # Empty - feature logic not yet created
 │   ├── visibility/
+│   │   ├── index.ts                 # Visibility exports
+│   │   ├── visibilityTypes.ts       # Visibility types
+│   │   ├── visibilityApi.ts         # Visibility backend request
+│   │   ├── visibilityQuery.ts       # TanStack Query hooks and cache key
 │   │   ├── AllAccordions.tsx        # All accordions component
 │   │   ├── VisibilityFormContext.tsx # Visibility form context
 │   │   ├── Visibility.tsx           # Visibility main component
 │   │   ├── preview/
 │   │   │   ├── Preview.tsx          # Preview component
 │   │   │   └── ChatButton.tsx       # Chat button component
-│   │   ├── fields/
-│   │   │   ├── Position.tsx         # Position field
-│   │   │   ├── LookNFeel.tsx        # Look & feel field
-│   │   │   ├── SocialButton.tsx     # Social button field
-│   │   │   ├── LeadCollection.tsx   # Lead collection field
-│   │   │   └── validations.ts      # Field validation schemas
-│   │   └── queries/
-│   │       └── visibilityQuery.ts   # Visibility API queries
+│   │   └── fields/
+│   │       ├── Position.tsx         # Position field
+│   │       ├── LookNFeel.tsx        # Look & feel field
+│   │       ├── SocialButton.tsx     # Social button field
+│   │       ├── LeadCollection.tsx   # Lead collection field
+│   │       └── validations.ts       # Field validation schemas
 │   ├── chatSettings/
 │   │   ├── Integrations.tsx         # Integrations component
 │   │   ├── Channels.tsx             # Channels component
@@ -161,18 +183,21 @@ src/
 │       ├── Settings.tsx             # Settings main component
 │       ├── index.ts                 # Settings exports
 │       ├── roleAndAccess/
-│       │   ├── index.ts            # Role & access exports
-│       │   ├── RoleAndAccess.tsx   # Role & access component
-│       │   └── BasicDetails.tsx    # Basic details component
+│       │   ├── index.ts             # Role & access exports
+│       │   ├── RoleAndAccess.tsx    # Role & access main component
+│       │   ├── BasicDetails.tsx     # Basic details display
+│       │   ├── BasicDetailsForm.tsx # Basic details edit form
+│       │   ├── RoleHistory.tsx      # Role history component
+│       │   └── Permissions.tsx      # Permissions management
 │       ├── plan/
-│       │   ├── index.ts            # Plan exports
-│       │   └── Plan.tsx            # Plan component
+│       │   ├── index.ts             # Plan exports
+│       │   └── Plan.tsx             # Plan component
 │       ├── payments/
-│       │   ├── index.ts            # Payments exports
-│       │   └── Payments.tsx        # Payments component
+│       │   ├── index.ts             # Payments exports
+│       │   └── Payments.tsx         # Payments component
 │       └── store/
-│           ├── index.ts            # Store exports
-│           └── Store.tsx           # Store component
+│           ├── index.ts             # Store exports
+│           └── Store.tsx            # Store component
 ├── pages/                           # Page-level components (compose features)
 │   ├── OverviewPage.tsx             # Dashboard overview
 │   ├── ContactPage.tsx              # Contact management
@@ -180,7 +205,9 @@ src/
 │   ├── ReportsPage.tsx              # Reports & analytics
 │   ├── SignInPage.tsx               # Sign-in page
 │   ├── SignUpPage.tsx               # Sign-up page
+│   ├── ForgotPassword.tsx           # Forgot password page (Background + ForgotPasswordForm)
 │   ├── AskMePage.tsx                # Ask me page
+│   ├── ErrorPage.tsx                # Error page (reuses AppCard + Button for reload/home)
 │   ├── SettingsPage.tsx             # Settings page
 │   ├── chatSettings/
 │   │   ├── ChatSettingsPage.tsx     # Chat settings page
@@ -195,16 +222,18 @@ src/
 ├── hooks/                           # Empty
 ├── lib/
 │   ├── utils.ts                     # cn() (clsx+twMerge), getInitials()
-│   └── queryClient.ts              # Empty - TanStack Query client not yet configured
+│   ├── api.ts                       # Shared apiFetch wrapper (auth, error handling, toast)
+│   └── queryClient.ts              # TanStack Query client
 ├── config/
 │   └── routes.tsx                   # createBrowserRouter definition
 ├── stores/
-│   └── mobileSidebarStore.ts        # Mobile sidebar state management
+│   └── mobileSidebarStore.ts        # Mobile sidebar state management (Zustand)
 ├── types/                           # Empty
 ├── assets/
 │   ├── hero.png
 │   ├── react.svg
-│   └── vite.svg
+│   ├── vite.svg
+│   └── sidebar/Icons                # Sidebar navigation icons
 ├── App.tsx                          # RouterProvider
 ├── main.tsx                         # React root mount
 └── index.css                        # Tailwind v4 imports, CSS variables (design tokens)
@@ -243,18 +272,22 @@ Defined in `src/components/layout/sidebar/sideNav.ts`:
 
 ## Architecture Notes
 
-- Authentication requests use `VITE_AUTH_API_BASE_URL` from the root `.env` file. Restart the Vite dev server after changing it.
+- `ErrorPage` reuses `AppCard` and `Button` for reload/home recovery. The router's root `errorElement` handles route errors, and `RootErrorBoundary` wraps the app providers to catch rendering failures outside routes.
+- The persisted auth store (`src/features/auth/authStore.ts`) exposes `user`, `name`, `email`, and `role`. Sign-in and sign-up populate these through `setUser`; `authApi.ts` reads the role from the backend's `user.role` field.
+- Auth token is stored as `vitalb.jwt` in localStorage via helpers in `authStorage.ts` (not `authToken`).
+- All API requests use `VITE_AUTH_API_BASE_URL` from the root `.env` file via the shared `apiFetch` wrapper (`src/lib/api.ts`). The wrapper automatically attaches Bearer tokens and surfaces errors via toast. Restart the Vite dev server after changing env vars.
+- Path alias `@/*` maps to `./src/*` (defined in `tsconfig.json` and `tsconfig.app.json`).
 - **Pages** are thin wrappers — they should compose feature-specific components, not contain business logic.
 - **Features** contain domain-specific logic organized as `components/`, `hooks/`, `api/`, `types/`.
 - **Components** are split into `ui/` (shadcn primitives), `layout/` (app shell), `shared/` (reusable app components), `design/` (design system components).
-- Most pages and shared components are currently **stubs** — implementation is pending.
 - The sidebar supports both desktop (collapsible, `w-[187px]` ↔ `w-[72px]`) and mobile (full-screen overlay).
-- Auth check uses `localStorage.getItem("authToken")` with a hardcoded `true` fallback (dev mode).
+- Auth check uses `localStorage.getItem("vitalb.jwt")` with a hardcoded `true` fallback (dev mode).
 - Zustand is used for mobile sidebar state management (`src/stores/mobileSidebarStore.ts`).
-- AI Training page uses nested routes with tabs for knowledge base, corrections, and prompt tools.
+- AI Training page uses nested routes with tabs for knowledge base, corrections, and prompt tools. The index route redirects to `knowledge-base`.
 - Chat Settings page includes integrations, channels, configuration, and visibility sub-routes.
-- Settings page uses nested routes for role-n-access, plan, payments, and store management.
+- Settings page uses nested routes for role-n-access, plan, payments, and store management. The index route redirects to `role-n-access`.
 - The `unsavedChangesBar` shared component provides a warning system for unsaved changes.
+- `forgotPassword` feature uses TanStack Query for password reset mutations.
 
 ## Key Conventions
 
@@ -267,3 +300,4 @@ Defined in `src/components/layout/sidebar/sideNav.ts`:
 - Design system components go in `src/components/design/`.
 - Feature-specific business logic goes in `src/features/`.
 - Pages compose features and should not contain business logic directly.
+- Use `apiFetch` from `src/lib/api.ts` for all API calls (handles auth, errors, toasts).

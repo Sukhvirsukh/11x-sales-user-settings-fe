@@ -1,15 +1,9 @@
-import type { ComponentType } from "react";
+import type { AccordionTab } from "./visibilityTypes";
 
 import LookNFeel from "./fields/LookNFeel";
 import Position from "./fields/Position";
 import SocialButton from "./fields/SocialButton";
 import LeadCollection from "./fields/LeadCollection";
-
-interface AccordionTab {
-    id: string;
-    label: string;
-    content: ComponentType;
-}
 
 const allAccordions: AccordionTab[] = [
     {

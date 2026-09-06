@@ -5,7 +5,7 @@ import {
 } from "react-router";
 import Sidebar from "./sidebar";
 import MobileTopbar from "./MobileTopbar";
-import { getAuthToken } from "@/features/auth/authRequest";
+import { getAuthToken } from "@/features/auth/authStorage";
 
 function AppLayout() {
     const isAuthenticated = Boolean(getAuthToken());

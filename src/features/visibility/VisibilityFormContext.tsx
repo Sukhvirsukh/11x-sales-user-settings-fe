@@ -1,5 +1,5 @@
 import { useFormContext, useWatch } from "react-hook-form";
-import type { VisibilityFields } from "@/components/shared/chatBox/type";
+import type { VisibilityFields } from "./visibilityTypes";
 
 export function useVisibilityForm() {
   const { control, setValue } = useFormContext<VisibilityFields>();

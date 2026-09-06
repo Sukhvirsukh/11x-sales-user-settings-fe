@@ -1,5 +1,5 @@
 import { getInitials } from "@/lib/utils";
-import { clearAuthToken } from "@/features/auth/authRequest";
+import { clearAuthToken } from "@/features/auth/authStorage";
 import { useAuthStore } from "@/features/auth";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { ChevronRight, LogOut } from "lucide-react";
