@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import type { AuthFormProps } from "./authTypes";
 import googleIcon from "@/assets/auth/google.svg";
 import facebookIcon from "@/assets/auth/facebook.svg";
 import shopifyIcon from "@/assets/auth/shopify.svg";
@@ -16,11 +16,8 @@ export default function AuthForm({
     title,
     subtitle,
     children,
-}: {
-    title: string;
-    subtitle: string;
-    children: ReactNode;
-}) {
+    withSocials = true,
+}: AuthFormProps) {
     return (
         <main className="flex min-h-screen items-center justify-center bg-transparent px-4 py-10">
             <div className="w-full max-w-100 rounded-[20px] border border-primary/10 bg-white p-7.5 shadow-auth relative z-10">
@@ -35,7 +32,7 @@ export default function AuthForm({
 
                 <div className="mt-7.5">{children}</div>
 
-                <div className="mt-7.5 flex flex-col items-center gap-5">
+                {withSocials && <div className="mt-7.5 flex flex-col items-center gap-5">
                     <div className="flex w-full items-center gap-3">
                         <span className="h-px flex-1 bg-black/10" />
                         <span className="shrink-0 text-sm text-ghost">
@@ -62,7 +59,7 @@ export default function AuthForm({
                             </button>
                         ))}
                     </div>
-                </div>
+                </div>}
             </div>
         </main>
     );

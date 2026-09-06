@@ -1,53 +1,9 @@
-import type { ChatBubbleType } from "@/components/design/ChatBubbleTypeSelector";
-
-export type PageVisibilityMode = "all" | "specific";
-export type BubblePosition = "left" | "right";
-export type LeadStatus = "ask-email" | "dont-ask";
-export type MarketingConsent = "ask-marketing" | "dont-ask-marketing";
-export type ConsentCheckboxDefault = "pre-selected" | "not-selected";
-
-export interface VisibilityFields {
-    agentName: string;
-    chatFace: File | string | null;
-    welcomeMessage: string;
-    predefinedMessages: string[];
-    placeholderMessage: string;
-    primaryColor: string;
-    notificationColor: string;
-    chatBubbleType: ChatBubbleType;
-    showOnMobile: boolean;
-    showOnDesktopTablet: boolean;
-    pageVisibility: PageVisibilityMode;
-    excludePages: string;
-    bubbleSize: string;
-    position: BubblePosition;
-    moveLeftRight: number;
-    moveUpDown: number;
-    zIndex: number;
-    connectWhatsApp: boolean;
-    connectInstagram: boolean;
-    leadStatus: LeadStatus;
-    leadTitle: string;
-    leadSubtitle: string;
-    sendButtonLabel: string;
-    emailPlaceholder: string;
-    marketingConsent: MarketingConsent;
-    consentCheckboxDefault: ConsentCheckboxDefault;
-    marketingConsentText: string;
-}
-
-
-export interface VisibilityStore {
-    fields: VisibilityFields;
-    duplicateFields: VisibilityFields;
-    isDirty: boolean;
-    hasLoaded: boolean;
-    setField: <K extends keyof VisibilityFields>(
-        key: K,
-        value: VisibilityFields[K],
-    ) => void;
-    hydrate: (fields: VisibilityFields) => void;
-    save: () => void;
-    discard: () => void;
-    resetToDefault: () => void;
-}
+export type {
+    PageVisibilityMode,
+    BubblePosition,
+    LeadStatus,
+    MarketingConsent,
+    ConsentCheckboxDefault,
+    VisibilityFields,
+    VisibilityStore,
+} from "@/features/visibility/visibilityTypes";

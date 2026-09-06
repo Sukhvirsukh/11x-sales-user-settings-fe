@@ -1,4 +1,5 @@
 import { createBrowserRouter, Navigate } from "react-router";
+import ErrorPage from "@/pages/ErrorPage";
 import SignInPage from "../pages/SignInPage";
 import SignUpPage from "../pages/SignUpPage";
 import AppLayout from "../components/layout/AppLayou";
@@ -18,45 +19,52 @@ import { RoleAndAccess } from "@/features/settings/roleAndAccess";
 import { Plan } from "@/features/settings/plan";
 import { Payments } from "@/features/settings/payments";
 import { Store } from "@/features/settings/store";
+import ForgotPassword from "@/pages/ForgotPassword";
 
 export const router = createBrowserRouter([
-  { path: "/sign-in", element: <SignInPage /> },
-  { path: "/sign-up", element: <SignUpPage /> },
   {
-    element: <AppLayout />,
+    errorElement: <ErrorPage />,
     children: [
-      { path: "/", element: <OverviewPage /> },
-      { path: "/contacts", element: <ContactsPage /> },
-      { path: "/conversations", element: <ConversationsPage /> },
-      { path: "/reports", element: <ReportsPage /> },
-      { path: "/chat-settings", element: <ChatSettingsPage /> },
-      { path: "/chat-settings/visibility", element: <VisibilityPage /> },
+      { path: "/sign-in", element: <SignInPage /> },
+      { path: "/sign-up", element: <SignUpPage /> },
+      { path: "/forgot-password", element: <ForgotPassword /> },
       {
-        path: "/ai-training",
-        element: <AiTrainingPage />,
+        element: <AppLayout />,
         children: [
+          { path: "/", element: <OverviewPage /> },
+          { path: "/contacts", element: <ContactsPage /> },
+          { path: "/conversations", element: <ConversationsPage /> },
+          { path: "/reports", element: <ReportsPage /> },
+          { path: "/chat-settings", element: <ChatSettingsPage /> },
+          { path: "/chat-settings/visibility", element: <VisibilityPage /> },
           {
-            index: true,
-            element: <Navigate to="knowledge-base" replace />,
+            path: "/ai-training",
+            element: <AiTrainingPage />,
+            children: [
+              {
+                index: true,
+                element: <Navigate to="knowledge-base" replace />,
+              },
+              { path: "knowledge-base", element: <KnowledgeBaseTab /> },
+              { path: "corrections", element: <CorrectionsTab /> },
+              { path: "prompt-tools", element: <PromptToolsTab /> },
+            ],
           },
-          { path: "knowledge-base", element: <KnowledgeBaseTab /> },
-          { path: "corrections", element: <CorrectionsTab /> },
-          { path: "prompt-tools", element: <PromptToolsTab /> },
-        ],
-      },
-      { path: "/ask-me", element: <AskMePage /> },
-      {
-        path: "/settings",
-        element: <SettingsPage />,
-        children: [
+          { path: "/ask-me", element: <AskMePage /> },
           {
-            index: true,
-            element: <Navigate to="role-n-access" replace />,
+            path: "/settings",
+            element: <SettingsPage />,
+            children: [
+              {
+                index: true,
+                element: <Navigate to="role-n-access" replace />,
+              },
+              { path: "role-n-access", element: <RoleAndAccess /> },
+              { path: "plan", element: <Plan /> },
+              { path: "payments", element: <Payments /> },
+              { path: "store", element: <Store /> },
+            ],
           },
-          { path: "role-n-access", element: <RoleAndAccess /> },
-          { path: "plan", element: <Plan /> },
-          { path: "payments", element: <Payments /> },
-          { path: "store", element: <Store /> },
         ],
       },
     ],

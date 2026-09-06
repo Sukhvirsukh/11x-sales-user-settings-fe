@@ -8,10 +8,11 @@ import { AuthForm, authInputClassName } from "@/features/auth";
 import { InputField } from "@/components/design/InputField";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/toast";
-import { signInSchema, type SignInFormValues } from "./schema";
-import { signInRequest } from "./queries/auth";
-import { storeAuthToken } from "@/features/auth/authRequest";
-import { useAuthStore } from "@/features/auth/storeAuth";
+import { signInSchema } from "./signInSchema";
+import type { SignInFormValues } from "./signInTypes";
+import { signInRequest } from "./signInApi";
+import { storeAuthToken } from "@/features/auth/authStorage";
+import { useAuthStore } from "@/features/auth/authStore";
 
 export default function SignInForm() {
     const [showPassword, setShowPassword] = useState(false);
@@ -29,16 +30,7 @@ export default function SignInForm() {
             });
             navigate("/");
         },
-        onError: (error) => {
-            toast.add({
-                type: "error",
-                title: "Sign-in failed",
-                description:
-                    error instanceof Error
-                        ? error.message
-                        : "Unable to sign in. Please try again.",
-            });
-        },
+
     });
 
     const {
@@ -102,16 +94,21 @@ export default function SignInForm() {
                         }
                         {...register("password")}
                     />
+                    <div className="flex items-center justify-between">
+                        <Button variant="link" size="sm" onClick={() => navigate("/forgot-password")}>
+                            Forgot Password
+                        </Button>
 
-                    <p className="text-right text-sm text-ghost">
-                        New here?{" "}
-                        <Link
-                            to="/sign-up"
-                            className="font-medium text-ghost underline underline-offset-2"
-                        >
-                            Sign up
-                        </Link>
-                    </p>
+                        <p className="text-right text-sm text-ghost">
+                            New here?{" "}
+                            <Link
+                                to="/sign-up"
+                                className="font-medium text-ghost underline underline-offset-2"
+                            >
+                                Sign up
+                            </Link>
+                        </p>
+                    </div>
                 </div>
 
                 <Button

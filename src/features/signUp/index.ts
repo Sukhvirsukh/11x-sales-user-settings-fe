@@ -1,2 +1,4 @@
 export { default as SignUpForm } from "./SignUpForm";
-export { signUpSchema, type SignUpFormValues } from "./schema";
+export { signUpSchema } from "./signUpSchema";
+export type { SignUpFormValues } from "./signUpTypes";
+export { signUpRequest } from "./signUpApi";

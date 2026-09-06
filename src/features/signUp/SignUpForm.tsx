@@ -8,10 +8,11 @@ import { AuthForm, authInputClassName } from "@/features/auth";
 import { InputField } from "@/components/design/InputField";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/toast";
-import { signUpSchema, type SignUpFormValues } from "./schema";
-import { signUpRequest } from "./queries/auth";
-import { storeAuthToken } from "@/features/auth/authRequest";
-import { useAuthStore } from "@/features/auth/storeAuth";
+import { signUpSchema } from "./signUpSchema";
+import type { SignUpFormValues } from "./signUpTypes";
+import { signUpRequest } from "./signUpApi";
+import { storeAuthToken } from "@/features/auth/authStorage";
+import { useAuthStore } from "@/features/auth/authStore";
 
 export default function SignUpForm() {
     const [showPassword, setShowPassword] = useState(false);
@@ -29,16 +30,7 @@ export default function SignUpForm() {
             });
             navigate("/");
         },
-        onError: (error) => {
-            toast.add({
-                type: "error",
-                title: "Sign-up failed",
-                description:
-                    error instanceof Error
-                        ? error.message
-                        : "Unable to create the account. Please try again.",
-            });
-        },
+
     });
 
     const {

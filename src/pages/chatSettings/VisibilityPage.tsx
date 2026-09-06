@@ -1,5 +1,5 @@
 import { PageHeader } from "@/components/shared/PageHeader";
-import Visibility from "@/features/visibility/Visibility";
+import { Visibility } from "@/features/visibility";
 
 export default function VisibilityPage() {
     return (
