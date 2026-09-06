@@ -85,8 +85,10 @@ export default function SignUpForm() {
                         containerClassName={authInputClassName}
                         startIcon={<User className="size-3" />}
                         endIcon={
-                            <button
+                            <Button
                                 type="button"
+                                variant="bare"
+                                size={null}
                                 onClick={() => setShowPassword((prev) => !prev)}
                                 className="text-ghost transition-colors hover:text-foreground"
                                 aria-label={
@@ -100,7 +102,7 @@ export default function SignUpForm() {
                                 ) : (
                                     <EyeOff className="size-4.5" />
                                 )}
-                            </button>
+                            </Button>
                         }
                         {...register("password")}
                     />

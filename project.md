@@ -31,6 +31,7 @@
 | `/sign-in` | SignInPage | Auth page (outside layout) |
 | `/sign-up` | SignUpPage | Registration page (outside layout) |
 | `/forgot-password` | ForgotPassword | Password recovery page (outside layout) |
+| `/reset-password` | ResetPassword | Password reset page (reads `?token=` from URL, outside layout) |
 | `/chat-settings` | ChatSettingsPage | Chat configuration |
 | `/chat-settings/visibility` | VisibilityPage | Chat visibility settings |
 | `/ai-training` | AiTrainingPage | AI training hub (nested routes with index redirect to knowledge-base) |
@@ -54,7 +55,7 @@ src/
 │   ├── ui/                          # shadcn primitives
 │   │   ├── accordion.tsx
 │   │   ├── badge.tsx
-│   │   ├── button.tsx
+│   │   ├── button.tsx               # cva variants: primary, outline, secondary, ghost, bare (p-0), link, destructive; sizes: sm, default, full (pass size={null} to skip padding)
 │   │   ├── checkbox.tsx
 │   │   ├── dialog.tsx
 │   │   ├── field.tsx
@@ -129,7 +130,7 @@ src/
 │   ├── auth/
 │   │   ├── index.ts                 # Auth exports (AuthForm, Background, useAuthStore, authRequest, token helpers, types)
 │   │   ├── AuthForm.tsx             # Auth form component
-│   │   ├── Background.tsx           # Auth background component
+│   │   ├── Background.tsx           # Auth background component (decorative SVG lines)
 │   │   ├── authTypes.ts            # Auth response, user, store, and form types
 │   │   ├── authApi.ts              # Auth requests via shared apiFetch
 │   │   ├── authStorage.ts          # JWT storage helpers (vitalb.jwt key)
@@ -152,6 +153,12 @@ src/
 │   │   ├── forgotPasswordSchema.ts  # Forgot password validation schema (Zod)
 │   │   ├── forgotPasswordTypes.ts   # Forgot password form types
 │   │   └── forgotPasswordApi.ts     # Forgot password API request (apiFetch)
+│   ├── resetPassword/
+│   │   ├── index.ts                 # Reset password exports
+│   │   ├── ResetPasswordForm.tsx    # Reset password form (password + confirm password, react-hook-form + useMutation)
+│   │   ├── resetPasswordSchema.ts   # Reset password validation schema (Zod, confirm match via .refine)
+│   │   ├── resetPasswordTypes.ts    # Reset password form types
+│   │   └── resetPasswordApi.ts      # Reset password API request (apiFetch, POST /auth/reset-password)
 │   ├── dashboard/                   # Empty - feature logic not yet created
 │   ├── knowledgeBase/               # Empty - feature logic not yet created
 │   ├── visibility/
@@ -208,6 +215,7 @@ src/
 │   ├── SignInPage.tsx               # Sign-in page
 │   ├── SignUpPage.tsx               # Sign-up page
 │   ├── ForgotPassword.tsx           # Forgot password page (Background + ForgotPasswordForm)
+│   ├── ResetPassword.tsx            # Reset password page (Background + ResetPasswordForm)
 │   ├── AskMePage.tsx                # Ask me page
 │   ├── ErrorPage.tsx                # Error page (reuses AppCard + Button for reload/home)
 │   ├── SettingsPage.tsx             # Settings page
@@ -221,11 +229,11 @@ src/
 │           ├── KnowledgeBaseTab.tsx # Knowledge base tab
 │           ├── CorrectionsTab.tsx   # Corrections tab
 │           └── PromptToolsTab.tsx   # Prompt tools tab
-├── hooks/                           # Empty
 ├── lib/
 │   ├── utils.ts                     # cn() (clsx+twMerge), getInitials()
+│   ├── formSchema.ts                # Shared Zod schemas (emailSchema, passwordSchema)
 │   ├── api.ts                       # Shared apiFetch wrapper (auth, error handling, toast)
-│   └── queryClient.ts              # TanStack Query client
+│   └── queryClient.ts               # TanStack Query client (retry: false, refetchOnWindowFocus: false)
 ├── config/
 │   └── routes.tsx                   # createBrowserRouter definition
 ├── stores/
@@ -235,26 +243,40 @@ src/
 │   ├── hero.png
 │   ├── react.svg
 │   ├── vite.svg
-│   └── sidebar/Icons                # Sidebar navigation icons
+│   ├── auth/
+│   │   ├── background.png
+│   │   ├── google.svg
+│   │   ├── facebook.svg
+│   │   ├── shopify.svg
+│   │   └── Background.tsx           # EMPTY leftover stub (unused; real Background is features/auth/Background.tsx)
+│   ├── integrations/
+│   │   ├── shopify.svg
+│   │   └── backend.svg
+│   ├── chatSettings/
+│   │   └── preview-background.png
+│   └── sidebar/
+│       └── Icons.tsx                # Sidebar navigation icons
 ├── App.tsx                          # RouterProvider
-├── main.tsx                         # React root mount
-└── index.css                        # Tailwind v4 imports, CSS variables (design tokens)
+├── main.tsx                         # React root mount (RootErrorBoundary > QueryClientProvider > Toaster > App)
+└── index.css                        # Tailwind v4 imports, theme tokens, font scale, CSS variables
 ```
 
 ## Design Tokens (index.css)
 
-Custom CSS variables mapped to Tailwind v4 theme:
+Tailwind v4 `@theme` maps semantic color tokens to CSS variables in `:root`. Font scale is overridden to a 10–28px custom scale (`text-xs` = 10px through `text-3xl` = 24px, base `text-base` = 14px). Dark mode is opt-in via `@custom-variant dark` (only applies under a `.dark` ancestor, not OS preference).
 
-- **Backgrounds**: `--background` (#FFF), `--sidebar-bg` (#ffffff), `--card-bg` (#f8fafd), `--card-nested-bg` (#ffffff)
+- **Backgrounds**: `--background` (#FFF), `--sidebar-bg` (#ffffff), `--light` (#F7F8FB), `--card-bg` (#f8fafd), `--card-nested-bg` (#ffffff), `--muted` (#F1F1F1), `--light-gray` (#F7F7F7)
 - **Primary**: `--primary` (#3576F3), `--primary-hover` (#236efa), `--primary-foreground` (#ffffff)
-- **Borders**: `--border` (#e2e8f0), `--border-subtle` (#edf2f7), `--border-blue` (#dbeafe), `--border-light` (#e6e6e8), `--border-soft` (rgba(0,0,0,0.21)), `--border-strong` (#c7c7cc)
+- **Borders**: `--border` (#e2e8f0), `--border-subtle` (#edf2f7), `--border-blue` (#dbeafe), `--border-light` (#e6e6e8), `--border-soft` (rgba(0,0,0,0.21)), `--border-strong` (#c7c7cc), `--border-tab` (#DADADA), `--border-gray` (#808080), `--input` (#c7c7cc), `--ring` (#2f6df3)
 - **Text**: `--foreground` (#0f172a), `--muted-foreground` (#64748b), `--label-text` (#94a3b8)
 - **Active states**: `--active-item-bg` (#f0f7ff), `--active-item-border` (#dbeafe), `--active-tab-bg` (#ffffff), `--active-tab-border` (#e2e8f0)
-- **Badges**: `--badge-active-bg` (#CDFEE1), `--badge-active-text` (#166534), `--badge-active-dot` (#16a34a), `--badge-inactive-bg` (#FFDBDB)
-- **Status**: `--status-online` (#D1EFC0), `--danger` (#FF7B7E), `--success` (#47941E)
-- **Muted**: `--muted` (#F1F1F1), `--light-gray` (#F7F7F7)
+- **Badges & status**: `--badge-active-bg` (#CDFEE1), `--badge-active-text` (#166534), `--badge-active-dot` (#16a34a), `--badge-inactive-bg` (#FFDBDB), `--status-online` (#D1EFC0)
+- **Status / semantic**: `--danger` (#FF7B7E), `--danger-light` (#FFDBDB), `--danger-dark` (#FF0000), `--success` (#47941E), `--success-light` (#E4F5E6)
 - **Secondary**: `--secondary-button-bg` (#e2e8f0), `--secondary-button-hover` (#cbd5e1)
 - **Chat**: `--chat-bg` (#EEEEEE)
+- **Sections**: `--section-border` (rgba(53,118,243,0.20)), `--section-bg` (rgba(232,238,251,0.50))
+- **Table**: `--table-header` (#E8EEFB)
+- **Neutrals**: `--black` (#000), `--gray` (#808080), `--ghost` (#808080)
 - **Shadows**: `--shadow-blue`, `--shadow-auth`, `--shadow-panel`
 
 Use these tokens via Tailwind classes (e.g. `bg-background`, `text-primary`, `border-border-subtle`) rather than hardcoded hex values.
@@ -280,7 +302,7 @@ Defined in `src/components/layout/sidebar/sideNav.ts`:
 - All API requests use `VITE_AUTH_API_BASE_URL` from the root `.env` file via the shared `apiFetch` wrapper (`src/lib/api.ts`). The wrapper automatically attaches Bearer tokens and surfaces errors via toast. Restart the Vite dev server after changing env vars.
 - Path alias `@/*` maps to `./src/*` (defined in `tsconfig.json` and `tsconfig.app.json`).
 - **Pages** are thin wrappers — they should compose feature-specific components, not contain business logic.
-- **Features** contain domain-specific logic organized as `components/`, `hooks/`, `api/`, `types/`.
+- **Features** contain domain-specific logic; auth flows follow a consistent layout: `XxxForm.tsx` (react-hook-form + useMutation), `xxxSchema.ts` (Zod), `xxxTypes.ts` (inferred types), `xxxApi.ts` (apiFetch request), `index.ts` barrel.
 - **Components** are split into `ui/` (shadcn primitives), `layout/` (app shell), `shared/` (reusable app components), `design/` (design system components).
 - The sidebar supports both desktop (collapsible, `w-[187px]` ↔ `w-[72px]`) and mobile (full-screen overlay).
 - Auth check uses `localStorage.getItem("vitalb.jwt")` with a hardcoded `true` fallback (dev mode).
@@ -289,7 +311,8 @@ Defined in `src/components/layout/sidebar/sideNav.ts`:
 - Chat Settings page includes integrations, channels, configuration, and visibility sub-routes.
 - Settings page uses nested routes for role-n-access, plan, payments, and store management. The index route redirects to `role-n-access`.
 - The `unsavedChangesBar` shared component provides a warning system for unsaved changes.
-- `forgotPassword` feature uses TanStack Query for password reset mutations.
+- Password recovery flows live in `forgotPassword` (email request, `POST /auth/forgot-password`) and `resetPassword` (new password + confirm, `POST /auth/reset-password`); both use TanStack Query mutations, and the reset form reads its token from the `?token=` query param.
+- `src/assets/auth/Background.tsx` is an empty unused stub — the auth background component lives at `src/features/auth/Background.tsx`.
 
 ## Key Conventions
 
@@ -303,3 +326,4 @@ Defined in `src/components/layout/sidebar/sideNav.ts`:
 - Feature-specific business logic goes in `src/features/`.
 - Pages compose features and should not contain business logic directly.
 - Use `apiFetch` from `src/lib/api.ts` for all API calls (handles auth, errors, toasts).
+- Icon-only buttons use `Button variant="bare" size={null}` (the `bare` variant carries `p-0`; passing a size would override it with padding).

@@ -27,7 +27,7 @@ const buttonVariants = cva(
 
         // No border, no background — just children
         bare:
-          "border-transparent bg-transparent hover:bg-zinc-50",
+          "border-transparent bg-transparent p-0 hover:bg-zinc-50",
 
         // Simple Link
         link:

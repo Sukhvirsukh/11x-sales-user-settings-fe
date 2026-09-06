@@ -20,6 +20,7 @@ import { Plan } from "@/features/settings/plan";
 import { Payments } from "@/features/settings/payments";
 import { Store } from "@/features/settings/store";
 import ForgotPassword from "@/pages/ForgotPassword";
+import ResetPassword from "@/pages/ResetPassword";
 
 export const router = createBrowserRouter([
   {
@@ -28,6 +29,7 @@ export const router = createBrowserRouter([
       { path: "/sign-in", element: <SignInPage /> },
       { path: "/sign-up", element: <SignUpPage /> },
       { path: "/forgot-password", element: <ForgotPassword /> },
+      { path: "/reset-password", element: <ResetPassword /> },
       {
         element: <AppLayout />,
         children: [
