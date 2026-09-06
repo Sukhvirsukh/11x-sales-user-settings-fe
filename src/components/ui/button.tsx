@@ -39,11 +39,17 @@ const buttonVariants = cva(
 
       },
       size: {
-        sm: "p-[8px] text-sm rounded-[10px]",
-        default: "p-[10px] text-base rounded-[10px]",
-        full: "w-full h-10 px-5 text-base rounded-[10px]",
+        sm: "px-[10px] py-[6px] text-[12px] md:p-[8px] md:text-sm rounded-[10px]",
+        default: "px-[10px] py-[6px] text-[12px] md:p-[10px] md:text-base rounded-[10px]",
+        full: "w-full px-[10px] py-[6px] text-[12px] md:h-10 md:px-5 md:py-0 md:text-base rounded-[10px]",
       },
     },
+    compoundVariants: [
+      {
+        variant: "bare",
+        className: "p-0 md:p-0",
+      },
+    ],
     defaultVariants: {
       variant: "primary",
       size: "default",

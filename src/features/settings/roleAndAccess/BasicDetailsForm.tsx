@@ -13,12 +13,15 @@ export default function BasicDetailsForm() {
     return (
         <Modal
             trigger={
+                /* Mobile: icon-only button next to the avatar.
+                   Desktop: full "Edit details" button. */
                 <Button
                     variant="ghost"
                     size="default"
-                    className="text-md "
+                    className="px-2.5 py-1.5 sm:px-[10px] sm:py-[10px] text-md"
                 >
-                    Edit details <SquarePen size={14} className="ml-1" />
+                    <span className="hidden sm:inline">Edit details</span>
+                    <SquarePen size={14} className="ml-1" />
                 </Button>
             }
             title="Edit details"

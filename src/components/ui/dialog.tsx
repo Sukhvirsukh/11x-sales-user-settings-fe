@@ -51,7 +51,13 @@ function DialogContent({
       <DialogPrimitive.Popup
         data-slot="dialog-content"
         className={cn(
-          "fixed top-1/2 left-1/2 z-50 grid w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-6 rounded-xl bg-popover p-6 text-sm text-popover-foreground ring-1 ring-foreground/10 duration-100 outline-none sm:max-w-md data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
+          /* Base + mobile (<sm): bottom sheet — full-bleed, anchored to the
+             bottom edge, slides up/down. */
+          "fixed left-0 right-0 bottom-0 z-50 grid w-full max-w-[calc(100%-2rem)] max-sm:max-w-full max-sm:rounded-b-none max-sm:max-h-[calc(100dvh-2rem)] max-sm:overflow-y-auto max-sm:duration-300 gap-6 rounded-xl bg-popover p-6 text-sm text-popover-foreground ring-1 ring-foreground/10 duration-100 outline-none",
+          "max-sm:data-open:slide-in-from-bottom max-sm:data-closed:slide-out-to-bottom",
+          /* Desktop (sm+): original centered dialog with fade/zoom. */
+          "sm:left-1/2 sm:right-auto sm:bottom-auto sm:top-1/2 sm:max-w-md sm:-translate-x-1/2 sm:-translate-y-1/2",
+          "data-open:animate-in data-open:fade-in-0 sm:data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 sm:data-closed:zoom-out-95",
           className
         )}
         {...props}
