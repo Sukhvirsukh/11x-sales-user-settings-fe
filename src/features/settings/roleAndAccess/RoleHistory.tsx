@@ -80,16 +80,16 @@ export default function RoleHistory() {
                 </div>
             }
             rowActions={() => (
-                <div className="flex items-center md:gap-0.5 gap-2">
+                <div className="flex items-center gap-2">
                     <Button variant="bare" size="sm">
-                        <SquarePen className="size-4" />
+                        <SquarePen className="size-4 text-gray" />
                     </Button>
                     <Button variant="bare" size="sm">
-                        <Trash className="size-4" />
+                        <Trash className="size-4 text-gray" />
                     </Button>
                 </div>
             )}
-            className="w-full"
+            className="w-full md:[&_td:first-child:has([role=checkbox])+td]:pl-0"
         />
     )
 }
