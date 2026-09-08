@@ -32,7 +32,7 @@ export default function SidebarUserCard({ isCollapsed, name, email, avatarUrl }:
                 render={
                     <button
                         type="button"
-                        className={`rounded-[10px] bg-blue-50/60 border border-blue-100/80 py-2 px-1.5 flex w-full items-center transition-all ${isCollapsed ? "justify-center p-1.5" : "justify-between"
+                        className={`rounded-[10px] bg-table-header border border-primary/20 py-2 px-1.5 flex w-full items-center transition-all ${isCollapsed ? "justify-center p-1.5" : "justify-between"
                             }`}
                         aria-label="Open account menu"
                     />
@@ -51,7 +51,7 @@ export default function SidebarUserCard({ isCollapsed, name, email, avatarUrl }:
                     }
                     {!isCollapsed && (
                         <div className="flex flex-col text-left min-w-0">
-                            <span className="font-semibold text-zinc-800 truncate">
+                            <span className="text-zinc-800 truncate">
                                 {name}
                             </span>
                             <span className="text-sm text-zinc-400 truncate">
@@ -62,7 +62,7 @@ export default function SidebarUserCard({ isCollapsed, name, email, avatarUrl }:
                 </div>
 
                 {!isCollapsed && (
-                    <span className="size-4 rounded-full bg-white flex items-center justify-center text-zinc-400 shadow-2xs shrink-0">
+                    <span className="size-4 flex items-center justify-center text-zinc-400 shadow-2xs shrink-0">
                         <ChevronRight className="size-3" />
                     </span>
                 )}

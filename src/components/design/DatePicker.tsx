@@ -1,6 +1,6 @@
 import * as React from "react"
 import { format as formatDate } from "date-fns"
-import { ChevronDownIcon, Info } from "lucide-react"
+import { Calendar as CalendarIcon, Info } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 import { Button } from "@/components/ui/button"
@@ -110,7 +110,7 @@ const DatePicker = React.forwardRef<HTMLButtonElement, DatePickerProps>(
                                     disabled={disabled}
                                     data-empty={!selectedDate}
                                     className={cn(
-                                        "h-full w-full justify-between rounded-[inherit] px-3.5 text-left text-sm font-normal text-slate-800 hover:bg-transparent focus-visible:ring-0 dark:text-slate-200 data-[empty=true]:text-slate-400 disabled:cursor-not-allowed",
+                                        "h-full w-full justify-between rounded-[inherit] px-3.5 md:px-3.5 text-left text-sm font-normal text-slate-800 hover:bg-transparent focus-visible:ring-0 dark:text-slate-200 data-[empty=true]:text-slate-400 disabled:cursor-not-allowed",
                                         className
                                     )}
                                     aria-describedby={
@@ -127,15 +127,30 @@ const DatePicker = React.forwardRef<HTMLButtonElement, DatePickerProps>(
                                     ) : (
                                         <span>{placeholder}</span>
                                     )}
-                                    <ChevronDownIcon
+                                    <CalendarIcon
                                         className="size-4 shrink-0 text-ghost"
                                         aria-hidden
                                     />
                                 </Button>
                             }
                         />
-                        <PopoverContent className="w-auto p-0" align="start">
+                        <PopoverContent
+                            className="w-auto overflow-hidden rounded-xl border border-section-border bg-white p-0 font-sans text-sm text-slate-800 shadow-panel ring-0 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200"
+                            align="start"
+                            sideOffset={8}
+                        >
                             <Calendar
+                                className="p-3 [--cell-radius:10px] [--cell-size:2rem] [&_button[data-day]]:p-0 [&_button[data-day]]:text-sm [&_button[data-day]]:text-inherit [&_button[data-day]:hover]:bg-active-bg [&_button[data-selected-single=true]]:bg-primary [&_button[data-selected-single=true]]:text-white [&_button[data-selected-single=true]:hover]:bg-primary-hover"
+                                classNames={{
+                                    month_caption: "flex h-(--cell-size) w-full items-center justify-center rounded-lg bg-light px-(--cell-size) dark:bg-slate-800",
+                                    caption_label: "text-sm font-medium select-none",
+                                    button_previous: "inline-flex size-(--cell-size) items-center justify-center rounded-lg text-ghost transition-colors hover:bg-active-bg hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/20 aria-disabled:opacity-50",
+                                    button_next: "inline-flex size-(--cell-size) items-center justify-center rounded-lg text-ghost transition-colors hover:bg-active-bg hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/20 aria-disabled:opacity-50",
+                                    weekday: "flex-1 text-sm font-normal text-ghost select-none",
+                                    today: "rounded-[10px] bg-active-bg text-primary",
+                                    outside: "text-ghost opacity-50",
+                                    disabled: "text-ghost opacity-40",
+                                }}
                                 mode="single"
                                 selected={selectedDate}
                                 defaultMonth={selectedDate ?? defaultValue}

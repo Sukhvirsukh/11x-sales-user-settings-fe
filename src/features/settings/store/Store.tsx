@@ -6,6 +6,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { ListFilter, Search, SquarePen, Trash } from "lucide-react"
 import AddStore from "./AddStore"
+import { Badge } from "@/components/ui/badge"
 
 const columns: Column[] = [
     {
@@ -17,7 +18,19 @@ const columns: Column[] = [
     { key: "storeName", header: "Store Name", width: "280px" },
     { key: "storeUrl", header: "Store URL" },
     { key: "storeOwner", header: "Store Owner" },
-    { key: "status", header: "Status", align: "center" },
+    {
+        key: "status",
+        header: "Status",
+        align: "center",
+        render: (value) => {
+            const status = String(value)
+            return (
+                <Badge variant={status === "Active" ? "default" : "destructive"}>
+                    {status}
+                </Badge>
+            )
+        },
+    },
     { key: "startDate", header: "Start date", align: "right" },
 ]
 
@@ -78,8 +91,6 @@ export function Store() {
                                     endIcon={
                                         <ListFilter className="size-4" />
                                     }
-                                    containerClassName="h-[35px] bg-transparent!"
-                                    className="bg-transparent!"
                                 />
                             </div>
                             <AddStore />
@@ -95,7 +106,7 @@ export function Store() {
                             </Button>
                         </div>
                     )}
-                    className="w-full md:[&_td:first-child:has([role=checkbox])+td]:pl-0"
+                    className="w-full md:[&_th:nth-child(2)]:pl-0 md:[&_td:first-child:has([role=checkbox])+td]:pl-0"
                 />
 
             </div>

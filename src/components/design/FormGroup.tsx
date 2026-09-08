@@ -5,6 +5,10 @@ import { FieldGroup } from "@/components/ui/field";
 
 const formGroupVariants = cva("", {
     variants: {
+        col: {
+            1: "",
+            2: "md:grid md:grid-cols-2",
+        },
         gap: {
             xs: "gap-2", //8px
             sm: "gap-2.5", //10px
@@ -14,6 +18,7 @@ const formGroupVariants = cva("", {
         },
     },
     defaultVariants: {
+        col: 1,
         gap: "lg",
     },
 });
@@ -23,12 +28,13 @@ type CustomFormGroupProps = ComponentProps<typeof FieldGroup> &
 
 export function FormGroup({
     className,
+    col = 1,
     gap = "lg",
     ...props
 }: CustomFormGroupProps) {
     return (
         <FieldGroup
-            className={cn(formGroupVariants({ gap }), className)}
+            className={cn(formGroupVariants({ col, gap }), className)}
             {...props}
         />
     );

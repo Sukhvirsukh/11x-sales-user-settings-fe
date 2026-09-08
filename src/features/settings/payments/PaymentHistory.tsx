@@ -1,11 +1,16 @@
-import CustomTable, { type Column } from "@/components/design/CustomTable"
+
+import type { Column } from "@/components/design/CustomTable"
+import CustomTable from "@/components/design/CustomTable"
 import { InputField } from "@/components/design/InputField"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { ListFilter, Search, SquarePen, Trash } from "lucide-react"
-import AddRoleForm from "./AddRoleForm"
+import AddStore from "../store/AddStore"
+import AddNewPayment from "./AddNewPayment"
+
+
 
 const columns: Column[] = [
     {
@@ -14,9 +19,7 @@ const columns: Column[] = [
         width: "56px",
         render: (_, row) => <Checkbox aria-label={`Select ${row.name}`} />,
     },
-    { key: "name", header: "Name", width: "280px" },
-    { key: "email", header: "Mail Id" },
-    { key: "role", header: "Role" },
+    { key: "invoiceNumber", header: "Invoice Number", width: "280px" },
     {
         key: "status",
         header: "Status",
@@ -30,37 +33,33 @@ const columns: Column[] = [
             )
         },
     },
-    { key: "startDate", header: "Start date", align: "right" },
+    { key: "startDate", header: "Start date", },
+    { key: "amount", header: "Amount", align: "right" },
+    { key: "method", header: "Method", align: "right" },
 ]
 
 const data = [
     {
-        name: "Karl Kin",
-        email: "Kia44co.com",
-        role: "Subordinate",
+        invoiceNumber: "S456RT789P1116",
         status: "Active",
         startDate: "10/02/26",
+        amount: "INR 500",
+        method: "Card"
     },
     {
-        name: "Adam Uim",
-        email: "Kia44co.com",
-        role: "Subordinate",
+        invoiceNumber: "S456RT789P1216",
         status: "Active",
         startDate: "10/02/26",
-    },
-    {
-        name: "Sara Vem",
-        email: "Kia44co.com",
-        role: "Subordinate",
-        status: "Inactive",
-        startDate: "10/02/26",
+        amount: "INR 400",
+        method: "AMount"
     },
 ]
 
-export default function RoleHistory() {
+export default function PaymentHistory() {
     return (
+
         <CustomTable
-            title="Role history"
+            title="Payment history"
             columns={columns}
             data={data}
             headerActions={
@@ -92,7 +91,7 @@ export default function RoleHistory() {
                             }
                         />
                     </div>
-                    <AddRoleForm />
+                    <AddNewPayment />
                 </div>
             }
             rowActions={() => (

@@ -2,7 +2,7 @@ import AppSection from "@/components/design/AppSectoin";
 import Heading from "@/components/design/Heading";
 import { ToggleField } from "@/components/design/ToggleField";
 import { useState } from "react";
-import { DetailGroup, DetailItem } from "./BasicDetails";
+import { DetailGroup, DetailItem } from "@/components/design/DetailContainer";
 
 interface PermissionProps {
     name: string
@@ -75,8 +75,8 @@ export default function Permissions() {
                 <Heading size="lg" className="font-medium">
                     Other Infomation
                 </Heading>
-                <div className="flex items-start gap-2.5 w-full">
-                    <DetailGroup className="pl-0">
+                <div className="flex items-start w-full">
+                    <DetailGroup className="pl-0!">
                         <DetailItem
                             label="Mode"
                             value={

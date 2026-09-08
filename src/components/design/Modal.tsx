@@ -59,7 +59,7 @@ export default function Modal({
                     </DialogHeader>
                 )}
 
-                <div className="px-4 py-2.5">{children}</div>
+                <div className="px-4 py-3.5">{children}</div>
 
                 {(primaryAction || secondaryAction || closeAction) && (
                     <div className="flex items-start gap-2.5 px-4 pb-4 w-full">
