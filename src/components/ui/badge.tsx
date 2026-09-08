@@ -32,13 +32,14 @@ function Badge({
   className,
   variant = "default",
   render,
+  indigator = true,
   ...props
-}: useRender.ComponentProps<"span"> & VariantProps<typeof badgeVariants>) {
+}: useRender.ComponentProps<"span"> & VariantProps<typeof badgeVariants> & { indigator?: boolean }) {
   return useRender({
     defaultTagName: "span",
     props: mergeProps<"span">(
       {
-        className: cn(badgeVariants({ variant }), className),
+        className: cn(badgeVariants({ variant }), !indigator && "after:hidden", className),
       },
       props
     ),

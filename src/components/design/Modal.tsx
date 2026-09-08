@@ -2,14 +2,13 @@ import {
     Dialog,
     DialogClose,
     DialogContent,
-    DialogDescription,
     DialogHeader,
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
-import { type ReactNode } from "react";
+import { type ReactElement, type ReactNode } from "react";
 
 interface ModalAction {
     label: string;
@@ -26,7 +25,7 @@ interface ModalCloseAction {
 interface ModalProps {
     open?: boolean;
     onOpenChange?: (open: boolean) => void;
-    trigger?: ReactNode;
+    trigger?: ReactElement;
     title?: string;
     children: ReactNode;
     primaryAction?: ModalAction;
@@ -46,7 +45,7 @@ export default function Modal({
 }: ModalProps) {
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            {trigger && <DialogTrigger>{trigger}</DialogTrigger>}
+            {trigger && <DialogTrigger render={trigger} />}
             <DialogContent showCloseButton={false} className="max-w-md p-0 gap-0 bg-white rounded-[10px] ring-0 border-0 shadow-[0_40px_4px_rgba(70,132,250,0.06),0_20px_8px_rgba(70,132,250,0.05)]">
                 {title && (
                     <DialogHeader className="flex flex-row justify-between items-center py-2.5 px-4 bg-[#F7F8FB] rounded-t-[10px]">
