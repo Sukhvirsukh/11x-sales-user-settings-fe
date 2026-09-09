@@ -8,12 +8,17 @@ interface AppCardProps {
     className?: string;
     header?: string;
     actions?: ReactNode;
+    padding?: "default" | "sm";
 }
 
-export default function AppCard({ children, className, header, actions }: AppCardProps) {
+export default function AppCard({ children, className, header, actions, padding = "default" }: AppCardProps) {
     return (
         <div
-            className={cn("w-full rounded-[10px] border border-section-border bg-white p-2.5 md:p-4", className)}
+            className={cn(
+                "w-full rounded-[10px] border border-section-border bg-white",
+                padding === "sm" ? "p-2.5" : "p-2.5 md:p-4",
+                className,
+            )}
         >
             {(header || actions) && (
                 <div className="mb-2.5 flex items-start justify-between gap-4">

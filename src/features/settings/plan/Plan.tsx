@@ -109,55 +109,53 @@ export function Plan() {
     };
 
     return (
-        <div className="flex flex-col items-start gap-3.5 pb-5 pt-2">
-            <div className="flex p-4 flex-col items-start gap-3.5 rounded-[10px] border border-blue-100/70 bg-white shadow-blue w-full overflow-hidden">
-                <AppSection className="w-full min-w-0 gap-0! overflow-hidden">
-                    <div className="flex w-full items-center justify-between">
-                        <Heading size="lg">Plan</Heading>
-                        <div className="flex items-center gap-2 lg:hidden">
-                            <Button variant="secondary" size="sm" className="size-6 rounded-md bg-white p-0!" aria-label="Show previous plan" onClick={() => showPlan(-1)}>
-                                <ChevronLeft aria-hidden="true" className="size-3.5" />
-                            </Button>
-                            <Button variant="secondary" size="sm" className="size-6 rounded-md bg-white p-0!" aria-label="Show next plan" onClick={() => showPlan(1)}>
-                                <ChevronRight aria-hidden="true" className="size-3.5" />
-                            </Button>
-                        </div>
+        <>
+            <AppSection className="w-full min-w-0 gap-0! overflow-hidden">
+                <div className="flex w-full items-center justify-between">
+                    <Heading size="lg">Plan</Heading>
+                    <div className="flex items-center gap-2 lg:hidden">
+                        <Button variant="secondary" size="sm" className="size-6 rounded-md bg-white p-0!" aria-label="Show previous plan" onClick={() => showPlan(-1)}>
+                            <ChevronLeft aria-hidden="true" className="size-3.5" />
+                        </Button>
+                        <Button variant="secondary" size="sm" className="size-6 rounded-md bg-white p-0!" aria-label="Show next plan" onClick={() => showPlan(1)}>
+                            <ChevronRight aria-hidden="true" className="size-3.5" />
+                        </Button>
                     </div>
+                </div>
 
-                    <div ref={carouselRef} className={styles.carousel} role="region" aria-label="Available plans" tabIndex={0}>
-                        {
-                            plans.map((plan) => (
-                                <PlanCard key={plan.label} {...plan} />
-                            ))
-                        }
-                    </div>
-                </AppSection>
+                <div ref={carouselRef} className={styles.carousel} role="region" aria-label="Available plans" tabIndex={0}>
+                    {
+                        plans.map((plan) => (
+                            <PlanCard key={plan.label} {...plan} />
+                        ))
+                    }
+                </div>
+            </AppSection>
 
-                <AppSection
-                    className="w-full"
-                >
-                    <Heading size="lg">Other details</Heading>
-                    <AppCard>
-                        <DetailContainer fullWidth={true} equalWidth={true}>
-                            <DetailGroup>
-                                <DetailItem label="Start date" value="12th May 2026" />
-                            </DetailGroup>
-                            <DetailGroup>
-                                <DetailItem label="End date" value="12th June 2026" />
-                            </DetailGroup>
-                            <DetailGroup>
-                                <DetailItem label="Plan" value="Basic" />
-                            </DetailGroup>
-                            <DetailGroup>
-                                <DetailItem label="Point used" value="127/990" />
-                            </DetailGroup>
-                            <DetailGroup>
-                                <DetailItem label="Next cycle" value="12th June 2026" />
-                            </DetailGroup>
-                        </DetailContainer>
-                    </AppCard>
-                </AppSection>
-            </div>
-        </div>
+            <AppSection
+                className="w-full"
+            >
+                <Heading size="lg">Other details</Heading>
+                <AppCard>
+                    <DetailContainer fullWidth={true} equalWidth={true}>
+                        <DetailGroup>
+                            <DetailItem label="Start date" value="12th May 2026" />
+                        </DetailGroup>
+                        <DetailGroup>
+                            <DetailItem label="End date" value="12th June 2026" />
+                        </DetailGroup>
+                        <DetailGroup>
+                            <DetailItem label="Plan" value="Basic" />
+                        </DetailGroup>
+                        <DetailGroup>
+                            <DetailItem label="Point used" value="127/990" />
+                        </DetailGroup>
+                        <DetailGroup>
+                            <DetailItem label="Next cycle" value="12th June 2026" />
+                        </DetailGroup>
+                    </DetailContainer>
+                </AppCard>
+            </AppSection>
+        </>
     )
 }

@@ -50,7 +50,7 @@ export default function Visibility() {
 
     return (
         <FormProvider {...form}>
-            <div className="flex h-full min-h-0 min-w-0 flex-col overflow-hidden">
+            <div className="flex h-full min-h-0 min-w-0 flex-col">
                 <div className="relative flex min-h-0 flex-1 flex-row items-stretch gap-4">
                     {isSettingsOpen && (
                         <button
@@ -62,12 +62,12 @@ export default function Visibility() {
                     )}
 
                     <aside
-                        className={`min-h-0 min-w-0 overflow-y-auto transition-[flex-basis,transform] duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] ${isSettingsOpen
+                        className={`min-h-0 min-w-0 overflow-y-auto rounded-[10px] border border-border bg-background shadow-blue transition-[flex-basis,transform] duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] ${isSettingsOpen
                             ? "absolute inset-y-0 left-0 z-50 w-[min(92vw,360px)]"
                             : "pointer-events-none absolute inset-y-0 left-0 z-50 w-[min(92vw,360px)] -translate-x-full"
                             } md:pointer-events-auto md:relative md:inset-auto md:z-auto md:block md:h-full md:w-auto md:shrink-0 md:translate-x-0 ${isMaximized ? "md:basis-[70%]" : "md:basis-[30%] md:max-w-75"}`}
                     >
-                        <div className="h-fit min-h-full min-w-0 rounded-[10px] border border-border bg-background px-3 shadow-panel sm:px-4 md:min-h-0">
+                        <div className="h-fit min-h-full min-w-0 px-3 sm:px-4 md:min-h-0">
                             <Accordion>
                                 {allAccordions.map((tab) => (
                                     <AccordionItem key={tab.id} value={tab.id}>
@@ -84,7 +84,7 @@ export default function Visibility() {
                     </aside>
 
                     <div
-                        className={`flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-[10px] border border-border bg-card shadow-panel transition-[flex-basis] duration-300 ease-in-out ${isMaximized ? "md:basis-[30%] md:flex-none" : "min-w-0 flex-1"}`}
+                        className={`flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-[10px] border border-border bg-card shadow-blue transition-[flex-basis] duration-300 ease-in-out ${isMaximized ? "md:basis-[30%] md:flex-none" : "min-w-0 flex-1"}`}
                     >
                         <Preview
                             isMaximized={isMaximized}

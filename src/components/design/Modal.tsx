@@ -48,11 +48,11 @@ export default function Modal({
             {trigger && <DialogTrigger render={trigger} />}
             <DialogContent showCloseButton={false} className="max-w-md p-0 gap-0 bg-white rounded-[10px] ring-0 border-0 shadow-[0_40px_4px_rgba(70,132,250,0.06),0_20px_8px_rgba(70,132,250,0.05)]">
                 {title && (
-                    <DialogHeader className="flex flex-row justify-between items-center py-2.5 px-4 bg-[#F7F8FB] rounded-t-[10px]">
+                    <DialogHeader className="flex flex-row justify-between items-center py-2.5 px-4 bg-table-header rounded-t-[10px]">
                         <DialogTitle className="text-lg font-semibold font-inter">
                             {title}
                         </DialogTitle>
-                        <DialogClose className="p-1">
+                        <DialogClose className="p-1 cursor-pointer">
                             <X size={16} className="text-[#1E1E1E]" />
                         </DialogClose>
                     </DialogHeader>
