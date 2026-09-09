@@ -30,7 +30,7 @@ export default function Visibility() {
 
     useEffect(() => {
         if (query.data) {
-
+            console.log("query.data", query.data);
             form.reset(query.data);
             setIsFormReady(true);
         }

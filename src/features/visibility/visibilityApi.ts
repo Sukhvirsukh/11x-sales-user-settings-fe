@@ -6,6 +6,12 @@ type ChatDesignResponse = VisibilityFields & {
     userId?: string;
 };
 
+type ChatDesignApiResponse = {
+    success: boolean;
+    message: string;
+    data: ChatDesignResponse;
+};
+
 function toVisibilityFields(response: ChatDesignResponse): VisibilityFields {
     return {
         aiAgentName: response.aiAgentName,
@@ -40,7 +46,8 @@ function toVisibilityFields(response: ChatDesignResponse): VisibilityFields {
 }
 
 export async function getVisibility(): Promise<VisibilityFields> {
-    return toVisibilityFields(await apiFetch<ChatDesignResponse>("/chat-design"));
+    const response = await apiFetch<ChatDesignApiResponse>("/chat-design");
+    return toVisibilityFields(response.data);
 }
 
 export async function saveVisibility(values: VisibilityFields): Promise<VisibilityFields> {
