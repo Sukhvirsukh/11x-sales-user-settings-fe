@@ -14,7 +14,7 @@ export function RoleAndAccess() {
                 {/* Basic details */}
                 <BasicDetails />
 
-                {user?.role === 'admin' &&
+                {user?.role === 'ADMIN' &&
                     <>
                         <Permissions />
 

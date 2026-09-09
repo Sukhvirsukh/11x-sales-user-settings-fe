@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 import type { ChatBubbleType } from "@/components/design/ChatBubbleTypeSelector";
 
 export interface ChatBubbleButtonProps
-    extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, "children"> {
+    extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, "children" | "type"> {
     primaryColor?: string;
     placeholder?: string;
     size?: number;

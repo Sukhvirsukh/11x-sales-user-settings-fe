@@ -114,7 +114,6 @@ export function ChatBubbleTypeSelector({
     onValueChange,
     label = "Chat bubble type",
     error,
-    id,
     disabled = false,
     className,
 }: ChatBubbleTypeSelectorProps) {

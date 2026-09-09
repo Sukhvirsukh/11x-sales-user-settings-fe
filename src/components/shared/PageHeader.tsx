@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from "react";
+import { useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { useNavigate, type NavigateProps } from "react-router";
 import { ChevronLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -20,6 +20,27 @@ export function PageHeader({
 }: PageHeaderProps) {
     const navigate = useNavigate();
     const [isChatOpen, setIsChatOpen] = useState(false);
+    const chatColumnRef = useRef<HTMLDivElement>(null);
+    const [chatPosition, setChatPosition] = useState({ left: 0, width: 360 });
+
+    useLayoutEffect(() => {
+        const column = chatColumnRef.current;
+        if (!isChatOpen || !column) return;
+
+        const updatePosition = () => {
+            const { left, width } = column.getBoundingClientRect();
+            setChatPosition({ left, width });
+        };
+
+        updatePosition();
+        const observer = new ResizeObserver(updatePosition);
+        observer.observe(column);
+        window.addEventListener("resize", updatePosition);
+        return () => {
+            observer.disconnect();
+            window.removeEventListener("resize", updatePosition);
+        };
+    }, [isChatOpen]);
 
     return (
         <div className="flex h-full flex-col">
@@ -75,7 +96,19 @@ export function PageHeader({
                             onClick={() => setIsChatOpen(false)}
                         />
 
-                        <div className="fixed inset-x-3 bottom-3 top-3 z-50 overflow-hidden bg-card shadow-lg lg:relative lg:inset-auto lg:z-30 lg:w-[min(360px,38%)] lg:max-w-100 lg:shrink-0 lg:self-stretch">
+                        {/* Reserve the desktop column while its panel stays fixed. */}
+                        <div
+                            ref={chatColumnRef}
+                            aria-hidden="true"
+                            className="hidden lg:block lg:w-[min(360px,38%)] lg:shrink-0"
+                        />
+                        <div
+                            style={{
+                                "--chat-left": `${chatPosition.left}px`,
+                                "--chat-width": `${chatPosition.width}px`,
+                            } as CSSProperties}
+                            className="fixed inset-x-3 bottom-3 top-3 z-50 rounded-[10px] border border-border bg-card shadow-lg lg:left-(--chat-left) lg:right-auto lg:top-auto lg:bottom-7 lg:z-30 lg:h-[min(600px,calc(100dvh-160px))] lg:w-(--chat-width)"
+                        >
                             <ChatBox
                                 onClose={() => setIsChatOpen(false)}
                                 className="h-full"

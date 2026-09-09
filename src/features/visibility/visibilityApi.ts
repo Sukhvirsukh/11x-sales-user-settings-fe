@@ -51,11 +51,11 @@ export async function getVisibility(): Promise<VisibilityFields> {
 }
 
 export async function saveVisibility(values: VisibilityFields): Promise<VisibilityFields> {
-    const response = await apiFetch<ChatDesignResponse>("/chat-design", {
+    const response = await apiFetch<ChatDesignApiResponse>("/chat-design", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(toVisibilityFields(values)),
     });
 
-    return toVisibilityFields(response);
+    return toVisibilityFields(response.data);
 }

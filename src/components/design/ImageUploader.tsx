@@ -37,16 +37,20 @@ export default function ImageUploader({
     const inputId = id ?? generatedId;
     const hintId = `${inputId}-hint`;
     const errorId = `${inputId}-error`;
-    const [uncontrolledValue, setUncontrolledValue] = useState<string | null>(null);
+    const [uncontrolledValue, setUncontrolledValue] = useState<string | File | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [isDragging, setIsDragging] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
-    const imageUrl =
-        controlledValue instanceof File
-            ? URL.createObjectURL(controlledValue)
-            : (controlledValue ?? uncontrolledValue);
-    const setImage = controlledValue !== undefined ? onValueChange : setUncontrolledValue;
+    const imageValue = controlledValue ?? uncontrolledValue;
+    const imageUrl = imageValue instanceof File ? URL.createObjectURL(imageValue) : imageValue;
+    const setImage = (file: File | null) => {
+        if (controlledValue !== undefined) {
+            onValueChange?.(file);
+        } else {
+            setUncontrolledValue(file);
+        }
+    };
     const helpText = note || hint;
 
     function validateAndSetFile(file: File) {
@@ -67,7 +71,7 @@ export default function ImageUploader({
             return;
         }
 
-        setImage?.(file);
+        setImage(file);
     }
 
     function handleFileChange(e: ChangeEvent<HTMLInputElement>) {
@@ -88,7 +92,7 @@ export default function ImageUploader({
     }
 
     function handleRemove() {
-        setImage?.(null);
+        setImage(null);
         setError(null);
         if (fileInputRef.current) fileInputRef.current.value = "";
     }
@@ -124,7 +128,7 @@ export default function ImageUploader({
                             />
                         </div>
                         <span className="min-w-0 flex-1 truncate text-body-sm text-muted-foreground">
-                            {controlledValue instanceof File ? controlledValue.name : "Uploaded image"}
+                            {imageValue instanceof File ? imageValue.name : "Uploaded image"}
                         </span>
                         {!disabled && (
                             <button

@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { ListFilter, Search, SquarePen, Trash } from "lucide-react"
-import AddStore from "../store/AddStore"
 import AddNewPayment from "./AddNewPayment"
 
 

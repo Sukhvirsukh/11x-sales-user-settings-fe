@@ -1,25 +1,37 @@
+import { lazy } from "react";
 import { createBrowserRouter, Navigate } from "react-router";
 import ErrorPage from "@/pages/ErrorPage";
-import SignInPage from "../pages/SignInPage";
-import SignUpPage from "../pages/SignUpPage";
 import AppLayout from "../components/layout/AppLayou";
-import OverviewPage from "@/pages/OverviewPage";
-import ContactsPage from "@/pages/ContactPage";
-import ConversationsPage from "@/pages/ConversationsPage";
-import ReportsPage from "@/pages/ReportsPage";
-import { AiTrainingPage } from "@/pages/aiTraining";
-import KnowledgeBaseTab from "@/pages/aiTraining/tabs/KnowledgeBaseTab";
-import CorrectionsTab from "@/pages/aiTraining/tabs/CorrectionsTab";
-import PromptToolsTab from "@/pages/aiTraining/tabs/PromptToolsTab";
-import ChatSettingsPage from "@/pages/chatSettings/ChatSettingsPage";
-import VisibilityPage from "@/pages/chatSettings/VisibilityPage";
-import AskMePage from "@/pages/AskMePage";
-import SettingsPage from "@/pages/SettingsPage";
-import { RoleAndAccess } from "@/features/settings/roleAndAccess";
-import { Plan } from "@/features/settings/plan";
-import { Payments } from "@/features/settings/payments";
-import { Store } from "@/features/settings/store";
-import ForgotPassword from "@/pages/ForgotPassword";
+
+const SignInPage = lazy(() => import("@/pages/SignInPage"));
+const SignUpPage = lazy(() => import("@/pages/SignUpPage"));
+const ForgotPassword = lazy(() => import("@/pages/ForgotPassword"));
+const OverviewPage = lazy(() => import("@/pages/OverviewPage"));
+const ContactsPage = lazy(() => import("@/pages/ContactPage"));
+const ConversationsPage = lazy(() => import("@/pages/ConversationsPage"));
+const ReportsPage = lazy(() => import("@/pages/ReportsPage"));
+const ChatSettingsPage = lazy(() => import("@/pages/chatSettings/ChatSettingsPage"));
+const VisibilityPage = lazy(() => import("@/pages/chatSettings/VisibilityPage"));
+const AskMePage = lazy(() => import("@/pages/AskMePage"));
+const SettingsPage = lazy(() => import("@/pages/SettingsPage"));
+const KnowledgeBaseTab = lazy(() => import("@/pages/aiTraining/tabs/KnowledgeBaseTab"));
+const CorrectionsTab = lazy(() => import("@/pages/aiTraining/tabs/CorrectionsTab"));
+const PromptToolsTab = lazy(() => import("@/pages/aiTraining/tabs/PromptToolsTab"));
+const AiTrainingPage = lazy(() =>
+  import("@/pages/aiTraining").then(({ AiTrainingPage }) => ({ default: AiTrainingPage })),
+);
+const RoleAndAccess = lazy(() =>
+  import("@/features/settings/roleAndAccess").then(({ RoleAndAccess }) => ({ default: RoleAndAccess })),
+);
+const Plan = lazy(() =>
+  import("@/features/settings/plan").then(({ Plan }) => ({ default: Plan })),
+);
+const Payments = lazy(() =>
+  import("@/features/settings/payments").then(({ Payments }) => ({ default: Payments })),
+);
+const Store = lazy(() =>
+  import("@/features/settings/store").then(({ Store }) => ({ default: Store })),
+);
 
 export const router = createBrowserRouter([
   {
