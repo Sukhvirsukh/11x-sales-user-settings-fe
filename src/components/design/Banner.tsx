@@ -14,7 +14,7 @@ const variants = {
         icon: OctagonX,
     },
     info: {
-        className: "border-section-border bg-active-bg",
+        className: "border-section-border bg-section-bg",
         iconClassName: "text-primary",
         icon: Info,
     },

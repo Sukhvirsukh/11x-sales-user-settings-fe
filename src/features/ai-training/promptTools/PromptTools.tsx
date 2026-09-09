@@ -28,7 +28,8 @@ function ActionCard({ heading, content, isChecked = false, onToggle }: ActionCar
                 pressed={isChecked}
                 onPressedChange={onToggle}
                 showText={true}
-                className={`border text-sm rounded-[10px] px-3.5 py-0.5 ${isChecked ? "bg-success-light text-success border-success" : "border-ghost text-ghost"}`}
+                toggleVariant="button"
+                aria-label={heading}
             />}
         </div>
     )
@@ -66,9 +67,10 @@ export function PromptTools() {
                                 <div className="flex w-full min-w-0 sm:w-[20%] sm:min-w-[250px] sm:shrink-0">
                                     <Banner
                                         variant="info"
+                                        className="p-2"
                                     >
                                         <p className="text-sm font-medium mb-1">Learn how to use prompt tools</p>
-                                        <ul className="list-disc space-y-1 text-sm text-gray">
+                                        <ul className="list-disc space-y-1 text-sm text-gray pl-2.5">
                                             <li className="text-sm text-gray"   >Your name is Karl ai</li>
                                             <li className="text-sm text-gray"   >Your goal is to aware the user to know about the product variants</li>
                                             <li className="text-sm text-gray"   >Stay on brand related copy</li>
