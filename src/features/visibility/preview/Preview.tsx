@@ -35,7 +35,7 @@ export default function Preview({
     return (
         <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
             <div className="flex shrink-0 items-center justify-between border-b border-border px-3 pt-2.5 pb-1.5 md:px-5 md:pb-2.5">
-                <h2 className="text-title font-semibold text-foreground">
+                <h2 className="text-title py-2.5 font-semibold text-foreground">
                     Preview
                 </h2>
 
@@ -75,7 +75,7 @@ export default function Preview({
             </div>
 
             <div className="flex min-h-0 flex-1 flex-col px-3 pb-3 pt-2.5 md:px-5 md:pb-5">
-                <div className="relative isolate w-full flex-1 overflow-hidden rounded-lg bg-[#E9E9E9]">
+                <div className="relative isolate w-full flex-1 overflow-hidden bg-[#E9E9E9]">
                     <img
                         src={previewBackground}
                         alt=""

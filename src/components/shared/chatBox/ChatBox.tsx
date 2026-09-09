@@ -67,7 +67,7 @@ export function ChatBox({ onClose, className = "", fields: previewFields }: Chat
 function LoadedChatBox({ fields, onClose, className = "" }: ChatBoxProps & { fields: VisibilityFields }) {
 
   const {
-    agentName,
+    aiAgentName,
     chatFace,
     welcomeMessage,
     predefinedMessages,
@@ -165,7 +165,7 @@ function LoadedChatBox({ fields, onClose, className = "" }: ChatBoxProps & { fie
         <div className="flex min-w-0 items-center gap-2">
           <div className="min-w-0 flex items-center gap-2.5">
             <p className="truncate text-base font-semibold tracking-[0.02em]">
-              {agentName}
+              {aiAgentName}
             </p>
             <span className="inline-flex items-center gap-[7px] rounded-[44px] bg-status-online! px-1.5 py-[3px] text-[10px] font-medium tracking-[0.04em] text-success-strong">
               <span

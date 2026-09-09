@@ -4,10 +4,12 @@ import Heading from "@/components/design/Heading";
 import { getInitials } from "@/lib/utils";
 import DetailContainer, { DetailGroup, DetailItem } from "@/components/design/DetailContainer";
 import BasicDetailsForm from "./BasicDetailsForm";
+import { useAuthStore } from "@/features/auth";
 
 export function BasicDetails() {
-    const name = "Racheal Karl";
     const avatarUrl: string | undefined = undefined;
+    const user = useAuthStore(data => data.user);
+    const name = user?.name || '';
 
     return (
         <AppSection>
@@ -30,11 +32,11 @@ export function BasicDetails() {
                 >
                     <DetailGroup>
                         <DetailItem label="Name" value={name} />
-                        <DetailItem label="Mail id" value="Alex@co.com" />
+                        <DetailItem label="Mail id" value={user?.email} />
                     </DetailGroup>
                     <DetailGroup>
-                        <DetailItem label="Phone" value="+91 | 86556788" />
-                        <DetailItem label="Role" value="Admin" />
+                        <DetailItem label="Phone" value={user?.phone || '-'} />
+                        <DetailItem label="Role" value={user?.role} />
                     </DetailGroup>
                     <DetailGroup>
                         <DetailItem label="Plan name" value="Basic" />
