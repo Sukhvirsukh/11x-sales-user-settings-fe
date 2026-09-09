@@ -1,4 +1,5 @@
 import type { ReactNode } from "react"
+import { Inbox } from "lucide-react"
 import {
     Table,
     TableBody,
@@ -25,6 +26,14 @@ interface CustomTableProps {
     headerActions?: ReactNode
     rowActions?: (row: Record<string, unknown>) => ReactNode
     className?: string
+    /** Shown when `data` is empty. Customizes the empty-state message. */
+    emptyMessage?: string
+    /** Shown when `data` is empty. Customizes the empty-state message. */
+    emptyDescription?: string
+    /** Shown when `data` is empty. Custom action button/link below the message. */
+    emptyStateAction?: ReactNode
+    /** Shown when `data` is empty. Replaces the default empty state entirely. */
+    emptyState?: ReactNode
 }
 
 export default function CustomTable({
@@ -34,6 +43,10 @@ export default function CustomTable({
     headerActions,
     rowActions,
     className,
+    emptyMessage = "No data available",
+    emptyDescription = "New entries will appear here once added.",
+    emptyStateAction,
+    emptyState,
 }: CustomTableProps) {
     const mobileColumns = columns.filter((col) => col.key !== "select")
     const mobileCellCount = mobileColumns.length + (rowActions ? 1 : 0)
@@ -107,6 +120,20 @@ export default function CustomTable({
                         ))}
                     </TableBody>
                 </Table>
+
+                {/* Empty state */}
+                {data.length === 0 && (
+                    emptyState ?? (
+                        <div className="flex flex-col w-full items-center justify-center gap-2 rounded-lg border border-section-border bg-white px-4 py-10 text-center md:rounded-none md:border-0 md:py-16">
+                            <span className="flex size-10 items-center justify-center rounded-full bg-section-bg text-primary">
+                                <Inbox aria-hidden="true" className="size-5" />
+                            </span>
+                            <p className="text-sm font-medium text-black">{emptyMessage}</p>
+                            <p className="text-sm text-ghost">{emptyDescription}</p>
+                            {emptyStateAction && <div className="mt-2">{emptyStateAction}</div>}
+                        </div>
+                    )
+                )}
             </div>
         </AppSection>
     )
