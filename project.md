@@ -12,6 +12,7 @@
 - React Hook Form v7.87.0 + Zod v4.5.4 (forms & validation)
 - @hookform/resolvers v5.9.1
 - Zustand v5.0.15 (state management)
+- date-fns v4.4.0 + react-day-picker v10.0.1 (date picker)
 - Inter & Geist fonts
 - tw-animate-css v1.4.0
 - class-variance-authority v0.7.1
@@ -55,6 +56,7 @@ src/
 │   │   ├── accordion.tsx
 │   │   ├── badge.tsx
 │   │   ├── button.tsx
+│   │   ├── calendar.tsx             # Calendar (react-day-picker), used by DatePicker
 │   │   ├── checkbox.tsx
 │   │   ├── dialog.tsx
 │   │   ├── field.tsx
@@ -113,7 +115,7 @@ src/
 │       ├── CustomTabs.tsx           # Custom tabs component
 │       ├── ChatBubbleTypeSelector.tsx # Chat bubble type selector
 │       ├── SliderField.tsx          # Slider field component
-│       ├── GroupRadioField.tsx       # Group radio field component
+│       ├── GroupRadioField.tsx      # Group radio field component
 │       ├── InputField.tsx           # Input field component
 │       ├── SelectField.tsx          # Select field component
 │       ├── Heading.tsx              # Heading component
@@ -122,30 +124,32 @@ src/
 │       ├── ImageUploader.tsx        # Image uploader component
 │       ├── FormGroup.tsx            # Form group component
 │       ├── ToggleField.tsx          # Toggle field component
-│       ├── CustomTable.tsx          # Custom table component
-│       ├── ExampleTable.tsx         # Example table component
-│       └── Modal.tsx                # Modal component
+│       ├── CustomTable.tsx          # Custom table component (columns/data/headerActions/rowActions)
+│       ├── DatePicker.tsx           # Date picker (Calendar + Popover, date-fns formatting)
+│       ├── DetailContainer.tsx      # Label/value detail layout (DetailContainer, DetailGroup, DetailItem)
+│       ├── DetailContainer.module.css # CSS module styles for DetailContainer
+│       └── Modal.tsx                # Dialog wrapper (trigger, title, primary/secondary/close actions)
 ├── features/
 │   ├── auth/
 │   │   ├── index.ts                 # Auth exports (AuthForm, Background, useAuthStore, authRequest, token helpers, types)
 │   │   ├── AuthForm.tsx             # Auth form component
-│   │   ├── Background.tsx           # Auth background component
-│   │   ├── authTypes.ts            # Auth response, user, store, and form types
-│   │   ├── authApi.ts              # Auth requests via shared apiFetch
-│   │   ├── authStorage.ts          # JWT storage helpers (vitalb.jwt key)
-│   │   └── authStore.ts            # Persisted auth state (Zustand)
+│   │   ├── Background.tsx           # Decorative SVG auth background
+│   │   ├── authTypes.ts             # Auth response, user, store, and form types
+│   │   ├── authApi.ts               # Auth requests via shared apiFetch
+│   │   ├── authStorage.ts           # JWT storage helpers (vitalb.jwt key)
+│   │   └── authStore.ts             # Persisted auth state (Zustand)
 │   ├── signIn/
 │   │   ├── index.ts                 # Sign-in exports
 │   │   ├── SignInForm.tsx           # Sign-in form component
-│   │   ├── signInTypes.ts          # Sign-in types inferred from schema
-│   │   ├── signInApi.ts            # Sign-in backend request
-│   │   └── signInSchema.ts         # Sign-in validation schema (Zod)
+│   │   ├── signInTypes.ts           # Sign-in types inferred from schema
+│   │   ├── signInApi.ts             # Sign-in backend request
+│   │   └── signInSchema.ts          # Sign-in validation schema (Zod)
 │   ├── signUp/
 │   │   ├── index.ts                 # Sign-up exports
 │   │   ├── SignUpForm.tsx           # Sign-up form component
-│   │   ├── signUpTypes.ts          # Sign-up types inferred from schema
-│   │   ├── signUpApi.ts            # Sign-up backend request
-│   │   └── signUpSchema.ts         # Sign-up validation schema (Zod)
+│   │   ├── signUpTypes.ts           # Sign-up types inferred from schema
+│   │   ├── signUpApi.ts             # Sign-up backend request
+│   │   └── signUpSchema.ts          # Sign-up validation schema (Zod)
 │   ├── forgotPassword/
 │   │   ├── index.tsx                # Exports ForgotPasswordForm
 │   │   ├── ForgotPasswordForm.tsx   # Forgot password form component
@@ -178,26 +182,31 @@ src/
 │   │       ├── SpamFilter.tsx       # Spam filter settings
 │   │       ├── TrackingSettings.tsx # Tracking settings
 │   │       ├── CrawlSettings.tsx    # Crawl settings
-│   │       └── fieldStyles.ts      # Field styles
+│   │       └── fieldStyles.ts       # Field styles
 │   └── settings/
 │       ├── Settings.tsx             # Settings main component
 │       ├── index.ts                 # Settings exports
 │       ├── roleAndAccess/
 │       │   ├── index.ts             # Role & access exports
 │       │   ├── RoleAndAccess.tsx    # Role & access main component
-│       │   ├── BasicDetails.tsx     # Basic details display
+│       │   ├── BasicDetails.tsx     # Basic details display (DetailContainer + avatar initials)
 │       │   ├── BasicDetailsForm.tsx # Basic details edit form
-│       │   ├── RoleHistory.tsx      # Role history component
+│       │   ├── AddRoleForm.tsx      # "Add role" modal form (name, email, role, joining date)
+│       │   ├── RoleHistory.tsx      # Roles table (CustomTable) with search + Add role
 │       │   └── Permissions.tsx      # Permissions management
 │       ├── plan/
 │       │   ├── index.ts             # Plan exports
 │       │   └── Plan.tsx             # Plan component
 │       ├── payments/
 │       │   ├── index.ts             # Payments exports
-│       │   └── Payments.tsx         # Payments component
+│       │   ├── Payments.tsx         # Payments page (renders history + saved details)
+│       │   ├── PaymentHistory.tsx   # Invoices table (CustomTable) with search + Add payment
+│       │   ├── AddNewPayment.tsx    # "Add payment" modal with Account/Card tabs
+│       │   └── SavedPaymentDetails.tsx # Saved cards/accounts as AppCards with DetailContainer
 │       └── store/
 │           ├── index.ts             # Store exports
-│           └── Store.tsx            # Store component
+│           ├── Store.tsx            # Store component
+│           └── AddStore.tsx         # "Add store" modal form (name, URL, owner, start date)
 ├── pages/                           # Page-level components (compose features)
 │   ├── OverviewPage.tsx             # Dashboard overview
 │   ├── ContactPage.tsx              # Contact management
@@ -219,11 +228,10 @@ src/
 │           ├── KnowledgeBaseTab.tsx # Knowledge base tab
 │           ├── CorrectionsTab.tsx   # Corrections tab
 │           └── PromptToolsTab.tsx   # Prompt tools tab
-├── hooks/                           # Empty
 ├── lib/
 │   ├── utils.ts                     # cn() (clsx+twMerge), getInitials()
 │   ├── api.ts                       # Shared apiFetch wrapper (auth, error handling, toast)
-│   └── queryClient.ts              # TanStack Query client
+│   └── queryClient.ts               # TanStack Query client
 ├── config/
 │   └── routes.tsx                   # createBrowserRouter definition
 ├── stores/
@@ -233,26 +241,34 @@ src/
 │   ├── hero.png
 │   ├── react.svg
 │   ├── vite.svg
-│   └── sidebar/Icons                # Sidebar navigation icons
+│   ├── auth/                        # background.png, social icons (google/shopify/facebook), empty Background.tsx leftover
+│   ├── integrations/                # shopify.svg, backend.svg
+│   ├── chatSettings/                # preview-background.png
+│   └── sidebar/
+│       └── Icons.tsx                # Sidebar navigation icons
 ├── App.tsx                          # RouterProvider
-├── main.tsx                         # React root mount
+├── main.tsx                         # React root mount (RootErrorBoundary > QueryClientProvider > Toaster > App)
 └── index.css                        # Tailwind v4 imports, CSS variables (design tokens)
 ```
 
 ## Design Tokens (index.css)
 
+Imports `tailwindcss`, `tw-animate-css`, `shadcn/tailwind.css`, and the Inter variable font. A `@custom-variant dark` restricts `dark:` utilities to a `.dark` class (OS `prefers-color-scheme` dark mode is disabled).
+
 Custom CSS variables mapped to Tailwind v4 theme:
 
-- **Backgrounds**: `--background` (#FFF), `--sidebar-bg` (#ffffff), `--card-bg` (#f8fafd), `--card-nested-bg` (#ffffff)
-- **Primary**: `--primary` (#3576F3), `--primary-hover` (#236efa), `--primary-foreground` (#ffffff)
-- **Borders**: `--border` (#e2e8f0), `--border-subtle` (#edf2f7), `--border-blue` (#dbeafe), `--border-light` (#e6e6e8), `--border-soft` (rgba(0,0,0,0.21)), `--border-strong` (#c7c7cc)
-- **Text**: `--foreground` (#0f172a), `--muted-foreground` (#64748b), `--label-text` (#94a3b8)
+- **Font scale**: custom `--text-*` sizes — xs 10px, sm 12px, base 14px, lg 16px, xl 18px, 2xl 20px, 3xl 24px (with custom line heights). Body defaults to 14px Inter.
+- **Backgrounds**: `--background` (#FFF), `--popover` (#FFF), `--sidebar-bg` (#ffffff), `--card-bg` (#f8fafd), `--card-nested-bg` (#ffffff), `--light` (#F7F8FB), `--muted` (#F1F1F1), `--light-gray` (#F7F7F7)
+- **Primary**: `--primary` (#3576F3), `--primary-hover` (#236efa), `--primary-foreground` (#ffffff), `--ring` (#2f6df3)
+- **Borders**: `--border` (#e2e8f0), `--border-subtle` (#edf2f7), `--border-blue` (#dbeafe), `--border-light` (#e6e6e8), `--border-soft` (rgba(0,0,0,0.21)), `--border-strong` (#c7c7cc), `--border-tab` (#DADADA), `--border-gray` (#808080), `--input` (#c7c7cc)
+- **Text**: `--foreground` (#0f172a), `--muted-foreground` (#64748b), `--label-text` (#94a3b8), `--gray`/`--ghost` (#808080), `--black` (#000)
 - **Active states**: `--active-item-bg` (#f0f7ff), `--active-item-border` (#dbeafe), `--active-tab-bg` (#ffffff), `--active-tab-border` (#e2e8f0)
-- **Badges**: `--badge-active-bg` (#CDFEE1), `--badge-active-text` (#166534), `--badge-active-dot` (#16a34a), `--badge-inactive-bg` (#FFDBDB)
-- **Status**: `--status-online` (#D1EFC0), `--danger` (#FF7B7E), `--success` (#47941E)
-- **Muted**: `--muted` (#F1F1F1), `--light-gray` (#F7F7F7)
+- **Badges**: `--badge-active-bg` (#E5FFD8), `--badge-active-text` (#808080), `--badge-active-dot` (#127557), `--badge-inactive-bg` (#FFDBDB), `--badge-inactive-dot` (#B42318) — default/destructive variants render a trailing status dot
+- **Status**: `--status-online` (#D1EFC0), `--danger` (#FF7B7E), `--danger-light` (#FFDBDB), `--danger-dark` (#FF0000), `--success` (#47941E), `--success-light` (#E4F5E6)
 - **Secondary**: `--secondary-button-bg` (#e2e8f0), `--secondary-button-hover` (#cbd5e1)
 - **Chat**: `--chat-bg` (#EEEEEE)
+- **Section**: `--section-border` (rgba(53,118,243,0.20)), `--section-bg` (rgba(232,238,251,0.50))
+- **Table**: `--table-header` (#E8EEFB)
 - **Shadows**: `--shadow-blue`, `--shadow-auth`, `--shadow-panel`
 
 Use these tokens via Tailwind classes (e.g. `bg-background`, `text-primary`, `border-border-subtle`) rather than hardcoded hex values.
@@ -272,20 +288,21 @@ Defined in `src/components/layout/sidebar/sideNav.ts`:
 
 ## Architecture Notes
 
-- `ErrorPage` reuses `AppCard` and `Button` for reload/home recovery. The router's root `errorElement` handles route errors, and `RootErrorBoundary` wraps the app providers to catch rendering failures outside routes.
+- `ErrorPage` reuses `AppCard` and `Button` for reload/home recovery. The router's root `errorElement` handles route errors, and `RootErrorBoundary` wraps the app providers (QueryClientProvider + Toaster) to catch rendering failures outside routes.
 - The persisted auth store (`src/features/auth/authStore.ts`) exposes `user`, `name`, `email`, and `role`. Sign-in and sign-up populate these through `setUser`; `authApi.ts` reads the role from the backend's `user.role` field.
 - Auth token is stored as `vitalb.jwt` in localStorage via helpers in `authStorage.ts` (not `authToken`).
+- `AppLayout` guards protected routes with `getAuthToken()` from `authStorage` and redirects unauthenticated users to `/sign-in` (preserving the origin in `state.from`).
 - All API requests use `VITE_AUTH_API_BASE_URL` from the root `.env` file via the shared `apiFetch` wrapper (`src/lib/api.ts`). The wrapper automatically attaches Bearer tokens and surfaces errors via toast. Restart the Vite dev server after changing env vars.
 - Path alias `@/*` maps to `./src/*` (defined in `tsconfig.json` and `tsconfig.app.json`).
 - **Pages** are thin wrappers — they should compose feature-specific components, not contain business logic.
 - **Features** contain domain-specific logic organized as `components/`, `hooks/`, `api/`, `types/`.
 - **Components** are split into `ui/` (shadcn primitives), `layout/` (app shell), `shared/` (reusable app components), `design/` (design system components).
 - The sidebar supports both desktop (collapsible, `w-[187px]` ↔ `w-[72px]`) and mobile (full-screen overlay).
-- Auth check uses `localStorage.getItem("vitalb.jwt")` with a hardcoded `true` fallback (dev mode).
 - Zustand is used for mobile sidebar state management (`src/stores/mobileSidebarStore.ts`).
 - AI Training page uses nested routes with tabs for knowledge base, corrections, and prompt tools. The index route redirects to `knowledge-base`.
 - Chat Settings page includes integrations, channels, configuration, and visibility sub-routes.
 - Settings page uses nested routes for role-n-access, plan, payments, and store management. The index route redirects to `role-n-access`.
+- Settings sub-pages compose shared design components: tables use `CustomTable` (columns/data/headerActions/rowActions, e.g. RoleHistory, PaymentHistory), detail displays use `DetailContainer`/`DetailGroup`/`DetailItem` (e.g. BasicDetails, SavedPaymentDetails), and create/edit flows use the shared `Modal` with `FormGroup` + field components (AddRoleForm, AddNewPayment, AddStore).
 - The `unsavedChangesBar` shared component provides a warning system for unsaved changes.
 - `forgotPassword` feature uses TanStack Query for password reset mutations.
 

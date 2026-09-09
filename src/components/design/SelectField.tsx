@@ -43,6 +43,8 @@ export interface SelectFieldProps {
     className?: string
     /** Custom class names for the container */
     containerClassName?: string
+    /** Visual variant of the select */
+    variant?: "default" | "light"
 }
 
 const SelectField = React.forwardRef<
@@ -63,6 +65,7 @@ const SelectField = React.forwardRef<
             disabled = false,
             className,
             containerClassName,
+            variant = "default",
         },
         ref
     ) => {
@@ -89,7 +92,9 @@ const SelectField = React.forwardRef<
                         id={selectId}
                         className={cn(
                             "h-[34px] w-full rounded-xl border border-border-soft px-3.5 transition-all focus-visible:border-border-soft focus-visible:ring-2 focus-visible:ring-blue-400/20 dark:border-slate-800",
-                            "bg-white focus-visible:bg-white dark:bg-slate-900/40 dark:focus-visible:bg-slate-900",
+                            variant === "light"
+                                ? "bg-light border-section-border focus-visible:bg-light focus-visible:border-section-border dark:bg-slate-800/60 dark:focus-visible:bg-slate-800/60"
+                                : "bg-white focus-visible:bg-white dark:bg-slate-900/40 dark:focus-visible:bg-slate-900",
                             containerClassName,
                             error && "border-danger focus-visible:border-danger",
                             disabled && "opacity-50 cursor-not-allowed",

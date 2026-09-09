@@ -31,9 +31,9 @@ export default function LookNFeel() {
       <InputField
         label="Name of AI Agent"
         placeholder="Enter name of AI agent"
-        value={fields.agentName}
-        error={errors.agentName}
-        onChange={(e) => updateRequiredField("agentName", e.target.value)}
+        value={fields.aiAgentName}
+        error={errors.aiAgentName}
+        onChange={(e) => updateRequiredField("aiAgentName", e.target.value)}
       />
 
       <ImageUploader
@@ -74,8 +74,10 @@ export default function LookNFeel() {
       <ColorSelector label="Notification color" hint="Choose the color for notification badges" value={fields.notificationColor} error={errors.notificationColor} onValueChange={(color) => updateRequiredField("notificationColor", color)} showPresets={false} />
 
       <TextAreaField
-        label="Desclaimer message"
+        label="Disclaimer message"
         placeholder="Enter desclaimer message"
+        value={fields.disclaimerMessage}
+        onChange={(e) => setField("disclaimerMessage", e.target.value)}
       />
 
 

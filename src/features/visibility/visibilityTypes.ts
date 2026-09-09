@@ -8,20 +8,21 @@ export type MarketingConsent = "ask-marketing" | "dont-ask-marketing";
 export type ConsentCheckboxDefault = "pre-selected" | "not-selected";
 
 export interface VisibilityFields {
-    agentName: string;
+    aiAgentName: string;
     chatFace: File | string | null;
     welcomeMessage: string;
     predefinedMessages: string[];
     placeholderMessage: string;
+    disclaimerMessage: string;
     primaryColor: string;
-    notificationColor: string;
-    chatBubbleType: ChatBubbleType;
-    showOnMobile: boolean;
-    showOnDesktopTablet: boolean;
-    pageVisibility: PageVisibilityMode;
+    notificationColor: string; //add
+    chatBubbleType: ChatBubbleType;//add
+    showOnMobile: boolean; //add
+    showOnDesktopTablet: boolean;//add
+    pageVisibility: PageVisibilityMode;//add
     excludePages: string;
-    bubbleSize: string;
-    position: BubblePosition;
+    bubbleSize: string;//add
+    position: BubblePosition; //corner
     moveLeftRight: number;
     moveUpDown: number;
     zIndex: number;

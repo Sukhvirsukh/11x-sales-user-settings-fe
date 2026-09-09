@@ -2,7 +2,7 @@ import z from "zod";
 
 
 export const requiredFieldsSchema = z.object({
-    agentName: z.string().trim().min(1, "Agent name is required"),
+    aiAgentName: z.string().trim().min(1, "Agent name is required"),
     welcomeMessage: z.string().trim().min(1, "Welcome message is required"),
     placeholderMessage: z.string().trim().min(1, "Placeholder message is required"),
     primaryColor: z

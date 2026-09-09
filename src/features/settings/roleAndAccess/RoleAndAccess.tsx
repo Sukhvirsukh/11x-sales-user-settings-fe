@@ -1,20 +1,26 @@
-import AppSection from "@/components/design/AppSectoin";
-import { BasicDetails } from "./BasicDetails";
-import Heading from "@/components/design/Heading";
-import Permissions from "./Permissions";
-import RoleHistory from "./RoleHistory";
+import { useAuthStore } from "@/features/auth";
+import { BasicDetails } from "./basicDetails";
+import Permissions from "./permissions";
+import RoleHistory from "./roleHistory";
 
 
 export function RoleAndAccess() {
+
+    const user = useAuthStore(data => data.user);
+
     return (
-        <div className="flex flex-col items-start gap-3.5 top-[41px]">
-            <div className="flex p-4 flex-col items-start gap-3.5 rounded-[10px] border border-[rgba(53,118,243,0.20)] bg-[#FFF] shadow-[0010px4pxrgba(70,132,250,0.06),0011px8pxrgba(70,132,250,0.05)] w-full overflow-hidden">
+        <div className="flex flex-col items-start gap-3.5 pb-5 pt-2">
+            <div className="flex p-4 flex-col items-start gap-3.5 rounded-[10px] border border-blue-100/70 bg-white shadow-blue w-full overflow-hidden">
                 {/* Basic details */}
                 <BasicDetails />
 
-                <Permissions />
+                {user?.role === 'admin' &&
+                    <>
+                        <Permissions />
 
-                <RoleHistory />
+                        <RoleHistory />
+                    </>
+                }
             </div>
         </div>
     )

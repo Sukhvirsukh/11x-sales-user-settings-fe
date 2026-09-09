@@ -15,6 +15,7 @@ import { Spinner } from "@/components/ui/spinner";
 import type { VisibilityFields } from "./visibilityTypes";
 import { useVisibilityQuery, visibilityQueryKey } from "./visibilityQuery";
 import { requiredFieldsSchema } from "./fields/validations";
+import { saveVisibility } from "./visibilityApi";
 
 export default function Visibility() {
     const query = useVisibilityQuery();
@@ -25,9 +26,11 @@ export default function Visibility() {
     const [isFormReady, setIsFormReady] = useState(false);
     const [errorDialogOpen, setErrorDialogOpen] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string | undefined>();
+    const [validationErrors, setValidationErrors] = useState<string[]>([]);
 
     useEffect(() => {
         if (query.data) {
+
             form.reset(query.data);
             setIsFormReady(true);
         }
@@ -98,16 +101,23 @@ export default function Visibility() {
                         const values = form.getValues();
                         const result = requiredFieldsSchema.safeParse(values);
                         if (!result.success) {
-                            const messages = result.error.issues
-                                .map((issue) => issue.message)
-                                .join(", ");
-                            setErrorMessage(messages);
+                            const messages = result.error.issues.map((issue) => {
+                                const field = issue.path[0]
+                                    ?.toString()
+                                    .replace(/([A-Z])/g, " $1")
+                                    .replace(/^./, (character) => character.toUpperCase())
+                                    .trim() || "Field";
+                                return `${field}: ${issue.message}`;
+                            });
+                            setValidationErrors(messages);
+                            setErrorMessage(undefined);
                             setErrorDialogOpen(true);
                             return;
                         }
-                        await form.handleSubmit((data) => {
-                            queryClient.setQueryData(visibilityQueryKey, data);
-                            form.reset(data);
+                        await form.handleSubmit(async (data) => {
+                            const savedData = await saveVisibility(data);
+                            queryClient.setQueryData(visibilityQueryKey, savedData);
+                            form.reset(savedData);
                         })();
                     }}
                     onDiscard={() => form.reset(query.data)}
@@ -119,6 +129,7 @@ export default function Visibility() {
                     onOpenChange={setErrorDialogOpen}
                     title="Validation Error"
                     description={errorMessage}
+                    errors={validationErrors}
                 />
 
             </div>

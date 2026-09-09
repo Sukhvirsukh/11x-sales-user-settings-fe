@@ -45,6 +45,8 @@
 
   /* Color Mappings */
   --color-background: var(--background);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
   --color-sidebar: var(--sidebar-bg);
   --color-card-bg: var(--card-bg);
   --color-card-nested: var(--card-nested-bg);
@@ -80,6 +82,7 @@
   --color-badge-active-dot: var(--badge-active-dot);
   --color-status-online: var(--status-online);
   --color-badge-inactive-bg: var(--badge-inactive-bg);
+  --color-badge-inactive-dot: var(--badge-inactive-dot);
 
   --color-border-gray: var(--gray);
   --color-border-tab: var(--border-tab);
@@ -107,6 +110,8 @@
   :root {
     /* Main Layout & Backgrounds */
     --background: #FFF;
+    --popover: #FFF;
+    --popover-foreground: var(--foreground);
     --sidebar-bg: #ffffff;
     --light: #F7F8FB;
     --card-bg: #f8fafd;
@@ -129,9 +134,9 @@
     --border-light: #e6e6e8;
     --border-soft: rgba(0, 0, 0, 0.21);
     --input: #c7c7cc;
-    --border-subtle: #edf2f7;
-    --border-blue: #dbeafe;
-    --border-gray: #808080;
+  --border-subtle: #edf2f7;
+  --border-blue: #dbeafe;
+  --border-gray: #808080;
     --ring: #2f6df3;
     --border-strong: #c7c7cc;
 
@@ -147,10 +152,11 @@
     --active-tab-border: #e2e8f0;
 
     /* Badges & Status Indicators */
-    --badge-active-bg: #CDFEE1;
+    --badge-active-bg: #E5FFD8;
     --badge-inactive-bg: #FFDBDB;
-    --badge-active-text: #166534;
-    --badge-active-dot: #16a34a;
+    --badge-active-text: #808080;
+    --badge-active-dot: #127557;
+    --badge-inactive-dot: #B42318;
     --status-online: #D1EFC0;
 
     /* Secondary Action Items */

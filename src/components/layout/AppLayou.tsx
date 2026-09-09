@@ -21,9 +21,9 @@ function AppLayout() {
         );
     }
     return (
-        <div className="flex h-screen gap-0 overflow-hidden bg-background p-5 md:gap-5">
+        <div className="flex h-screen gap-0 overflow-hidden bg-background p-5 md:pr-0">
             <Sidebar />
-            <main className="flex min-w-0 flex-1 flex-col overflow-y-auto">
+            <main className="flex min-w-0 flex-1 flex-col overflow-y-auto md:px-5">
                 <MobileTopbar />
                 <Outlet />
             </main>

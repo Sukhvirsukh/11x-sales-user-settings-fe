@@ -2,7 +2,7 @@ import AppSection from "@/components/design/AppSectoin";
 import Heading from "@/components/design/Heading";
 import { ToggleField } from "@/components/design/ToggleField";
 import { useState } from "react";
-import { DetailGroup, DetailItem } from "./BasicDetails";
+import { DetailGroup, DetailItem } from "@/components/design/DetailContainer";
 
 interface PermissionProps {
     name: string
@@ -21,8 +21,8 @@ const allPermissions = [
 
 export function Permission({ name, isChecked, onToggle }: PermissionProps) {
     return (
-        <div className="flex justify-between items-center w-full">
-            <p className="text-[#000] font-inter text-sm leading-none w-fit">
+        <div className="flex justify-between items-center w-full py-2.5">
+            <p className="text-[#000] font-inter text-base leading-none w-fit">
                 {name}
             </p>
             <ToggleField
@@ -53,9 +53,9 @@ export default function Permissions() {
     };
 
     return (
-        <div className="flex items-stretch gap-3.5 w-full">
-            <AppSection className="flex-[4_1_0%] min-w-0 h-auto! self-stretch">
-                <Heading size="lg" className="font-medium">
+        <div className="flex flex-col md:flex-row items-stretch gap-3.5 w-full">
+            <AppSection className="w-full md:w-auto md:flex-[4_1_0%] min-w-0 h-auto! self-stretch">
+                <Heading size="md" className="font-medium">
                     Permissions
                 </Heading>
                 <div className="flex flex-col items-start w-full">
@@ -71,17 +71,17 @@ export default function Permissions() {
                     }
                 </div>
             </AppSection>
-            <AppSection className="flex-[1_1_0%] min-w-[250px] !h-auto self-stretch">
+            <AppSection className="w-full md:w-auto md:flex-[1_1_0%] min-w-0 md:min-w-[250px] !h-auto self-stretch">
                 <Heading size="lg" className="font-medium">
                     Other Infomation
                 </Heading>
-                <div className="flex items-start gap-2.5 w-full">
-                    <DetailGroup className="pl-0">
+                <div className="flex items-start w-full">
+                    <DetailGroup className="pl-0!">
                         <DetailItem
                             label="Mode"
                             value={
                                 <div className="flex items-center gap-2">
-                                    <Heading size="md">Light Mode</Heading>
+                                    <p className="text-base">Light Mode</p>
                                     <ToggleField
                                         pressed={false}
                                         onPressedChange={() => { }}
