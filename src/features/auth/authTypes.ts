@@ -12,6 +12,7 @@ export type AuthApiUser = {
   name?: string | null;
   email?: string;
   role?: string;
+  phone?: string;
 };
 
 export type AuthRequestValues = {
@@ -24,6 +25,7 @@ export interface AuthUser {
   name: string;
   email?: string;
   role?: string;
+  phone?: string;
 }
 
 export interface AuthResponse {
@@ -32,17 +34,18 @@ export interface AuthResponse {
 }
 
 export interface AuthStore {
-    user: AuthUser | null;
-    name: string | null;
-    email: string | null;
-    role: string | null;
-    setUser: (user: AuthUser | undefined) => void;
-    clearUser: () => void;
+  user: AuthUser | null;
+  name: string | null;
+  email: string | null;
+  role: string | null;
+  phone: string | null;
+  setUser: (user: AuthUser | undefined) => void;
+  clearUser: () => void;
 }
 
 export interface AuthFormProps {
-    title: string;
-    subtitle: string;
-    children: ReactNode;
-    withSocials?: boolean;
+  title: string;
+  subtitle: string;
+  children: ReactNode;
+  withSocials?: boolean;
 }

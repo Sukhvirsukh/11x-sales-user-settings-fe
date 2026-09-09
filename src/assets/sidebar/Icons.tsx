@@ -1,12 +1,14 @@
 
 type IconProps = {
+    className?: string
     fill?: string
     height?: number
     width?: number
 }
 
-export const ConversationsIcon = ({ width = 22, height = 22, fill = "black" }: IconProps) => (
+export const ConversationsIcon = ({ width = 22, height = 22, fill = "black", className }: IconProps) => (
     <svg
+        className={className}
         width={width}
         height={height}
         viewBox="0 0 22 22"
@@ -22,8 +24,9 @@ export const ConversationsIcon = ({ width = 22, height = 22, fill = "black" }: I
     </svg>
 );
 
-export const ContactsIcon = ({ width = 22, height = 22, fill = "black" }) => (
+export const ContactsIcon = ({ width = 22, height = 22, fill = "black", className }: IconProps) => (
     <svg
+        className={className}
         width={width}
         height={height}
         viewBox="0 0 22 22"
@@ -42,8 +45,9 @@ export const ContactsIcon = ({ width = 22, height = 22, fill = "black" }) => (
     </svg>
 );
 
-export const OverviewIcon = ({ width = 22, height = 22, fill = "black" }) => (
+export const OverviewIcon = ({ width = 22, height = 22, fill = "black", className }: IconProps) => (
     <svg
+        className={className}
         width={width}
         height={height}
         viewBox="0 0 22 22"
@@ -62,8 +66,9 @@ export const OverviewIcon = ({ width = 22, height = 22, fill = "black" }) => (
     </svg>
 );
 
-export const SettingsIcon = ({ width = 22, height = 22, fill = "black" }) => (
+export const SettingsIcon = ({ width = 22, height = 22, fill = "black", className }: IconProps) => (
     <svg
+        className={className}
         width={width}
         height={height}
         viewBox="0 0 22 22"
@@ -79,8 +84,9 @@ export const SettingsIcon = ({ width = 22, height = 22, fill = "black" }) => (
     </svg>
 );
 
-export const AiTrainingIcon = ({ width = 22, height = 22, fill = "black" }) => (
+export const AiTrainingIcon = ({ width = 22, height = 22, fill = "black", className }: IconProps) => (
     <svg
+        className={className}
         width={width}
         height={height}
         viewBox="0 0 22 22"
@@ -96,8 +102,9 @@ export const AiTrainingIcon = ({ width = 22, height = 22, fill = "black" }) => (
     </svg>
 );
 
-export const ChatConfigurationIcon = ({ width = 22, height = 22, fill = "black" }) => (
+export const ChatConfigurationIcon = ({ width = 22, height = 22, fill = "black", className }: IconProps) => (
     <svg
+        className={className}
         width={width}
         height={height}
         viewBox="0 0 22 22"
@@ -115,8 +122,9 @@ export const ChatConfigurationIcon = ({ width = 22, height = 22, fill = "black" 
     </svg>
 );
 
-export const ReportsIcon = ({ width = 22, height = 22, fill = "black" }) => (
+export const ReportsIcon = ({ width = 22, height = 22, fill = "black", className }: IconProps) => (
     <svg
+        className={className}
         width={width}
         height={height}
         viewBox="0 0 22 22"
@@ -132,8 +140,9 @@ export const ReportsIcon = ({ width = 22, height = 22, fill = "black" }) => (
     </svg>
 );
 
-export const AskMeIcon = ({ width = 22, height = 22, fill = "black" }: IconProps) => (
+export const AskMeIcon = ({ width = 22, height = 22, fill = "black", className }: IconProps) => (
     <svg
+        className={className}
         width={width}
         height={height}
         viewBox="0 0 24 24"

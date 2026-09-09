@@ -1,4 +1,3 @@
-import { useState } from "react"
 import { NavLink } from "react-router"
 import { NAV_ITEMS } from "./sideNav"
 import SidebarUserCard from "./SidebarUserCard"
@@ -6,7 +5,7 @@ import { isSidebarHidden } from "./isSidebarHidden"
 import { useAuthStore } from "@/features/auth"
 
 export default function DesktopSidebar() {
-  const [isCollapsed, setIsCollapsed] = useState(false)
+  const isCollapsed = false
   const name = useAuthStore((state) => state.name)
   const email = useAuthStore((state) => state.email)
 

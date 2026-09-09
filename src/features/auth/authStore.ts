@@ -9,14 +9,16 @@ export const useAuthStore = create<AuthStore>()(
             name: null,
             email: null,
             role: null,
+            phone: null,
             setUser: (user) =>
                 set({
                     user: user ?? null,
                     name: user?.name ?? null,
                     email: user?.email ?? null,
                     role: user?.role ?? null,
+                    phone: user?.phone ?? null,
                 }),
-            clearUser: () => set({ user: null, name: null, email: null, role: null }),
+            clearUser: () => set({ user: null, name: null, email: null, role: null, phone: null }),
         }),
         { name: "vitalb.user" },
     ),
