@@ -114,3 +114,11 @@ export async function editRole(role: RoleRecord): Promise<RoleRecord> {
     });
     return toRoleRow(response);
 }
+
+
+
+export async function deleteRole(id: string) {
+    return apiFetch<unknown>(`/admin/roles/${encodeURIComponent(id)}`, {
+        method: "DELETE",
+    });
+}

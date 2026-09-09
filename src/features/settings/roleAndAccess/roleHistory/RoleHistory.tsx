@@ -9,6 +9,7 @@ import AddRoleForm from "./AddRoleForm"
 import { useRoleHistoryQuery } from "./roleHistoryQuery"
 import { Spinner } from "@/components/ui/spinner"
 import { useState } from "react"
+import DeleteRole from "./DeleteRole"
 
 const columns: Column[] = [
     {
@@ -40,6 +41,8 @@ export default function RoleHistory() {
     const { data = [], isLoading, error } = useRoleHistoryQuery()
     const [editData, setEditData] = useState<Record<string, unknown> | null>(null)
     const [isOpen, setIsOpen] = useState(false)
+    const [deleteRole, setDeleteRole] = useState<Record<string, unknown> | null>(null)
+    const [isDeleteOpen, setIsDeleteOpen] = useState(false)
 
     if (error) throw error
 
@@ -56,6 +59,16 @@ export default function RoleHistory() {
     function handleModalOpenChange(open: boolean) {
         setIsOpen(open)
         if (!open) setEditData(null)
+    }
+
+    function handleDeleteModalChange(open: boolean) {
+        setIsDeleteOpen(open)
+        if (!open) setDeleteRole(null)
+    }
+
+    function deleteRoleHandler(role: Record<string, unknown>) {
+        setDeleteRole(role)
+        setIsDeleteOpen(true)
     }
 
     return (
@@ -111,7 +124,7 @@ export default function RoleHistory() {
                         <Button variant="bare" size="sm" onClick={() => openEditRole(row)}>
                             <SquarePen className="size-4 text-gray" />
                         </Button>
-                        <Button variant="bare" size="sm">
+                        <Button variant="bare" size="sm" onClick={() => deleteRoleHandler(row)}>
                             <Trash className="size-4 text-gray" />
                         </Button>
                     </div>
@@ -123,6 +136,12 @@ export default function RoleHistory() {
                 onOpenChange={handleModalOpenChange}
                 role={editData}
             />
+            <DeleteRole
+                open={isDeleteOpen}
+                onOpenChange={handleDeleteModalChange}
+                role={deleteRole}
+            />
+
         </>
     )
 }
