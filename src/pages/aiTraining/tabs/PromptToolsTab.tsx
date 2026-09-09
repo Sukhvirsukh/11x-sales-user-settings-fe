@@ -1,6 +1,7 @@
+import { PromptTools } from "@/features/ai-training/promptTools";
 
 export default function PromptToolsTab() {
     return (
-        <div>PromptToolsTab</div>
+        <PromptTools />
     )
 }

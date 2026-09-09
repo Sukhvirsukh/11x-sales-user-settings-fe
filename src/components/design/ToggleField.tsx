@@ -12,6 +12,8 @@ interface ToggleFieldProps extends React.ComponentPropsWithoutRef<typeof Toggle>
     uncheckedIcon?: LucideIcon
     iconClassName?: string
     "aria-label"?: string
+    showText?: boolean
+    textStyle?: string
 }
 
 export function ToggleField({
@@ -22,10 +24,18 @@ export function ToggleField({
     iconClassName = "h-4 w-4",
     className,
     "aria-label": ariaLabel,
+    showText = false,
+    textStyle,
     ...props
 }: ToggleFieldProps) {
     // Renders the icon for the current state (falls back to ToggleRight/ToggleLeft)
     const ActiveIcon = pressed ? CheckedIcon : UncheckedIcon
+
+    const text = showText
+        ? pressed
+            ? "Activate"
+            : "Deactivate"
+        : undefined
 
     return (
         <Toggle
@@ -44,6 +54,7 @@ export function ToggleField({
                 className
             )}
         >
+            {showText && <span className={`${textStyle}`}>{text}</span>}
             <ActiveIcon className={iconClassName} />
         </Toggle>
     )

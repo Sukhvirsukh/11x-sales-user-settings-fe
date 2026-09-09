@@ -1,12 +1,10 @@
-import type { Column } from "@/components/design/CustomTable"
-import CustomTable from "@/components/design/CustomTable"
-import { InputField } from "@/components/design/InputField"
-import { Button } from "@/components/ui/button"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { ListFilter, Search, SquarePen, Trash } from "lucide-react"
-import AddStore from "./AddStore"
-import { Badge } from "@/components/ui/badge"
+import CustomTable, { type Column } from "@/components/design/CustomTable";
+import { InputField } from "@/components/design/InputField";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { ListFilter, Search, SquarePen, Trash } from "lucide-react";
 
 const columns: Column[] = [
     {
@@ -15,9 +13,8 @@ const columns: Column[] = [
         width: "56px",
         render: (_, row) => <Checkbox aria-label={`Select ${row.name}`} />,
     },
-    { key: "storeName", header: "Store Name", width: "280px" },
-    { key: "storeUrl", header: "Store URL" },
-    { key: "storeOwner", header: "Store Owner" },
+    { key: "name", header: "Name", width: "280px" },
+    { key: "corrections", header: "Corrections" },
     {
         key: "status",
         header: "Status",
@@ -31,32 +28,31 @@ const columns: Column[] = [
             )
         },
     },
-    { key: "startDate", header: "Start date", align: "right" },
+    { key: "createDate", header: "Create date" },
+    { key: "lastRefresh", header: "Last refresh", align: "right" },
 ]
 
 const data = [
     {
-        storeName: "Sunvi",
-        storeUrl: "sunvi.myshopify.com",
-        storeOwner: "Racheal",
+        name: "Do you have anything in black shoe?",
+        corrections: "Yes, we have exactly in navy bluish black",
         status: "Active",
-        startDate: "10/02/26",
+        createDate: "10/02/26",
+        lastRefresh: "10/02/26",
     },
     {
-        storeName: "Firr",
-        storeUrl: "firr.myshopify.com",
-        storeOwner: "Kimk k",
+        name: "Do you have anything in black shoe?",
+        orrections: "Yes, we have exactly in navy bluish black",
         status: "Active",
-        startDate: "10/02/26",
-    },
+        createDate: "10/02/26",
+        lastRefresh: "10/02/26",
+    }
 ]
 
-
-export function Store() {
+export function Corrections() {
     return (
-
         <CustomTable
-            title="Store"
+            title="Knowledge base"
             columns={columns}
             data={data}
             headerActions={
@@ -75,8 +71,6 @@ export function Store() {
                                 placeholder="Search"
                                 startIcon={<Search className="size-4" />}
                                 endIcon={<ListFilter className="size-4" />}
-                                // containerClassName="h-[35px] bg-transparent!"
-                                // className="bg-transparent!"
                                 variant="light"
                             />
                         </PopoverContent>
@@ -90,7 +84,6 @@ export function Store() {
                             }
                         />
                     </div>
-                    <AddStore />
                 </div>
             }
             rowActions={() => (
@@ -105,6 +98,5 @@ export function Store() {
             )}
             className="w-full md:[&_th:nth-child(2)]:pl-0 md:[&_td:first-child:has([role=checkbox])+td]:pl-0"
         />
-
     )
 }
