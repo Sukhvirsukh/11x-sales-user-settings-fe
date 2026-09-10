@@ -89,7 +89,7 @@ export default function RoleHistory() {
                 bulkActions={(rows, deselectRows) => (
                     <DeleteSelectedRoles roles={rows} onDeleted={deselectRows} />
                 )}
-                emptyMessage={isLoading ? "Loading role history" : search ? "No matching roles found" : "No role history found"}
+                emptyMessage={isLoading ? "Loading.. role history" : search ? "No matching roles found" : "No role history found"}
                 emptyDescription={isLoading ? "" : search ? "Try a different search term." : "Roles assigned to your team will appear here."}
                 emptyState={isLoading ? (
                     <div className="flex w-full items-center justify-center py-16">

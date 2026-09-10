@@ -1,110 +1,164 @@
-import type { Column } from "@/components/design/CustomTable"
-import CustomTable from "@/components/design/CustomTable"
-import { InputField } from "@/components/design/InputField"
-import { Button } from "@/components/ui/button"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { ListFilter, Search, SquarePen, Trash } from "lucide-react"
-import AddStore from "./AddStore"
-import { Badge } from "@/components/ui/badge"
+import type { Column } from "@/components/design/CustomTable";
+import CustomTable from "@/components/design/CustomTable";
+import { InputField } from "@/components/design/InputField";
+import { Button } from "@/components/ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { ListFilter, Plus, Search, SquarePen, Trash } from "lucide-react";
+import AddStore from "./AddStore";
+import DeleteStore from "./DeleteStore";
+import DeleteSelectedStores from "./DeleteSelectedStores";
+import { Badge } from "@/components/ui/badge";
+import { useStoreQuery } from "./storeQuery";
+import { Spinner } from "@/components/ui/spinner";
+import { useMemo, useState } from "react";
 
 const columns: Column[] = [
-    {
-        key: "select",
-        header: "",
-        width: "56px",
-        render: (_, row) => <Checkbox aria-label={`Select ${row.name}`} />,
-    },
-    { key: "storeName", header: "Store Name", width: "280px" },
-    { key: "storeUrl", header: "Store URL" },
-    { key: "storeOwner", header: "Store Owner" },
+    { key: "name", header: "Store Name", width: "280px" },
+    { key: "url", header: "Store URL" },
+    { key: "owner", header: "Store Owner" },
     {
         key: "status",
         header: "Status",
         align: "center",
         render: (value) => {
-            const status = String(value)
+            const isActive = value === true || String(value).toLowerCase() === "active";
             return (
-                <Badge variant={status === "Active" ? "default" : "destructive"}>
-                    {status}
+                <Badge variant={isActive ? "default" : "destructive"}>
+                    {isActive ? "Active" : "Inactive"}
                 </Badge>
-            )
+            );
         },
     },
     { key: "startDate", header: "Start date", align: "right" },
-]
-
-const data = [
-    {
-        storeName: "Sunvi",
-        storeUrl: "sunvi.myshopify.com",
-        storeOwner: "Racheal",
-        status: "Active",
-        startDate: "10/02/26",
-    },
-    {
-        storeName: "Firr",
-        storeUrl: "firr.myshopify.com",
-        storeOwner: "Kimk k",
-        status: "Active",
-        startDate: "10/02/26",
-    },
-]
-
+];
 
 export function Store() {
-    return (
+    const { data = [], isLoading, error } = useStoreQuery();
+    const [search, setSearch] = useState("");
+    const [editStore, setEditStore] = useState<Record<string, unknown> | null>(null);
+    const [isOpen, setIsOpen] = useState(false);
+    const [deleteStoreRow, setDeleteStoreRow] = useState<Record<string, unknown> | null>(null);
+    const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
-        <CustomTable
-            title="Store"
-            columns={columns}
-            data={data}
-            headerActions={
-                <div className="flex items-center gap-2.5">
-                    <Popover>
-                        <PopoverTrigger
-                            render={
-                                <Button variant="ghost" size="sm" className="size-[35px] md:hidden" aria-label="Search role history">
-                                    <Search className="size-4" />
-                                </Button>
-                            }
-                        />
-                        <PopoverContent side="top" align="end" sideOffset={8} className="w-[255px] max-w-[calc(100vw-2rem)] rounded-[10px] border border-blue-200 bg-white! p-3 shadow-blue ring-0! md:hidden">
+    if (error) throw error;
+
+    const filteredData = useMemo(() => {
+        const query = search.trim().toLowerCase();
+        if (!query) return data;
+
+        return data.filter((row) =>
+            ["name", "url", "owner"].some((key) =>
+                String(row[key] ?? "").toLowerCase().includes(query),
+            ),
+        );
+    }, [data, search]);
+
+    function openCreateStore() {
+        setEditStore(null);
+        setIsOpen(true);
+    }
+
+    function openEditStore(store: Record<string, unknown>) {
+        setEditStore(store);
+        setIsOpen(true);
+    }
+
+    function handleModalOpenChange(open: boolean) {
+        setIsOpen(open);
+        if (!open) setEditStore(null);
+    }
+
+    function handleDeleteModalChange(open: boolean) {
+        setIsDeleteOpen(open);
+        if (!open) setDeleteStoreRow(null);
+    }
+
+    function deleteStoreHandler(store: Record<string, unknown>) {
+        setDeleteStoreRow(store);
+        setIsDeleteOpen(true);
+    }
+
+    return (
+        <>
+            <CustomTable
+                title="Store"
+                columns={columns}
+                data={filteredData}
+                selectable
+                getRowId={(row) => String(row.id)}
+                bulkActions={(rows, deselectRows) => (
+                    <DeleteSelectedStores stores={rows} onDeleted={deselectRows} />
+                )}
+                emptyMessage={isLoading ? "Loading stores..." : search ? "No matching stores found" : "No stores found"}
+                emptyDescription={isLoading ? "" : search ? "Try a different search term." : "Stores connected to your account will appear here."}
+                emptyState={
+                    isLoading ? (
+                        <div className="flex w-full items-center justify-center py-16">
+                            <Spinner className="size-6 text-primary" />
+                        </div>
+                    ) : undefined
+                }
+                headerActions={
+                    <div className="flex items-center gap-2.5">
+                        <Popover>
+                            <PopoverTrigger
+                                render={
+                                    <Button variant="ghost" size="sm" className="size-[35px] md:hidden" aria-label="Search stores">
+                                        <Search className="size-4" />
+                                    </Button>
+                                }
+                            />
+                            <PopoverContent side="top" align="end" sideOffset={8} className="w-[255px] max-w-[calc(100vw-2rem)] rounded-[10px] border border-blue-200 bg-white! p-3 shadow-blue ring-0! md:hidden">
+                                <InputField
+                                    aria-label="Search stores"
+                                    placeholder="Search"
+                                    startIcon={<Search className="size-4" />}
+                                    endIcon={<ListFilter className="size-4" />}
+                                    variant="light"
+                                    value={search}
+                                    onChange={(e) => setSearch(e.target.value)}
+                                />
+                            </PopoverContent>
+                        </Popover>
+                        <div className="hidden w-full max-w-[231px] md:block">
                             <InputField
-                                aria-label="Search role history"
+                                aria-label="Search stores"
                                 placeholder="Search"
                                 startIcon={<Search className="size-4" />}
                                 endIcon={<ListFilter className="size-4" />}
-                                // containerClassName="h-[35px] bg-transparent!"
-                                // className="bg-transparent!"
-                                variant="light"
+                                value={search}
+                                onChange={(e) => setSearch(e.target.value)}
                             />
-                        </PopoverContent>
-                    </Popover>
-                    <div className="hidden w-full max-w-[231px] md:block">
-                        <InputField
-                            placeholder="Search"
-                            startIcon={<Search className="size-4" />}
-                            endIcon={
-                                <ListFilter className="size-4" />
-                            }
-                        />
+                        </div>
+                        <Button variant="primary" size="sm" onClick={openCreateStore}>
+                            Add store
+                            <Plus className="ml-0.5 size-2 md:ml-2 md:size-4" />
+                        </Button>
                     </div>
-                    <AddStore />
-                </div>
-            }
-            rowActions={() => (
-                <div className="flex items-center gap-2">
-                    <Button variant="bare" size="sm">
-                        <SquarePen className="size-4 text-gray" />
-                    </Button>
-                    <Button variant="bare" size="sm">
-                        <Trash className="size-4 text-gray" />
-                    </Button>
-                </div>
-            )}
-            className="w-full md:[&_th:nth-child(2)]:pl-0 md:[&_td:first-child:has([role=checkbox])+td]:pl-0"
-        />
+                }
+                rowActions={(row) => (
+                    <div className="flex items-center gap-2">
+                        <Button variant="bare" size="sm" onClick={() => openEditStore(row)} aria-label="Edit store">
+                            <SquarePen className="size-4 text-gray" />
+                        </Button>
+                        <Button variant="bare" size="sm" onClick={() => deleteStoreHandler(row)} aria-label="Delete store">
+                            <Trash className="size-4 text-gray" />
+                        </Button>
+                    </div>
+                )}
+                className="w-full"
+            />
+            <AddStore
+                open={isOpen}
+                onOpenChange={handleModalOpenChange}
+                store={editStore}
+            />
+            <DeleteStore
+                open={isDeleteOpen}
+                onOpenChange={handleDeleteModalChange}
+                stores={deleteStoreRow ? [deleteStoreRow] : []}
+            />
+        </>
 
-    )
+    );
 }
