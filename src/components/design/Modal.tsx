@@ -14,6 +14,7 @@ interface ModalAction {
     label: string;
     onClick?: () => void;
     disabled?: boolean;
+    variant?: "primary" | "secondary" | "outline" | "destructive" | "ghost";
 }
 
 interface ModalCloseAction {
@@ -64,9 +65,9 @@ export default function Modal({
                     <div className="flex items-start gap-2.5 px-4 pb-4 w-full">
                         {primaryAction && (
                             <Button
-                                variant="primary"
                                 onClick={primaryAction.onClick}
                                 disabled={primaryAction.disabled}
+                                variant={primaryAction.variant ?? "primary"}
                             >
                                 {primaryAction.label}
                             </Button>

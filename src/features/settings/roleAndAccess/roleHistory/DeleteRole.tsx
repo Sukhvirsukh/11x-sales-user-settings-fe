@@ -43,13 +43,18 @@ export default function DeleteRole({ open, onOpenChange, role }: DeleteRoleProps
                 label: "Delete",
                 onClick: confirmDelete,
                 disabled: deleteRoleMutation.isPending || !role,
+                variant: "destructive",
             }}
             closeAction={{ label: "Cancel", disabled: false }}
         >
-            <Banner variant="destructive">
+            <Banner variant="destructive" isIcon>
                 <p>
                     Are you sure you want to delete{" "}
-                    <span className="font-bold">{role?.name || 'this role'}</span>? This action cannot be undone.
+                    <span className="font-bold">
+                        <>
+                            {role?.name ?? 'this role'}
+                        </>
+                    </span>? This action cannot be undone.
                 </p>
             </Banner>
         </Modal>
