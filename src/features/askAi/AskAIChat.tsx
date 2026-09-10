@@ -63,7 +63,7 @@ export default function AskAIChat() {
                     <Heading size="2xl" className="text-2xl md:text-3xl">
                         Hi there, How can I help you?
                     </Heading>
-                    <p className="mt-6 max-w-[728px] text-sm text-gray">
+                    <p className="mt-6 max-w-182 text-sm text-gray">
                         How do I connect Shopify? How do I add a WhatsApp integration? Why isn't my chatbot responding? How do I invite another team member?
                     </p>
                 </div>
