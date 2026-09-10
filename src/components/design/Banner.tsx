@@ -28,6 +28,7 @@ const variants = {
 export interface BannerProps extends Omit<ComponentProps<"div">, "title"> {
     variant?: keyof typeof variants
     title?: ReactNode
+    titleClassName?: string
     isIcon?: boolean
 }
 
@@ -35,6 +36,7 @@ export function Banner({
     variant = "info",
     isIcon = false,
     title,
+    titleClassName,
     children,
     className,
     role = variant === "destructive" ? "alert" : "status",
@@ -55,8 +57,8 @@ export function Banner({
             {...props}
         >
             {isIcon && <Icon aria-hidden="true" className={cn("size-5 shrink-0", iconClassName)} />}
-            <div className="min-w-0 flex-1 break-words">
-                {title && <div className="font-semibold">{title}</div>}
+            <div className="min-w-0 flex-1 wrap-break-word">
+                {title && <div className={cn("font-semibold", titleClassName)}>{title}</div>}
                 {children && <div className={cn("leading-relaxed", title && "mt-1")}>{children}</div>}
             </div>
         </div>

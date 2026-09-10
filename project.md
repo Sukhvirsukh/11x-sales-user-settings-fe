@@ -38,7 +38,7 @@
 | `/ai-training/knowledge-base` | KnowledgeBaseTab | Knowledge base management |
 | `/ai-training/corrections` | CorrectionsTab | Corrections management |
 | `/ai-training/prompt-tools` | PromptToolsTab | Prompt tools management |
-| `/ask-me` | AskMePage | Ask me page |
+| `/ask-me` | AskMePage | Ask me page (AI chat assistant) |
 | `/settings` | SettingsPage | Settings page (index redirects to role-n-access) |
 | `/settings/role-n-access` | RoleAndAccess | Role & access management |
 | `/settings/plan` | Plan | Plan management |
@@ -108,7 +108,8 @@ src/
 │   └── design/                      # Design system components
 │       ├── HelperText.tsx           # Helper text component
 │       ├── AppCard.tsx              # App card component
-│       ├── AppSectoin.tsx           # App section component
+│       ├── AppSectoin.tsx           # App section component (flex container with border/bg)
+│       ├── Banner.tsx               # Banner component (variants: success, destructive, info, warning)
 │       ├── ColorSelector.tsx        # Color selector component
 │       ├── Label.tsx                # Label component
 │       ├── TextAreaField.tsx        # Text area field component
@@ -118,7 +119,7 @@ src/
 │       ├── GroupRadioField.tsx      # Group radio field component
 │       ├── InputField.tsx           # Input field component
 │       ├── SelectField.tsx          # Select field component
-│       ├── Heading.tsx              # Heading component
+│       ├── Heading.tsx              # Heading component (CVA-based: 2xl, xlg, lg, md sizes)
 │       ├── GroupCheckboxField.tsx   # Group checkbox field component
 │       ├── MultiTextField.tsx       # Multi-text field component
 │       ├── ImageUploader.tsx        # Image uploader component
@@ -126,6 +127,7 @@ src/
 │       ├── ToggleField.tsx          # Toggle field component
 │       ├── CustomTable.tsx          # Custom table component (columns/data/headerActions/rowActions)
 │       ├── DatePicker.tsx           # Date picker (Calendar + Popover, date-fns formatting)
+│       ├── PreviewSection.tsx       # Preview section wrapper (white card with shadow-blue)
 │       ├── DetailContainer.tsx      # Label/value detail layout (DetailContainer, DetailGroup, DetailItem)
 │       ├── DetailContainer.module.css # CSS module styles for DetailContainer
 │       └── Modal.tsx                # Dialog wrapper (trigger, title, primary/secondary/close actions)
@@ -183,6 +185,10 @@ src/
 │   │       ├── TrackingSettings.tsx # Tracking settings
 │   │       ├── CrawlSettings.tsx    # Crawl settings
 │   │       └── fieldStyles.ts       # Field styles
+│   ├── askAi/
+│   │   ├── index.ts                 # AskAI exports
+│   │   ├── AskAI.tsx                # AskAI main component (chat + history banner)
+│   │   └── AskAIChat.tsx            # AskAI chat interface (messages, input, file attachment)
 │   └── settings/
 │       ├── Settings.tsx             # Settings main component
 │       ├── index.ts                 # Settings exports
@@ -215,7 +221,7 @@ src/
 │   ├── SignInPage.tsx               # Sign-in page
 │   ├── SignUpPage.tsx               # Sign-up page
 │   ├── ForgotPassword.tsx           # Forgot password page (Background + ForgotPasswordForm)
-│   ├── AskMePage.tsx                # Ask me page
+│   ├── AskMePage.tsx                # Ask me page (PageHeader + AskAI)
 │   ├── ErrorPage.tsx                # Error page (reuses AppCard + Button for reload/home)
 │   ├── SettingsPage.tsx             # Settings page
 │   ├── chatSettings/
@@ -305,6 +311,7 @@ Defined in `src/components/layout/sidebar/sideNav.ts`:
 - Settings sub-pages compose shared design components: tables use `CustomTable` (columns/data/headerActions/rowActions, e.g. RoleHistory, PaymentHistory), detail displays use `DetailContainer`/`DetailGroup`/`DetailItem` (e.g. BasicDetails, SavedPaymentDetails), and create/edit flows use the shared `Modal` with `FormGroup` + field components (AddRoleForm, AddNewPayment, AddStore).
 - The `unsavedChangesBar` shared component provides a warning system for unsaved changes.
 - `forgotPassword` feature uses TanStack Query for password reset mutations.
+- **Ask AI feature** (`src/features/askAi/`): Provides an AI chat assistant interface at `/ask-me`. Composed of `AskAI.tsx` (main component with chat area + history banner) and `AskAIChat.tsx` (chat interface with messages, input, file attachment button). Uses `PreviewSection` wrapper, `AppSection` for the chat area, and `Banner` component (info variant) for the history sidebar.
 
 ## Key Conventions
 
@@ -318,3 +325,29 @@ Defined in `src/components/layout/sidebar/sideNav.ts`:
 - Feature-specific business logic goes in `src/features/`.
 - Pages compose features and should not contain business logic directly.
 - Use `apiFetch` from `src/lib/api.ts` for all API calls (handles auth, errors, toasts).
+
+## Design System Components
+
+### AppSectoin (`src/components/design/AppSectoin.tsx`)
+Flex container with section styling (border-section-border, bg-section-bg). Used as the main chat container in AskAI.
+
+### Banner (`src/components/design/Banner.tsx`)
+Status banner component with four variants:
+- `success`: green border/bg with CircleCheck icon
+- `destructive`: red border/bg with OctagonX icon (role="alert")
+- `info`: blue section border/bg with Info icon (default)
+- `warning`: warning border/bg with TriangleAlert icon
+
+Props: `variant`, `isIcon`, `title`, `titleClassName`, `children`, `className`, `role`.
+
+### Heading (`src/components/design/Heading.tsx`)
+CVA-based heading component with sizes:
+- `2xl`: 24px, semi-bold
+- `xlg`: 20px, semi-bold
+- `lg`: 16px, semi-bold (default)
+- `md`: 14px, medium
+
+Supports `as` prop (h1-h6, p, span). Memoized for performance.
+
+### PreviewSection (`src/components/design/PreviewSection.tsx`)
+White card wrapper with shadow-blue and border-blue-100/70. Used as the outer container for AskAI page.
