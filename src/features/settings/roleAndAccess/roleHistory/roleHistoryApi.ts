@@ -1,6 +1,7 @@
 import { apiFetch } from "@/lib/api";
 import { dateFormater } from "@/lib/utils";
 import { format as formatDate } from "date-fns";
+import type { RoleFormValues } from "./roleHistoryTypes";
 
 type RoleRecord = Record<string, unknown>;
 
@@ -25,7 +26,7 @@ function asRoleRecords(value: unknown): RoleRecord[] {
     }
 
     if (typeof value === "object" && value !== null && "roles" in value) {
-        return asRoleRecords((value as { roles?: unknown }).roles);
+        return asRoleRecords(value.roles);
     }
 
     return [];
@@ -34,7 +35,7 @@ function asRoleRecords(value: unknown): RoleRecord[] {
 function roleName(value: unknown): string {
     if (typeof value === "string") return value;
     if (typeof value === "object" && value !== null && "name" in value) {
-        return String((value as { name?: unknown }).name ?? "");
+        return String(value.name ?? "");
     }
     return "";
 }
@@ -51,16 +52,14 @@ function toRoleRow(role: RoleRecord): RoleRecord {
     const user = typeof role.user === "object" && role.user !== null
         ? role.user as RoleRecord
         : {};
-    const status = role.status ?? (role.isActive === false ? "Inactive" : "Active");
     const startDateValue = toDate(role.startDate ?? role.createdAt);
-    const startDate = dateFormater(startDateValue);
     return {
         id: role.id,
         name: role.name ?? user.name ?? "",
         email: role.email ?? user.email ?? "",
         role: roleName(role.role),
-        status,
-        startDate,
+        status: role.status ?? (role.isActive === false ? "Inactive" : "Active"),
+        startDate: dateFormater(startDateValue),
         startDateValue,
     };
 }
@@ -74,22 +73,17 @@ export async function getRoles(): Promise<RoleRecord[]> {
     return roles.map(toRoleRow);
 }
 
-export function toRolePayload(values: {
-    name: string;
-    email: string;
-    role: string;
-    startDate?: Date;
-}): RolePayload {
+function toRolePayload(values: RoleFormValues): RolePayload {
     return {
         name: values.name.trim(),
         email: values.email.trim().toLowerCase(),
         role: values.role.toUpperCase(),
         status: true,
-        startDate: values.startDate ? formatDate(values.startDate, "yyyy-MM-dd") : "",
+        startDate: formatDate(values.startDate, "yyyy-MM-dd"),
     };
 }
 
-export function createRole(values: Parameters<typeof toRolePayload>[0]) {
+export function createRole(values: RoleFormValues) {
     return apiFetch<unknown>("/admin/roles", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -97,27 +91,14 @@ export function createRole(values: Parameters<typeof toRolePayload>[0]) {
     });
 }
 
-export function updateRole(id: string, values: Parameters<typeof toRolePayload>[0]) {
+export function updateRole(id: string, values: RoleFormValues) {
     return apiFetch<unknown>(`/admin/roles/${encodeURIComponent(id)}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(toRolePayload(values)),
     });
 }
-
-
-export async function editRole(role: RoleRecord): Promise<RoleRecord> {
-    const response = await apiFetch<RoleRecord>("/admin/roles/", {
-        method: role.id ? "PATCH" : "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ role }),
-    });
-    return toRoleRow(response);
-}
-
-
-
-export async function deleteRole(id: string) {
+export function deleteRole(id: string) {
     return apiFetch<unknown>(`/admin/roles/${encodeURIComponent(id)}`, {
         method: "DELETE",
     });
