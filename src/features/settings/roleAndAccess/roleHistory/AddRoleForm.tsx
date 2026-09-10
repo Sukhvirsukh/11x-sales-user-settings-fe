@@ -113,10 +113,10 @@ export default function AddRoleForm({ open, onOpenChange, role }: AddRoleFormPro
                         error={errors.role?.message}
                         onValueChange={(role) => setValue("role", role ?? "", { shouldValidate: true })}
                         options={[
-                            { value: "admin", label: "Admin" },
-                            { value: "manager", label: "Manager" },
-                            { value: "user", label: "User" },
-                            { value: "member", label: "Member" },
+                            { value: "ADMIN", label: "Admin" },
+                            { value: "EDITOR", label: "Editor" },
+                            { value: "AGENT", label: "Agent" },
+                            { value: "MEMBER", label: "Member" },
                         ]}
                         variant="light"
                     />
