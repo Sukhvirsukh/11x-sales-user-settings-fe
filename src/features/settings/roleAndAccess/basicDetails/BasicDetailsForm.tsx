@@ -1,21 +1,26 @@
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { SquarePen } from "lucide-react";
 import Modal from "@/components/design/Modal";
+import { useMutation } from "@tanstack/react-query";
+
 import { InputField } from "@/components/design/InputField";
 import { Button } from "@/components/ui/button";
-import { Slider } from "@/components/ui/slider";
-import { SquarePen } from "lucide-react";
 import { FormGroup } from "@/components/design/FormGroup";
-import Label from "@/components/design/Label";
-import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuthStore } from "@/features/auth";
 import { basicDetailsSchema } from "./basicDetailsSchema";
 import type { BasicDetailsFormValues } from "./basicDetailsTypes";
+import { updateProfile } from "./basicDetailsApi";
 
 export default function BasicDetailsForm() {
     const user = useAuthStore(data => data.user);
+    const setUser = useAuthStore(data => data.setUser);
+    const [isOpen, setIsOpen] = useState(false);
     const {
         register,
         handleSubmit,
+        reset,
         formState: { errors },
     } = useForm<BasicDetailsFormValues>({
         resolver: zodResolver(basicDetailsSchema),
@@ -26,12 +31,39 @@ export default function BasicDetailsForm() {
         },
     });
 
+    const updateProfileMutation = useMutation({
+        mutationFn: updateProfile,
+        onSuccess: (updatedUser) => {
+            setUser({
+                id: updatedUser.id ?? user?.id,
+                name: updatedUser.name,
+                email: updatedUser.email ?? user?.email,
+                phone: updatedUser.phone ?? user?.phone,
+                role: updatedUser.role ?? user?.role,
+            });
+            setIsOpen(false);
+        },
+    });
+
     function saveBasicDetails(values: BasicDetailsFormValues) {
-        console.log("Save", values);
+        updateProfileMutation.mutate(values);
+    }
+
+    function handleOpenChange(open: boolean) {
+        setIsOpen(open);
+        if (open) {
+            reset({
+                name: user?.name ?? "",
+                email: user?.email ?? "",
+                phone: user?.phone ?? "",
+            });
+        }
     }
 
     return (
         <Modal
+            open={isOpen}
+            onOpenChange={handleOpenChange}
             trigger={
                 /* Mobile: icon-only button next to the avatar.
                    Desktop: full "Edit details" button. */
@@ -48,6 +80,7 @@ export default function BasicDetailsForm() {
             primaryAction={{
                 label: "Save",
                 onClick: handleSubmit(saveBasicDetails),
+                disabled: updateProfileMutation.isPending,
             }}
             closeAction={{
                 label: "Cancel",
@@ -77,16 +110,6 @@ export default function BasicDetailsForm() {
                         error={errors.phone?.message}
                         {...register("phone")}
                     />
-                    <div className="flex flex-col gap-2">
-                        <Label className="text-sm">Points used</Label>
-                        <Slider
-                            value={[50]}
-                            min={0}
-                            max={100}
-                            disabled
-                        />
-                        <span className="text-sm text-ghost">50 / 100 used</span>
-                    </div>
                 </FormGroup>
             </form>
         </Modal>

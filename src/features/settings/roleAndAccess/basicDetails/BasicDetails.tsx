@@ -24,7 +24,7 @@ export function BasicDetails() {
                             {avatarUrl ? (
                                 <img src={avatarUrl} className="size-full object-cover" alt="Profile" />
                             ) : (
-                                <span>{getInitials(name)}</span>
+                                <span className="text-2xl">{getInitials(name)}</span>
                             )}
                         </div>
                     }
