@@ -1,23 +1,18 @@
+import { useMemo, useState } from "react"
+import { ListFilter, Plus, Search, SquarePen, Trash } from "lucide-react"
+
 import CustomTable, { type Column } from "@/components/design/CustomTable"
 import { InputField } from "@/components/design/InputField"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Checkbox } from "@/components/ui/checkbox"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { ListFilter, Plus, Search, SquarePen, Trash } from "lucide-react"
 import AddRoleForm from "./AddRoleForm"
 import { useRoleHistoryQuery } from "./roleHistoryQuery"
 import { Spinner } from "@/components/ui/spinner"
-import { useState } from "react"
 import DeleteRole from "./DeleteRole"
+import DeleteSelectedRoles from "./DeleteSelectedRoles"
 
 const columns: Column[] = [
-    {
-        key: "select",
-        header: "",
-        width: "56px",
-        render: (_, row) => <Checkbox aria-label={`Select ${row.name}`} />,
-    },
     { key: "name", header: "Name", width: "280px" },
     { key: "email", header: "Mail Id" },
     { key: "role", header: "Role" },
@@ -43,8 +38,20 @@ export default function RoleHistory() {
     const [isOpen, setIsOpen] = useState(false)
     const [deleteRole, setDeleteRole] = useState<Record<string, unknown> | null>(null)
     const [isDeleteOpen, setIsDeleteOpen] = useState(false)
+    const [search, setSearch] = useState("")
 
     if (error) throw error
+
+    const filteredData = useMemo(() => {
+        const query = search.trim().toLowerCase()
+        if (!query) return data
+
+        return data.filter((row) =>
+            ["name", "email", "role"].some((key) =>
+                String(row[key] ?? "").toLowerCase().includes(query)
+            )
+        )
+    }, [data, search])
 
     function openCreateRole() {
         setEditData(null)
@@ -76,9 +83,14 @@ export default function RoleHistory() {
             <CustomTable
                 title="Role history"
                 columns={columns}
-                data={data}
-                emptyMessage={isLoading ? "Loading role history" : "No role history found"}
-                emptyDescription={isLoading ? "" : "Roles assigned to your team will appear here."}
+                data={filteredData}
+                selectable
+                getRowId={(row) => String(row.id)}
+                bulkActions={(rows, deselectRows) => (
+                    <DeleteSelectedRoles roles={rows} onDeleted={deselectRows} />
+                )}
+                emptyMessage={isLoading ? "Loading role history" : search ? "No matching roles found" : "No role history found"}
+                emptyDescription={isLoading ? "" : search ? "Try a different search term." : "Roles assigned to your team will appear here."}
                 emptyState={isLoading ? (
                     <div className="flex w-full items-center justify-center py-16">
                         <Spinner className="size-6 text-primary" />
@@ -101,16 +113,21 @@ export default function RoleHistory() {
                                     startIcon={<Search className="size-4" />}
                                     endIcon={<ListFilter className="size-4" />}
                                     variant="light"
+                                    value={search}
+                                    onChange={(e) => setSearch(e.target.value)}
                                 />
                             </PopoverContent>
                         </Popover>
                         <div className="hidden w-full max-w-[231px] md:block">
                             <InputField
+                                aria-label="Search role history"
                                 placeholder="Search"
                                 startIcon={<Search className="size-4" />}
                                 endIcon={
                                     <ListFilter className="size-4" />
                                 }
+                                value={search}
+                                onChange={(e) => setSearch(e.target.value)}
                             />
                         </div>
                         <Button variant="primary" size="sm" onClick={openCreateRole}>
@@ -139,7 +156,7 @@ export default function RoleHistory() {
             <DeleteRole
                 open={isDeleteOpen}
                 onOpenChange={handleDeleteModalChange}
-                role={deleteRole}
+                roles={deleteRole ? [deleteRole] : []}
             />
 
         </>
