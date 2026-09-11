@@ -72,7 +72,7 @@ function AccordionContent({
       <div
         className={cn(
           "min-w-0",
-          "in-data-[variant=inset]:mb-4 in-data-[variant=inset]:rounded-[10px] in-data-[variant=inset]:bg-muted in-data-[variant=inset]:p-2.5 md:in-data-[variant=inset]:p-4",
+          "in-data-[variant=inset]:mb-4 in-data-[variant=inset]:rounded-[10px] in-data-[variant=inset]:bg-section-bg in-data-[variant=inset]:p-2.5 md:in-data-[variant=inset]:p-4",
           "in-data-[variant=card]:bg-muted in-data-[variant=card]:pb-3",
           className
         )}

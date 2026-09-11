@@ -11,12 +11,22 @@ const badgeVariants = cva(
       variant: {
         default:
           "bg-badge-active-bg text-badge-active-text after:size-1.5 after:rounded-full after:bg-badge-active-dot after:content-[''] md:after:size-[7px] [a]:hover:bg-badge-active-bg/80",
+        defaultDark:
+          "bg-badge-active-dot text-primary-fg after:size-1.5 after:rounded-full after:bg-primary-fg after:content-[''] md:after:size-[7px] [a]:hover:bg-badge-active-dot/90",
         secondary:
           "bg-secondary text-secondary-foreground [a]:hover:bg-secondary/80",
+        darkSecondary:
+          "bg-input after:size-1.5 after:rounded-full after:bg-gray after:content-[''] md:after:size-[7px] [a]:hover:bg-black/85",
+        darkSuccess:
+          "bg-success-light text-success after:size-1.5 after:rounded-full after:bg-success after:content-[''] md:after:size-[7px] [a]:hover:bg-success-light/80",
         destructive:
           "bg-badge-inactive-bg text-gray after:size-1.5 after:rounded-full after:bg-badge-inactive-dot after:content-[''] md:after:size-[7px] focus-visible:ring-destructive/20 [a]:hover:bg-badge-inactive-bg/80",
+        destructiveDark:
+          "bg-badge-inactive-dot text-primary-fg after:size-1.5 after:rounded-full after:bg-primary-fg after:content-[''] md:after:size-[7px] focus-visible:ring-destructive/20 [a]:hover:bg-badge-inactive-dot/90",
         outline:
           "border-border text-foreground [a]:hover:bg-muted [a]:hover:text-muted-foreground",
+        darkOutline:
+          "border border-gray bg-border text-gray after:size-1.5 after:rounded-full after:bg-gray after:content-[''] md:after:size-[7px] [a]:hover:bg-black/5",
         ghost:
           "hover:bg-muted hover:text-muted-foreground dark:hover:bg-muted/50",
         link: "text-primary underline-offset-4 hover:underline",

@@ -65,9 +65,9 @@ export default function Visibility() {
                         className={`min-h-0 min-w-0 overflow-y-auto rounded-[10px] border border-border bg-background shadow-blue transition-[flex-basis,transform] duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] ${isSettingsOpen
                             ? "absolute inset-y-0 left-0 z-50 w-[min(92vw,360px)]"
                             : "pointer-events-none absolute inset-y-0 left-0 z-50 w-[min(92vw,360px)] -translate-x-full"
-                            } md:pointer-events-auto md:relative md:inset-auto md:z-auto md:block md:h-full md:w-auto md:shrink-0 md:translate-x-0 ${isMaximized ? "md:basis-[70%]" : "md:basis-[30%] md:max-w-75"}`}
+                            } md:pointer-events-auto md:relative md:inset-auto md:z-auto md:block md:h-auto md:w-auto md:shrink-0 md:self-start md:translate-x-0 ${isMaximized ? "md:basis-[70%]" : "md:basis-[30%] md:max-w-75"}`}
                     >
-                        <div className="h-fit min-h-full min-w-0 px-3 sm:px-4 md:min-h-0">
+                        <div className="h-fit min-w-0 px-3 sm:px-4 md:min-h-0">
                             <Accordion>
                                 {allAccordions.map((tab) => (
                                     <AccordionItem key={tab.id} value={tab.id}>
