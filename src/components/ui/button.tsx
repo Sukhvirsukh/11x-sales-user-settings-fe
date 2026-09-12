@@ -33,6 +33,10 @@ const buttonVariants = cva(
         link:
           "text-blue-600 underline-offset-4 hover:underline dark:text-blue-400",
 
+        // Compact text action, used for inline card actions such as "Show all".
+        action:
+          "!h-auto !rounded-none !p-0 md:!p-0 !text-sm md:!text-sm font-normal text-ghost underline underline-offset-2 hover:bg-transparent hover:text-foreground",
+
         // destructive
         destructive:
           "bg-danger text-white hover:bg-danger-dark",

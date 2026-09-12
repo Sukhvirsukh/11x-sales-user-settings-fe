@@ -33,9 +33,24 @@ export function debounce<TArgs extends unknown[]>(
 }
 
 
-export function dateFormater(date: Date | null): string {
+export type DateFormat = "numeric" | "long";
+
+export function dateFormater(
+  date: Date | string | null,
+  format: DateFormat = "numeric",
+): string {
   if (!date) return ""
   const d = new Date(date)
+  if (Number.isNaN(d.getTime())) return ""
+
+  if (format === "long") {
+    return new Intl.DateTimeFormat("en-GB", {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    }).format(d)
+  }
+
   const year = d.getFullYear()
   const month = d.getMonth() + 1
   const day = d.getDate()

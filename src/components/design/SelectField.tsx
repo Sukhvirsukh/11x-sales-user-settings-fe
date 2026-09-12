@@ -82,6 +82,7 @@ const SelectField = React.forwardRef<
 
                 {/* Select Trigger Container */}
                 <Select
+                    items={options}
                     value={value}
                     defaultValue={defaultValue}
                     onValueChange={onValueChange}
