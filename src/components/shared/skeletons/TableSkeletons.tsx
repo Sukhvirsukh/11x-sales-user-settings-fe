@@ -9,7 +9,7 @@ type TableSkeletonProps = {
 
 export default function TableSkeleton({ columns = 5, rows = 5, showHeader = true }: TableSkeletonProps) {
     return (
-        <div className={showHeader ? "w-full overflow-hidden rounded-lg border border-section-border bg-white" : "w-full bg-white"}>
+        <div className={showHeader ? "w-full overflow-hidden rounded-lg border border-section-border bg-card-nested" : "w-full bg-card-nested"}>
             {showHeader && (
                 <div className="flex h-10 items-center gap-5 bg-table-header px-5">
                     {Array.from({ length: columns }, (_, index) => (

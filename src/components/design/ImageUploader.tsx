@@ -1,5 +1,5 @@
 import { useId, useRef, useState, type ChangeEvent, type DragEvent } from "react";
-import { Upload, X, Info } from "lucide-react";
+import { FileText, Upload, X, Info } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { FieldError } from "@/components/ui/field";
 import Label from "./Label";
@@ -15,11 +15,22 @@ interface CustomImageUploaderProps {
     disabled?: boolean;
     className?: string;
     accept?: string[];
+    /** Maximum file size in KB. */
+    fileSize?: number;
     maxSizeKB?: number;
+    variant?: "default" | "light";
 }
 
-const DEFAULT_ACCEPT = ["image/png", "image/jpeg", "image/jpg", "image/gif", "image/webp"];
-const DEFAULT_ACCEPT_EXTENSIONS = ".png,.jpg,.jpeg,.gif,.webp";
+const IMAGE_ACCEPT = ["image/png", "image/jpeg", "image/jpg", "image/gif", "image/webp"];
+export const DOCUMENT_ACCEPT = [
+    "application/msword",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+];
+
+const FILE_TYPE_LABELS: Record<string, string> = {
+    "application/msword": "DOC",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document": "DOCX",
+};
 
 export default function ImageUploader({
     label,
@@ -30,8 +41,10 @@ export default function ImageUploader({
     id,
     disabled = false,
     className,
-    accept = DEFAULT_ACCEPT,
-    maxSizeKB = 50,
+    accept = IMAGE_ACCEPT,
+    fileSize,
+    maxSizeKB,
+    variant = "default",
 }: CustomImageUploaderProps) {
     const generatedId = useId();
     const inputId = id ?? generatedId;
@@ -52,21 +65,36 @@ export default function ImageUploader({
         }
     };
     const helpText = note || hint;
+    const isImage = imageValue instanceof File ? imageValue.type.startsWith("image/") : true;
+    const maximumSizeKB = fileSize ?? maxSizeKB ?? (accept.every((type) => type.startsWith("image/")) ? 50 : 5120);
+
+    function formatAcceptedTypes() {
+        return accept.map((type) => {
+            if (FILE_TYPE_LABELS[type]) return FILE_TYPE_LABELS[type];
+            if (type.startsWith(".")) return type.slice(1).toUpperCase();
+            return type.split("/").pop()?.toUpperCase() ?? type;
+        }).join(", ");
+    }
+
+    function isAcceptedFile(file: File) {
+        const extension = `.${file.name.split(".").pop()?.toLowerCase() ?? ""}`;
+        return accept.includes(file.type) || accept.map((type) => type.toLowerCase()).includes(extension);
+    }
 
     function validateAndSetFile(file: File) {
         setError(null);
 
-        if (!accept.includes(file.type)) {
+        if (!isAcceptedFile(file)) {
             setError(
-                `Invalid file type. Please upload ${accept.map((t) => t.split("/")[1].toUpperCase()).join(", ")}`,
+                `Invalid file type. Please upload ${formatAcceptedTypes()}.`,
             );
             return;
         }
 
         const fileSizeKB = file.size / 1024;
-        if (fileSizeKB > maxSizeKB) {
+        if (fileSizeKB > maximumSizeKB) {
             setError(
-                `File size exceeds ${maxSizeKB}KB limit. Your file is ${fileSizeKB.toFixed(1)}KB`,
+                `File size exceeds ${maximumSizeKB}KB limit. Your file is ${fileSizeKB.toFixed(1)}KB`,
             );
             return;
         }
@@ -97,10 +125,7 @@ export default function ImageUploader({
         if (fileInputRef.current) fileInputRef.current.value = "";
     }
 
-    const acceptString =
-        accept.length === DEFAULT_ACCEPT.length
-            ? DEFAULT_ACCEPT_EXTENSIONS
-            : accept.map((t) => `.${t.split("/")[1]}`).join(",");
+    const acceptString = accept.join(",");
 
     return (
         <div className={cn("flex w-full flex-col gap-2", className)}>
@@ -110,6 +135,9 @@ export default function ImageUploader({
                 className={cn(
                     "relative flex h-[34px] items-center overflow-hidden rounded-xl border border-border-soft px-3.5 transition-all focus-within:border-border-soft focus-within:ring-2 focus-within:ring-blue-400/20 dark:border-slate-800",
                     "bg-card-nested focus-within:bg-card-nested",
+                    variant === "light"
+                        ? "border-section-border bg-light focus-within:border-section-border focus-within:bg-light dark:bg-slate-800/60 dark:focus-within:bg-slate-800/60"
+                        : "",
                     isDragging && "border-primary bg-primary/5",
                     disabled && "cursor-not-allowed opacity-50",
                     error && "border-danger focus-within:border-danger"
@@ -120,15 +148,19 @@ export default function ImageUploader({
             >
                 {imageUrl ? (
                     <div className="flex min-w-0 flex-1 items-center gap-2 px-2">
-                        <div className="size-7 shrink-0 overflow-hidden rounded-md border border-border bg-muted">
-                            <img
-                                src={imageUrl}
-                                alt="Uploaded preview"
-                                className="size-full object-cover"
-                            />
+                        <div className="flex size-7 shrink-0 items-center justify-center overflow-hidden rounded-md border border-border bg-muted">
+                            {isImage ? (
+                                <img
+                                    src={imageUrl ?? ""}
+                                    alt="Uploaded preview"
+                                    className="size-full object-cover"
+                                />
+                            ) : (
+                                <FileText className="size-4 text-primary" />
+                            )}
                         </div>
                         <span className="min-w-0 flex-1 truncate text-body-sm text-muted-foreground">
-                            {imageValue instanceof File ? imageValue.name : "Uploaded image"}
+                            {imageValue instanceof File ? imageValue.name : isImage ? "Uploaded image" : "Uploaded document"}
                         </span>
                         {!disabled && (
                             <button
@@ -150,7 +182,7 @@ export default function ImageUploader({
                     >
                         <Upload className="size-4 shrink-0 text-muted-foreground" />
                         <span className="truncate text-body-sm text-muted-foreground">
-                            Click to upload or drag and drop
+                            {isImage ? "Click to upload or drag and drop" : "Click to upload a document or drag and drop"}
                         </span>
                     </button>
                 )}

@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input"
 import AppCard from "@/components/design/AppCard"
 import { useConversationFilterStore } from "@/features/conversations/conversationFilterStore"
 import { filterGroups } from "./conversationData"
+import AppSection from "@/components/design/AppSectoin"
 
 const emptySelection: string[] = []
 
@@ -12,12 +13,12 @@ function FilterGroup({ title, options }: { title: string; options: string[] }) {
     const toggleFilter = useConversationFilterStore((state) => state.toggleFilter)
 
     return (
-        <div className="rounded-lg bg-light p-3">
-            <div className="mb-2 flex items-center justify-between border-b border-border pb-2">
+        <AppSection className="h-auto! gap-2 p-3">
+            <div className="flex w-full items-center justify-between border-b border-border pb-2">
                 <p className="text-sm font-medium text-foreground">{title}</p>
                 {selected.length > 0 && <span className="text-xs text-muted-foreground">{selected.length} selected</span>}
             </div>
-            <div className="space-y-2.5">
+            <div className="w-full space-y-2.5">
                 {options.map((option) => (
                     <label key={option} className="flex cursor-pointer items-center gap-2 text-sm text-foreground">
                         <Checkbox
@@ -28,7 +29,7 @@ function FilterGroup({ title, options }: { title: string; options: string[] }) {
                     </label>
                 ))}
             </div>
-        </div>
+        </AppSection>
     )
 }
 
