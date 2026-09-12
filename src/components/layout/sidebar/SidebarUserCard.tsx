@@ -51,10 +51,10 @@ export default function SidebarUserCard({ isCollapsed, name, email, avatarUrl }:
                     }
                     {!isCollapsed && (
                         <div className="flex flex-col text-left min-w-0">
-                            <span className="text-zinc-800 truncate">
+                            <span className="truncate text-foreground">
                                 {name}
                             </span>
-                            <span className="text-sm text-zinc-400 truncate">
+                            <span className="truncate text-sm text-muted-foreground">
                                 {email}
                             </span>
                         </div>
@@ -62,7 +62,7 @@ export default function SidebarUserCard({ isCollapsed, name, email, avatarUrl }:
                 </div>
 
                 {!isCollapsed && (
-                    <span className="size-4 flex items-center justify-center text-zinc-400 shadow-2xs shrink-0">
+                    <span className="flex size-4 shrink-0 items-center justify-center text-muted-foreground shadow-2xs">
                         <ChevronRight className="size-3" />
                     </span>
                 )}
@@ -72,19 +72,19 @@ export default function SidebarUserCard({ isCollapsed, name, email, avatarUrl }:
                 side="right"
                 align="start"
                 sideOffset={8}
-                className="w-max max-w-[calc(100vw-2rem)] gap-0 overflow-hidden rounded-[10px] border-0 bg-white! p-0 shadow-blue ring-0!"
+                className="w-max max-w-[calc(100vw-2rem)] gap-0 overflow-hidden rounded-[10px] border-0 bg-popover! p-0 shadow-blue ring-0!"
             >
-                <div className="flex items-center justify-center gap-3 bg-[#F7F8FB] px-3 py-3 text-center">
+                <div className="flex items-center justify-center gap-3 bg-light px-3 py-3 text-center">
                     {avatarUrl ? (
-                        <img src={avatarUrl} alt={name} className="size-10 shrink-0 rounded-full border border-blue-100 object-cover" />
+                        <img src={avatarUrl} alt={name} className="size-10 shrink-0 rounded-full border border-section-border object-cover" />
                     ) : (
-                        <div className="flex size-10 shrink-0 items-center justify-center rounded-full border border-blue-100 bg-brand-muted text-sm font-semibold text-primary">
+                        <div className="flex size-10 shrink-0 items-center justify-center rounded-full border border-section-border bg-brand-muted text-sm font-semibold text-primary">
                             {initials}
                         </div>
                     )}
                     <div className="min-w-0 space-y-0.5 text-left">
-                        <p className="wrap-break-words text-sm font-semibold text-zinc-800">{name}</p>
-                        <p className="break-all text-xs text-zinc-500">{email}</p>
+                        <p className="wrap-break-words text-sm font-semibold text-foreground">{name}</p>
+                        <p className="break-all text-xs text-muted-foreground">{email}</p>
                     </div>
                 </div>
                 <div className="flex flex-col gap-1 p-2">
@@ -96,9 +96,9 @@ export default function SidebarUserCard({ isCollapsed, name, email, avatarUrl }:
                             setOpen(false);
                             navigate("/settings");
                         }}
-                        className="w-full justify-start gap-2.5 px-3 py-2.5 text-zinc-700"
+                        className="w-full justify-start gap-2.5 px-3 py-2.5 text-foreground"
                     >
-                        <Settings className="size-4 shrink-0 text-zinc-500" />
+                        <Settings className="size-4 shrink-0 text-muted-foreground" />
                         Settings
                     </Button>
                     <Button
@@ -106,7 +106,7 @@ export default function SidebarUserCard({ isCollapsed, name, email, avatarUrl }:
                         variant="bare"
                         size="sm"
                         onClick={handleLogout}
-                        className="w-full justify-start gap-2.5 px-3 py-2.5 text-danger hover:bg-red-50"
+                        className="w-full justify-start gap-2.5 px-3 py-2.5 text-danger hover:bg-danger-light"
                     >
                         <LogOut className="size-4 shrink-0" />
                         Log out

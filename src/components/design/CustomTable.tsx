@@ -42,9 +42,9 @@ type CustomTableProps = {
     /** Shown when `data` is empty. Replaces the default empty state entirely. */
     emptyState?: ReactNode
 } & (
-    | { selectable: true; getRowId: (row: Record<string, unknown>) => string | number }
-    | { selectable?: false; getRowId?: (row: Record<string, unknown>) => string | number }
-)
+        | { selectable: true; getRowId: (row: Record<string, unknown>) => string | number }
+        | { selectable?: false; getRowId?: (row: Record<string, unknown>) => string | number }
+    )
 
 export default function CustomTable({
     title,
@@ -80,16 +80,18 @@ export default function CustomTable({
         })
     }
 
-    const selectAllCheckbox = (
-        <Checkbox
-            aria-label="Select all rows"
-            checked={allSelected}
-            indeterminate={partiallySelected}
-            disabled={data.length === 0}
-            onCheckedChange={(checked) => selectRows(rowIds, checked)}
-            className="data-indeterminate:border-primary data-indeterminate:bg-primary"
-        />
-    )
+    function SelectAllCheckbox() {
+        return (
+            <Checkbox
+                aria-label="Select all rows"
+                checked={allSelected}
+                indeterminate={partiallySelected}
+                disabled={data.length === 0}
+                onCheckedChange={(checked) => selectRows(rowIds, checked)}
+                className="data-indeterminate:border-primary data-indeterminate:bg-primary"
+            />
+        )
+    }
     const mobileColumns = columns.filter((col) => col.key !== "select")
     const mobileCellCount = mobileColumns.length + (rowActions ? 1 : 0)
     const lastMobileRowStart = Math.floor((mobileCellCount - 1) / 2) * 2
@@ -108,34 +110,40 @@ export default function CustomTable({
                 </div>
             )}
 
-            {selectable && bulkActions && selectedCount > 0 && (
-                <div aria-label="Bulk actions" role="group" className="flex w-full flex-wrap items-center justify-between gap-3 rounded-lg border border-section-border bg-table-header px-4 py-2">
-                    <span className="text-sm font-medium" aria-live="polite">
-                        {selectedCount} selected
-                    </span>
-                    <div className="flex flex-wrap items-center gap-2">
-                        <Button variant="ghost" size="sm" onClick={() => setSelectedIds(new Set())}>
-                            Clear selection
-                        </Button>
-                        {bulkActions(selectedRows, (ids) => selectRows(ids, false))}
-                    </div>
-                </div>
-            )}
-
             {/* Table */}
             {selectable && (
                 <label className="flex items-center gap-2 text-sm md:hidden">
-                    {selectAllCheckbox}
+                    <SelectAllCheckbox />
                     Select all rows
                 </label>
             )}
-            <div className="flex flex-col items-start md:rounded-lg md:border md:border-section-border md:bg-background w-full overflow-hidden">
+            <div className="relative flex w-full flex-col items-start overflow-hidden md:rounded-lg md:border md:border-section-border md:bg-background">
+                {selectable && bulkActions && selectedCount > 0 && (
+                    <div
+                        aria-label="Bulk actions"
+                        role="group"
+                        className="z-10 flex w-full flex-wrap items-center justify-between gap-3 rounded-lg border border-section-border bg-table-header px-4 py-2 md:absolute md:inset-x-0 md:top-0 md:h-10 md:flex-nowrap md:rounded-none md:border-0 md:px-5 md:py-0"
+                    >
+                        <div className="flex items-center gap-3">
+                            <SelectAllCheckbox />
+                            <span className="text-sm font-medium" aria-live="polite">
+                                {selectedCount} selected
+                            </span>
+                        </div>
+                        <div className="flex flex-wrap items-center gap-2">
+                            <Button variant="ghost" size="xs" onClick={() => setSelectedIds(new Set())}>
+                                Clear
+                            </Button>
+                            {bulkActions(selectedRows, (ids) => selectRows(ids, false))}
+                        </div>
+                    </div>
+                )}
                 <Table className="block md:table">
                     <TableHeader className="hidden md:table-header-group [&_tr]:border-b-0">
                         <TableRow className="bg-table-header hover:bg-section-bg border-0 rounded-[10px]">
                             {selectable && (
                                 <TableHead className="w-14 px-5 py-2.5">
-                                    {selectAllCheckbox}
+                                    <SelectAllCheckbox />
                                 </TableHead>
                             )}
                             {columns.map((col) => (
@@ -158,7 +166,7 @@ export default function CustomTable({
                         {data.map((row, rowIndex) => (
                             <TableRow
                                 key={rowIds[rowIndex]}
-                                className="grid grid-cols-2 overflow-hidden rounded-lg border! border-section-border bg-white px-2 py-0 md:table-row md:rounded-none md:border-0! md:bg-transparent md:p-0 hover:bg-white md:hover:bg-transparent"
+                                className="grid grid-cols-2 overflow-hidden rounded-lg border! border-section-border bg-card-nested px-2 py-0 hover:bg-card-nested md:table-row md:rounded-none md:border-0! md:bg-transparent md:p-0 md:hover:bg-transparent"
                             >
                                 {selectable && (
                                     <TableCell className="col-span-2 border-b border-section-border px-1 py-2 md:border-0 md:px-5">
@@ -200,7 +208,7 @@ export default function CustomTable({
                 {/* Empty state */}
                 {data.length === 0 && (
                     emptyState ?? (
-                        <div className="flex flex-col w-full items-center justify-center gap-2 rounded-lg border border-section-border bg-white px-4 py-10 text-center md:rounded-none md:border-0 md:py-16">
+                        <div className="flex w-full flex-col items-center justify-center gap-2 rounded-lg border border-section-border bg-card-nested px-4 py-10 text-center md:rounded-none md:border-0 md:py-16">
                             <span className="flex size-10 items-center justify-center rounded-full bg-section-bg text-primary">
                                 <Inbox aria-hidden="true" className="size-5" />
                             </span>

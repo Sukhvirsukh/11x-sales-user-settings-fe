@@ -8,9 +8,8 @@ import { Button } from "@/components/ui/button"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import AddRoleForm from "./AddRoleForm"
 import { useRoleHistoryQuery } from "./roleHistoryQuery"
-import { Spinner } from "@/components/ui/spinner"
 import DeleteRole from "./DeleteRole"
-import DeleteSelectedRoles from "./DeleteSelectedRoles"
+import TableSkeleton from "@/components/shared/skeletons/TableSkeletons"
 
 const columns: Column[] = [
     { key: "name", header: "Name", width: "280px" },
@@ -36,7 +35,10 @@ export default function RoleHistory() {
     const { data = [], isLoading, error } = useRoleHistoryQuery()
     const [editData, setEditData] = useState<Record<string, unknown> | null>(null)
     const [isOpen, setIsOpen] = useState(false)
-    const [deleteRole, setDeleteRole] = useState<Record<string, unknown> | null>(null)
+    const [deleteRequest, setDeleteRequest] = useState<{
+        roles: Record<string, unknown>[]
+        onDeleted?: (ids: string[]) => void
+    } | null>(null)
     const [isDeleteOpen, setIsDeleteOpen] = useState(false)
     const [search, setSearch] = useState("")
 
@@ -70,11 +72,11 @@ export default function RoleHistory() {
 
     function handleDeleteModalChange(open: boolean) {
         setIsDeleteOpen(open)
-        if (!open) setDeleteRole(null)
+        if (!open) setDeleteRequest(null)
     }
 
-    function deleteRoleHandler(role: Record<string, unknown>) {
-        setDeleteRole(role)
+    function requestDelete(roles: Record<string, unknown>[], onDeleted?: (ids: string[]) => void) {
+        setDeleteRequest({ roles, onDeleted })
         setIsDeleteOpen(true)
     }
 
@@ -87,14 +89,15 @@ export default function RoleHistory() {
                 selectable
                 getRowId={(row) => String(row.id)}
                 bulkActions={(rows, deselectRows) => (
-                    <DeleteSelectedRoles roles={rows} onDeleted={deselectRows} />
+                    <Button variant="destructive" size="xs" onClick={() => requestDelete(rows, deselectRows)}>
+                        <Trash className="size-3.5" />
+                        Delete selected
+                    </Button>
                 )}
-                emptyMessage={isLoading ? "Loading.. role history" : search ? "No matching roles found" : "No role history found"}
-                emptyDescription={isLoading ? "" : search ? "Try a different search term." : "Roles assigned to your team will appear here."}
+                emptyMessage={search ? "No matching roles found" : "No role history found"}
+                emptyDescription={search ? "Try a different search term." : "Roles assigned to your team will appear here."}
                 emptyState={isLoading ? (
-                    <div className="flex w-full items-center justify-center py-16">
-                        <Spinner className="size-6 text-primary" />
-                    </div>
+                    <TableSkeleton columns={3} showHeader={false} />
                 ) : undefined}
                 headerActions={
                     <div className="flex items-center gap-2.5">
@@ -141,7 +144,7 @@ export default function RoleHistory() {
                         <Button variant="bare" size="sm" onClick={() => openEditRole(row)}>
                             <SquarePen className="size-4 text-gray" />
                         </Button>
-                        <Button variant="bare" size="sm" onClick={() => deleteRoleHandler(row)}>
+                        <Button variant="bare" size="sm" onClick={() => requestDelete([row])}>
                             <Trash className="size-4 text-gray" />
                         </Button>
                     </div>
@@ -156,7 +159,8 @@ export default function RoleHistory() {
             <DeleteRole
                 open={isDeleteOpen}
                 onOpenChange={handleDeleteModalChange}
-                roles={deleteRole ? [deleteRole] : []}
+                roles={deleteRequest?.roles ?? []}
+                onDeleted={deleteRequest?.onDeleted}
             />
 
         </>

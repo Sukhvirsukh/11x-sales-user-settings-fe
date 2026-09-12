@@ -1,7 +1,7 @@
 import AppSection from "@/components/design/AppSectoin";
 import Heading from "@/components/design/Heading";
 import { ToggleField } from "@/components/design/ToggleField";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { DetailGroup, DetailItem } from "@/components/design/DetailContainer";
 
 interface PermissionProps {
@@ -22,7 +22,7 @@ const allPermissions = [
 export function Permission({ name, isChecked, onToggle }: PermissionProps) {
     return (
         <div className="flex justify-between items-center w-full py-2.5">
-            <p className="text-[#000] font-inter text-base leading-none w-fit">
+            <p className="text-foreground font-inter text-base leading-none w-fit">
                 {name}
             </p>
             <ToggleField
@@ -43,6 +43,14 @@ export default function Permissions() {
         "manage-team-permissions": false,
         "delete-workspace": false
     });
+    const [isDarkMode, setIsDarkMode] = useState(
+        () => localStorage.getItem("theme") === "dark",
+    );
+
+    useEffect(() => {
+        document.documentElement.classList.toggle("dark", isDarkMode);
+        localStorage.setItem("theme", isDarkMode ? "dark" : "light");
+    }, [isDarkMode]);
 
 
     const toggleHandler = (permissionName: string) => {
@@ -81,10 +89,11 @@ export default function Permissions() {
                             label="Mode"
                             value={
                                 <div className="flex items-center gap-2">
-                                    <p className="text-base">Light Mode</p>
+                                    <p className="text-base">{isDarkMode ? "Dark Mode" : "Light Mode"}</p>
                                     <ToggleField
-                                        pressed={false}
-                                        onPressedChange={() => { }}
+                                        pressed={isDarkMode}
+                                        onPressedChange={setIsDarkMode}
+                                        aria-label="Toggle dark mode"
                                     />
                                 </div>
                             }

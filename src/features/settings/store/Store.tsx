@@ -6,11 +6,10 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { ListFilter, Plus, Search, SquarePen, Trash } from "lucide-react";
 import AddStore from "./AddStore";
 import DeleteStore from "./DeleteStore";
-import DeleteSelectedStores from "./DeleteSelectedStores";
 import { Badge } from "@/components/ui/badge";
 import { useStoreQuery } from "./storeQuery";
-import { Spinner } from "@/components/ui/spinner";
 import { useMemo, useState } from "react";
+import TableSkeleton from "@/components/shared/skeletons/TableSkeletons";
 
 const columns: Column[] = [
     { key: "name", header: "Store Name", width: "280px" },
@@ -37,7 +36,10 @@ export function Store() {
     const [search, setSearch] = useState("");
     const [editStore, setEditStore] = useState<Record<string, unknown> | null>(null);
     const [isOpen, setIsOpen] = useState(false);
-    const [deleteStoreRow, setDeleteStoreRow] = useState<Record<string, unknown> | null>(null);
+    const [deleteRequest, setDeleteRequest] = useState<{
+        stores: Record<string, unknown>[];
+        onDeleted?: (ids: string[]) => void;
+    } | null>(null);
     const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
     if (error) throw error;
@@ -70,11 +72,11 @@ export function Store() {
 
     function handleDeleteModalChange(open: boolean) {
         setIsDeleteOpen(open);
-        if (!open) setDeleteStoreRow(null);
+        if (!open) setDeleteRequest(null);
     }
 
-    function deleteStoreHandler(store: Record<string, unknown>) {
-        setDeleteStoreRow(store);
+    function requestDelete(stores: Record<string, unknown>[], onDeleted?: (ids: string[]) => void) {
+        setDeleteRequest({ stores, onDeleted });
         setIsDeleteOpen(true);
     }
 
@@ -87,15 +89,16 @@ export function Store() {
                 selectable
                 getRowId={(row) => String(row.id)}
                 bulkActions={(rows, deselectRows) => (
-                    <DeleteSelectedStores stores={rows} onDeleted={deselectRows} />
+                    <Button variant="destructive" size="xs" onClick={() => requestDelete(rows, deselectRows)}>
+                        <Trash className="size-3.5" />
+                        Delete selected
+                    </Button>
                 )}
-                emptyMessage={isLoading ? "Loading stores..." : search ? "No matching stores found" : "No stores found"}
-                emptyDescription={isLoading ? "" : search ? "Try a different search term." : "Stores connected to your account will appear here."}
+                emptyMessage={search ? "No matching stores found" : "No stores found"}
+                emptyDescription={search ? "Try a different search term." : "Stores connected to your account will appear here."}
                 emptyState={
-                    isLoading ? (
-                        <div className="flex w-full items-center justify-center py-16">
-                            <Spinner className="size-6 text-primary" />
-                        </div>
+                    true ? (
+                        <TableSkeleton columns={6} rows={4} showHeader={false} />
                     ) : undefined
                 }
                 headerActions={
@@ -141,7 +144,7 @@ export function Store() {
                         <Button variant="bare" size="sm" onClick={() => openEditStore(row)} aria-label="Edit store">
                             <SquarePen className="size-4 text-gray" />
                         </Button>
-                        <Button variant="bare" size="sm" onClick={() => deleteStoreHandler(row)} aria-label="Delete store">
+                        <Button variant="bare" size="sm" onClick={() => requestDelete([row])} aria-label="Delete store">
                             <Trash className="size-4 text-gray" />
                         </Button>
                     </div>
@@ -156,7 +159,8 @@ export function Store() {
             <DeleteStore
                 open={isDeleteOpen}
                 onOpenChange={handleDeleteModalChange}
-                stores={deleteStoreRow ? [deleteStoreRow] : []}
+                stores={deleteRequest?.stores ?? []}
+                onDeleted={deleteRequest?.onDeleted}
             />
         </>
 

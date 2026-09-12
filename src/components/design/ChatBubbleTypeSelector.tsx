@@ -139,7 +139,7 @@ export function ChatBubbleTypeSelector({
                         className={cn(
                             "flex w-full flex-col items-center rounded-lg border transition-colors cursor-pointer text-center",
                             "has-[:focus-visible]:border-ring has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-ring/50",
-                            value === option.value ? "border-primary bg-primary/10" : "border-border bg-white",
+                            value === option.value ? "border-primary bg-primary/10" : "border-border bg-card-nested",
                             disabled && "opacity-50 cursor-not-allowed"
                         )}
                     >

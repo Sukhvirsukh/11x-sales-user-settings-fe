@@ -1,7 +1,7 @@
 import { Banner } from "@/components/design/Banner";
 import Modal from "@/components/design/Modal";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { deleteRole } from "./roleHistoryApi";
+import { deleteRole, deleteRoles } from "./roleHistoryApi";
 import { roleHistoryQueryKey } from "./roleHistoryQuery";
 import { toast } from "@/components/ui/toast";
 
@@ -23,38 +23,23 @@ export default function DeleteRole({ open, onOpenChange, roles, onDeleted }: Del
                 }
                 return role.id;
             });
-            const results = await Promise.allSettled(ids.map(deleteRole));
-            return {
-                deletedIds: ids.filter((_, index) => results[index].status === "fulfilled"),
-                failedCount: results.filter((result) => result.status === "rejected").length,
-            };
-        },
-        onSuccess: async ({ deletedIds, failedCount }) => {
-            if (deletedIds.length > 0) {
-                onOpenChange(false);
-                onDeleted?.(deletedIds);
-                toast.add({
-                    type: "success",
-                    title: deletedIds.length === 1 ? "Role deleted" : "Roles deleted",
-                    description: `${deletedIds.length} ${deletedIds.length === 1 ? "role has" : "roles have"} been deleted successfully.`,
-                });
+            if (ids.length === 1) {
+                await deleteRole(ids[0]);
+            } else {
+                await deleteRoles(ids);
             }
-            if (failedCount > 0) {
-                toast.add({
-                    type: "error",
-                    title: "Some roles could not be deleted",
-                    description: `${failedCount} ${failedCount === 1 ? "role could" : "roles could"} not be deleted. Please try again.`,
-                });
-            }
-            await queryClient.invalidateQueries({ queryKey: roleHistoryQueryKey });
+            return ids;
         },
-        onError: (error) => {
+        onSuccess: async (deletedIds) => {
+            onOpenChange(false);
+            onDeleted?.(deletedIds);
             toast.add({
-                type: "error",
-                title: "Unable to delete roles",
-                description: error.message,
+                type: "success",
+                title: deletedIds.length === 1 ? "Role deleted" : "Roles deleted",
+                description: `${deletedIds.length} ${deletedIds.length === 1 ? "role has" : "roles have"} been deleted successfully.`,
             });
-        },
+            await queryClient.invalidateQueries({ queryKey: roleHistoryQueryKey });
+        }
     });
 
     function confirmDelete() {

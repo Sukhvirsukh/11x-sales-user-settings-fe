@@ -32,6 +32,12 @@ const Payments = lazy(() =>
 const Store = lazy(() =>
   import("@/features/settings/store").then(({ Store }) => ({ default: Store })),
 );
+const ActiveChat = lazy(() =>
+  import("@/features/conversations/activeChats").then(({ ActiveChat }) => ({ default: ActiveChat })),
+);
+const Escalated = lazy(() => import("@/features/conversations/escalated"));
+const AssignedToMe = lazy(() => import("@/features/conversations/assignedToMe"));
+const Archived = lazy(() => import("@/features/conversations/archived"));
 
 export const router = createBrowserRouter([
   {
@@ -45,7 +51,17 @@ export const router = createBrowserRouter([
         children: [
           { path: "/", element: <OverviewPage /> },
           { path: "/contacts", element: <ContactsPage /> },
-          { path: "/conversations", element: <ConversationsPage /> },
+          {
+            path: "/conversations",
+            element: <ConversationsPage />,
+            children: [
+              { index: true, element: <Navigate to="active-chats" replace /> },
+              { path: "active-chats", element: <ActiveChat /> },
+              { path: "escalated", element: <Escalated /> },
+              { path: "assigned-to-me", element: <AssignedToMe /> },
+              { path: "archived", element: <Archived /> },
+            ],
+          },
           { path: "/reports", element: <ReportsPage /> },
           { path: "/chat-settings", element: <ChatSettingsPage /> },
           { path: "/chat-settings/visibility", element: <VisibilityPage /> },

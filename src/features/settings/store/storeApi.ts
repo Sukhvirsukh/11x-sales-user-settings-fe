@@ -40,3 +40,11 @@ export function deleteStore(id: string) {
         method: "DELETE",
     });
 }
+
+export function deleteStores(ids: string[]) {
+    return apiFetch<unknown>("/admin/stores/bulk", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ids }),
+    });
+}

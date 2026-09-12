@@ -29,7 +29,7 @@ export default function MobileTopbar() {
                     type="button"
                     aria-label="Open menu"
                     onClick={open}
-                    className="flex shrink-0 items-center justify-center rounded-[10px] border border-primary/20 bg-white p-2 text-foreground "
+                    className="flex shrink-0 items-center justify-center rounded-[10px] border border-primary/20 bg-card-nested p-2 text-muted-foreground"
                 >
                     <Menu className="size-4" strokeWidth={2} />
                 </button>
