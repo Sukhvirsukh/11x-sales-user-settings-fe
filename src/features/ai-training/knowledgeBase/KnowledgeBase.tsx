@@ -1,20 +1,43 @@
-import CustomTable, { type Column } from "@/components/design/CustomTable";
-import { InputField } from "@/components/design/InputField";
+import { useRef, useState } from "react";
+import { useSearchParams } from "react-router";
+import { Plus, SquarePen, Trash } from "lucide-react";
+
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { ListFilter, Plus, Search, SquarePen, Trash } from "lucide-react";
+import CustomTable, { type Column } from "@/components/design/CustomTable";
+import TableSkeleton from "@/components/shared/skeletons/TableSkeletons";
+
 import AddKnowledge from "./AddKnowledge";
 import { useKnowledgeBaseQuery } from "./useKnowledgeBaseQuery";
-import { dateFormater } from "@/lib/utils";
-import TableSkeleton from "@/components/shared/skeletons/TableSkeletons";
-import { useState } from "react";
+import { dateFormater, debounce } from "@/lib/utils";
 import type { KnowledgeBase } from "./knowledgeBaseTypes";
 import DeleteKnowledgeBase from "./DeleteKnowledgeBase";
+import SearchField from "@/components/shared/SearchField";
 
 
 const columns: Column[] = [
-    { key: "name", header: "Name", width: "280px" },
+    {
+        key: "name", header: "Name", width: "280px",
+        render: (value, row) => {
+            const url = typeof row.url === "string" ? row.url : "";
+            const name = String(value ?? "").trim();
+            const label = name || url
+            return url ? (
+                <a
+                    href={url}
+                    title={label}
+                    target="_blank"
+                    className="block max-w-full truncate text-primary hover:underline"
+                >
+                    {label}
+                </a>
+            ) : (
+                <span title={label} className="block max-w-full truncate">
+                    {label}
+                </span>
+            );
+        },
+    },
     {
         key: "status",
         header: "Status",
@@ -36,7 +59,12 @@ const columns: Column[] = [
 
 export function KnowledgeBase() {
 
-    const [page, setPage] = useState(1);
+    const [searchParams, setSearchParams] = useSearchParams();
+    const setSearchParamsRef = useRef(setSearchParams);
+    setSearchParamsRef.current = setSearchParams;
+    const search = searchParams.get("search") ?? "";
+    const pageParam = Number(searchParams.get("page"));
+    const page = Number.isInteger(pageParam) && pageParam > 0 ? pageParam : 1;
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [editData, setEditData] = useState<KnowledgeBase | null>(null);
@@ -44,10 +72,36 @@ export function KnowledgeBase() {
         knowledges: KnowledgeBase[];
         onDeleted?: (ids: string[]) => void;
     } | null>(null);
-    const { data, isLoading, error } = useKnowledgeBaseQuery(page);
+    const { data, isLoading, error } = useKnowledgeBaseQuery(page, search.trim());
     const items = data?.items ?? [];
     const total = data?.total ?? 0;
     const pageSize = data?.pageSize ?? 10;
+
+    const handleSearchChange = useRef(
+        debounce((value: string) => {
+            setSearchParamsRef.current((currentParams) => {
+                const nextParams = new URLSearchParams(currentParams);
+                if (value) nextParams.set("search", value);
+                else nextParams.delete("search");
+                nextParams.delete("page");
+                return nextParams;
+            }, { replace: true });
+        }),
+    ).current;
+
+    const handlePageChange = (nextPage: number) => {
+        setSearchParams((currentParams) => {
+            const nextParams = new URLSearchParams(currentParams);
+
+            if (nextPage === 1) {
+                nextParams.delete("page");
+            } else {
+                nextParams.set("page", String(nextPage));
+            }
+
+            return nextParams;
+        });
+    };
 
     if (error) return <div>Error: {error.message}</div>
 
@@ -77,8 +131,10 @@ export function KnowledgeBase() {
                 title="Knowledge base"
                 columns={columns}
                 data={items || []}
-                pagination={{ page, pageSize, total, onPageChange: setPage }}
+                pagination={{ page, pageSize, total, onPageChange: handlePageChange }}
                 emptyState={isLoading ? <TableSkeleton columns={6} showHeader={false} /> : undefined}
+                emptyMessage={search.trim() ? "No matching knowledge found" : undefined}
+                emptyDescription={search.trim() ? "Try a different search term." : undefined}
                 selectable
                 getRowId={(row) => String(row.id)}
                 bulkActions={(rows, deselectRows) => (
@@ -91,33 +147,10 @@ export function KnowledgeBase() {
                 )}
                 headerActions={
                     <div className="flex items-center gap-2.5">
-                        <Popover>
-                            <PopoverTrigger
-                                render={
-                                    <Button variant="ghost" size="sm" className="size-[35px] md:hidden" aria-label="Search role history">
-                                        <Search className="size-4" />
-                                    </Button>
-                                }
-                            />
-                            <PopoverContent side="top" align="end" sideOffset={8} className="w-[255px] max-w-[calc(100vw-2rem)] rounded-[10px] border border-blue-200 bg-white! p-3 shadow-blue ring-0! md:hidden">
-                                <InputField
-                                    aria-label="Search role history"
-                                    placeholder="Search"
-                                    startIcon={<Search className="size-4" />}
-                                    endIcon={<ListFilter className="size-4" />}
-                                    variant="light"
-                                />
-                            </PopoverContent>
-                        </Popover>
-                        <div className="hidden w-full max-w-[231px] md:block">
-                            <InputField
-                                placeholder="Search"
-                                startIcon={<Search className="size-4" />}
-                                endIcon={
-                                    <ListFilter className="size-4" />
-                                }
-                            />
-                        </div>
+                        {/* Search Field */}
+                        <SearchField
+                            onSearchChange={handleSearchChange}
+                        />
                         {/* <AddRoleForm /> */}
                         <Button
                             variant="primary"

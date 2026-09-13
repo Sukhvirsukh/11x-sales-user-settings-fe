@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import shopifyIcon from "@/assets/integrations/shopify.svg";
 import backendIcon from "@/assets/integrations/backend.svg";
+import { useIntegrationsQuery } from "./chatSettingsQuery";
 
 const ShopifyIcon = memo(function ShopifyIcon() {
     return (
@@ -37,9 +38,11 @@ const StatusBadge = memo(function StatusBadge({ active }: { active: boolean }) {
 const ToggleAction = memo(function ToggleAction({
     active,
     onToggle,
+    disabled,
 }: {
     active: boolean;
     onToggle: () => void;
+    disabled?: boolean;
 }) {
     const Icon = active ? ToggleRight : ToggleLeft;
 
@@ -48,6 +51,7 @@ const ToggleAction = memo(function ToggleAction({
             variant={active ? "secondary" : "primary"}
             className="gap-2.5 px-4 py-2 md:py-2.5"
             onClick={onToggle}
+            disabled={disabled}
         >
             {active ? "Active" : "Activate"}
             <Icon className="size-4" />
@@ -56,11 +60,15 @@ const ToggleAction = memo(function ToggleAction({
 });
 
 export default function Integrations() {
-    const [shopifyActive, setShopifyActive] = useState(true);
+    const { data, isLoading, error } = useIntegrationsQuery();
     const [backendActive, setBackendActive] = useState(false);
 
+    const shopifyActive = data?.shopify?.connected || false;
+
     const toggleShopify = useCallback(() => {
-        setShopifyActive((prev) => !prev);
+        if (!shopifyActive) {
+            window.open("https://www.shopify.com/", "_blank");
+        }
     }, []);
 
     const toggleBackend = useCallback(() => {
@@ -78,6 +86,7 @@ export default function Integrations() {
                     <ToggleAction
                         active={shopifyActive}
                         onToggle={toggleShopify}
+                        disabled={isLoading}
                     />
                 }
             />
@@ -90,6 +99,7 @@ export default function Integrations() {
                     <ToggleAction
                         active={backendActive}
                         onToggle={toggleBackend}
+                        disabled={isLoading}
                     />
                 }
             />

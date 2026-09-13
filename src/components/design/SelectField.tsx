@@ -45,6 +45,7 @@ export interface SelectFieldProps {
     containerClassName?: string
     /** Visual variant of the select */
     variant?: "default" | "light"
+    labelClassName?: string
 }
 
 const SelectField = React.forwardRef<
@@ -66,6 +67,7 @@ const SelectField = React.forwardRef<
             className,
             containerClassName,
             variant = "default",
+            labelClassName
         },
         ref
     ) => {
@@ -77,7 +79,7 @@ const SelectField = React.forwardRef<
         return (
             <div className="flex w-full flex-col gap-2">
                 {label ? (
-                    <Label htmlFor={selectId}>{label}</Label>
+                    <Label htmlFor={selectId} className={labelClassName}>{label}</Label>
                 ) : null}
 
                 {/* Select Trigger Container */}

@@ -12,6 +12,7 @@ export interface TextAreaFieldProps extends React.ComponentProps<"textarea"> {
     containerClassName?: string
     wrapperClassName?: string
     variant?: "default" | "light"
+    labelClassName?: string
 }
 
 const TextAreaField = React.forwardRef<HTMLTextAreaElement, TextAreaFieldProps>(
@@ -25,6 +26,7 @@ const TextAreaField = React.forwardRef<HTMLTextAreaElement, TextAreaFieldProps>(
             className,
             id,
             variant = "default",
+            labelClassName,
             ...props
         },
         ref
@@ -35,7 +37,7 @@ const TextAreaField = React.forwardRef<HTMLTextAreaElement, TextAreaFieldProps>(
 
         return (
             <div className={cn("flex w-full flex-col gap-2", wrapperClassName)}>
-                {label ? <Label htmlFor={textareaId}>{label}</Label> : null}
+                {label ? <Label className={labelClassName} htmlFor={textareaId}>{label}</Label> : null}
 
                 <Textarea
                     id={textareaId}

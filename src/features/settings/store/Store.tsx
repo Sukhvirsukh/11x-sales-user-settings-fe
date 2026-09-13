@@ -97,7 +97,7 @@ export function Store() {
                 emptyMessage={search ? "No matching stores found" : "No stores found"}
                 emptyDescription={search ? "Try a different search term." : "Stores connected to your account will appear here."}
                 emptyState={
-                    true ? (
+                    isLoading ? (
                         <TableSkeleton columns={6} rows={4} showHeader={false} />
                     ) : undefined
                 }
