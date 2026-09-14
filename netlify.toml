@@ -1,0 +1,15 @@
+# Netlify configuration for the Vitalb admin SPA.
+# Docs: https://docs.netlify.com/configure-builds/file-based-configuration/
+
+[build]
+  command = "pnpm build"
+  publish = "dist"
+
+# SPA fallback: the app uses client-side routing (React Router), so any path
+# that isn't a real file on disk must be served index.html.
+# `status = 200` makes this a rewrite (URL bar keeps the original path).
+# Netlify serves existing static files first, so /assets/* are unaffected.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
