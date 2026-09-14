@@ -15,7 +15,7 @@ export default function DesktopSidebar() {
 
   return (
     <aside
-      className={`hidden md:flex flex-col justify-between p-4 bg-white border border-blue-100/70 rounded-[10px] shadow-blue transition-all duration-300 relative ${isCollapsed ? "w-[72px]" : "w-[187px]"
+      className={`relative hidden flex-col justify-between rounded-[10px] border border-section-border bg-sidebar p-4 shadow-blue transition-all duration-300 md:flex ${isCollapsed ? "w-[72px]" : "w-[187px]"
         }`}
     >
       {/* Top Header & Toggle */}
@@ -23,9 +23,9 @@ export default function DesktopSidebar() {
         <div className="flex items-center justify-between mb-10 px-1">
           <div className="flex items-center gap-2.5">
             {/* Logo Box */}
-            <div className="size-5 rounded-md bg-blue-600 shrink-0" />
+            <div className="size-5 shrink-0 rounded-md bg-primary" />
             {!isCollapsed && (
-              <span className="font-semibold text-lg text-zinc-900 tracking-tight">
+              <span className="text-lg font-semibold tracking-tight text-foreground">
                 Vitalb
               </span>
             )}
@@ -43,16 +43,15 @@ export default function DesktopSidebar() {
                 title={isCollapsed ? item.label : undefined}
                 className={({ isActive }) =>
                   `w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-base transition-all ${isActive
-                    ? "text-zinc-900 bg-blue-50/60 border font-medium border-blue-100/80 shadow-2xs"
-                    : "hover:bg-blue-50/60 hover:text-zinc-900 border border-transparent"
+                    ? "border border-active-border bg-active-bg font-medium text-foreground shadow-2xs"
+                    : "border border-transparent text-foreground hover:bg-active-bg"
                   } ${isCollapsed ? "justify-center px-0" : ""}`
                 }
               >
                 {({ isActive }) => (
                   <>
                     <Icon
-                      className={`size-4 shrink-0 ${isActive ? "text-blue-600" : "text-zinc-900"
-                        }`}
+                      className={`size-5 shrink-0 ${isActive ? "text-primary" : "text-muted-foreground"}`}
                     />
                     {!isCollapsed && (
                       <span className="truncate">{item.label}</span>

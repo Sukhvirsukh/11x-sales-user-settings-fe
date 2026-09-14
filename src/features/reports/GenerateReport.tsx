@@ -27,7 +27,7 @@ export default function GenerateReport() {
         mutationFn: (reportFormValues: ReportFormValues) => {
             return addReport(reportFormValues)
         },
-        onSuccess: async (data) => {
+        onSuccess: async () => {
             setIsOpen(false);
             await queryClient.invalidateQueries({ queryKey: reportQueryKey });
             toast.add({

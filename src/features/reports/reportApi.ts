@@ -1,5 +1,5 @@
-import { delay } from "@/lib/utils"
-import type { Report } from "./reportType"
+import { dateFormater, delay } from "@/lib/utils"
+import type { Report, ReportFormValues } from "./reportType"
 
 const data: Report[] = [
     {
@@ -30,8 +30,16 @@ export async function getReports() {
 }
 
 
-export async function addReport(report: Report) {
-    await delay(2000).then(() => data.push(report))
+export async function addReport(values: ReportFormValues) {
+    const report: Report = {
+        source: values.source,
+        status: true,
+        createdDate: dateFormater(new Date()),
+        endDate: dateFormater(values.endDate),
+    }
+
+    await delay(2000)
+    data.push(report)
 
     return report
 }

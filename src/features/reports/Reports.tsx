@@ -1,4 +1,4 @@
-import { ListFilter, Plus, Search } from "lucide-react";
+import { ListFilter, Search } from "lucide-react";
 import { useReportQuery } from "./reportQuery";
 
 import CustomTable, { type Column } from "@/components/design/CustomTable";
@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Spinner } from "@/components/ui/spinner";
 import GenerateReport from "./GenerateReport";
-import { useMemo } from "react";
 
 const columns: Column[] = [
     { key: "source", header: "Source", width: "280px" },
@@ -30,17 +29,12 @@ const columns: Column[] = [
 ]
 
 export function Reports() {
-    const { data = [], isLoading, error } = useReportQuery()
+    const { data = [], isLoading } = useReportQuery()
     const search = ""
 
-    // const filteredData = useMemo(() => {
-    //     const query = search.trim().toLowerCase()
-    //     if (!query) return data
-    //     return data.filter((role) => role.name.toLowerCase().includes(query))
-    // }, [data, search])
-
-
-    const setSearch = () => { }
+    const setSearch = (value: string) => {
+        void value
+    }
 
     return (
         <CustomTable
@@ -92,7 +86,7 @@ export function Reports() {
                     <GenerateReport />
                 </div>
             }
-            rowActions={(row) => (
+            rowActions={() => (
                 <div className="flex items-center gap-2">
                     <Button variant="bare" className='underline' size="sm" onClick={() => ''}>
                         Download

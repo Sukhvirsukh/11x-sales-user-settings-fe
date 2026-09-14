@@ -8,15 +8,6 @@ interface ApiFetchOptions extends RequestInit {
   auth?: boolean;
 }
 
-interface ApiSuccessResponse {
-  success?: boolean;
-  message?: string;
-}
-
-function isApiSuccessResponse(body: unknown): body is ApiSuccessResponse {
-  return typeof body === "object" && body !== null;
-}
-
 export async function apiFetch<T>(endpoint: string, options?: ApiFetchOptions): Promise<T> {
   const { auth = true, ...init } = options ?? {};
 
@@ -52,14 +43,6 @@ export async function apiFetch<T>(endpoint: string, options?: ApiFetchOptions): 
   }
 
   const body = await response.json() as T;
-
-  // if (isApiSuccessResponse(body) && body.success && body.message) {
-  //   toast.add({
-  //     type: "success",
-  //     title: "Success",
-  //     description: body.message,
-  //   });
-  // }
 
   return body;
 }

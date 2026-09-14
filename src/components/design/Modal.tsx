@@ -47,7 +47,7 @@ export default function Modal({
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
             {trigger && <DialogTrigger render={trigger} />}
-            <DialogContent showCloseButton={false} className="max-w-md p-0 gap-0 bg-white rounded-[10px] ring-0 border-0 shadow-[0_40px_4px_rgba(70,132,250,0.06),0_20px_8px_rgba(70,132,250,0.05)]">
+            <DialogContent showCloseButton={false} className="max-w-md gap-0 rounded-[10px] border-0 bg-popover p-0 ring-0 shadow-panel">
                 {title && (
                     <DialogHeader className="flex flex-row justify-between items-center py-2.5 px-4 bg-table-header rounded-t-[10px]">
                         <DialogTitle className="text-lg font-semibold font-inter">

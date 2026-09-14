@@ -68,7 +68,7 @@
   --color-border-subtle: var(--border-subtle);
   --color-border-blue: var(--border-blue);
   --color-border: var(--border);
-  --color-border-light: #e6e6e8;
+  --color-border-light: var(--border-light);
   --color-border-soft: var(--border-soft);
   --color-border-tab: var(--border-tab);
   --color-input: var(--input);
@@ -184,6 +184,75 @@
 
   /* Table color */
   --table-header: #E8EEFB
+  }
+
+  .dark {
+    color-scheme: dark;
+
+    /* Neutral slate surfaces: canvas, panels, then raised content. */
+    --background: #101318;
+    --popover: #222831;
+    --popover-foreground: var(--foreground);
+    --sidebar-bg: #171c23;
+    --light: #222831;
+    --card-bg: #1a2028;
+    --card-nested-bg: #222831;
+    --muted: #2b333f;
+    --light-gray: #252c36;
+
+    /* Brand & status colors retain contrast on dark surfaces. */
+    --primary: #3673df;
+    --primary-hover: #326bd0;
+    --primary-foreground: #ffffff;
+    --danger: #cc3e4b;
+    --danger-light: #352126;
+    --danger-dark: #bb3442;
+    --success: #7ad5a4;
+    --success-light: #1b3028;
+    --warning: #e9bf6b;
+    --warning-light: #332c20;
+
+    /* Borders & typography */
+    --border: #343d49;
+    --border-light: #303843;
+    --border-soft: #46515f;
+    --input: #647184;
+    --border-subtle: #29313b;
+    --border-blue: #344d70;
+    --border-gray: #647184;
+    --border-strong: #647184;
+    --ring: #8ab4ff;
+    --foreground: #e8edf4;
+    --muted-foreground: #aab5c4;
+    --label-text: #aab5c4;
+    --black: #e8edf4;
+    --gray: #aab5c4;
+    --ghost: #aab5c4;
+
+    /* Navigation, tables, and section surfaces */
+    --active-item-bg: #233249;
+    --active-item-border: #3c567c;
+    --active-tab-bg: #293341;
+    --active-tab-border: #46515f;
+    --section-border: #343d49;
+    --section-bg: #1a2028;
+    --table-header: #252e3b;
+    --chat-bg: #222831;
+    --border-tab: #343d49;
+    --secondary-button-bg: #2b333f;
+    --secondary-button-hover: #364150;
+
+    --badge-active-bg: #1b352b;
+    --badge-inactive-bg: #38242b;
+    --badge-active-text: #9be0bb;
+    --badge-active-dot: #7ad5a4;
+    --badge-inactive-dot: #f19ca4;
+    --status-online: #294b3a;
+
+    /* Subtle depth without the light theme's blue glow. */
+    --shadow-blue: 0 2px 6px rgb(0 0 0 / 0.18), 0 6px 18px rgb(0 0 0 / 0.16);
+    --shadow-auth: 0 10px 24px rgb(0 0 0 / 0.24), 0 20px 40px rgb(0 0 0 / 0.2);
+    --shadow-panel: 0 1px 3px rgb(0 0 0 / 0.2), 0 8px 24px rgb(0 0 0 / 0.24);
   }
 
   /* Set default font size (14px) and family globally */

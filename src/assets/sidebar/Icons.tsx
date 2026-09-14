@@ -6,7 +6,7 @@ type IconProps = {
     width?: number
 }
 
-export const ConversationsIcon = ({ width = 22, height = 22, fill = "black", className }: IconProps) => (
+export const ConversationsIcon = ({ width = 22, height = 22, fill = "currentColor", className }: IconProps) => (
     <svg
         className={className}
         width={width}
@@ -24,7 +24,7 @@ export const ConversationsIcon = ({ width = 22, height = 22, fill = "black", cla
     </svg>
 );
 
-export const ContactsIcon = ({ width = 22, height = 22, fill = "black", className }: IconProps) => (
+export const ContactsIcon = ({ width = 22, height = 22, fill = "currentColor", className }: IconProps) => (
     <svg
         className={className}
         width={width}
@@ -45,7 +45,7 @@ export const ContactsIcon = ({ width = 22, height = 22, fill = "black", classNam
     </svg>
 );
 
-export const OverviewIcon = ({ width = 22, height = 22, fill = "black", className }: IconProps) => (
+export const OverviewIcon = ({ width = 22, height = 22, fill = "currentColor", className }: IconProps) => (
     <svg
         className={className}
         width={width}
@@ -66,7 +66,7 @@ export const OverviewIcon = ({ width = 22, height = 22, fill = "black", classNam
     </svg>
 );
 
-export const SettingsIcon = ({ width = 22, height = 22, fill = "black", className }: IconProps) => (
+export const SettingsIcon = ({ width = 22, height = 22, fill = "currentColor", className }: IconProps) => (
     <svg
         className={className}
         width={width}
@@ -84,7 +84,7 @@ export const SettingsIcon = ({ width = 22, height = 22, fill = "black", classNam
     </svg>
 );
 
-export const AiTrainingIcon = ({ width = 22, height = 22, fill = "black", className }: IconProps) => (
+export const AiTrainingIcon = ({ width = 22, height = 22, fill = "currentColor", className }: IconProps) => (
     <svg
         className={className}
         width={width}
@@ -102,7 +102,7 @@ export const AiTrainingIcon = ({ width = 22, height = 22, fill = "black", classN
     </svg>
 );
 
-export const ChatConfigurationIcon = ({ width = 22, height = 22, fill = "black", className }: IconProps) => (
+export const ChatConfigurationIcon = ({ width = 22, height = 22, fill = "currentColor", className }: IconProps) => (
     <svg
         className={className}
         width={width}
@@ -122,7 +122,7 @@ export const ChatConfigurationIcon = ({ width = 22, height = 22, fill = "black",
     </svg>
 );
 
-export const ReportsIcon = ({ width = 22, height = 22, fill = "black", className }: IconProps) => (
+export const ReportsIcon = ({ width = 22, height = 22, fill = "currentColor", className }: IconProps) => (
     <svg
         className={className}
         width={width}
@@ -140,7 +140,7 @@ export const ReportsIcon = ({ width = 22, height = 22, fill = "black", className
     </svg>
 );
 
-export const AskMeIcon = ({ width = 22, height = 22, fill = "black", className }: IconProps) => (
+export const AskMeIcon = ({ width = 22, height = 22, fill = "currentColor", className }: IconProps) => (
     <svg
         className={className}
         width={width}

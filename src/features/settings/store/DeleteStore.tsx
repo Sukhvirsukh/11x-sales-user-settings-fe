@@ -1,7 +1,7 @@
 import { Banner } from "@/components/design/Banner";
 import Modal from "@/components/design/Modal";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { deleteStore } from "./storeApi";
+import { deleteStore, deleteStores } from "./storeApi";
 import { storeQueryKey } from "./storeQuery";
 import { toast } from "@/components/ui/toast";
 
@@ -22,38 +22,23 @@ export default function DeleteStore({ open, onOpenChange, stores, onDeleted }: D
                 }
                 return store.id;
             });
-            const results = await Promise.allSettled(ids.map(deleteStore));
-            return {
-                deletedIds: ids.filter((_, index) => results[index].status === "fulfilled"),
-                failedCount: results.filter((result) => result.status === "rejected").length,
-            };
-        },
-        onSuccess: async ({ deletedIds, failedCount }) => {
-            if (deletedIds.length > 0) {
-                onOpenChange(false);
-                onDeleted?.(deletedIds);
-                toast.add({
-                    type: "success",
-                    title: deletedIds.length === 1 ? "Store deleted" : "Stores deleted",
-                    description: `${deletedIds.length} ${deletedIds.length === 1 ? "store has" : "stores have"} been deleted successfully.`,
-                });
+            if (ids.length === 1) {
+                await deleteStore(ids[0]);
+            } else {
+                await deleteStores(ids);
             }
-            if (failedCount > 0) {
-                toast.add({
-                    type: "error",
-                    title: "Some stores could not be deleted",
-                    description: `${failedCount} ${failedCount === 1 ? "store could" : "stores could"} not be deleted. Please try again.`,
-                });
-            }
-            await queryClient.invalidateQueries({ queryKey: storeQueryKey });
+            return ids;
         },
-        onError: (error) => {
+        onSuccess: async (deletedIds) => {
+            onOpenChange(false);
+            onDeleted?.(deletedIds);
             toast.add({
-                type: "error",
-                title: "Unable to delete stores",
-                description: error.message,
+                type: "success",
+                title: deletedIds.length === 1 ? "Store deleted" : "Stores deleted",
+                description: `${deletedIds.length} ${deletedIds.length === 1 ? "store has" : "stores have"} been deleted successfully.`,
             });
-        },
+            await queryClient.invalidateQueries({ queryKey: storeQueryKey });
+        }
     });
 
     function confirmDelete() {

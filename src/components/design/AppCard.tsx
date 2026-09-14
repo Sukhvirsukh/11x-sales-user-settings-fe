@@ -17,7 +17,7 @@ export default function AppCard({ children, className, header, headingSize = "md
     return (
         <div
             className={cn(
-                "w-full rounded-[10px] border border-section-border bg-white",
+                "w-full rounded-[10px] border border-section-border bg-card-nested",
                 padding === "sm" ? "p-2.5" : "p-2.5 md:p-4",
                 shadow && "shadow-blue",
                 className,

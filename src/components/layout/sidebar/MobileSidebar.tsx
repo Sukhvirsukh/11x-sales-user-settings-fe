@@ -50,7 +50,7 @@ export default function MobileSidebar() {
             />
 
             {/* Panel */}
-            <aside className="absolute inset-y-0 left-0 flex h-full w-full max-w-[320px] flex-col bg-white p-2.5 shadow-blue sm:max-w-[360px] sm:p-4">
+            <aside className="absolute inset-y-0 left-0 flex h-full w-full max-w-[320px] flex-col bg-sidebar p-2.5 shadow-blue sm:max-w-[360px] sm:p-4">
                 {/* Header */}
                 <div className="flex items-center justify-between border-b border-border-light pb-2.5 sm:pb-4">
                     <div className="flex min-w-0 items-center gap-2.5">
@@ -84,13 +84,13 @@ export default function MobileSidebar() {
                                 }}
                                 className={`flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-base font-medium transition-colors sm:gap-3 sm:px-3 sm:py-2.5 ${
                                     isActive
-                                        ? "border border-blue-100/80 bg-blue-50/60 text-foreground shadow-2xs"
-                                        : "border border-transparent text-foreground hover:bg-blue-50/60"
+                                        ? "border border-active-border bg-active-bg text-foreground shadow-2xs"
+                                        : "border border-transparent text-foreground hover:bg-active-bg"
                                 }`}
                             >
                                 <Icon
                                     className={`size-4 shrink-0 sm:size-5 ${
-                                        isActive ? "text-primary" : "text-foreground"
+                                        isActive ? "text-primary" : "text-muted-foreground"
                                     }`}
                                 />
                                 <span className="truncate">{item.label}</span>

@@ -91,7 +91,7 @@ const DatePicker = React.forwardRef<HTMLButtonElement, DatePickerProps>(
                 <div
                     className={cn(
                         "relative flex h-[34px] w-full items-center rounded-xl border border-border-soft transition-all focus-within:border-border-soft focus-within:ring-2 focus-within:ring-blue-400/20 dark:border-slate-800",
-                        "bg-white focus-within:bg-white dark:bg-slate-900/40 dark:focus-within:bg-slate-900",
+                        "bg-card-nested focus-within:bg-card-nested",
                         variant === "light"
                             ? "bg-light border-section-border focus-within:bg-light focus-within:border-section-border dark:bg-slate-800/60 dark:focus-within:bg-slate-800/60"
                             : "",
@@ -135,7 +135,7 @@ const DatePicker = React.forwardRef<HTMLButtonElement, DatePickerProps>(
                             }
                         />
                         <PopoverContent
-                            className="w-auto overflow-hidden rounded-xl border border-section-border bg-white p-0 font-sans text-sm text-slate-800 shadow-panel ring-0 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200"
+                            className="w-auto overflow-hidden rounded-xl border border-section-border bg-card-nested p-0 font-sans text-sm text-foreground shadow-panel ring-0"
                             align="start"
                             sideOffset={8}
                         >

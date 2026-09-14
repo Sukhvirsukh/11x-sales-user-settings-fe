@@ -12,6 +12,7 @@ export interface TextAreaFieldProps extends React.ComponentProps<"textarea"> {
     containerClassName?: string
     wrapperClassName?: string
     variant?: "default" | "light"
+    labelClassName?: string
 }
 
 const TextAreaField = React.forwardRef<HTMLTextAreaElement, TextAreaFieldProps>(
@@ -25,6 +26,7 @@ const TextAreaField = React.forwardRef<HTMLTextAreaElement, TextAreaFieldProps>(
             className,
             id,
             variant = "default",
+            labelClassName,
             ...props
         },
         ref
@@ -35,14 +37,14 @@ const TextAreaField = React.forwardRef<HTMLTextAreaElement, TextAreaFieldProps>(
 
         return (
             <div className={cn("flex w-full flex-col gap-2", wrapperClassName)}>
-                {label ? <Label htmlFor={textareaId}>{label}</Label> : null}
+                {label ? <Label className={labelClassName} htmlFor={textareaId}>{label}</Label> : null}
 
                 <Textarea
                     id={textareaId}
                     ref={ref}
                     className={cn(
                         "min-h-[80px] w-full rounded-xl border border-border-soft px-3.5 py-2 transition-all focus-visible:border-border-soft focus-visible:ring-2 focus-visible:ring-blue-400/20 dark:border-slate-800",
-                        "bg-white focus-visible:bg-white dark:bg-slate-900/40 dark:focus-visible:bg-slate-900",
+                        "bg-card-nested focus-visible:bg-card-nested",
                         "text-sm text-slate-800 placeholder:text-slate-400 dark:text-slate-200",
                         variant === "light"
                             ? "bg-light border-section-border focus-visible:bg-light focus-visible:border-section-border dark:bg-slate-800/60 dark:focus-visible:bg-slate-800/60"

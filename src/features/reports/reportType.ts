@@ -1,6 +1,6 @@
 
 
-export interface Report {
+export interface Report extends Record<string, unknown> {
     source: string,
     status: boolean,
     createdDate: string,

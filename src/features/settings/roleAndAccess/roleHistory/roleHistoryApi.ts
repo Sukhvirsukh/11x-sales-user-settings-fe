@@ -103,3 +103,12 @@ export function deleteRole(id: string) {
         method: "DELETE",
     });
 }
+
+
+export function deleteRoles(ids: string[]) {
+    return apiFetch<unknown>("/admin/roles/bulk", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ids }),
+    });
+}

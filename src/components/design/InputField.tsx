@@ -46,7 +46,7 @@ const InputField = React.forwardRef<HTMLInputElement, InputFieldProps>(
                 <div
                     className={cn(
                         "relative flex h-[34px] w-full items-center rounded-xl border border-border-soft px-3.5 transition-all focus-within:border-border-soft focus-within:ring-2 focus-within:ring-blue-400/20 dark:border-slate-800",
-                        "bg-white focus-within:bg-white dark:bg-slate-900/40 dark:focus-within:bg-slate-900",
+                        "bg-card-nested focus-within:bg-card-nested",
                         variant === "light"
                             ? "bg-light border-section-border focus-within:bg-light focus-within:border-section-border dark:bg-slate-800/60 dark:focus-within:bg-slate-800/60"
                             : "",
