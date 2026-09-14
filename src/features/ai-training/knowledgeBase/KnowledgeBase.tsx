@@ -15,6 +15,11 @@ import DeleteKnowledgeBase from "./DeleteKnowledgeBase";
 import SearchField from "@/components/shared/SearchField";
 
 
+function toDateValue(value: unknown): string | Date | null {
+    return value instanceof Date || typeof value === "string" ? value : null;
+}
+
+
 const columns: Column[] = [
     {
         key: "name", header: "Name", width: "280px",
@@ -51,8 +56,8 @@ const columns: Column[] = [
             )
         },
     },
-    { key: "createdAt", header: "Create date", render: (value) => dateFormater(value) },
-    { key: "lastRefreshAt", header: "Last refresh", align: "right", render: (value) => dateFormater(value) },
+    { key: "createdAt", header: "Create date", render: (value) => dateFormater(toDateValue(value)) },
+    { key: "lastRefreshAt", header: "Last refresh", align: "right", render: (value) => dateFormater(toDateValue(value)) },
     { key: "format", header: "Format", align: "right" },
 ]
 

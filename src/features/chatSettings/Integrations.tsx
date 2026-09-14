@@ -60,7 +60,7 @@ const ToggleAction = memo(function ToggleAction({
 });
 
 export default function Integrations() {
-    const { data, isLoading, error } = useIntegrationsQuery();
+    const { data, isLoading } = useIntegrationsQuery();
     const [backendActive, setBackendActive] = useState(false);
 
     const shopifyActive = data?.shopify?.connected || false;

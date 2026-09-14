@@ -1,4 +1,5 @@
 import { apiFetch } from "@/lib/api";
+import type { IntegrationResponse } from "./chatSettingsType";
 
 
 export async function getIntegrations() {
