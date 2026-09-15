@@ -8,17 +8,21 @@ export async function getKnowledgeBase(page = 1) {
     return response
 }
 
-export async function updateKnowledgeBase({ id, name, format, url, file }: KnowledgeBaseFormValues & { id?: string }) {
-    const isDocument = format === "Doc";
+export async function updateKnowledgeBase({ id, name, format, url, file, text }: KnowledgeBaseFormValues & { id?: string }) {
+    const isDocument = format === "Doc" || format === "Pdf" || format === "Csv";
+    const isText = format === "Text";
     let body: FormData | string;
 
     if (isDocument) {
         const formData = new FormData();
         formData.append("name", name);
         formData.append("format", format);
-        if (file) formData.append("file", file);
+        if (file instanceof File) formData.append("file", file);
         // if (id) formData.append("id", id);
         body = formData;
+    } else if (isText) {
+        console.log({ name, format, text })
+        body = JSON.stringify({ name, format, text });
     } else {
         body = JSON.stringify({ name, format, url });
     }

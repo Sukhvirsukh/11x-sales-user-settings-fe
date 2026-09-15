@@ -46,7 +46,6 @@ export function PromptTools() {
                         <TextAreaField
                             label="Human help support"
                             placeholder="E.g: In order to reach to our team send us an email at support@example.com"
-                            variant="light"
                         // value={fields.disclaimerMessage}
                         // onChange={(e) => setField("disclaimerMessage", e.target.value)}
                         />
@@ -59,7 +58,6 @@ export function PromptTools() {
                                         wrapperClassName="flex-1"
                                         className="flex-1"
                                         placeholder="Enter your instructions here"
-                                        variant="light"
                                     // value={fields.disclaimerMessage}
                                     // onChange={(e) => setField("disclaimerMessage", e.target.value)}
                                     />

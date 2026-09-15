@@ -48,12 +48,14 @@ const ToggleAction = memo(function ToggleAction({
 
     return (
         <Button
-            variant={active ? "secondary" : "primary"}
-            className="gap-2.5 px-4 py-2 md:py-2.5"
+            variant='secondary'
+            className={`gap-2 px-2! py-1.5! rounded-[10px] ${active ? 'bg-badge-active-bg' : ''}`}
             onClick={onToggle}
             disabled={disabled}
+            aria-disabled={disabled}
+            size='sm'
         >
-            {active ? "Active" : "Activate"}
+            {active ? "Deactivate" : "Activate"}
             <Icon className="size-4" />
         </Button>
     );
@@ -78,6 +80,7 @@ export default function Integrations() {
     return (
         <div className="flex min-w-0 flex-col gap-2.5 md:gap-4">
             <ActionCard
+                variant="bare"
                 icon={<ShopifyIcon />}
                 title="Shopify app"
                 subtitle="Enables advances shopify features"
@@ -90,7 +93,9 @@ export default function Integrations() {
                     />
                 }
             />
+            <div className="separator" />
             <ActionCard
+                variant="bare"
                 icon={<BackendIcon />}
                 title="Backend API"
                 subtitle="Pull chatbot data from back end via API"

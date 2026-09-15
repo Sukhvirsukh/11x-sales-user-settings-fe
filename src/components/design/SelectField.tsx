@@ -66,7 +66,7 @@ const SelectField = React.forwardRef<
             disabled = false,
             className,
             containerClassName,
-            variant = "default",
+            variant = "light",
             labelClassName
         },
         ref

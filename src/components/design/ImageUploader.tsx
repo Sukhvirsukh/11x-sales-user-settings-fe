@@ -67,7 +67,9 @@ export default function ImageUploader({
         }
     };
     const helpText = note || hint;
-    const isImage = imageValue instanceof File ? imageValue.type.startsWith("image/") : true;
+    const isImage = imageValue instanceof File
+        ? imageValue.type.startsWith("image/")
+        : accept.every((type) => type.startsWith("image/"));
     const maximumSizeKB = fileSize ?? maxSizeKB ?? (accept.every((type) => type.startsWith("image/")) ? 50 : 5120);
 
     function formatAcceptedTypes() {

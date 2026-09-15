@@ -5,11 +5,11 @@ export interface KnowledgeBase extends Record<string, unknown> {
     name: string,
     url: string,
     status: "active" | "inactive",
-    file?: Blob | null,
+    file?: Blob | string | null,
     text?: string,
     createdAt: string,
     lastRefreshAt: string,
-    format: "Link" | "Pdf" | "Doc" | "CSV" | "Text",
+    format: "Link" | "Pdf" | "Doc" | "Csv" | "Text",
 }
 
 export interface KnowledgeBaseResponse {

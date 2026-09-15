@@ -1,5 +1,6 @@
 import CustomTable, { type Column } from "@/components/design/CustomTable";
 import { InputField } from "@/components/design/InputField";
+import SearchField from "@/components/shared/SearchField";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -57,33 +58,7 @@ export function Corrections() {
             data={data}
             headerActions={
                 <div className="flex items-center gap-2.5">
-                    <Popover>
-                        <PopoverTrigger
-                            render={
-                                <Button variant="ghost" size="sm" className="size-[35px] md:hidden" aria-label="Search role history">
-                                    <Search className="size-4" />
-                                </Button>
-                            }
-                        />
-                        <PopoverContent side="top" align="end" sideOffset={8} className="w-[255px] max-w-[calc(100vw-2rem)] rounded-[10px] border border-blue-200 bg-white! p-3 shadow-blue ring-0! md:hidden">
-                            <InputField
-                                aria-label="Search role history"
-                                placeholder="Search"
-                                startIcon={<Search className="size-4" />}
-                                endIcon={<ListFilter className="size-4" />}
-                                variant="light"
-                            />
-                        </PopoverContent>
-                    </Popover>
-                    <div className="hidden w-full max-w-[231px] md:block">
-                        <InputField
-                            placeholder="Search"
-                            startIcon={<Search className="size-4" />}
-                            endIcon={
-                                <ListFilter className="size-4" />
-                            }
-                        />
-                    </div>
+                    <SearchField onSearchChange={() => { }} />
                 </div>
             }
             rowActions={() => (

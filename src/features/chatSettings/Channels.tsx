@@ -1,12 +1,11 @@
 import { memo } from "react";
-import { Paintbrush, QrCode } from "lucide-react";
+import { Download, Paintbrush, QrCode } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import CopyField from "@/components/shared/CopyField";
 import ActionCard from "@/components/shared/ActionCard";
 import { useNavigate } from "react-router";
+import AppCard from "@/components/design/AppCard";
 
-const copyFieldContainerClassName =
-    "h-auto rounded-[10px] border-0 bg-muted py-[7px] focus-within:border-0 focus-within:bg-muted focus-within:ring-0";
 
 const VitaChatIcon = memo(function VitaChatIcon() {
     return (
@@ -37,27 +36,29 @@ export default function Channels() {
 
     return (
         <div className="flex min-w-0 flex-col gap-2.5 md:gap-4">
+
             <ActionCard
+                variant="bare"
                 icon={<VitaChatIcon />}
                 title="Vita chat"
                 subtitle="Talk to Vita lab directly on site"
                 actions={<VisibilityAction />}
             />
 
-            <div className="rounded-[10px] bg-white p-2.5 md:p-4">
+            <AppCard>
                 <div className="flex min-w-0 flex-col gap-5 lg:flex-row lg:gap-5">
                     <div className="flex min-w-0 flex-1 flex-col gap-3 md:gap-5">
                         <div className="min-w-0">
                             <p className="text-base font-semibold text-foreground md:text-lg">
                                 Link to chat
                             </p>
-                            <p className="mt-2 text-muted-foreground">
+                            <p className="mt-1 text-gray">
                                 Use the following link to the standalone chat page
                             </p>
                             <div className="mt-2 min-w-0">
                                 <CopyField
                                     value={chatLink}
-                                    containerClassName={copyFieldContainerClassName}
+                                    variant='light'
                                 />
                             </div>
                         </div>
@@ -66,13 +67,13 @@ export default function Channels() {
                             <p className="text-base font-semibold text-foreground md:text-lg">
                                 Embedded chat (iframe)
                             </p>
-                            <p className="mt-2 text-muted-foreground">
+                            <p className="mt-1 text-gray">
                                 Add the following code into the HTML code of your page
                             </p>
                             <div className="mt-2 min-w-0">
                                 <CopyField
                                     value={embedCode}
-                                    containerClassName={copyFieldContainerClassName}
+                                    variant='light'
                                 />
                             </div>
                         </div>
@@ -93,13 +94,16 @@ export default function Channels() {
                         </div>
                         <Button
                             variant="secondary"
-                            className="mt-3 border-gray text-gray"
+                            className="mt-2"
+                            size="sm"
                         >
                             Download QR
+                            <Download className="size-3.5 ml-1" />
                         </Button>
                     </div>
                 </div>
-            </div>
+            </AppCard>
+
         </div>
     );
 }

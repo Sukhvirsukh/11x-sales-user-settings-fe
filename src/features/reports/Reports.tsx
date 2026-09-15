@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Spinner } from "@/components/ui/spinner";
 import GenerateReport from "./GenerateReport";
+import SearchField from "@/components/shared/SearchField";
 
 const columns: Column[] = [
     { key: "source", header: "Source", width: "280px" },
@@ -51,38 +52,7 @@ export function Reports() {
             ) : undefined}
             headerActions={
                 <div className="flex items-center gap-2.5">
-                    <Popover>
-                        <PopoverTrigger
-                            render={
-                                <Button variant="ghost" size="sm" className="size-[35px] md:hidden" aria-label="Search role history">
-                                    <Search className="size-4" />
-                                </Button>
-                            }
-                        />
-                        <PopoverContent side="top" align="end" sideOffset={8} className="w-[255px] max-w-[calc(100vw-2rem)] rounded-[10px] border border-blue-200 bg-white! p-3 shadow-blue ring-0! md:hidden">
-                            <InputField
-                                aria-label="Search role history"
-                                placeholder="Search"
-                                startIcon={<Search className="size-4" />}
-                                endIcon={<ListFilter className="size-4" />}
-                                variant="light"
-                                value={search}
-                                onChange={(e) => setSearch(e.target.value)}
-                            />
-                        </PopoverContent>
-                    </Popover>
-                    <div className="hidden w-full max-w-[231px] md:block">
-                        <InputField
-                            aria-label="Search role history"
-                            placeholder="Search"
-                            startIcon={<Search className="size-4" />}
-                            endIcon={
-                                <ListFilter className="size-4" />
-                            }
-                            value={search}
-                            onChange={(e) => setSearch(e.target.value)}
-                        />
-                    </div>
+                    <SearchField onSearchChange={setSearch} />
                     <GenerateReport />
                 </div>
             }

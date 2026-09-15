@@ -7,12 +7,14 @@ interface CopyFieldProps {
     value: string;
     className?: string;
     containerClassName?: string;
+    variant?: "default" | "light";
 }
 
 export default function CopyField({
     value,
     className,
     containerClassName,
+    variant
 }: CopyFieldProps) {
     const [copied, setCopied] = useState(false);
 
@@ -32,6 +34,7 @@ export default function CopyField({
             readOnly
             className={cn("truncate text-muted-foreground", className)}
             containerClassName={containerClassName}
+            variant={variant}
             endIcon={
                 <button
                     type="button"

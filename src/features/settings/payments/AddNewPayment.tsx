@@ -25,13 +25,11 @@ export function AccountPayment() {
                 label="Store Name"
                 placeholder="Enter store name"
                 labelClassName="text-sm font-medium"
-                variant="light"
             />
             <InputField
                 label="Store URL"
                 placeholder="Enter store URL"
                 labelClassName="text-sm font-medium"
-                variant="light"
             />
         </FormGroup>
     )
@@ -47,14 +45,12 @@ export function CardPayment() {
                 label="Name"
                 placeholder="Enter name"
                 labelClassName="text-sm font-medium"
-                variant="light"
             />
             <InputField
                 label="Card number"
                 type="number"
                 placeholder="Enter card number"
                 labelClassName="text-sm font-medium"
-                variant="light"
             />
 
             <FormGroup col={2} gap="sm">
@@ -62,13 +58,11 @@ export function CardPayment() {
                     label="Expire date"
                     placeholder="Select date"
                     labelClassName="text-sm font-medium"
-                    variant="light"
                 />
                 <InputField
                     label="CVV"
                     placeholder="Enter CVV"
                     labelClassName="text-sm font-medium"
-                    variant="light"
                 />
 
             </FormGroup>

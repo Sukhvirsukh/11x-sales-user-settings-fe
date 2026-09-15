@@ -2,6 +2,7 @@ import { Accordion as AccordionPrimitive } from "@base-ui/react/accordion"
 import { ChevronDownIcon } from "lucide-react"
 
 import { cn } from "@/lib/utils"
+import AppSection from "../design/AppSectoin"
 
 function Accordion({ className, ...props }: AccordionPrimitive.Root.Props) {
   return (
@@ -69,16 +70,14 @@ function AccordionContent({
       className="overflow-hidden text-body data-ending-style:h-0 data-starting-style:h-0 data-open:h-auto"
       {...props}
     >
-      <div
-        className={cn(
-          "min-w-0",
-          "in-data-[variant=inset]:mb-4 in-data-[variant=inset]:rounded-[10px] in-data-[variant=inset]:bg-section-bg in-data-[variant=inset]:p-2.5 md:in-data-[variant=inset]:p-4",
-          "in-data-[variant=card]:bg-muted in-data-[variant=card]:pb-3",
-          className
-        )}
+      <AppSection
+        data-slot="accordion-content-section"
+        className='w-full'
       >
-        {children}
-      </div>
+        <div className="w-full">
+          {children}
+        </div>
+      </AppSection>
     </AccordionPrimitive.Panel>
   )
 }

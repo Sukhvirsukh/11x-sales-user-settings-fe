@@ -29,7 +29,7 @@ const InputField = React.forwardRef<HTMLInputElement, InputFieldProps>(
             className,
             labelClassName,
             id,
-            variant = "default",
+            variant = "light",
             ...props
         },
         ref

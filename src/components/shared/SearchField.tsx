@@ -32,7 +32,7 @@ export default function SearchField({ onSearchChange }: { onSearchChange: (value
                         placeholder="Search"
                         startIcon={<Search className="size-4" />}
                         endIcon={<ListFilter className="size-4" />}
-                        variant="light"
+                        variant="default"
                     />
                 </PopoverContent>
             </Popover>
@@ -46,6 +46,7 @@ export default function SearchField({ onSearchChange }: { onSearchChange: (value
                     endIcon={
                         <ListFilter className="size-4" />
                     }
+                    variant="default"
                 />
             </div>
         </>
