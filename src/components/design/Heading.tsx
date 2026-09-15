@@ -13,6 +13,10 @@ const headingVariants = cva("text-foreground", {
             lg: "text-lg font-semibold",
             /** 14px, medium */
             md: "text-base font-medium",
+            /** 12px, medium */
+            sm: "text-sm font-medium",
+            /** 10px, medium */
+            xs: "text-xs font-medium",
         },
     },
     defaultVariants: {

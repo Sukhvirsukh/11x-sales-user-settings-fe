@@ -2,9 +2,9 @@ import z from "zod";
 
 export const knowledgeBaseSchema = z.object({
     name: z.string().min(1, { message: "Name is required" }),
-    format: z.enum(["Link", "Doc", "Pdf", "CSV", "Text"], { message: "Format is required" }),
+    format: z.enum(["Link", "Doc", "Pdf", "Csv", "Text"], { message: "Format is required" }),
     url: z.string(),
-    file: z.instanceof(File).nullable().optional(),
+    file: z.union([z.instanceof(File), z.string()]).nullable().optional(),
     text: z.string(),
 }).superRefine(({ format, url, file, text }, context) => {
     if (format === "Link" && !z.string().url().safeParse(url).success) {
@@ -15,7 +15,7 @@ export const knowledgeBaseSchema = z.object({
         });
     }
 
-    if (["Doc", "Pdf", "CSV"].includes(format) && !file) {
+    if (["Doc", "Pdf", "Csv"].includes(format) && !file) {
         context.addIssue({
             code: "custom",
             path: ["file"],

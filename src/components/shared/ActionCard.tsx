@@ -8,6 +8,7 @@ export interface ActionCardProps {
     icon?: ReactNode;
     actions?: ReactNode;
     className?: string;
+    variant?: "default" | "bare";
 }
 
 function ActionCard({
@@ -17,11 +18,14 @@ function ActionCard({
     icon,
     actions,
     className,
+    variant = "default",
 }: ActionCardProps) {
     return (
         <div
             className={cn(
-                "flex gap-3 rounded-[10px] bg-white p-2.5 md:p-4",
+                "flex gap-3",
+                variant === "default" && "rounded-[10px] bg-white p-2.5 md:p-4",
+                variant === "bare" && "rounded-none border-0 bg-transparent p-0",
                 className
             )}
         >

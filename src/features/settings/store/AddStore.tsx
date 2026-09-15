@@ -130,7 +130,6 @@ export default function AddStore({ open, onOpenChange, store }: AddStoreProps) {
                         label="Store Name"
                         placeholder="Enter store name"
                         labelClassName="text-sm font-medium"
-                        variant="light"
                         error={errors.name?.message}
                         {...register("name")}
                     />
@@ -138,7 +137,6 @@ export default function AddStore({ open, onOpenChange, store }: AddStoreProps) {
                         label="Store URL"
                         placeholder="https://your-store.myshopify.com"
                         labelClassName="text-sm font-medium"
-                        variant="light"
                         error={errors.url?.message}
                         {...register("url")}
                     />
@@ -155,7 +153,6 @@ export default function AddStore({ open, onOpenChange, store }: AddStoreProps) {
                                 value={field.value}
                                 onValueChange={(owner) => field.onChange(owner ?? "")}
                                 options={ownerOptions}
-                                variant="light"
                             />
                         )}
                     />

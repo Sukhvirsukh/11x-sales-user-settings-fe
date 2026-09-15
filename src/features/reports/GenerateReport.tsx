@@ -76,7 +76,6 @@ export default function GenerateReport() {
                         label="Source name"
                         placeholder="Enter source name"
                         labelClassName="text-sm font-medium"
-                        variant="light"
                         error={errors.source?.message}
                         {...register("source")}
                     />
@@ -85,7 +84,6 @@ export default function GenerateReport() {
                             label="Start date"
                             placeholder="Pick a date"
                             labelClassName="text-sm font-medium"
-                            variant="light"
                             value={watch("startDate")}
                             error={errors.startDate?.message}
                             onChange={(startDate) => {
@@ -96,7 +94,6 @@ export default function GenerateReport() {
                             label="End date"
                             placeholder="Pick a date"
                             labelClassName="text-sm font-medium"
-                            variant="light"
                             value={watch("endDate")}
                             error={errors.endDate?.message}
                             onChange={(endDate) => {

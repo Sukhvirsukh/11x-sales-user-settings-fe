@@ -25,7 +25,7 @@ const TextAreaField = React.forwardRef<HTMLTextAreaElement, TextAreaFieldProps>(
             wrapperClassName,
             className,
             id,
-            variant = "default",
+            variant = "light",
             labelClassName,
             ...props
         },

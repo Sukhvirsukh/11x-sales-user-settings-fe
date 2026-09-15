@@ -8,6 +8,7 @@ const formGroupVariants = cva("", {
         col: {
             1: "",
             2: "md:grid md:grid-cols-2",
+            3: "md:grid md:grid-cols-3",
         },
         gap: {
             xs: "gap-2",       // 8px

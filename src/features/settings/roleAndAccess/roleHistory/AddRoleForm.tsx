@@ -94,7 +94,6 @@ export default function AddRoleForm({ open, onOpenChange, role }: AddRoleFormPro
                         label="Name"
                         placeholder="Enter name"
                         labelClassName="text-sm font-medium"
-                        variant="light"
                         error={errors.name?.message}
                         {...register("name")}
                     />
@@ -102,7 +101,6 @@ export default function AddRoleForm({ open, onOpenChange, role }: AddRoleFormPro
                         label="Email"
                         placeholder="Enter email"
                         labelClassName="text-sm font-medium"
-                        variant="light"
                         error={errors.email?.message}
                         {...register("email")}
                     />
@@ -118,13 +116,11 @@ export default function AddRoleForm({ open, onOpenChange, role }: AddRoleFormPro
                             { value: "AGENT", label: "Agent" },
                             { value: "MEMBER", label: "Member" },
                         ]}
-                        variant="light"
                     />
                     <DatePicker
                         label="Joining date"
                         placeholder="Pick a date"
                         labelClassName="text-sm font-medium"
-                        variant="light"
                         value={watch("startDate")}
                         error={errors.startDate?.message}
                         onChange={(startDate) => {
