@@ -7,6 +7,7 @@ const SignInPage = lazy(() => import("@/pages/SignInPage"));
 const SignUpPage = lazy(() => import("@/pages/SignUpPage"));
 const ForgotPassword = lazy(() => import("@/pages/ForgotPassword"));
 const OverviewPage = lazy(() => import("@/pages/OverviewPage"));
+const NotFoundPage = lazy(() => import("@/pages/NotFoundPage"));
 const ContactsPage = lazy(() => import("@/pages/ContactPage"));
 const ConversationsPage = lazy(() => import("@/pages/ConversationsPage"));
 const ReportsPage = lazy(() => import("@/pages/ReportsPage"));
@@ -103,7 +104,8 @@ export const router = createBrowserRouter([
               { path: "payments", element: <Payments /> },
               { path: "store", element: <Store /> },
             ],
-          }
+          },
+          { path: "*", element: <NotFoundPage /> },
         ],
       },
     ],

@@ -39,9 +39,9 @@ export default function ConversationsPage() {
                     listClassName="pl-[4px]"
                     className="p-0!"
                 >
-                    <div className="h-full pt-2.5 pb-5">
-                        <div className="grid h-full w-full gap-3 xl:grid-cols-[minmax(0,1fr)_250px]">
-                            <AppCard shadow>
+                    <div className="h-full py-2.5">
+                        <div className="grid h-full w-full gap-3 xl:grid-cols-[minmax(0,1fr)_230px]">
+                            <AppCard shadow className="min-w-0">
                                 <Outlet />
                             </AppCard>
                             <ConversationsFilter />

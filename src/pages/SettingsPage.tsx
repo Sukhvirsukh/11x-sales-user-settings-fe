@@ -1,4 +1,5 @@
 import { CustomTabs } from "@/components/design/CustomTabs";
+import PreviewSection from "@/components/design/PreviewSection";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { Outlet, useLocation, useNavigate } from "react-router";
 
@@ -37,11 +38,9 @@ export default function SettingsPage() {
                     className="p-0!"
                 >
 
-                    <div className="flex flex-col items-start gap-3.5 pb-5 pt-2">
-                        <div className="flex w-full flex-col items-start gap-3.5 overflow-hidden rounded-[10px] border border-section-border bg-card-nested p-4 shadow-blue">
-                            <Outlet />
-                        </div>
-                    </div>
+                    <PreviewSection>
+                        <Outlet />
+                    </PreviewSection>
                 </CustomTabs>
             </PageHeader>
         </section>
