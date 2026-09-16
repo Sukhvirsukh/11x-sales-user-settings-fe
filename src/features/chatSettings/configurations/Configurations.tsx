@@ -10,18 +10,18 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { UnSavedChangesBar } from "@/components/shared/unsavedChangesBar";
 import { toast } from "@/components/ui/toast";
 
-export type ConfigurationFormValues = Omit<Configuration, "rateLimit" | "rateLimitPeriodMinutes" | "messageWhenLimitReached"> & {
+export type ConfigurationFormValues = Omit<Configuration, "rateLimit" | "rateLimitPerPeriod" | "messageWhenLimitReached"> & {
     rateLimit: string;
-    rateLimitPeriodMinutes: string;
+    rateLimitPerPeriod: string;
     messageWhenLimitReached: string;
 };
 
 const DEFAULT_VALUES: ConfigurationFormValues = {
-    ignoreOutOfStockProducts: "out-of-stock",
+    ignoreProducts: "out-of-stock",
     ignoreElements: [],
     crawlInterval: "ONE_HOUR",
     rateLimit: "",
-    rateLimitPeriodMinutes: "",
+    rateLimitPerPeriod: "",
     messageWhenLimitReached: "",
     enableUtmTracking: false,
 };
@@ -31,7 +31,7 @@ function toFormValues(configuration: Configuration): ConfigurationFormValues {
         ...configuration,
         ignoreElements: configuration.ignoreElements ?? [],
         rateLimit: configuration.rateLimit?.toString() ?? "",
-        rateLimitPeriodMinutes: configuration.rateLimitPeriodMinutes?.toString() ?? "",
+        rateLimitPerPeriod: configuration.rateLimitPerPeriod?.toString() ?? "",
         messageWhenLimitReached: configuration.messageWhenLimitReached ?? "",
     };
 }
@@ -40,7 +40,7 @@ function toConfiguration(values: ConfigurationFormValues): Configuration {
     return {
         ...values,
         rateLimit: values.rateLimit ? Number(values.rateLimit) : null,
-        rateLimitPeriodMinutes: values.rateLimitPeriodMinutes ? Number(values.rateLimitPeriodMinutes) : null,
+        rateLimitPerPeriod: values.rateLimitPerPeriod ? Number(values.rateLimitPerPeriod) : null,
         messageWhenLimitReached: values.messageWhenLimitReached || null,
     };
 }

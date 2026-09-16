@@ -6,11 +6,11 @@ export interface IntegrationResponse {
 
 
 export interface Configuration {
-    ignoreOutOfStockProducts: 'out-of-stock' | 'discontinued',
+    ignoreProducts: 'out-of-stock' | 'discontinued',
     ignoreElements: string[],
     crawlInterval: string,
     rateLimit: number | null,
-    rateLimitPeriodMinutes: number | null,
+    rateLimitPerPeriod: number | null,
     messageWhenLimitReached: string | null,
     enableUtmTracking: boolean
 }
