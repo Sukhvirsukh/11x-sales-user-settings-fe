@@ -1,5 +1,6 @@
 import { ArrowUpIcon, ImageIcon } from "lucide-react";
 import { useRef, useState, type ChangeEvent, type KeyboardEvent } from "react";
+import { InputField } from "@/components/design/InputField";
 
 export interface ChatInputProps {
   onSend: (message: string) => void;
@@ -7,6 +8,7 @@ export interface ChatInputProps {
   placeholder?: string;
   disabled?: boolean;
   primaryColor?: string;
+  variant?: "default" | "light";
 }
 
 export function ChatInput({
@@ -15,6 +17,7 @@ export function ChatInput({
   placeholder = "Type a message...",
   disabled = false,
   primaryColor = "blue",
+  variant = "light",
 }: ChatInputProps) {
   const [value, setValue] = useState("");
   const imageInputRef = useRef<HTMLInputElement>(null);
@@ -40,7 +43,7 @@ export function ChatInput({
   }
 
   return (
-    <div className="flex h-[42px] items-center rounded-[10px] border border-primary/20 bg-table-header px-2.5">
+    <>
       <input
         ref={imageInputRef}
         type="file"
@@ -49,33 +52,40 @@ export function ChatInput({
         className="sr-only"
         onChange={handleImageUpload}
       />
-      <input
+      <InputField
         type="text"
         value={value}
         onChange={(e) => setValue(e.target.value)}
         onKeyDown={handleKeyDown}
-        placeholder={placeholder || "Ask AI..."}
-        className="min-w-0 flex-1 bg-transparent text-xs tracking-[0.02em] text-foreground outline-none placeholder:text-[#808080]"
-      />
-      <button
-        type="button"
-        aria-label="Attach image"
+        placeholder={placeholder}
         disabled={disabled}
-        onClick={() => imageInputRef.current?.click()}
-        className="flex size-5 shrink-0 items-center justify-center text-ghost transition-colors hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
-      >
-        <ImageIcon className="size-3.5" />
-      </button>
-      <button
-        type="button"
-        onClick={handleSend}
-        disabled={!value.trim() || disabled}
-        aria-label="Send message"
-        className="ml-2 flex size-[22px] shrink-0 items-center justify-center rounded-full text-sm leading-none text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
-        style={{ backgroundColor: primaryColor }}
-      >
-        <ArrowUpIcon className="size-3.5" />
-      </button>
-    </div>
+        variant={variant}
+        containerClassName="h-[42px] rounded-[10px] px-2.5"
+        className="min-w-0 text-xs tracking-[0.02em] text-foreground placeholder:text-[#808080]"
+        endIcon={
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              aria-label="Attach image"
+              disabled={disabled}
+              onClick={() => imageInputRef.current?.click()}
+              className="flex size-5 shrink-0 items-center justify-center text-ghost transition-colors hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              <ImageIcon className="size-3.5" />
+            </button>
+            <button
+              type="button"
+              onClick={handleSend}
+              disabled={!value.trim() || disabled}
+              aria-label="Send message"
+              className="flex size-[22px] shrink-0 items-center justify-center rounded-full text-sm leading-none text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
+              style={{ backgroundColor: primaryColor }}
+            >
+              <ArrowUpIcon className="size-3.5" />
+            </button>
+          </div>
+        }
+      />
+    </>
   );
 }
