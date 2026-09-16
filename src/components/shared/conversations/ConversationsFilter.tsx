@@ -1,32 +1,25 @@
-import { Star } from "lucide-react"
 import { Checkbox } from "@/components/ui/checkbox"
-import AppCard from "@/components/design/AppCard"
+import Heading from "@/components/design/Heading"
+import { RatingStars } from "@/components/shared/RatingStars"
 import SearchField from "@/components/shared/SearchField"
+import { Separator } from "@/components/ui/separator"
 import { useConversationFilterStore } from "@/features/conversations/conversationFilterStore"
 import { filterGroups, type FilterOption } from "./conversationData"
+import AppSection from "@/components/design/AppSectoin"
 
 const emptySelection: string[] = []
-
-function Stars({ count }: { count: number }) {
-    return (
-        <span className="flex shrink-0 items-center gap-0.5">
-            {Array.from({ length: count }, (_, index) => (
-                <Star key={index} className="size-3.5 text-gray" />
-            ))}
-        </span>
-    )
-}
 
 function FilterGroup({ title, options }: { title: string; options: FilterOption[] }) {
     const selected = useConversationFilterStore((state) => state.selectedFilters[title] ?? emptySelection)
     const toggleFilter = useConversationFilterStore((state) => state.toggleFilter)
 
     return (
-        <div className="w-full border-t border-section-border pt-3">
-            <div className="mb-2.5 flex items-center justify-between gap-2">
-                <p className="text-sm font-medium text-foreground">{title}</p>
-                {selected.length > 0 && <span className="text-xs text-ghost">{selected.length} selected</span>}
+        <section className="flex w-full flex-col gap-2.5">
+            <div className="flex items-center justify-between gap-2">
+                <Heading size="md">{title}</Heading>
+                <span className="text-xs text-ghost">{selected.length} selected</span>
             </div>
+            <Separator className="bg-section-border" />
             <div className="flex flex-col gap-2.5">
                 {options.map((option) => (
                     <label key={option.label} className="flex cursor-pointer items-center justify-between gap-2 text-sm text-foreground">
@@ -37,11 +30,11 @@ function FilterGroup({ title, options }: { title: string; options: FilterOption[
                             />
                             {option.label}
                         </span>
-                        {option.stars ? <Stars count={option.stars} /> : null}
+                        {option.stars ? <RatingStars count={option.stars} /> : null}
                     </label>
                 ))}
             </div>
-        </div>
+        </section>
     )
 }
 
@@ -49,11 +42,11 @@ export function ConversationsFilter() {
     const setSearchQuery = useConversationFilterStore((state) => state.setSearchQuery)
 
     return (
-        <AppCard header="Filters" shadow className="h-fit">
-            <SearchField onSearchChange={setSearchQuery} />
-            <div className="mt-3 flex flex-col gap-3">
+        <AppSection>
+            <SearchField onSearchChange={setSearchQuery} showMobilePanel={false} />
+            <div className="flex w-full flex-col gap-4">
                 {filterGroups.map((group) => <FilterGroup key={group.title} {...group} />)}
             </div>
-        </AppCard>
+        </AppSection>
     )
 }

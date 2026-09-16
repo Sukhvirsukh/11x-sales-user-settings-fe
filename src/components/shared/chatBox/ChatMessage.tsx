@@ -31,6 +31,9 @@ export function ChatMessage({
   onApprove,
 }: ChatMessageProps) {
   const isUser = sender === "user";
+  const bubbleClassName = isUser
+    ? "rounded-br-none"
+    : "rounded-bl-none";
 
   const [isEditing, setIsEditing] = useState(false);
   const [correctionDraft, setCorrectionDraft] = useState(content);
@@ -56,10 +59,7 @@ export function ChatMessage({
         ))}
 
       <div className={isUser ? "max-w-[227px]" : "w-fit max-w-full min-w-0"}>
-        {/* Message bubble */}
-        <div
-          className={`max-w-full rounded-[10px] p-2.5 ${isUser ? "bg-[#E2E2E2]" : "bg-[#EEE]"}`}
-        >
+        <div className={`max-w-full rounded-[10px] bg-table-header p-2.5 ${bubbleClassName}`}>
           <p className="text-sm leading-none whitespace-pre-wrap text-black">{content}</p>
         </div>
 

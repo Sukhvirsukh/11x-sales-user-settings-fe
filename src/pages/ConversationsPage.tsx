@@ -1,5 +1,6 @@
-import AppCard from "@/components/design/AppCard";
+import AppSection from "@/components/design/AppSectoin";
 import { CustomTabs } from "@/components/design/CustomTabs";
+import PreviewSection from "@/components/design/PreviewSection";
 import { ConversationsFilter } from "@/components/shared/conversations";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { Outlet, useLocation, useNavigate } from "react-router";
@@ -12,19 +13,14 @@ const mainTabs = [
 ];
 
 export default function ConversationsPage() {
-
     const location = useLocation();
-
+    const navigate = useNavigate();
     const activeTab = mainTabs.find((tab) => location.pathname === tab.path)?.id ?? mainTabs[0].id;
 
-    const navigate = useNavigate();
-
-    const handleTabChange = (tabId: string) => {
-        const tab = mainTabs.find((t) => t.id === tabId);
-        if (tab) {
-            navigate(tab.path);
-        }
-    };
+    function handleTabChange(tabId: string) {
+        const tab = mainTabs.find((item) => item.id === tabId);
+        if (tab) navigate(tab.path);
+    }
 
     return (
         <section className="h-full min-w-0">
@@ -39,14 +35,14 @@ export default function ConversationsPage() {
                     listClassName="pl-[4px]"
                     className="p-0!"
                 >
-                    <div className="h-full py-2.5">
-                        <div className="grid h-full w-full gap-3 xl:grid-cols-[minmax(0,1fr)_230px]">
-                            <AppCard shadow className="min-w-0">
+                    <PreviewSection>
+                        <div className="grid w-full min-w-0 grid-cols-1 gap-3.5 lg:grid-cols-[minmax(0,1fr)_194px]">
+                            <AppSection className="min-h-0 p-2.5">
                                 <Outlet />
-                            </AppCard>
+                            </AppSection>
                             <ConversationsFilter />
                         </div>
-                    </div>
+                    </PreviewSection>
                 </CustomTabs>
             </PageHeader>
         </section>
