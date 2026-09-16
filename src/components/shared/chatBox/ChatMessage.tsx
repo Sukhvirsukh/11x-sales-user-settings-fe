@@ -31,6 +31,10 @@ export function ChatMessage({
   onApprove,
 }: ChatMessageProps) {
   const isUser = sender === "user";
+  const bubbleClassName = isUser
+    ? "rounded-br-none"
+    : "rounded-bl-none";
+  const avatarClassName = "size-[34px] shrink-0 rounded-full border object-cover";
 
   const [isEditing, setIsEditing] = useState(false);
   const [correctionDraft, setCorrectionDraft] = useState(content);
@@ -50,16 +54,23 @@ export function ChatMessage({
       {/* Bot avatar */}
       {!isUser &&
         (avatar ? (
-          <img src={avatar} alt="" className="size-5 shrink-0 rounded-[6px] object-cover" />
+          <img
+            src={avatar}
+            alt=""
+            className={avatarClassName}
+            style={{ borderColor: primaryColor }}
+          />
         ) : (
-          <span aria-hidden className="size-5 shrink-0 rounded-[6px] rounded-bl-none bg-primary" />
+          <span
+            aria-hidden
+            className="flex h-[30px] w-[30px] shrink-0 items-center justify-center rounded-full border border-primary bg-primary p-0.5 text-[16px] font-extrabold leading-none text-white"
+          >
+            V
+          </span>
         ))}
 
       <div className={isUser ? "max-w-[227px]" : "w-fit max-w-full min-w-0"}>
-        {/* Message bubble */}
-        <div
-          className={`max-w-full rounded-[10px] p-2.5 ${isUser ? "bg-[#E2E2E2]" : "bg-[#EEE]"}`}
-        >
+        <div className={`max-w-full rounded-[10px] bg-table-header p-2.5 ${bubbleClassName}`}>
           <p className="text-sm leading-none whitespace-pre-wrap text-black">{content}</p>
         </div>
 

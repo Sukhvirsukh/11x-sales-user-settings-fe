@@ -1,51 +1,39 @@
 import AppSection from "@/components/design/AppSectoin";
-import { Banner } from "@/components/design/Banner";
+import Heading from "@/components/design/Heading";
 import PreviewSection from "@/components/design/PreviewSection";
+import { Separator } from "@/components/ui/separator";
 import AskAIChat from "./AskAIChat";
 
 export function AskAI() {
     return (
         <PreviewSection>
-            <div className="flex w-full flex-col gap-3 md:flex-row">
+            <div className="flex w-full flex-col gap-3.5 md:flex-row">
                 <AppSection className="h-[80vh] min-w-0 flex-1 justify-between md:py-7.5 md:px-5">
                     <AskAIChat />
                 </AppSection>
-                <Banner
-                    variant="info"
-                    title="History"
-                    titleClassName="text-[16px] font-semibold mb-4"
-                    className="h-fit w-full shrink-0 self-start md:w-[230px]"
-
-                >
-                    <div className="flex flex-col gap-[30px]">
-                        <div className="">
-                            <p className="text-sm text-gray">
-                                Today
-                            </p>
-                            <ul className="space-y-1 text-base my-1">
-                                <li className="my-2">
-                                    Integrate shopify with vitalb..
-                                </li>
-                                <li className="my-2">
-                                    How to add shopify
-                                </li>
-                            </ul>
+                <div className="flex w-full flex-col gap-3.5 md:w-auto md:flex-row md:self-start">
+                    <Separator className="md:hidden" />
+                    <Separator orientation="vertical" className="hidden md:block" />
+                    <aside className="w-full shrink-0 md:w-[230px]">
+                        <Heading size="md" className="mb-4 font-semibold">History</Heading>
+                        <div className="flex flex-col gap-[30px]">
+                            <div>
+                                <p className="text-sm text-gray">Today</p>
+                                <ul className="my-1 space-y-1 text-base">
+                                    <li className="my-2">Integrate shopify with vitalb..</li>
+                                    <li className="my-2">How to add shopify</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <p className="text-sm text-gray">Yesterday</p>
+                                <ul className="my-1 space-y-1 text-base">
+                                    <li className="my-2">Integrate shopify with vitalb..</li>
+                                    <li className="my-2">How to add shopify</li>
+                                </ul>
+                            </div>
                         </div>
-                        <div className="">
-                            <p className="text-sm text-gray">
-                                Yesterday
-                            </p>
-                            <ul className="space-y-1 text-base my-1">
-                                <li className="my-2">
-                                    Integrate shopify with vitalb..
-                                </li>
-                                <li className="my-2">
-                                    How to add shopify
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </Banner>
+                    </aside>
+                </div>
             </div>
         </PreviewSection>
     )

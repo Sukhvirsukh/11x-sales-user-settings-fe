@@ -24,7 +24,7 @@ export default function CrawlSettings() {
                         <div className="flex w-full flex-col gap-1.5">
 
                             <Controller
-                                name="ignoreOutOfStockProducts"
+                                name="ignoreProducts"
                                 control={control}
                                 render={({ field }) => (
                                     <SelectField
