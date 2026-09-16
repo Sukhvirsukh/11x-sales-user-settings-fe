@@ -39,6 +39,9 @@ const Escalated = lazy(() => import("@/features/conversations/escalated"));
 const AssignedToMe = lazy(() => import("@/features/conversations/assignedToMe"));
 const Archived = lazy(() => import("@/features/conversations/archived"));
 
+const UserProfileDetails = lazy(() => import("@/features/contacts/UserProfileDetails"));
+const Segaments = lazy(() => import("@/features/contacts/Segaments"));
+
 export const router = createBrowserRouter([
   {
     errorElement: <ErrorPage />,
@@ -50,7 +53,15 @@ export const router = createBrowserRouter([
         element: <AppLayout />,
         children: [
           { path: "/", element: <OverviewPage /> },
-          { path: "/contacts", element: <ContactsPage /> },
+          {
+            path: "/contacts",
+            element: <ContactsPage />,
+            children: [
+              { index: true, element: <Navigate to="user-profile-details" replace /> },
+              { path: "user-profile-details", element: <UserProfileDetails /> },
+              { path: "segaments", element: <Segaments /> },
+            ]
+          },
           {
             path: "/conversations",
             element: <ConversationsPage />,
@@ -92,7 +103,7 @@ export const router = createBrowserRouter([
               { path: "payments", element: <Payments /> },
               { path: "store", element: <Store /> },
             ],
-          },
+          }
         ],
       },
     ],

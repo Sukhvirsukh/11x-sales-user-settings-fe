@@ -36,14 +36,14 @@ export default function LookNFeel() {
         onChange={(e) => updateRequiredField("aiAgentName", e.target.value)}
       />
 
-      <ImageUploader
+      {/* <ImageUploader
         // label="Chat face"
         note="Upload an image for the chat avatar. Accepted formats: PNG, JPG, JPEG, GIF, WEBP. Maximum file size: 50KB."
         accept={["image/png", "image/jpeg", "image/jpg", "image/gif", "image/webp"]}
         maxSizeKB={50}
         value={fields.chatFace}
         onValueChange={(file) => setField("chatFace", file)}
-      />
+      /> */}
 
       <InputField
         label="Welcome message"
@@ -59,6 +59,7 @@ export default function LookNFeel() {
         placeholder="Type a message and press Enter..."
         value={fields.predefinedMessages}
         onValueChange={(tags) => setField("predefinedMessages", tags)}
+
       />
 
       <InputField

@@ -1,24 +1,20 @@
 
-import { useState } from "react";
+import { Controller, useFormContext } from "react-hook-form";
 import { MultiTextField } from "@/components/design/MultiTextField";
 import Heading from "@/components/design/Heading";
 import AppCard from "@/components/design/AppCard";
 import HelperText from "@/components/design/HelperText";
 import SectionHeader from "@/components/shared/SectionHeader";
-import { SelectField } from "@/components/design/SelectField";
+import { SelectField, type SelectOption } from "@/components/design/SelectField";
+import type { ConfigurationFormValues } from "./Configurations";
 
-const STOCK_OPTIONS = [
+const STOCK_OPTIONS: SelectOption[] = [
     { label: "Out of stock only", value: "out-of-stock" },
     { label: "Discontinued", value: "discontinued" },
-] as const;
-
-const DEFAULT_IGNORE_ELEMENTS = ["Footer", "miniature", "keychain"];
+];
 
 export default function CrawlSettings() {
-    const [stockFilter, setStockFilter] = useState<typeof STOCK_OPTIONS[number]['value']>('out-of-stock');
-    const [ignoreElements, setIgnoreElements] = useState<string[]>(
-        DEFAULT_IGNORE_ELEMENTS
-    );
+    const { control } = useFormContext<ConfigurationFormValues>();
 
     return (
         <SectionHeader heading="Crawl settings">
@@ -27,11 +23,19 @@ export default function CrawlSettings() {
                     <div className="flex min-w-0 flex-col gap-5 lg:border-r lg:border-border-light lg:pr-5">
                         <div className="flex w-full flex-col gap-1.5">
 
-                            <SelectField
-                                label="Select stock products to ignore out of crawling"
-                                options={STOCK_OPTIONS}
-                                value={stockFilter}
-                                onValueChange={setStockFilter}
+                            <Controller
+                                name="ignoreOutOfStockProducts"
+                                control={control}
+                                render={({ field }) => (
+                                    <SelectField
+                                        label="Select stock products to ignore out of crawling"
+                                        options={STOCK_OPTIONS}
+                                        value={field.value}
+                                        onValueChange={(value) => {
+                                            if (value) field.onChange(value);
+                                        }}
+                                    />
+                                )}
                             />
 
                             <HelperText>
@@ -40,11 +44,17 @@ export default function CrawlSettings() {
                             </HelperText>
                         </div>
 
-                        <MultiTextField
-                            label="Add or remove your Ignore elements from the pages when crawling"
-                            hint="Type to add elements, cross to remove elements that are irrelevant to the main content of a page like Headers, Footer, Cross-sell product links, etc"
-                            value={ignoreElements}
-                            onValueChange={setIgnoreElements}
+                        <Controller
+                            name="ignoreElements"
+                            control={control}
+                            render={({ field }) => (
+                                <MultiTextField
+                                    label="Add or remove your Ignore elements from the pages when crawling"
+                                    hint="Type to add elements, cross to remove elements that are irrelevant to the main content of a page like Headers, Footer, Cross-sell product links, etc"
+                                    value={field.value}
+                                    onValueChange={field.onChange}
+                                />
+                            )}
                         />
                     </div>
 

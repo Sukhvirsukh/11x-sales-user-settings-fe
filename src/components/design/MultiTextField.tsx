@@ -39,7 +39,7 @@ export function MultiTextField({
     className,
     containerClassName,
     separator = "Enter",
-    variant = "default",
+    variant = "light",
 }: MultiTextFieldProps) {
     const generatedId = useId();
     const inputId = id ?? generatedId;

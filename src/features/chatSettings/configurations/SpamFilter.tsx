@@ -1,13 +1,15 @@
-import { useState } from "react";
+import { useFormContext } from "react-hook-form";
 import AppCard from "@/components/design/AppCard";
 import { InputField } from "@/components/design/InputField";
 import SectionHeader from "@/components/shared/SectionHeader";
 import { FormGroup } from "@/components/design/FormGroup";
+import type { ConfigurationFormValues } from "./Configurations";
+import { SelectField } from "@/components/design/SelectField";
+import { useIntervalsQuery } from "../chatSettingsQuery";
 
 export default function SpamFilter() {
-    const [rateLimit, setRateLimit] = useState("");
-    const [period, setPeriod] = useState("");
-    const [limitMessage, setLimitMessage] = useState("");
+    const { register, setValue, watch } = useFormContext<ConfigurationFormValues>();
+    const { data, isLoading } = useIntervalsQuery();
 
     return (
         <SectionHeader heading="Spam filter">
@@ -16,23 +18,25 @@ export default function SpamFilter() {
                     <InputField
                         label="Rate limit (Max replies of user)"
                         placeholder="Enter"
+                        type="number"
                         hint="Limit the number of messages a user can send during a period time"
-                        value={rateLimit}
-                        onChange={(e) => setRateLimit(e.target.value)}
+                        {...register("rateLimit")}
                     />
 
-                    <InputField
+                    <SelectField
                         label="Over a period of"
-                        placeholder="Enter"
-                        value={period}
-                        onChange={(e) => setPeriod(e.target.value)}
+                        disabled={isLoading}
+                        options={data || [{ label: "One hour", value: "ONE_HOUR" }]}
+                        value={watch("crawlInterval")}
+                        onValueChange={(value) => {
+                            if (value) setValue("crawlInterval", value, { shouldDirty: true });
+                        }}
                     />
 
                     <InputField
                         label="Message when limit is reached"
                         placeholder="Enter"
-                        value={limitMessage}
-                        onChange={(e) => setLimitMessage(e.target.value)}
+                        {...register("messageWhenLimitReached")}
                     />
                 </FormGroup>
             </AppCard>
