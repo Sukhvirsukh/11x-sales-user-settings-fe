@@ -14,7 +14,7 @@ export default function SystemStatus() {
                 <div className="w-full">
                     <div className="border-b border-border flex items-center justify-between w-full py-1.5">
                         <p className="block text-sm font-semibold">Agent Name</p>
-                        <p className="block text-sm font-semibold">Ations</p>
+                        <p className="block text-sm font-semibold">Actions</p>
                     </div>
                     <div className="py-2">
                         <div className="flex items-center justify-between">

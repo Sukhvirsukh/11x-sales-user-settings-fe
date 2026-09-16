@@ -1,134 +1,133 @@
-
-import { useState } from "react"
-import { Archive, CheckCheck, ChevronRight, Copy, MoreHorizontal, ThumbsDown, ThumbsUp } from "lucide-react"
-import AppCard from "@/components/design/AppCard"
+import { Fragment, useState } from "react"
+import { ChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { conversations, type Conversation } from "./conversationData"
+import { SelectField } from "@/components/design/SelectField"
+import { ChatMessage } from "@/components/shared/chatBox"
+import CopyField from "@/components/shared/CopyField"
+import { conversationMessages, conversations, type Conversation, type ConversationMessage } from "./conversationData"
 
-const messages = [
-    { id: 1, text: "Welcome to Vitalb. How can I help you today?", sender: "assistant" },
-    { id: 2, text: "What is there in your brand?", sender: "customer" },
-    { id: 3, text: "We help stores give customers fast, accurate answers at every stage of their journey.", sender: "assistant" },
-]
-
-function ConversationItem({ conversation, selected, onSelect }: {
-    conversation: Conversation
-    selected: boolean
-    onSelect: () => void
-}) {
-    return (
-        <button
-            type="button"
-            onClick={onSelect}
-            className={`w-full rounded-lg p-3 text-left transition-colors ${selected ? "bg-active-bg" : "hover:bg-light"}`}
-        >
-            <div className="mb-1 flex items-center justify-between gap-2">
-                <span className="truncate text-sm font-medium text-foreground">{conversation.name}</span>
-                <span className="shrink-0 text-xs text-muted-foreground">{conversation.time}</span>
-            </div>
-            <p className="truncate text-sm text-muted-foreground">{conversation.preview}</p>
-        </button>
-    )
-}
+// Feedback, debug and approve endpoints aren't available yet — the controls stay
+// visible so the panel matches the design.
+const noop = () => { }
 
 function ConversationList({ selectedId, onSelect }: { selectedId: number; onSelect: (id: number) => void }) {
     return (
-        <AppCard padding="sm">
-            <div className="mb-2 flex items-center justify-between px-1">
-                <p className="text-sm font-medium text-foreground">Conversations</p>
-                <span className="text-xs text-muted-foreground">{conversations.length} open</span>
-            </div>
-            <div className="space-y-1">
-                {conversations.map((conversation) => (
-                    <ConversationItem
-                        key={conversation.id}
-                        conversation={conversation}
-                        selected={conversation.id === selectedId}
-                        onSelect={() => onSelect(conversation.id)}
-                    />
-                ))}
-            </div>
-        </AppCard>
+        <div className="flex min-w-0 flex-col divide-y divide-border-subtle border-section-border lg:border-r">
+            {conversations.map((conversation) => (
+                <button
+                    key={conversation.id}
+                    type="button"
+                    onClick={() => onSelect(conversation.id)}
+                    className={`w-full border-l-2 px-2.5 py-2.5 text-left transition-colors ${conversation.id === selectedId
+                        ? "border-primary bg-active-bg"
+                        : "border-transparent hover:bg-light"
+                        }`}
+                >
+                    <div className="flex items-center justify-between gap-2">
+                        <span className="truncate text-sm font-semibold text-foreground">{conversation.name}</span>
+                        <span className="shrink-0 text-xs text-ghost">{conversation.time}</span>
+                    </div>
+                    <p className="truncate text-sm text-muted-foreground">{conversation.preview}</p>
+                </button>
+            ))}
+        </div>
     )
 }
 
-function MessageHistory({ conversation }: { conversation: Conversation }) {
+function MessageHistory({ messages, onCorrect }: {
+    messages: ConversationMessage[]
+    onCorrect: (id: string, content: string) => void
+}) {
     return (
-        <AppCard padding="sm" className="flex h-full flex-col">
-            <div className="flex items-center justify-between gap-3 border-b border-border px-2 pb-3">
-                <div>
-                    <p className="text-base font-medium text-foreground">Conversation history</p>
-                    <p className="mt-0.5 text-xs text-muted-foreground">{conversation.channel} · {conversation.name}</p>
-                </div>
-                <div className="flex items-center gap-1">
-                    <Button variant="bare" size="xs" aria-label="Mark as unread"><CheckCheck className="size-4" /></Button>
-                    <Button variant="bare" size="xs" aria-label="Archive conversation"><Archive className="size-4" /></Button>
-                    <Button variant="bare" size="xs" aria-label="More actions"><MoreHorizontal className="size-4" /></Button>
+        <div className="flex min-w-0 flex-col">
+            <div className="flex items-center justify-between gap-3 border-b border-section-border px-3 pb-3">
+                <p className="text-base font-semibold text-foreground">Conversational history</p>
+                <div className="flex items-center gap-2">
+                    <Button variant="bare" size="sm">Mark unread</Button>
+                    <Button variant="bare" size="sm">Archive</Button>
+                    <Button variant="secondary" size="sm">Takeover</Button>
                 </div>
             </div>
-
-            <div className="flex flex-1 flex-col gap-4 overflow-y-auto px-2 py-4">
+            <div className="flex flex-1 flex-col gap-4 overflow-y-auto px-3 py-4">
                 {messages.map((message) => (
-                    <div key={message.id} className={message.sender === "customer" ? "ml-auto max-w-[80%]" : "max-w-[85%]"}>
-                        <div className={`rounded-xl px-3 py-2 text-sm ${message.sender === "customer" ? "bg-primary text-primary-fg" : "bg-light text-foreground"}`}>
-                            {message.text}
-                        </div>
-                        {message.sender === "assistant" && (
-                            <div className="mt-1 flex items-center gap-1 text-muted-foreground">
-                                <Button variant="bare" size="xs" aria-label="Helpful"><ThumbsUp className="size-3.5" /></Button>
-                                <Button variant="bare" size="xs" aria-label="Not helpful"><ThumbsDown className="size-3.5" /></Button>
-                            </div>
-                        )}
-                    </div>
+                    <ChatMessage
+                        key={message.id}
+                        {...message}
+                        onCorrect={message.sender === "bot" ? onCorrect : undefined}
+                        onDebug={message.sender === "bot" ? noop : undefined}
+                        onLike={message.sender === "bot" ? noop : undefined}
+                        onDislike={message.sender === "bot" ? noop : undefined}
+                        onApprove={message.sender === "bot" ? noop : undefined}
+                    />
                 ))}
             </div>
-        </AppCard>
+        </div>
     )
 }
 
 function CustomerDetails({ conversation }: { conversation: Conversation }) {
+    const details = [
+        { label: "Name", value: conversation.name },
+        { label: "Mail Id", value: conversation.email },
+        { label: "Phone", value: conversation.phone },
+        { label: "Location", value: conversation.location },
+    ]
+
     return (
-        <AppCard padding="sm" >
-            <div className="border-b border-border pb-3">
-                <div className="flex items-center justify-between">
+        <div className="flex min-w-0 flex-col gap-4 border-section-border lg:border-l lg:pl-3">
+            <div>
+                <div className="mb-2.5 flex items-center justify-between gap-2">
                     <p className="text-sm font-medium text-foreground">Assignee</p>
-                    <Button variant="bare" size="xs">Add note</Button>
+                    <Button variant="bare" size="sm">Add note</Button>
                 </div>
-                <div className="mt-2 rounded-lg bg-light px-3 py-2 text-sm text-foreground">Vitalb AI</div>
+                <SelectField
+                    value="vitalb-ai"
+                    onValueChange={noop}
+                    placeholder="Assign"
+                    options={[{ value: "vitalb-ai", label: "Vitalb ai" }]}
+                />
             </div>
-            <div className="border-b border-border py-4">
-                <div className="mb-3 flex items-center justify-between">
+
+            <div className="border-t border-section-border pt-4">
+                <div className="mb-3 flex items-center justify-between gap-2">
                     <p className="text-sm font-medium text-foreground">Customer details</p>
-                    <ChevronRight className="size-4 text-muted-foreground" />
+                    <ChevronRight className="size-4 text-gray" />
                 </div>
-                <dl className="space-y-2 text-sm">
-                    <div className="flex justify-between gap-2"><dt className="text-muted-foreground">Name</dt><dd className="text-foreground">{conversation.name}</dd></div>
-                    <div className="flex justify-between gap-2"><dt className="text-muted-foreground">Channel</dt><dd className="text-foreground">{conversation.channel}</dd></div>
-                    <div className="flex justify-between gap-2"><dt className="text-muted-foreground">Location</dt><dd className="text-foreground">India</dd></div>
+                <dl className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-2 text-sm">
+                    {details.map((detail) => (
+                        <Fragment key={detail.label}>
+                            <dt className="text-ghost">{detail.label}</dt>
+                            <dd className="truncate text-foreground">{detail.value}</dd>
+                        </Fragment>
+                    ))}
                 </dl>
             </div>
-            <div className="pt-4">
-                <div className="mb-2 flex items-center justify-between">
+
+            <div className="border-t border-section-border pt-4">
+                <div className="mb-2.5 flex items-center justify-between gap-2">
                     <p className="text-sm font-medium text-foreground">Share URL</p>
-                    <ChevronRight className="size-4 text-muted-foreground" />
+                    <ChevronRight className="size-4 text-gray" />
                 </div>
-                <div className="flex items-center gap-2 rounded-lg bg-light p-2">
-                    <span className="min-w-0 flex-1 truncate text-xs text-muted-foreground">https://app.vitalb.ai/conversations/{conversation.id}</span>
-                    <Button variant="bare" size="xs" aria-label="Copy conversation URL"><Copy className="size-3.5" /></Button>
-                </div>
+                <CopyField value={conversation.shareUrl} />
             </div>
-        </AppCard>
+        </div>
     )
 }
 
 export function ConversationsChatPannel() {
     const [selectedId, setSelectedId] = useState(conversations[0].id)
+    const [messages, setMessages] = useState(conversationMessages)
+
     const selectedConversation = conversations.find((conversation) => conversation.id === selectedId) ?? conversations[0]
 
+    function handleCorrect(id: string, content: string) {
+        setMessages((current) => current.map((message) => message.id === id ? { ...message, content } : message))
+    }
+
     return (
-        <div className="grid h-full gap-3 lg:grid-cols-[220px_minmax(0,1fr)_240px]">
+        <div className="grid h-full min-w-0 grid-cols-1 gap-4 lg:grid-cols-[170px_minmax(0,1fr)_230px] lg:gap-0">
             <ConversationList selectedId={selectedId} onSelect={setSelectedId} />
-            <MessageHistory conversation={selectedConversation} />
+            <MessageHistory messages={messages} onCorrect={handleCorrect} />
             <CustomerDetails conversation={selectedConversation} />
         </div>
     )

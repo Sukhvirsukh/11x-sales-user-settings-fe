@@ -61,7 +61,7 @@ const DatePicker = React.forwardRef<HTMLButtonElement, DatePickerProps>(
             className,
             containerClassName,
             labelClassName,
-            variant = "default",
+            variant = "light",
         },
         ref
     ) => {

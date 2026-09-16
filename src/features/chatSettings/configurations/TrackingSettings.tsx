@@ -1,23 +1,31 @@
-import { useId, useState } from "react";
+import { useId } from "react";
+import { Controller, useFormContext } from "react-hook-form";
 import AppCard from "@/components/design/AppCard";
 import Label from "@/components/design/Label";
 import HelperText from "@/components/design/HelperText";
 import SectionHeader from "@/components/shared/SectionHeader";
+import type { ConfigurationFormValues } from "./Configurations";
 
 export default function TrackingSettings() {
     const id = useId();
-    const [enabled, setEnabled] = useState(true);
+    const { control } = useFormContext<ConfigurationFormValues>();
 
     return (
         <SectionHeader heading="Tracking settings">
             <AppCard>
                 <div className="flex items-start gap-2.5">
-                    <input
-                        id={id}
-                        type="checkbox"
-                        checked={enabled}
-                        onChange={() => setEnabled((prev) => !prev)}
-                        className="size-4 shrink-0 cursor-pointer rounded-[3px] border border-border-soft transition-colors checked:border-foreground checked:bg-foreground"
+                    <Controller
+                        name="enableUtmTracking"
+                        control={control}
+                        render={({ field }) => (
+                            <input
+                                id={id}
+                                type="checkbox"
+                                checked={field.value}
+                                onChange={(event) => field.onChange(event.target.checked)}
+                                className="size-4 shrink-0 cursor-pointer rounded-[3px] border border-border-soft transition-colors checked:border-foreground checked:bg-foreground"
+                            />
+                        )}
                     />
 
                     <div className="flex min-w-0 flex-col gap-1">

@@ -1,19 +1,19 @@
-import { useMemo, useState } from "react"
-import { Plus, SquarePen, Trash } from "lucide-react"
-
-import CustomTable, { type Column } from "@/components/design/CustomTable"
+import type { Column } from "@/components/design/CustomTable"
+import CustomTable from "@/components/design/CustomTable"
+import SearchField from "@/components/shared/SearchField"
+import TableSkeleton from "@/components/shared/skeletons/TableSkeletons"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import AddRoleForm from "./AddRoleForm"
-import { useRoleHistoryQuery } from "./roleHistoryQuery"
-import DeleteRole from "./DeleteRole"
-import TableSkeleton from "@/components/shared/skeletons/TableSkeletons"
-import SearchField from "@/components/shared/SearchField"
+import { Download, Plus, Trash } from "lucide-react"
+import { useMemo, useState } from "react"
+import AddSegament from "./AddSegament"
+import DeleteContacts from "./DeleteContacts"
+import { useSegamentsQuery } from "./contactQuery"
+import type { Segament } from "./contactType"
+
 
 const columns: Column[] = [
     { key: "name", header: "Name", width: "280px" },
-    { key: "email", header: "Mail Id" },
-    { key: "role", header: "Role" },
     {
         key: "status",
         header: "Status",
@@ -21,25 +21,28 @@ const columns: Column[] = [
         render: (value) => {
             const status = String(value)
             return (
-                <Badge variant={status ? "default" : "destructive"}>
-                    {status ? "Active" : "Inactive"}
+                <Badge variant={status === "Active" ? "default" : "destructive"}>
+                    {status}
                 </Badge>
             )
         },
     },
-    { key: "startDate", header: "Start date", align: "right" },
+    { key: "createdAt", header: "Created date", align: "right" },
+    { key: "activeUsers", header: "Active Users", align: "right" },
 ]
 
-export default function RoleHistory() {
-    const { data = [], isLoading, error } = useRoleHistoryQuery()
-    const [editData, setEditData] = useState<Record<string, unknown> | null>(null)
-    const [isOpen, setIsOpen] = useState(false)
+/** Every displayed column is searchable. */
+const searchKeys = columns.map((column) => column.key)
+
+export default function Segaments() {
+    const { data = [], isLoading, error } = useSegamentsQuery()
+    const [search, setSearch] = useState("")
     const [deleteRequest, setDeleteRequest] = useState<{
-        roles: Record<string, unknown>[]
+        rows: Segament[]
         onDeleted?: (ids: string[]) => void
     } | null>(null)
     const [isDeleteOpen, setIsDeleteOpen] = useState(false)
-    const [search, setSearch] = useState("")
+    const [isAddOpen, setIsAddOpen] = useState(false)
 
     if (error) throw error
 
@@ -48,69 +51,58 @@ export default function RoleHistory() {
         if (!query) return data
 
         return data.filter((row) =>
-            ["name", "email", "role"].some((key) =>
-                String(row[key] ?? "").toLowerCase().includes(query)
+            searchKeys.some((key) =>
+                String(row[key as keyof Segament] ?? "").toLowerCase().includes(query)
             )
         )
     }, [data, search])
-
-    function openCreateRole() {
-        setEditData(null)
-        setIsOpen(true)
-    }
-
-    function openEditRole(role: Record<string, unknown>) {
-        setEditData(role)
-        setIsOpen(true)
-    }
-
-    function handleModalOpenChange(open: boolean) {
-        setIsOpen(open)
-        if (!open) setEditData(null)
-    }
 
     function handleDeleteModalChange(open: boolean) {
         setIsDeleteOpen(open)
         if (!open) setDeleteRequest(null)
     }
 
-    function requestDelete(roles: Record<string, unknown>[], onDeleted?: (ids: string[]) => void) {
-        setDeleteRequest({ roles, onDeleted })
+    function requestDelete(rows: Segament[], onDeleted?: (ids: string[]) => void) {
+        setDeleteRequest({ rows, onDeleted })
         setIsDeleteOpen(true)
+    }
+
+    function handleAddModalChange(open: boolean) {
+        setIsAddOpen(open)
     }
 
     return (
         <>
             <CustomTable
-                title="Role history"
+                title="All segaments"
                 columns={columns}
                 data={filteredData}
                 selectable
-                getRowId={(row) => String(row.id)}
+                getRowId={(row) => row.id}
                 bulkActions={(rows, deselectRows) => (
                     <Button variant="destructive" size="xs" onClick={() => requestDelete(rows, deselectRows)}>
                         <Trash className="size-3.5" />
                         Delete selected
                     </Button>
                 )}
-                emptyMessage={search ? "No matching roles found" : "No role history found"}
-                emptyDescription={search ? "Try a different search term." : "Roles assigned to your team will appear here."}
+                emptyMessage={search ? "No matching segaments found" : "No segaments found"}
+                emptyDescription={search ? "Try a different search term." : "Segaments you create will appear here."}
                 emptyState={isLoading ? (
-                    <TableSkeleton columns={3} showHeader={false} />
+                    <TableSkeleton columns={4} showHeader={false} />
                 ) : undefined}
                 headerActions={
                     <div className="flex items-center gap-2.5">
                         <SearchField onSearchChange={setSearch} />
-                        <Button variant="primary" size="sm" onClick={openCreateRole}>
-                            Add role
+                        <Button variant="primary" size="sm" onClick={() => setIsAddOpen(true)}>
+                            Add segament
                             <Plus className="ml-0.5 size-2 md:ml-2 md:size-4" />
                         </Button>
                     </div>
                 }
                 rowActions={(row) => (
                     <div className="flex items-center gap-2">
-                        <Button variant="bare" size="sm" onClick={() => openEditRole(row)}>
-                            <SquarePen className="size-4 text-gray" />
+                        <Button variant="bare" size="sm" onClick={() => { }}>
+                            <Download className="size-4 text-gray" />
                         </Button>
                         <Button variant="bare" size="sm" onClick={() => requestDelete([row])}>
                             <Trash className="size-4 text-gray" />
@@ -119,18 +111,14 @@ export default function RoleHistory() {
                 )}
                 className="w-full md:[&_th:nth-child(2)]:pl-0 md:[&_td:first-child:has([role=checkbox])+td]:pl-0"
             />
-            <AddRoleForm
-                open={isOpen}
-                onOpenChange={handleModalOpenChange}
-                role={editData}
-            />
-            <DeleteRole
+            <AddSegament open={isAddOpen} onOpenChange={handleAddModalChange} />
+            <DeleteContacts
+                kind="segament"
                 open={isDeleteOpen}
                 onOpenChange={handleDeleteModalChange}
-                roles={deleteRequest?.roles ?? []}
+                rows={deleteRequest?.rows ?? []}
                 onDeleted={deleteRequest?.onDeleted}
             />
-
         </>
     )
 }

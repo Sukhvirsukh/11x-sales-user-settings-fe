@@ -30,7 +30,9 @@ Defined in `src/config/routes.tsx` (`createBrowserRouter`, all pages lazy-loaded
 | Path | Page / Component | Notes |
 | ------------------------------- | ----------------- | ------------------------- |
 | `/` | OverviewPage | Dashboard overview |
-| `/contacts` | ContactPage | Contact management (placeholder) |
+| `/contacts` | ContactPage | Parent route with tabbed `Outlet`; index redirects to `user-profile-details` |
+| `/contacts/user-profile-details` | UserProfileDetails | User profiles tab |
+| `/contacts/segaments` | Segaments | Segaments tab |
 | `/conversations` | ConversationsPage | Parent route with tabbed `Outlet`; index redirects to `active-chats` |
 | `/conversations/active-chats` | ActiveChat | Active chats tab |
 | `/conversations/escalated` | Escalated | Escalated chats tab |
@@ -52,6 +54,7 @@ Defined in `src/config/routes.tsx` (`createBrowserRouter`, all pages lazy-loaded
 | `/settings/plan` | Plan | Plan management |
 | `/settings/payments` | Payments | Payments management |
 | `/settings/store` | Store | Store management |
+| `*` | NotFoundPage | Catch-all 404, rendered inside `AppLayout` |
 
 `AppLayout` wraps all protected routes; the `/sign-in`, `/sign-up`, and `/forgot-password` routes sit outside it. The router root has `errorElement: <ErrorPage />`.
 
@@ -105,14 +108,14 @@ src/
 │   │   ├── OverviewCard.tsx         # Metric card (title, numbers, icon)
 │   │   ├── SearchField.tsx          # Responsive search input (popover on mobile)
 │   │   ├── chatBox/                 # Reusable chat box component
-│   │   │   ├── ChatBox.tsx
+│   │   │   ├── ChatBox.tsx          # Loaded chat box (visibility preview)
 │   │   │   ├── ChatInput.tsx
-│   │   │   ├── ChatMessage.tsx
+│   │   │   ├── ChatMessage.tsx      # User/bot bubble + bot action row (Debug / Make correction / thumbs / ✓)
 │   │   │   ├── type.ts
 │   │   │   └── index.ts
 │   │   ├── conversations/           # Conversations page UI
-│   │   │   ├── conversationData.ts  # Conversation fixtures
-│   │   │   ├── ConversationsChatPannel.tsx # Chat panel (uses chatBox)
+│   │   │   ├── conversationData.ts  # Conversation + message + filter-group fixtures
+│   │   │   ├── ConversationsChatPannel.tsx # Chat panel: list | thread | customer details
 │   │   │   ├── ConversationsFilter.tsx     # Filter sidebar
 │   │   │   └── index.ts
 │   │   ├── skeletons/
@@ -129,7 +132,7 @@ src/
 │       ├── Banner.tsx               # Banner (variants: success, destructive, info, warning)
 │       ├── ChatBubbleTypeSelector.tsx
 │       ├── ColorSelector.tsx
-│       ├── CustomTable.tsx          # Table (columns/data/headerActions/rowActions)
+│       ├── CustomTable.tsx          # Table (columns/data/headerActions/rowActions/bulkActions/pagination)
 │       ├── CustomTabs.tsx           # Custom tabs component
 │       ├── DatePicker.tsx           # Date picker (Calendar + Popover, date-fns)
 │       ├── DetailContainer.tsx      # DetailContainer / DetailGroup / DetailItem
@@ -181,16 +184,26 @@ src/
 │   ├── chatSettings/
 │   │   ├── Channels.tsx             # Channel cards + visibility link
 │   │   ├── Integrations.tsx         # Integrations cards (TanStack Query)
-│   │   ├── chatSettingsApi.ts       # getIntegrations()
-│   │   ├── chatSettingsQuery.ts     # useIntegrationsQuery + query key
-│   │   ├── chatSettingsType.ts      # IntegrationResponse type
+│   │   ├── chatSettingsApi.ts       # getIntegrations, getConfigurations, saveConfigurations, getIntervals
+│   │   ├── chatSettingsQuery.ts     # useIntegrationsQuery / useConfigurationsQuery / useIntervalsQuery + keys
+│   │   ├── chatSettingsType.ts      # IntegrationResponse, Configuration types
 │   │   └── configurations/
 │   │       ├── Configurations.tsx
 │   │       ├── SpamFilter.tsx
 │   │       ├── TrackingSettings.tsx
 │   │       ├── CrawlSettings.tsx
-│   │       ├── fieldStyles.ts
+│   │       ├── configurationsSchema.ts
 │   │       └── index.tsx
+│   ├── contacts/
+│   │   ├── UserProfileDetails.tsx   # User profiles table (CustomTable) + search + delete
+│   │   ├── Segaments.tsx            # Segaments table (CustomTable) + search + delete + Add segament
+│   │   ├── AddSegament.tsx          # Add-only modal (name + Active schedule date)
+│   │   ├── DeleteContacts.tsx       # Shared delete modal (kind: "segament" | "userProfile")
+│   │   ├── contactsApi.ts           # get/create/delete user profiles + segaments (mock delay)
+│   │   ├── contactQuery.ts          # useUserProfilesQuery / useSegamentsQuery + query keys
+│   │   ├── contactSchema.ts         # segamentFormSchema (zod)
+│   │   ├── contactType.ts           # UserProfile, Segament, SegamentStatus, SegamentFormValues
+│   │   └── mockContacts.ts          # userProfiles / segaments fixtures
 │   ├── conversations/
 │   │   ├── activeChats/             # ActiveChat (renders ConversationsChatPannel)
 │   │   ├── archived/                # Archived
@@ -300,7 +313,7 @@ src/
 │           └── validations.ts
 ├── pages/                           # Page-level components (compose features)
 │   ├── OverviewPage.tsx
-│   ├── ContactPage.tsx              # Placeholder
+│   ├── ContactPage.tsx              # Tabs + Outlet (user profile details / segaments)
 │   ├── ConversationsPage.tsx        # Tabs + Outlet + ConversationsFilter
 │   ├── ReportsPage.tsx
 │   ├── SignInPage.tsx
@@ -308,6 +321,7 @@ src/
 │   ├── ForgotPassword.tsx
 │   ├── AskMePage.tsx
 │   ├── ErrorPage.tsx                # Reuses AppCard + Button for reload/home
+│   ├── NotFoundPage.tsx             # Catch-all 404 (big 404 + nav shortcuts)
 │   ├── SettingsPage.tsx             # Tabs + Outlet
 │   ├── chatSettings/
 │   │   ├── ChatSettingsPage.tsx
@@ -327,7 +341,6 @@ src/
 │   └── routes.tsx                   # createBrowserRouter definition
 ├── stores/
 │   └── mobileSidebarStore.ts        # Mobile sidebar state (Zustand)
-├── types/                           # Empty
 ├── assets/
 │   ├── hero.png
 │   ├── react.svg
@@ -382,7 +395,7 @@ Defined in `src/components/layout/sidebar/sideNav.ts`:
 ## Architecture Notes
 
 - `App.tsx` wraps `RouterProvider` in a `Suspense` fallback because routes are lazy-loaded. `main.tsx` nests `RootErrorBoundary > QueryClientProvider > Toaster > App`.
-- `ErrorPage` reuses `AppCard` and `Button` for reload/home recovery. The router's root `errorElement` handles route errors, and `RootErrorBoundary` catches rendering failures.
+- `ErrorPage` reuses `AppCard` and `Button` for reload/home recovery. The router's root `errorElement` handles route errors, and `RootErrorBoundary` catches rendering failures. Unmatched paths fall through to the `*` route → `NotFoundPage`, which renders inside `AppLayout` and lists the `NAV_ITEMS` as shortcuts.
 - The persisted auth store (`src/features/auth/authStore.ts`) exposes `user`, `name`, `email`, and `role`. Sign-in/sign-up populate these via `setUser`; `authApi.ts` reads `user.role`. `RoleAndAccess` gates admin-only sections behind `user?.role === 'ADMIN'`.
 - Auth token is stored as `vitalb.jwt` in localStorage via helpers in `authStorage.ts`.
 - `AppLayout` guards protected routes with `getAuthToken()` from `authStorage` and redirects unauthenticated users to `/sign-in` (preserving the origin in `state.from`).
@@ -391,14 +404,17 @@ Defined in `src/components/layout/sidebar/sideNav.ts`:
 - **Pages** are thin wrappers that compose feature components and own tab/`Outlet` routing (Conversations, Settings, AI training). **Features** hold domain logic organized as `components/`, `api/`, `query`/`hooks` files, and `types`.
 - **Components** are split into `ui/` (shadcn primitives), `layout/` (app shell), `shared/` (reusable app components), `design/` (design system components).
 - Sidebar supports desktop (collapsible, `w-[187px]` ↔ `w-[72px]`) and mobile (full-screen overlay). Mobile sidebar state lives in `src/stores/mobileSidebarStore.ts` (Zustand).
-- Tabbed sections (Settings, AI training, Conversations) share the same pattern: a `mainTabs` array of `{ id, label, path }`, the active tab derived from `location.pathname`, and navigation via `useNavigate` — with an index route `<Navigate>` redirect.
+- Tabbed sections (Settings, AI training, Conversations, Contacts) share the same pattern: a `mainTabs` array of `{ id, label, path }`, the active tab derived from `location.pathname`, and navigation via `useNavigate` — with an index route `<Navigate>` redirect.
 - The conversations filter state is a Zustand store (`features/conversations/conversationFilterStore.ts`), separate from the mobile sidebar store. Note the duplicate empty `conversationsFilterStore.ts`.
-- Server state uses TanStack Query with feature-local query hooks and exported query keys (e.g. `visibilityQueryKey`, `roleHistoryQueryKey`, `chatSettingsIntegrationsQueryKey`). Reports currently use fixture data with a simulated delay.
+- Server state uses TanStack Query with feature-local query hooks and exported query keys (e.g. `visibilityQueryKey`, `roleHistoryQueryKey`, `chatSettingsIntegrationsQueryKey`, `userProfilesQueryKey`, `segamentsQueryKey`). Features without a backend yet return fixtures behind a simulated `delay()` (`reportApi.ts`, `contactsApi.ts`).
+- **Contacts feature** (`src/features/contacts/`): `/contacts` has two tabs, `UserProfileDetails` and `Segaments`, both `CustomTable` lists fed by the `mockContacts.ts` fixtures through `contactsApi.ts` (2s simulated fetch delay; the getters return `[...array]` snapshots so query invalidation actually picks up deletions). Search matches every displayed column by deriving keys from the `columns` array. Deletes go through the shared `DeleteContacts.tsx` modal, which mirrors `DeleteRole`: validate row ids, call the delete fn, fire `onDeleted` so only the deleted rows are deselected, toast, then invalidate the query key. Adds use `AddSegament.tsx` (add-only, mirrors `AddRoleForm`, no edit mode) with `segamentFormSchema` from `contactSchema.ts` and a `createSegament` mock that pushes onto the fixture array.
+- **Conversations feature** (`src/features/conversations/`): all four tab routes (Active chats, Escalated, Assigned, Archived) render the shared `ConversationsChatPannel`, while `ConversationsPage` owns the tabs and the `ConversationsFilter` sidebar. The panel is one surface split by dividers into list | thread | customer details, driven by the fixtures in `components/shared/conversations/conversationData.ts`; filter selections live in the Zustand `conversationFilterStore`. Message rows come from the shared `ChatMessage`.
 - Settings sub-pages compose shared design components: tables use `CustomTable` (RoleHistory, PaymentHistory), detail displays use `DetailContainer`/`DetailGroup`/`DetailItem` (BasicDetails, SavedPaymentDetails), and create/edit flows use the shared `Modal` with `FormGroup` + field components (AddRoleForm, AddNewPayment, AddStore, DeleteRole, DeleteStore).
 - The `unsavedChangesBar` shared component provides a warning system for unsaved changes.
+- `components/shared/chatBox/` holds the shared chat primitives: `ChatBox` (visibility preview), `ChatInput`, and `ChatMessage`, which renders the user/bot bubbles plus the bot action row (Debug / Make correction / thumbs / approve ✓). `ChatMessage` is used by both the visibility preview and the conversations panel, so tweaks to it show up in both places.
 - **Ask AI feature** (`src/features/askAi/`): AI chat assistant at `/ask-me`, composed of `AskAI.tsx` (chat + history banner) and `AskAIChat.tsx` (messages, input, file attachment). Uses `PreviewSection`, `AppSection`, and `Banner`.
 - **Overview feature** (`src/features/overview/`): dashboard grid of metric `OverviewCard`s plus Recharts-based widgets (`ChatToSaleChart`, `PerformanceMatrix`, `ActionTrend`, `AverageOrderValue`) and side widgets (`SystemStatus`, `Tips`, `SetupProgress`, `KnowMore`).
-- Known placeholders / dead files: `features/overview/overviewApi.ts`, `features/conversations/conversationsFilterStore.ts`, `src/types/`, and `src/assets/auth/Background.tsx` are empty.
+- Known placeholders / dead files: `features/overview/overviewApi.ts`, `features/conversations/conversationsFilterStore.ts`, and `src/assets/auth/Background.tsx` are empty.
 
 ## Deployment
 
@@ -417,6 +433,7 @@ Hosted on Netlify. `netlify.toml` pins the build (`command = "pnpm build"`, `pub
 - Feature-specific business logic goes in `src/features/`.
 - Pages compose features and should not contain business logic directly.
 - Use `apiFetch` from `src/lib/api.ts` for all API calls (handles auth, errors, toasts).
+- Table row types must be assignable to `Record<string, unknown>` (the `CustomTable` generic constraint). Declare them as object `type` aliases rather than `interface`s — interfaces have no implicit index signature, so the generic silently falls back and row typing is lost.
 
 ## Design System Components
 
@@ -446,6 +463,9 @@ White card wrapper with shadow-blue and border-blue-100/70. Outer container for 
 
 ### OverviewCard (`src/components/shared/OverviewCard.tsx`)
 Metric card: `AppCard` with an icon tile, a title, and a `Heading size="xlg"` value. Props: `title`, `numbers`, `icon`.
+
+### CustomTable (`src/components/design/CustomTable.tsx`)
+Generic table (`T extends Record<string, unknown>`) wrapping `AppSection` + the shadcn `Table`. Props: `title`, `columns` (`Column[]` = `key`, `header`, `width`, `align`, `render(value, row)`), `data`, `headerActions`, `rowActions`, `bulkActions(rows, deselectRows)`, `emptyMessage` / `emptyDescription` / `emptyState` / `emptyStateAction`, and `pagination` (`pageSize`, plus `page`/`total`/`onPageChange` for server-side paging). Pass `selectable` together with `getRowId` to enable row checkboxes and the bulk-action bar. Renders a stacked card layout below `md` and a real table above it.
 
 ### TableSkeleton (`src/components/shared/skeletons/TableSkeletons.tsx`)
 Loading placeholder for tables built from `Skeleton`. Props: `columns`, `rows`, `showHeader`.

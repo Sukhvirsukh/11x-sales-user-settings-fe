@@ -1,4 +1,4 @@
-import { PencilIcon, ThumbsDownIcon, ThumbsUpIcon } from "lucide-react";
+import { CheckIcon, ThumbsDownIcon, ThumbsUpIcon } from "lucide-react";
 import { useState } from "react";
 
 export interface ChatMessageProps {
@@ -9,18 +9,26 @@ export interface ChatMessageProps {
   avatar?: string;
   primaryColor?: string;
   onCorrect?: (messageId: string, correctedContent: string) => void;
+  onDebug?: (messageId: string) => void;
   onLike?: (messageId: string) => void;
   onDislike?: (messageId: string) => void;
+  onApprove?: (messageId: string) => void;
 }
+
+const actionClassName =
+  "text-sm text-black transition-colors hover:text-primary";
 
 export function ChatMessage({
   id,
   content,
   sender,
+  avatar,
   primaryColor = "blue",
   onCorrect,
+  onDebug,
   onLike,
   onDislike,
+  onApprove,
 }: ChatMessageProps) {
   const isUser = sender === "user";
 
@@ -38,8 +46,16 @@ export function ChatMessage({
   }
 
   return (
-    <div className={`flex w-full ${isUser ? "justify-end" : "justify-start"}`}>
-      <div className={isUser ? "max-w-[227px]" : "w-full"}>
+    <div className={`flex w-full items-start gap-2 ${isUser ? "justify-end" : "justify-start"}`}>
+      {/* Bot avatar */}
+      {!isUser &&
+        (avatar ? (
+          <img src={avatar} alt="" className="size-5 shrink-0 rounded-[6px] object-cover" />
+        ) : (
+          <span aria-hidden className="size-5 shrink-0 rounded-[6px] rounded-bl-none bg-primary" />
+        ))}
+
+      <div className={isUser ? "max-w-[227px]" : "w-fit max-w-full min-w-0"}>
         {/* Message bubble */}
         <div
           className={`max-w-full rounded-[10px] p-2.5 ${isUser ? "bg-[#E2E2E2]" : "bg-[#EEE]"}`}
@@ -49,34 +65,38 @@ export function ChatMessage({
 
         {/* Feedback row for bot messages */}
         {!isUser && (
-          <div className="mt-2 flex items-center justify-between">
-            {/* {timestamp && (
-              <span className="text-micro text-placeholder">
-                {timestamp.toLocaleTimeString([], {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}
-              </span>
-            )} */}
-            {onCorrect && (
-              <button
-                type="button"
-                onClick={() => {
-                  setCorrectionDraft(content);
-                  setIsEditing(!isEditing);
-                }}
-                className="flex items-center gap-1 rounded text-xs leading-none text-black transition-colors hover:bg-black/5"
-                aria-label="Edit correction"
-              >
-                <PencilIcon className="size-3 mr-1" /> Create correction
-              </button>
-            )}
-            <div className="flex items-center gap-1">
+          <div className="mt-2 flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              {onDebug && (
+                <button
+                  type="button"
+                  onClick={() => onDebug(id)}
+                  className={actionClassName}
+                  aria-label="Debug response"
+                >
+                  Debug
+                </button>
+              )}
+              {onCorrect && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setCorrectionDraft(content);
+                    setIsEditing(!isEditing);
+                  }}
+                  className={actionClassName}
+                  aria-label="Make correction"
+                >
+                  Make correction
+                </button>
+              )}
+            </div>
+            <div className="flex items-center gap-2.5">
               {onLike && (
                 <button
                   type="button"
                   onClick={() => onLike(id)}
-                  className="flex size-3.5 items-center justify-center rounded text-sm text-black transition-colors hover:bg-black/5"
+                  className="flex items-center justify-center text-black transition-colors hover:text-primary"
                   aria-label="Good response"
                 >
                   <ThumbsUpIcon className="size-3.5" />
@@ -86,13 +106,22 @@ export function ChatMessage({
                 <button
                   type="button"
                   onClick={() => onDislike(id)}
-                  className="flex size-3.5 items-center justify-center rounded text-sm text-black transition-colors hover:bg-black/5"
+                  className="flex items-center justify-center text-black transition-colors hover:text-primary"
                   aria-label="Bad response"
                 >
                   <ThumbsDownIcon className="size-3.5" />
                 </button>
               )}
-
+              {onApprove && (
+                <button
+                  type="button"
+                  onClick={() => onApprove(id)}
+                  className="flex items-center justify-center text-black transition-colors hover:text-primary"
+                  aria-label="Approve response"
+                >
+                  <CheckIcon className="size-4" />
+                </button>
+              )}
             </div>
           </div>
         )}
@@ -127,7 +156,6 @@ export function ChatMessage({
           </div>
         )}
       </div>
-
     </div>
   );
 }
