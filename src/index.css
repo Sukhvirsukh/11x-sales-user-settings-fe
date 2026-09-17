@@ -277,6 +277,17 @@
   }
 }
 
+/* Keep password-manager/browser autofill visually consistent with the input surface. */
+input[data-slot="input"]:autofill,
+input[data-slot="input"]:-webkit-autofill,
+input[data-slot="input"]:-webkit-autofill:hover,
+input[data-slot="input"]:-webkit-autofill:focus {
+  box-shadow: 0 0 0 1000px var(--input-autofill-bg, var(--background)) inset;
+  -webkit-box-shadow: 0 0 0 1000px var(--input-autofill-bg, var(--background)) inset;
+  -webkit-text-fill-color: var(--foreground);
+  caret-color: var(--foreground);
+}
+
 /* iOS Safari zooms the page whenever a focused form control renders below 16px, which throws
    off the mobile layout. `user-scalable=no` / `maximum-scale=1` cannot fix this (iOS ignores
    them since iOS 10) and disabling zoom hurts accessibility, so pin the control font size instead.

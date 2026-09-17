@@ -45,10 +45,10 @@ const InputField = React.forwardRef<HTMLInputElement, InputFieldProps>(
                 {/* Input Outer Container (Handles borders, icons, pill background) */}
                 <div
                     className={cn(
-                        "relative flex h-[34px] w-full items-center rounded-xl border border-border-soft px-3.5 transition-all focus-within:border-border-soft focus-within:ring-2 focus-within:ring-blue-400/20 dark:border-slate-800",
+                        "relative flex h-[34px] w-full items-center rounded-xl border border-border-soft px-3.5 transition-all [--input-autofill-bg:var(--card-nested-bg)] focus-within:border-border-soft focus-within:ring-2 focus-within:ring-blue-400/20 dark:border-slate-800",
                         "bg-card-nested focus-within:bg-card-nested",
                         variant === "light"
-                            ? "bg-light border-section-border focus-within:bg-light focus-within:border-section-border dark:bg-slate-800/60 dark:focus-within:bg-slate-800/60"
+                            ? "bg-light border-section-border [--input-autofill-bg:var(--light)] focus-within:bg-light focus-within:border-section-border dark:bg-slate-800/60 dark:focus-within:bg-slate-800/60"
                             : "",
                         containerClassName,
                         error && "border-danger focus-within:border-danger"
@@ -64,7 +64,12 @@ const InputField = React.forwardRef<HTMLInputElement, InputFieldProps>(
                     <Input
                         id={inputId}
                         ref={ref}
-                        className={cn("max-sm:text-xs", className)}
+                        className={cn(
+                            "max-sm:text-xs",
+                            props.type === "number" &&
+                                "[appearance:textfield] [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none",
+                            className,
+                        )}
                         aria-describedby={
                             error
                                 ? `${inputId}-error`

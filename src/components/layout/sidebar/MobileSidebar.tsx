@@ -54,7 +54,11 @@ export default function MobileSidebar() {
                 {/* Header */}
                 <div className="flex items-center justify-between border-b border-border-light pb-2.5 sm:pb-4">
                     <div className="flex min-w-0 items-center gap-2.5">
-                        <div className="size-5 shrink-0 rounded-md bg-primary sm:size-8 sm:rounded-lg" />
+                        <img
+                            src="/logo.svg"
+                            alt=""
+                            className="size-7 shrink-0 object-contain sm:size-8"
+                        />
                         <span className="truncate text-lg font-semibold text-foreground">
                             Vitalb
                         </span>

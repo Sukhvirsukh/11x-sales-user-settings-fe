@@ -22,8 +22,11 @@ export default function DesktopSidebar() {
       <div>
         <div className="flex items-center justify-between mb-10 px-1">
           <div className="flex items-center gap-2.5">
-            {/* Logo Box */}
-            <div className="size-5 shrink-0 rounded-md bg-primary" />
+            <img
+              src="/logo.svg"
+              alt=""
+              className="size-7 shrink-0 object-contain"
+            />
             {!isCollapsed && (
               <span className="text-lg font-semibold tracking-tight text-foreground">
                 Vitalb

@@ -1,6 +1,5 @@
 import { useAuthStore } from "@/features/auth";
 import { BasicDetails } from "./basicDetails";
-import Permissions from "./permissions";
 import RoleHistory from "./roleHistory";
 
 
@@ -15,7 +14,7 @@ export function RoleAndAccess() {
 
             {user?.role === 'ADMIN' &&
                 <>
-                    <Permissions />
+                    {/* <Permissions /> */}
 
                     <RoleHistory />
                 </>
