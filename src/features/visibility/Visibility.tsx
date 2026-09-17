@@ -192,8 +192,8 @@ export default function Visibility() {
                         })();
                     }}
                     onDiscard={resetToSavedValues}
-                    placement="inline"
-                    edge="top"
+                    placement="fixed"
+                    edge="bottom"
                 />
 
                 <ErrorDialog
