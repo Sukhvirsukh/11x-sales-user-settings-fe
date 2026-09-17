@@ -47,54 +47,57 @@ export default function Modal({
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
             {trigger && <DialogTrigger render={trigger} />}
-            <DialogContent showCloseButton={false} className="max-w-md gap-0 rounded-[10px] border-0 bg-popover p-0 ring-0 shadow-panel">
-                {title && (
-                    <DialogHeader className="flex flex-row justify-between items-center py-2.5 px-4 bg-table-header rounded-t-[10px]">
-                        <DialogTitle className="text-lg font-semibold font-inter">
-                            {title}
-                        </DialogTitle>
-                        <DialogClose className="p-1 cursor-pointer">
-                            <X size={16} className="text-[#1E1E1E]" />
-                        </DialogClose>
-                    </DialogHeader>
-                )}
-
-                <div className="px-4 py-3.5">{children}</div>
-
-                {(primaryAction || secondaryAction || closeAction) && (
-                    <div className="flex items-start gap-2.5 px-4 pb-4 w-full">
-                        {primaryAction && (
-                            <Button
-                                onClick={primaryAction.onClick}
-                                disabled={primaryAction.disabled}
-                                variant={primaryAction.variant ?? "primary"}
-                            >
-                                {primaryAction.label}
-                            </Button>
-                        )}
-                        {secondaryAction && (
-                            <Button
-                                variant="secondary"
-                                onClick={secondaryAction.onClick}
-                                disabled={secondaryAction.disabled}
-                            >
-                                {secondaryAction.label}
-                            </Button>
-                        )}
-                        {closeAction && (
-                            <DialogClose
-                                render={
-                                    <Button
-                                        variant={closeAction.variant || "secondary"}
-                                        disabled={closeAction.disabled}
-                                    />
-                                }
-                            >
-                                {closeAction.label}
+            <DialogContent showCloseButton={false} className="max-w-md gap-0 rounded-[10px] border-0 bg-popover p-0 ring-0 shadow-panel max-sm:bg-transparent">
+                <div aria-hidden="true" className="max-sm:absolute max-sm:top-0 max-sm:right-[25px] max-sm:left-[25px] max-sm:h-20 z-[-1] max-sm:rounded-t-[20px] max-sm:bg-primary" />
+                <div className="max-sm:mt-2 max-sm:rounded-t-[10px] max-sm:bg-popover">
+                    {title && (
+                        <DialogHeader className="flex flex-row justify-between items-center py-2.5 px-4 bg-table-header rounded-t-[10px]">
+                            <DialogTitle className="text-lg font-semibold font-inter">
+                                {title}
+                            </DialogTitle>
+                            <DialogClose className="p-1 cursor-pointer">
+                                <X size={16} className="text-[#1E1E1E]" />
                             </DialogClose>
-                        )}
-                    </div>
-                )}
+                        </DialogHeader>
+                    )}
+
+                    <div className="px-4 py-3.5">{children}</div>
+
+                    {(primaryAction || secondaryAction || closeAction) && (
+                        <div className="flex items-start gap-2.5 px-4 pb-4 w-full">
+                            {primaryAction && (
+                                <Button
+                                    onClick={primaryAction.onClick}
+                                    disabled={primaryAction.disabled}
+                                    variant={primaryAction.variant ?? "primary"}
+                                >
+                                    {primaryAction.label}
+                                </Button>
+                            )}
+                            {secondaryAction && (
+                                <Button
+                                    variant="secondary"
+                                    onClick={secondaryAction.onClick}
+                                    disabled={secondaryAction.disabled}
+                                >
+                                    {secondaryAction.label}
+                                </Button>
+                            )}
+                            {closeAction && (
+                                <DialogClose
+                                    render={
+                                        <Button
+                                            variant={closeAction.variant || "secondary"}
+                                            disabled={closeAction.disabled}
+                                        />
+                                    }
+                                >
+                                    {closeAction.label}
+                                </DialogClose>
+                            )}
+                        </div>
+                    )}
+                </div>
             </DialogContent>
         </Dialog>
     );

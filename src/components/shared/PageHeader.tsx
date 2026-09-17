@@ -4,6 +4,7 @@ import { ChevronLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { StoreDropdown } from "./StoreDropdown";
 import { ChatBox } from "@/components/shared/chatBox";
+import { useTestChatStore } from "@/stores/testChatStore";
 
 interface PageHeaderProps {
     title: string;
@@ -19,7 +20,9 @@ export function PageHeader({
     children,
 }: PageHeaderProps) {
     const navigate = useNavigate();
-    const [isChatOpen, setIsChatOpen] = useState(false);
+    const isChatOpen = useTestChatStore((state) => state.isOpen);
+    const toggleChat = useTestChatStore((state) => state.toggle);
+    const closeChat = useTestChatStore((state) => state.close);
     const chatColumnRef = useRef<HTMLDivElement>(null);
     const [chatPosition, setChatPosition] = useState({ left: 0, width: 360 });
 
@@ -73,7 +76,7 @@ export function PageHeader({
                 <div className="hidden w-full flex-wrap items-center gap-2.5 md:mt-1 md:flex md:w-auto md:shrink-0">
                     <Button
                         variant="outline"
-                        onClick={() => setIsChatOpen((open) => !open)}
+                        onClick={toggleChat}
                         aria-pressed={isChatOpen}
                     >
                         Test chat
@@ -93,7 +96,7 @@ export function PageHeader({
                         <div
                             className="fixed inset-0 z-40 bg-black/40 backdrop-blur-xs lg:hidden"
                             aria-label="Close test chat"
-                            onClick={() => setIsChatOpen(false)}
+                            onClick={closeChat}
                         />
 
                         {/* Reserve the desktop column while its panel stays fixed. */}
@@ -110,7 +113,7 @@ export function PageHeader({
                             className="fixed inset-x-3 bottom-3 top-3 z-50 rounded-[10px] border border-border bg-card shadow-lg lg:left-(--chat-left) lg:right-auto lg:top-auto lg:bottom-7 lg:z-30 lg:h-[min(600px,calc(100dvh-160px))] lg:w-(--chat-width)"
                         >
                             <ChatBox
-                                onClose={() => setIsChatOpen(false)}
+                                onClose={closeChat}
                                 className="h-full"
                             />
                         </div>

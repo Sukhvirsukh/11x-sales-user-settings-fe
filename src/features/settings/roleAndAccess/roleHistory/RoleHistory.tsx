@@ -85,6 +85,7 @@ export default function RoleHistory() {
                 title="Role history"
                 columns={columns}
                 data={filteredData}
+                mobileColumnSplit={["50%", "50%"]}
                 selectable
                 getRowId={(row) => String(row.id)}
                 bulkActions={(rows, deselectRows) => (

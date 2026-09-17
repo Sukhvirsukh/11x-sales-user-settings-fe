@@ -2,7 +2,7 @@ import { useState } from "react";
 import { z } from "zod";
 import { FormGroup } from "@/components/design/FormGroup";
 import { InputField } from "@/components/design/InputField";
-import ImageUploader from "@/components/design/ImageUploader";
+// import ImageUploader from "@/components/design/ImageUploader";
 import { MultiTextField } from "@/components/design/MultiTextField";
 import { ColorSelector } from "@/components/design/ColorSelector";
 import { ChatBubbleTypeSelector } from "@/components/design/ChatBubbleTypeSelector";

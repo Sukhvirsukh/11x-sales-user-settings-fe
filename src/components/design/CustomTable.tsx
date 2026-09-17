@@ -16,10 +16,21 @@ import { Button } from "@/components/ui/button"
 export interface Column {
     key: string
     header: string
+    /** Desktop column width hint, e.g. `"280px"`. Also marks the column as the mobile lead. */
     width?: string
+    /**
+     * Mobile-only width for this column's line slot, e.g. `"70%"`; the paired cell takes the
+     * remaining room. Wins over the table's `mobileColumnSplit` for the side this column sits on.
+     */
+    mobileWidth?: string
     align?: "left" | "right" | "center"
     render?: (value: unknown, row: Record<string, unknown>) => ReactNode
 }
+
+/** Share of a mobile line given to the side holding the lead column. */
+const MOBILE_LEAD_SHARE = "65%"
+/** Every other mobile track takes whatever room is left. */
+const MOBILE_FILL = "minmax(0, 1fr)"
 
 type CustomTableProps<T extends Record<string, unknown> = Record<string, unknown>> = {
     title?: string
@@ -33,6 +44,12 @@ type CustomTableProps<T extends Record<string, unknown> = Record<string, unknown
     ) => ReactNode
     rowActions?: (row: T) => ReactNode
     className?: string
+    /**
+     * Mobile-only widths of the two cells paired on each line, e.g. `["65%", "35%"]` or
+     * `["50%", "50%"]` for an even split. Defaults to giving the mobile lead column
+     * `MOBILE_LEAD_SHARE`.
+     */
+    mobileColumnSplit?: [string, string]
     /** Shown when `data` is empty. Customizes the empty-state message. */
     emptyMessage?: string
     /** Shown when `data` is empty. Customizes the empty-state message. */
@@ -66,6 +83,7 @@ export default function CustomTable<T extends Record<string, unknown>>({
     emptyStateAction,
     emptyState,
     pagination,
+    mobileColumnSplit,
     selectable = false,
     getRowId,
 }: CustomTableProps<T>) {
@@ -122,6 +140,21 @@ export default function CustomTable<T extends Record<string, unknown>>({
     const mobileColumns = columns.filter((col) => col.key !== "select")
     const mobileCellCount = mobileColumns.length + (rowActions ? 1 : 0)
     const lastMobileRowStart = Math.floor((mobileCellCount - 1) / 2) * 2
+    /**
+     * Below `md` every row is a two-column grid, so each track is resolved per side: the column's
+     * own `mobileWidth`, then the table's `mobileColumnSplit`, then the wider `MOBILE_LEAD_SHARE`
+     * for whichever side holds the lead column (the first one given a desktop `width`).
+     */
+    const leadMobileIndex = mobileColumns.findIndex((col) => col.width)
+    const mobileTrack = (side: 0 | 1) =>
+        mobileColumns.find((col, index) => index % 2 === side && col.mobileWidth)?.mobileWidth ??
+        mobileColumnSplit?.[side] ??
+        (leadMobileIndex >= 0 && leadMobileIndex % 2 === side ? MOBILE_LEAD_SHARE : MOBILE_FILL)
+    const mobileTracks = [mobileTrack(0), mobileTrack(1)]
+    // `gridTemplateColumns` is inert once `md:table-row` turns the row back into a real table row.
+    const mobileRowStyle = mobileTracks.every((track) => track === MOBILE_FILL)
+        ? undefined
+        : { gridTemplateColumns: mobileTracks.join(" ") }
 
     return (
         <AppSection className={className}>
@@ -193,6 +226,7 @@ export default function CustomTable<T extends Record<string, unknown>>({
                         {displayedData.map((row, rowIndex) => (
                             <TableRow
                                 key={displayedRowIds[rowIndex]}
+                                style={mobileRowStyle}
                                 className="grid grid-cols-2 overflow-hidden rounded-lg border! border-section-border bg-card-nested px-2 py-0 hover:bg-card-nested md:table-row md:rounded-none md:border-0! md:bg-transparent md:p-0 md:hover:bg-transparent"
                             >
                                 {selectable && (

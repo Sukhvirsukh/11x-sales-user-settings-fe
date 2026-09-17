@@ -1,6 +1,6 @@
 import { toast } from "@/components/ui/toast";
 
-const API_BASE_URL = import.meta.env.VITE_AUTH_API_BASE_URL;
+const API_BASE_URL = import.meta.env.VITE_AUTH_API_BASE_URL ?? "";
 const AUTH_TOKEN_STORAGE_KEY = "vitalb.jwt";
 
 interface ApiFetchOptions extends RequestInit {

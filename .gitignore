@@ -30,3 +30,6 @@ agent.md
 AGENTS.md
 
 _redirects
+
+.env
+.env.development

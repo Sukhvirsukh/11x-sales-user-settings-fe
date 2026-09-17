@@ -1,9 +1,7 @@
 import type { Column } from "@/components/design/CustomTable";
 import CustomTable from "@/components/design/CustomTable";
-import { InputField } from "@/components/design/InputField";
 import { Button } from "@/components/ui/button";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { ListFilter, Plus, Search, SquarePen, Trash } from "lucide-react";
+import { Plus, SquarePen, Trash } from "lucide-react";
 import AddStore from "./AddStore";
 import DeleteStore from "./DeleteStore";
 import { Badge } from "@/components/ui/badge";

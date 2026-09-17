@@ -1,10 +1,13 @@
 import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useMobileSidebarStore } from "@/stores/mobileSidebarStore";
+import { useTestChatStore } from "@/stores/testChatStore";
 import { StoreDropdown } from "../shared/StoreDropdown";
 
 export default function MobileTopbar() {
     const open = useMobileSidebarStore((state) => state.open);
+    const isChatOpen = useTestChatStore((state) => state.isOpen);
+    const toggleChat = useTestChatStore((state) => state.toggle);
 
     return (
         <div className="flex w-full items-center justify-between gap-3 md:hidden">
@@ -19,6 +22,8 @@ export default function MobileTopbar() {
                 <Button
                     variant="outline"
                     className="h-auto border-black px-3 py-1.5 text-base rounded-[10px]"
+                    onClick={toggleChat}
+                    aria-pressed={isChatOpen}
                 >
                     Test chat
                 </Button>

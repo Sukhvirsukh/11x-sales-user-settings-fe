@@ -276,3 +276,17 @@
     background-color: var(--section-border);
   }
 }
+
+/* iOS Safari zooms the page whenever a focused form control renders below 16px, which throws
+   off the mobile layout. `user-scalable=no` / `maximum-scale=1` cannot fix this (iOS ignores
+   them since iOS 10) and disabling zoom hurts accessibility, so pin the control font size instead.
+   Desktop keeps the compact 12-14px scale; the whole design scale stays untouched.
+   Deliberately outside `@layer` so it also wins over the `text-*` utility on each control,
+   including the visually hidden inputs that Base UI renders for Select/Checkbox/Radio. */
+@media (max-width: 767px), (hover: none) and (pointer: coarse) {
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+  }
+}

@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react"
-import { Download, Trash } from "lucide-react"
+import { Trash } from "lucide-react"
 
 import type { Column } from "@/components/design/CustomTable"
 import CustomTable from "@/components/design/CustomTable"

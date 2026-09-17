@@ -1,11 +1,9 @@
 import CustomTable, { type Column } from "@/components/design/CustomTable";
-import { InputField } from "@/components/design/InputField";
 import SearchField from "@/components/shared/SearchField";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { ListFilter, Search, SquarePen, Trash } from "lucide-react";
+import { SquarePen, Trash } from "lucide-react";
 
 const columns: Column[] = [
     {

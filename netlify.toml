@@ -10,6 +10,12 @@
 # `status = 200` makes this a rewrite (URL bar keeps the original path).
 # Netlify serves existing static files first, so /assets/* are unaffected.
 [[redirects]]
+  from = "/api/*"
+  to = "http://138.197.47.188:3000/api/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200

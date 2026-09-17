@@ -1,11 +1,8 @@
-import { ListFilter, Search } from "lucide-react";
 import { useReportQuery } from "./reportQuery";
 
 import CustomTable, { type Column } from "@/components/design/CustomTable";
-import { InputField } from "@/components/design/InputField";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Spinner } from "@/components/ui/spinner";
 import GenerateReport from "./GenerateReport";
 import SearchField from "@/components/shared/SearchField";
