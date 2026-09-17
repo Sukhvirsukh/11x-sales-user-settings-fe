@@ -1,7 +1,8 @@
 import { lazy } from "react";
-import { createBrowserRouter, Navigate } from "react-router";
+import { createBrowserRouter, Navigate, Outlet } from "react-router";
 import ErrorPage from "@/pages/ErrorPage";
 import AppLayout from "../components/layout/AppLayou";
+import { getAuthToken } from "@/features/auth/authStorage";
 
 const SignInPage = lazy(() => import("@/pages/SignInPage"));
 const SignUpPage = lazy(() => import("@/pages/SignUpPage"));
@@ -43,12 +44,21 @@ const Archived = lazy(() => import("@/features/conversations/archived"));
 const UserProfileDetails = lazy(() => import("@/features/contacts/UserProfileDetails"));
 const Segaments = lazy(() => import("@/features/contacts/Segaments"));
 
+function GuestOnlyRoute() {
+  return getAuthToken() ? <Navigate to="/" replace /> : <Outlet />;
+}
+
 export const router = createBrowserRouter([
   {
     errorElement: <ErrorPage />,
     children: [
-      { path: "/sign-in", element: <SignInPage /> },
-      { path: "/sign-up", element: <SignUpPage /> },
+      {
+        element: <GuestOnlyRoute />,
+        children: [
+          { path: "/sign-in", element: <SignInPage /> },
+          { path: "/sign-up", element: <SignUpPage /> },
+        ],
+      },
       { path: "/forgot-password", element: <ForgotPassword /> },
       {
         element: <AppLayout />,
