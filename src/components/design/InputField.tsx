@@ -64,7 +64,7 @@ const InputField = React.forwardRef<HTMLInputElement, InputFieldProps>(
                     <Input
                         id={inputId}
                         ref={ref}
-                        className={className}
+                        className={cn("max-sm:text-xs", className)}
                         aria-describedby={
                             error
                                 ? `${inputId}-error`

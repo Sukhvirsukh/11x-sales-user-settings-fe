@@ -2,7 +2,6 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { DatePicker } from "@/components/design/DatePicker";
 import { FormGroup } from "@/components/design/FormGroup";
 import { InputField } from "@/components/design/InputField";
 import Modal from "@/components/design/Modal";
@@ -10,10 +9,8 @@ import { SelectField } from "@/components/design/SelectField";
 import { createRole, updateRole } from "./roleHistoryApi";
 import { roleHistoryQueryKey } from "./roleHistoryQuery";
 import { roleFormSchema } from "./roleHistorySchema";
-import type { RoleFormValues } from "./roleHistoryTypes";
+import type { RoleFormValues, RoleRow } from "./roleHistoryType";
 import { toast } from "@/components/ui/toast";
-
-type RoleRow = Record<string, unknown>;
 
 interface AddRoleFormProps {
     open: boolean;
@@ -30,7 +27,7 @@ function initialValues(role?: RoleRow | null): RoleFormValues {
         name: stringValue(role?.name),
         email: stringValue(role?.email),
         role: stringValue(role?.role).toLowerCase(),
-        startDate: role?.startDateValue instanceof Date ? role.startDateValue : new Date(),
+        // startDate: role?.createdAtValue instanceof Date ? role.createdAtValue : new Date(),
     };
 }
 
@@ -41,8 +38,8 @@ export default function AddRoleForm({ open, onOpenChange, role }: AddRoleFormPro
         register,
         handleSubmit,
         reset,
-        setValue,
         watch,
+        setValue,
         formState: { errors },
     } = useForm<RoleFormValues>({
         resolver: zodResolver(roleFormSchema),
@@ -55,7 +52,7 @@ export default function AddRoleForm({ open, onOpenChange, role }: AddRoleFormPro
 
     const saveRoleMutation = useMutation({
         mutationFn: (values: RoleFormValues) => {
-            const id = typeof role?.id === "string" ? role.id : undefined;
+            const id = role?.id;
             return id ? updateRole(id, values) : createRole(values);
         },
         onSuccess: async () => {
@@ -69,6 +66,13 @@ export default function AddRoleForm({ open, onOpenChange, role }: AddRoleFormPro
                     : "The role has been added successfully.",
             })
         },
+        onError: async (err) => {
+            toast.add({
+                type: "error",
+                title: isEditing ? "Role updated" : "Role added",
+                description: err.message,
+            })
+        }
     });
 
     function saveRole(values: RoleFormValues) {
@@ -117,7 +121,7 @@ export default function AddRoleForm({ open, onOpenChange, role }: AddRoleFormPro
                             { value: "MEMBER", label: "Member" },
                         ]}
                     />
-                    <DatePicker
+                    {/* <DatePicker
                         label="Joining date"
                         placeholder="Pick a date"
                         labelClassName="text-sm font-medium"
@@ -126,7 +130,7 @@ export default function AddRoleForm({ open, onOpenChange, role }: AddRoleFormPro
                         onChange={(startDate) => {
                             if (startDate) setValue("startDate", startDate, { shouldValidate: true });
                         }}
-                    />
+                    /> */}
                 </FormGroup>
             </form>
         </Modal>

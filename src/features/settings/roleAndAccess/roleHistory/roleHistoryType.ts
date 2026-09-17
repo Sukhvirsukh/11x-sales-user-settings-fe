@@ -1,0 +1,39 @@
+import type { z } from "zod";
+import type { roleFormSchema } from "./roleHistorySchema";
+
+export type RoleFormValues = z.infer<typeof roleFormSchema>;
+
+export interface RolePermissions {
+    add: boolean;
+    edit: boolean;
+    delete: boolean;
+}
+
+export interface RoleResponse {
+    id: string;
+    email: string;
+    phone: string | null;
+    name: string;
+    role: string;
+    status: boolean;
+    permissions: RolePermissions;
+    ownerId: string;
+    createdAt: string;
+}
+
+export interface RoleRow extends Record<string, unknown> {
+    id: string;
+    name: string;
+    email: string;
+    role: string;
+    status: boolean;
+    createdAt: string;
+    createdAtValue: Date | null;
+}
+
+export interface RolePayload {
+    name: string;
+    email: string;
+    role: string;
+    status: boolean;
+}

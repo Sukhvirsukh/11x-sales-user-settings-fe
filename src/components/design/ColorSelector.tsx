@@ -131,7 +131,7 @@ export function ColorSelector({
                         onClick={openColorPicker}
                         disabled={disabled}
                         className={cn(
-                            "h-10 w-10 shrink-0 rounded-lg shadow-sm transition-transform hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+                            "h-10 w-10 shrink-0 rounded-lg shadow-sm cursor-pointer transition-transform hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
                             disabled && "opacity-50 cursor-not-allowed"
                         )}
                         style={{ backgroundColor: isValidHex(color) ? color : "#000000" }}

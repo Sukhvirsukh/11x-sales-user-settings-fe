@@ -1,8 +1,7 @@
-import { useState } from "react";
 import { z } from "zod";
 import { FormGroup } from "@/components/design/FormGroup";
 import { InputField } from "@/components/design/InputField";
-// import ImageUploader from "@/components/design/ImageUploader";
+import ImageUploader from "@/components/design/ImageUploader";
 import { MultiTextField } from "@/components/design/MultiTextField";
 import { ColorSelector } from "@/components/design/ColorSelector";
 import { ChatBubbleTypeSelector } from "@/components/design/ChatBubbleTypeSelector";
@@ -14,15 +13,18 @@ import { requiredFieldsSchema } from "./validations";
 type RequiredField = keyof z.infer<typeof requiredFieldsSchema>;
 
 export default function LookNFeel() {
-  const { fields, setField } = useVisibilityForm();
-  const [errors, setErrors] = useState<Partial<Record<RequiredField, string>>>({});
+  const { fields, setField, errors, setError, clearErrors } = useVisibilityForm();
 
   function updateRequiredField(key: RequiredField, value: string) {
     const result = requiredFieldsSchema.shape[key].safeParse(value);
-    setErrors((current) => ({
-      ...current,
-      [key]: result.success ? undefined : result.error.issues[0]?.message,
-    }));
+    if (result.success) {
+      clearErrors(key);
+    } else {
+      setError(key, {
+        type: "validate",
+        message: result.error.issues[0]?.message,
+      });
+    }
     setField(key, value);
   }
 
@@ -32,24 +34,24 @@ export default function LookNFeel() {
         label="Name of AI Agent"
         placeholder="Enter name of AI agent"
         value={fields.aiAgentName}
-        error={errors.aiAgentName}
+        error={errors.aiAgentName?.message}
         onChange={(e) => updateRequiredField("aiAgentName", e.target.value)}
       />
 
-      {/* <ImageUploader
-        // label="Chat face"
+      <ImageUploader
+        label="Chat face"
         note="Upload an image for the chat avatar. Accepted formats: PNG, JPG, JPEG, GIF, WEBP. Maximum file size: 50KB."
         accept={["image/png", "image/jpeg", "image/jpg", "image/gif", "image/webp"]}
         maxSizeKB={50}
         value={fields.chatFace}
         onValueChange={(file) => setField("chatFace", file)}
-      /> */}
+      />
 
       <InputField
         label="Welcome message"
         placeholder="Enter welcome message"
         value={fields.welcomeMessage}
-        error={errors.welcomeMessage}
+        error={errors.welcomeMessage?.message}
         onChange={(e) => updateRequiredField("welcomeMessage", e.target.value)}
       />
 
@@ -66,13 +68,13 @@ export default function LookNFeel() {
         label="Placeholder message"
         placeholder="Enter placeholder text"
         value={fields.placeholderMessage}
-        error={errors.placeholderMessage}
+        error={errors.placeholderMessage?.message}
         onChange={(e) => updateRequiredField("placeholderMessage", e.target.value)}
       />
 
-      <ColorSelector label="Primary color" hint="Choose the primary color for the chat widget" value={fields.primaryColor} error={errors.primaryColor} onValueChange={(color) => updateRequiredField("primaryColor", color)} showPresets={false} />
+      <ColorSelector label="Primary color" hint="Choose the primary color for the chat widget" value={fields.primaryColor} error={errors.primaryColor?.message} onValueChange={(color) => updateRequiredField("primaryColor", color)} showPresets={false} />
 
-      <ColorSelector label="Notification color" hint="Choose the color for notification badges" value={fields.notificationColor} error={errors.notificationColor} onValueChange={(color) => updateRequiredField("notificationColor", color)} showPresets={false} />
+      <ColorSelector label="Notification color" hint="Choose the color for notification badges" value={fields.notificationColor} error={errors.notificationColor?.message} onValueChange={(color) => updateRequiredField("notificationColor", color)} showPresets={false} />
 
       <TextAreaField
         label="Disclaimer message"

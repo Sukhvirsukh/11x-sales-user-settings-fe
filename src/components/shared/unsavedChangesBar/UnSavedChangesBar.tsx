@@ -12,8 +12,10 @@ interface UnSavedChangesBarProps {
   message?: string;
   className?: string;
   saving?: boolean;
-  /** `inline` sits in the page footer. `fixed` overlays the full viewport above everything. */
+  /** `inline` participates in page layout; `fixed` overlays the viewport. */
   placement?: "inline" | "fixed";
+  /** Defaults to `bottom` for inline bars and `top` for fixed bars. */
+  edge?: "top" | "bottom";
   dialogTitle?: string;
   dialogDescription?: string;
 }
@@ -26,12 +28,17 @@ export function UnSavedChangesBar({
   className,
   saving = false,
   placement = "inline",
+  edge,
   dialogTitle,
   dialogDescription,
 }: UnSavedChangesBarProps) {
   const [isSaving, setIsSaving] = useState(false);
   const [mounted, setMounted] = useState(false);
   const busy = saving || isSaving;
+  const resolvedEdge = edge ?? (placement === "fixed" ? "top" : "bottom");
+  const isFixed = placement === "fixed";
+  const isInlineBottom = !isFixed && resolvedEdge === "bottom";
+  const isInlineTop = !isFixed && resolvedEdge === "top";
   const { isBlocking, proceed, cancel } = useUnsavedChangesWarning({ isDirty });
 
   useEffect(() => {
@@ -65,16 +72,22 @@ export function UnSavedChangesBar({
       aria-label="Unsaved changes"
       aria-live="polite"
       className={cn(
-        "flex shrink-0 flex-col gap-3 border-border bg-white px-4 py-3 sm:flex-row sm:items-center sm:justify-between",
-        placement === "fixed"
-          ? "fixed inset-x-0 top-0 z-[99999] border-b pt-[max(0.75rem,env(safe-area-inset-top))] shadow-md"
-          : "border-t",
+        "flex shrink-0 flex-row flex-wrap items-center justify-between gap-x-3 gap-y-2 border-border bg-white px-4 py-3",
+        isInlineBottom && "py-2",
+        isInlineTop && "order-first",
+        isFixed
+          ? resolvedEdge === "top"
+            ? "fixed inset-x-0 top-0 z-99999 border-b pt-[max(0.75rem,env(safe-area-inset-top))] shadow-md"
+            : "fixed inset-x-0 bottom-0 z-99999 border-t pb-[max(0.75rem,env(safe-area-inset-bottom))] shadow-md"
+          : resolvedEdge === "top"
+            ? "border-b"
+            : "border-t",
         className,
       )}
-      style={placement === "fixed" ? { zIndex: 99999 } : undefined}
+      style={isFixed ? { zIndex: 99999 } : undefined}
     >
-      <p className="text-sm font-medium text-foreground">{message}</p>
-      <div className="flex shrink-0 items-center gap-2">
+      <p className="min-w-0 flex-1 text-sm font-medium text-foreground">{message}</p>
+      <div className="ml-auto flex shrink-0 flex-nowrap items-center gap-2">
         <Button
           type="button"
           variant="outline"
@@ -93,7 +106,7 @@ export function UnSavedChangesBar({
 
   return (
     <>
-      {placement === "fixed"
+      {isFixed
         ? mounted
           ? createPortal(bar, document.body)
           : null
