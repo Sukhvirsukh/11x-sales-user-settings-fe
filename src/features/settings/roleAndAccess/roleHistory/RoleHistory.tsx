@@ -9,6 +9,7 @@ import { useRoleHistoryQuery } from "./roleHistoryQuery"
 import DeleteRole from "./DeleteRole"
 import TableSkeleton from "@/components/shared/skeletons/TableSkeletons"
 import SearchField from "@/components/shared/SearchField"
+import type { RoleRow } from "./roleHistoryType"
 
 const columns: Column[] = [
     { key: "name", header: "Name", width: "280px" },
@@ -19,23 +20,23 @@ const columns: Column[] = [
         header: "Status",
         align: "center",
         render: (value) => {
-            const status = String(value)
+            const isActive = value === true
             return (
-                <Badge variant={status ? "default" : "destructive"}>
-                    {status ? "Active" : "Inactive"}
+                <Badge variant={isActive ? "default" : "destructive"}>
+                    {isActive ? "Active" : "Inactive"}
                 </Badge>
             )
         },
     },
-    { key: "startDate", header: "Start date", align: "right" },
+    { key: "createdAt", header: "Created at", align: "right" },
 ]
 
 export default function RoleHistory() {
     const { data = [], isLoading, error } = useRoleHistoryQuery()
-    const [editData, setEditData] = useState<Record<string, unknown> | null>(null)
+    const [editData, setEditData] = useState<RoleRow | null>(null)
     const [isOpen, setIsOpen] = useState(false)
     const [deleteRequest, setDeleteRequest] = useState<{
-        roles: Record<string, unknown>[]
+        roles: RoleRow[]
         onDeleted?: (ids: string[]) => void
     } | null>(null)
     const [isDeleteOpen, setIsDeleteOpen] = useState(false)
@@ -59,7 +60,7 @@ export default function RoleHistory() {
         setIsOpen(true)
     }
 
-    function openEditRole(role: Record<string, unknown>) {
+    function openEditRole(role: RoleRow) {
         setEditData(role)
         setIsOpen(true)
     }
@@ -74,7 +75,7 @@ export default function RoleHistory() {
         if (!open) setDeleteRequest(null)
     }
 
-    function requestDelete(roles: Record<string, unknown>[], onDeleted?: (ids: string[]) => void) {
+    function requestDelete(roles: RoleRow[], onDeleted?: (ids: string[]) => void) {
         setDeleteRequest({ roles, onDeleted })
         setIsDeleteOpen(true)
     }

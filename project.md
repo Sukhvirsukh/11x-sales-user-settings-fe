@@ -270,7 +270,7 @@ src/
 │   │   │   │   ├── roleHistoryApi.ts
 │   │   │   │   ├── roleHistoryQuery.ts
 │   │   │   │   ├── roleHistorySchema.ts
-│   │   │   │   ├── roleHistoryTypes.ts
+│   │   │   │   ├── roleHistoryType.ts # Role API response/payload, table-row, and form types
 │   │   │   │   └── index.ts
 │   │   │   └── index.ts
 │   │   └── store/

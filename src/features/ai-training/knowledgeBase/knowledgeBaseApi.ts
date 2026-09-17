@@ -4,7 +4,7 @@ import type { KnowledgeBaseFormValues } from "./knowledgeBaseSchema";
 
 
 export async function getKnowledgeBase(page = 1) {
-    const response = await apiFetch<KnowledgeBaseResponse>(`/training/pages?page=${page}`);
+    const response = await apiFetch<KnowledgeBaseResponse>(`/training?page=${page}`);
     return response
 }
 
@@ -27,7 +27,7 @@ export async function updateKnowledgeBase({ id, name, format, url, file, text }:
         body = JSON.stringify({ name, format, url });
     }
 
-    const URL = id ? `/training/pages/${id}` : "/training/pages";
+    const URL = id ? `/training/${id}` : "/training";
 
     return apiFetch<KnowledgeBaseResponse>(URL, {
         method: id ? "PATCH" : "POST",
@@ -37,7 +37,7 @@ export async function updateKnowledgeBase({ id, name, format, url, file, text }:
 }
 
 export async function deleteKnowledgeBase(ids: string[]) {
-    const response = await apiFetch<KnowledgeBaseResponse>("/training/pages/bulk", {
+    const response = await apiFetch<KnowledgeBaseResponse>("/training/bulk", {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ids }),
@@ -47,6 +47,6 @@ export async function deleteKnowledgeBase(ids: string[]) {
 
 
 export async function searchKnowledge(search: string, page = 1) {
-    const response = await apiFetch<KnowledgeBaseResponse>(`/training/pages?search=${search}&page=${page}`);
+    const response = await apiFetch<KnowledgeBaseResponse>(`/training?search=${search}&page=${page}`);
     return response
 }

@@ -46,7 +46,7 @@ export default function ImageUploader({
     accept = IMAGE_ACCEPT,
     fileSize,
     maxSizeKB,
-    variant = "default",
+    variant = "light",
 }: CustomImageUploaderProps) {
     const generatedId = useId();
     const inputId = id ?? generatedId;

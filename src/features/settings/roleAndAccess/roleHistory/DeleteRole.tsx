@@ -4,11 +4,12 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteRole, deleteRoles } from "./roleHistoryApi";
 import { roleHistoryQueryKey } from "./roleHistoryQuery";
 import { toast } from "@/components/ui/toast";
+import type { RoleRow } from "./roleHistoryType";
 
 interface DeleteRoleProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
-    roles: Record<string, unknown>[];
+    roles: RoleRow[];
     onDeleted?: (ids: string[]) => void;
 }
 
@@ -18,7 +19,7 @@ export default function DeleteRole({ open, onOpenChange, roles, onDeleted }: Del
     const deleteRoleMutation = useMutation({
         mutationFn: async () => {
             const ids = roles.map((role) => {
-                if (typeof role.id !== "string" || !role.id) {
+                if (!role.id) {
                     throw new Error("A selected role does not have an ID.");
                 }
                 return role.id;
