@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, type ChangeEvent } from "react";
+import { useState, useEffect, type ChangeEvent } from "react";
 import { cn } from "@/lib/utils";
 import { InputField } from "./InputField";
 import { FieldError } from "@/components/ui/field";
@@ -70,7 +70,6 @@ export function ColorSelector({
 }: CustomColorSelectorProps) {
     const [uncontrolledValue, setUncontrolledValue] = useState(defaultValue);
     const [inputValue, setInputValue] = useState(defaultValue);
-    const colorInputRef = useRef<HTMLInputElement>(null);
 
     // Use controlled or uncontrolled value
     const color = controlledValue ?? uncontrolledValue;
@@ -113,12 +112,6 @@ export function ColorSelector({
         setColor?.(presetColor);
     };
 
-    const openColorPicker = () => {
-        if (!disabled && colorInputRef.current) {
-            colorInputRef.current.click();
-        }
-    };
-
     return (
         <FormGroup className={className}>
             <Label htmlFor={id}>{label}</Label>
@@ -126,17 +119,27 @@ export function ColorSelector({
                 {/* Color preview + Text input + Color picker trigger */}
                 <div className="flex items-center gap-2">
                     {/* Color preview circle */}
-                    <button
-                        type="button"
-                        onClick={openColorPicker}
-                        disabled={disabled}
-                        className={cn(
-                            "h-10 w-10 shrink-0 rounded-lg shadow-sm cursor-pointer transition-transform hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-                            disabled && "opacity-50 cursor-not-allowed"
-                        )}
-                        style={{ backgroundColor: isValidHex(color) ? color : "#000000" }}
-                        aria-label="Open color picker"
-                    />
+                    <div className="relative h-10 w-10 shrink-0">
+                        <input
+                            type="color"
+                            value={isValidHex(color) ? color : "#000000"}
+                            onChange={handleColorPickerChange}
+                            disabled={disabled}
+                            aria-label={`Choose ${label.toLowerCase()}`}
+                            className={cn(
+                                "peer absolute inset-0 z-10 size-full cursor-pointer opacity-0",
+                                disabled && "cursor-not-allowed",
+                            )}
+                        />
+                        <span
+                            aria-hidden="true"
+                            className={cn(
+                                "pointer-events-none block size-full rounded-lg shadow-sm transition-transform peer-hover:scale-105 peer-focus-visible:outline-none peer-focus-visible:ring-2 peer-focus-visible:ring-ring peer-focus-visible:ring-offset-2",
+                                disabled && "opacity-50",
+                            )}
+                            style={{ backgroundColor: isValidHex(color) ? color : "#000000" }}
+                        />
+                    </div>
 
                     {/* Hex input */}
                     <InputField
@@ -150,19 +153,6 @@ export function ColorSelector({
                         maxLength={7}
                         className="flex-1 rounded-xl font-mono"
                     />
-
-                    {/* Native color picker — keep out of layout */}
-                    <div className="hidden">
-                        <input
-                            ref={colorInputRef}
-                            type="color"
-                            value={isValidHex(color) ? color : "#000000"}
-                            onChange={handleColorPickerChange}
-                            disabled={disabled}
-                            tabIndex={-1}
-                            aria-hidden="true"
-                        />
-                    </div>
 
                     {/* Color picker button */}
                     {/* <button

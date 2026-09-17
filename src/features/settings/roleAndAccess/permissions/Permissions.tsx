@@ -1,8 +1,7 @@
 import AppSection from "@/components/design/AppSectoin";
 import Heading from "@/components/design/Heading";
 import { ToggleField } from "@/components/design/ToggleField";
-import { useEffect, useState } from "react";
-import { DetailGroup, DetailItem } from "@/components/design/DetailContainer";
+import { useState } from "react";
 
 interface PermissionProps {
     name: string
@@ -21,7 +20,7 @@ const allPermissions = [
 
 export function Permission({ name, isChecked, onToggle }: PermissionProps) {
     return (
-        <div className="flex justify-between items-center w-full py-2.5">
+        <div className="flex justify-between items-center w-full py-1">
             <p className="text-foreground font-inter text-base leading-none w-fit">
                 {name}
             </p>
@@ -43,16 +42,6 @@ export default function Permissions() {
         "manage-team-permissions": false,
         "delete-workspace": false
     });
-    const [isDarkMode, setIsDarkMode] = useState(
-        () => localStorage.getItem("theme") === "dark",
-    );
-
-    useEffect(() => {
-        document.documentElement.classList.toggle("dark", isDarkMode);
-        localStorage.setItem("theme", isDarkMode ? "dark" : "light");
-    }, [isDarkMode]);
-
-
     const toggleHandler = (permissionName: string) => {
         setPermissions((prevPermissions) => ({
             ...prevPermissions,
@@ -79,7 +68,7 @@ export default function Permissions() {
                     }
                 </div>
             </AppSection>
-            <AppSection className="w-full md:w-auto md:flex-[1_1_0%] min-w-0 md:min-w-[250px] !h-auto self-stretch">
+            {/* <AppSection className="w-full md:w-auto md:flex-[1_1_0%] min-w-0 md:min-w-[250px] !h-auto self-stretch">
                 <Heading size="lg" className="font-medium">
                     Other Infomation
                 </Heading>
@@ -107,7 +96,7 @@ export default function Permissions() {
                         />
                     </DetailGroup>
                 </div>
-            </AppSection>
+            </AppSection> */}
         </div>
     )
 }

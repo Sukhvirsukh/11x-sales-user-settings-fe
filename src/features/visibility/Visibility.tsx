@@ -19,6 +19,7 @@ import type { VisibilityFields } from "./visibilityTypes";
 import { useVisibilityQuery, visibilityQueryKey } from "./visibilityQuery";
 import { requiredFieldsSchema } from "./fields/validations";
 import { saveVisibility } from "./visibilityApi";
+import ResetVisibilityModal from "./ResetVisibilityModal";
 
 export default function Visibility() {
     const navigate = useNavigate();
@@ -34,7 +35,6 @@ export default function Visibility() {
 
     useEffect(() => {
         if (query.data) {
-            console.log("query.data", query.data);
             form.reset(query.data);
             setIsFormReady(true);
         }
@@ -47,6 +47,7 @@ export default function Visibility() {
         setErrorMessage(undefined);
         setErrorDialogOpen(false);
     }
+
 
     if (query.error) {
         throw query.error
@@ -132,13 +133,7 @@ export default function Visibility() {
                         </div>
 
                         <footer className="shrink-0 border-t border-border px-3 py-3 sm:px-4">
-                            <Button
-                                variant="secondary"
-                                size="full"
-                                onClick={resetToSavedValues}
-                            >
-                                Reset to default
-                            </Button>
+                            <ResetVisibilityModal />
                         </footer>
                     </aside>
 

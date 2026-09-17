@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { Eye, EyeOff, Mail, User } from "lucide-react";
-import { AuthForm, authInputClassName } from "@/features/auth";
+import { AuthForm } from "@/features/auth";
 import { InputField } from "@/components/design/InputField";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/toast";
@@ -59,30 +59,33 @@ export default function SignUpForm() {
                 <div className="flex flex-col gap-2.5">
                     <InputField
                         type="text"
+                        labelClassName="text-sm"
+                        label="Name"
                         placeholder="Name"
                         autoComplete="name"
                         error={errors.name?.message}
-                        containerClassName={authInputClassName}
                         startIcon={<User className="size-3" />}
                         {...register("name")}
                     />
 
                     <InputField
                         type="email"
-                        placeholder="Email ID"
+                        label="Email"
+                        labelClassName="text-sm"
+                        placeholder="Email"
                         autoComplete="email"
                         error={errors.email?.message}
-                        containerClassName={authInputClassName}
                         startIcon={<Mail className="size-3" />}
                         {...register("email")}
                     />
 
                     <InputField
+                        label="Password"
+                        labelClassName="text-sm"
                         type={showPassword ? "text" : "password"}
                         placeholder="Password"
                         autoComplete="new-password"
                         error={errors.password?.message}
-                        containerClassName={authInputClassName}
                         startIcon={<User className="size-3" />}
                         endIcon={
                             <button

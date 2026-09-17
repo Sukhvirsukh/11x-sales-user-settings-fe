@@ -11,6 +11,7 @@ import { roleHistoryQueryKey } from "./roleHistoryQuery";
 import { roleFormSchema } from "./roleHistorySchema";
 import type { RoleFormValues, RoleRow } from "./roleHistoryType";
 import { toast } from "@/components/ui/toast";
+import Permissions from "../permissions";
 
 interface AddRoleFormProps {
     open: boolean;
@@ -121,16 +122,9 @@ export default function AddRoleForm({ open, onOpenChange, role }: AddRoleFormPro
                             { value: "MEMBER", label: "Member" },
                         ]}
                     />
-                    {/* <DatePicker
-                        label="Joining date"
-                        placeholder="Pick a date"
-                        labelClassName="text-sm font-medium"
-                        value={watch("startDate")}
-                        error={errors.startDate?.message}
-                        onChange={(startDate) => {
-                            if (startDate) setValue("startDate", startDate, { shouldValidate: true });
-                        }}
-                    /> */}
+                    <div>
+                        <Permissions />
+                    </div>
                 </FormGroup>
             </form>
         </Modal>

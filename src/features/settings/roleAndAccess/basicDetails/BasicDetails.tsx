@@ -32,7 +32,7 @@ export function BasicDetails() {
                 >
                     <DetailGroup>
                         <DetailItem label="Name" value={name} />
-                        <DetailItem label="Mail id" value={user?.email} />
+                        <DetailItem label="Email" value={user?.email} />
                     </DetailGroup>
                     <DetailGroup>
                         <DetailItem label="Phone" value={user?.phone || '-'} />

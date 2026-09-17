@@ -14,7 +14,7 @@ import type { UserProfile } from "./contactType"
 
 const columns: Column[] = [
     { key: "name", header: "Name", width: "280px" },
-    { key: "email", header: "Mail Id" },
+    { key: "email", header: "Email" },
     { key: "phoneNo", header: "Phone No" },
     { key: "noOfConversions", header: "No of Conversions", align: "right" },
     { key: "startDate", header: "Start date", align: "right" },

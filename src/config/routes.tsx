@@ -7,6 +7,7 @@ import { getAuthToken } from "@/features/auth/authStorage";
 const SignInPage = lazy(() => import("@/pages/SignInPage"));
 const SignUpPage = lazy(() => import("@/pages/SignUpPage"));
 const ForgotPassword = lazy(() => import("@/pages/ForgotPassword"));
+const ResetPasswordPage = lazy(() => import("@/pages/ResetPasswordPage"));
 const OverviewPage = lazy(() => import("@/pages/OverviewPage"));
 const NotFoundPage = lazy(() => import("@/pages/NotFoundPage"));
 const ContactsPage = lazy(() => import("@/pages/ContactPage"));
@@ -57,9 +58,10 @@ export const router = createBrowserRouter([
         children: [
           { path: "/sign-in", element: <SignInPage /> },
           { path: "/sign-up", element: <SignUpPage /> },
+          { path: "/forgot-password", element: <ForgotPassword /> },
+          { path: "/reset-password", element: <ResetPasswordPage /> },
         ],
       },
-      { path: "/forgot-password", element: <ForgotPassword /> },
       {
         element: <AppLayout />,
         children: [

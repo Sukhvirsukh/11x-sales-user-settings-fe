@@ -9,18 +9,29 @@ const socialProviders = [
     { name: "Shopify", icon: shopifyIcon },
 ] as const;
 
-export const authInputClassName =
-    "h-auto border-transparent bg-black/[0.03] py-2 focus-within:border-transparent focus-within:bg-black/[0.03] focus-within:ring-0";
 
 export default function AuthForm({
     title,
     subtitle,
     children,
-    withSocials = true,
+    withSocials = false,
 }: AuthFormProps) {
     return (
-        <main className="flex min-h-screen items-center justify-center bg-transparent px-4 py-10">
-            <div className="w-full max-w-100 rounded-[20px] border border-primary/10 bg-white p-7.5 shadow-auth relative z-10">
+        <main className="flex min-h-screen items-center justify-center bg-table-header px-4 py-10">
+            <div className="isolate relative z-10 w-full max-w-[500px]">
+                <div
+                    aria-hidden="true"
+                    className="absolute inset-x-[25px] -bottom-3 z-[-1] h-12 rounded-full bg-primary/20 blur-xl"
+                />
+                <div className="relative z-0 rounded-[20px] border border-black/5 bg-white p-7.5 shadow-[0_0_4px_rgb(0_0_0/0.12)]">
+                <div className="flex items-center justify-center gap-2">
+                    <img
+                        src="/logo.svg"
+                        alt=""
+                        className="size-7 object-contain"
+                    />
+                    <p className="font-medium">Vitlab</p>
+                </div>
                 <div className="text-center">
                     <h1 className="text-[28px] leading-9 font-semibold tracking-tight text-foreground md:text-[32px] md:leading-10">
                         {title}
@@ -60,6 +71,7 @@ export default function AuthForm({
                         ))}
                     </div>
                 </div>}
+                </div>
             </div>
         </main>
     );

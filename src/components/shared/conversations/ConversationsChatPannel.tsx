@@ -87,7 +87,7 @@ function MessageHistory({ messages, onCorrect, onSend, alwaysShowChatInput }: {
 function CustomerDetails({ conversation }: { conversation: Conversation }) {
     const details = [
         { label: "Name", value: conversation.name },
-        { label: "Mail Id", value: conversation.email },
+        { label: "Email", value: conversation.email },
         { label: "Phone", value: conversation.phone },
         { label: "Location", value: conversation.location },
     ]

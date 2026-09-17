@@ -59,3 +59,12 @@ export async function saveVisibility(values: VisibilityFields): Promise<Visibili
 
     return toVisibilityFields(response.data);
 }
+
+
+export async function resetToDefault() {
+    const response = await apiFetch<ChatDesignApiResponse>("/chat-design/reset", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+    });
+    return toVisibilityFields(response.data);
+}

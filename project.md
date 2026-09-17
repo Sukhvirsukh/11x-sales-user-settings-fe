@@ -42,6 +42,7 @@ Defined in `src/config/routes.tsx` (`createBrowserRouter`, all pages lazy-loaded
 | `/sign-in` | SignInPage | Auth page (outside layout) |
 | `/sign-up` | SignUpPage | Registration page (outside layout) |
 | `/forgot-password` | ForgotPassword | Password recovery page (outside layout) |
+| `/reset-password?token=…` | ResetPasswordPage | Token-based password reset page (outside layout) |
 | `/chat-settings` | ChatSettingsPage | Chat configuration (accordion) |
 | `/chat-settings/visibility` | VisibilityPage | Chat visibility settings |
 | `/ai-training` | AiTrainingPage | AI training hub (nested tabs; index redirects to `knowledge-base`) |
@@ -215,6 +216,7 @@ src/
 │   │   ├── ForgotPasswordForm.tsx
 │   │   ├── forgotPasswordQueries.ts # TanStack Query mutations
 │   │   └── index.tsx
+│   ├── resetPassword/               # Token-based password reset form, schema, and API
 │   ├── overview/
 │   │   ├── Overview.tsx             # Dashboard grid (metrics + charts + widgets)
 │   │   ├── overviewApi.ts           # (empty placeholder)

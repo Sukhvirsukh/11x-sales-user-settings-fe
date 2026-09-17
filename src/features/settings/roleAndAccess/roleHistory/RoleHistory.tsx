@@ -13,7 +13,7 @@ import type { RoleRow } from "./roleHistoryType"
 
 const columns: Column[] = [
     { key: "name", header: "Name", width: "280px" },
-    { key: "email", header: "Mail Id" },
+    { key: "email", header: "Email" },
     { key: "role", header: "Role" },
     {
         key: "status",
