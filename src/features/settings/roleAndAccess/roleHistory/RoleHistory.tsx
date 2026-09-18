@@ -9,12 +9,16 @@ import { useRoleHistoryQuery } from "./roleHistoryQuery"
 import DeleteRole from "./DeleteRole"
 import TableSkeleton from "@/components/shared/skeletons/TableSkeletons"
 import SearchField from "@/components/shared/SearchField"
+import { useCan } from "@/features/auth"
 import type { RoleRow } from "./roleHistoryType"
 
 const columns: Column[] = [
     { key: "name", header: "Name", width: "280px" },
     { key: "email", header: "Email" },
-    { key: "role", header: "Role" },
+    {
+        key: "role",
+        header: "Role"
+    },
     {
         key: "status",
         header: "Status",
@@ -31,7 +35,16 @@ const columns: Column[] = [
     { key: "createdAt", header: "Created at", align: "right" },
 ]
 
+function rowId(row: RoleRow) {
+    return String(row.id)
+}
+
 export default function RoleHistory() {
+    // Each affordance asks for the capability it needs, so the table stays unchanged
+    // when the policy moves a permission to another role.
+    const canCreateRole = useCan("settings.roles.create")
+    const canEditRole = useCan("settings.roles.edit")
+    const canDeleteRole = useCan("settings.roles.delete")
     const { data = [], isLoading, error } = useRoleHistoryQuery()
     const [editData, setEditData] = useState<RoleRow | null>(null)
     const [isOpen, setIsOpen] = useState(false)
@@ -41,6 +54,10 @@ export default function RoleHistory() {
     } | null>(null)
     const [isDeleteOpen, setIsDeleteOpen] = useState(false)
     const [search, setSearch] = useState("")
+
+    const selection = canDeleteRole
+        ? { selectable: true as const, getRowId: rowId }
+        : {}
 
     if (error) throw error
 
@@ -87,14 +104,13 @@ export default function RoleHistory() {
                 columns={columns}
                 data={filteredData}
                 mobileColumnSplit={["50%", "50%"]}
-                selectable
-                getRowId={(row) => String(row.id)}
-                bulkActions={(rows, deselectRows) => (
+                {...selection}
+                bulkActions={canDeleteRole ? (rows, deselectRows) => (
                     <Button variant="destructive" size="xs" onClick={() => requestDelete(rows, deselectRows)}>
                         <Trash className="size-3.5" />
                         Delete selected
                     </Button>
-                )}
+                ) : undefined}
                 emptyMessage={search ? "No matching roles found" : "No role history found"}
                 emptyDescription={search ? "Try a different search term." : "Roles assigned to your team will appear here."}
                 emptyState={isLoading ? (
@@ -103,22 +119,28 @@ export default function RoleHistory() {
                 headerActions={
                     <div className="flex items-center gap-2.5">
                         <SearchField onSearchChange={setSearch} />
-                        <Button variant="primary" size="sm" onClick={openCreateRole}>
-                            Add role
-                            <Plus className="ml-0.5 size-2 md:ml-2 md:size-4" />
-                        </Button>
+                        {canCreateRole && (
+                            <Button variant="primary" size="sm" onClick={openCreateRole}>
+                                Add role
+                                <Plus className="ml-0.5 size-2 md:ml-2 md:size-4" />
+                            </Button>
+                        )}
                     </div>
                 }
-                rowActions={(row) => (
+                rowActions={canEditRole || canDeleteRole ? (row) => (
                     <div className="flex items-center gap-2">
-                        <Button variant="bare" size="sm" onClick={() => openEditRole(row)}>
-                            <SquarePen className="size-4 text-gray" />
-                        </Button>
-                        <Button variant="bare" size="sm" onClick={() => requestDelete([row])}>
-                            <Trash className="size-4 text-gray" />
-                        </Button>
+                        {canEditRole && (
+                            <Button variant="bare" size="sm" onClick={() => openEditRole(row)} aria-label="Edit role">
+                                <SquarePen className="size-4 text-gray" />
+                            </Button>
+                        )}
+                        {canDeleteRole && (
+                            <Button variant="bare" size="sm" onClick={() => requestDelete([row])} aria-label="Delete role">
+                                <Trash className="size-4 text-gray" />
+                            </Button>
+                        )}
                     </div>
-                )}
+                ) : undefined}
                 className="w-full md:[&_th:nth-child(2)]:pl-0 md:[&_td:first-child:has([role=checkbox])+td]:pl-0"
             />
             <AddRoleForm

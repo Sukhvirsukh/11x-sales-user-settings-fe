@@ -1,5 +1,5 @@
 import { NavLink } from "react-router"
-import { NAV_ITEMS } from "./sideNav"
+import { useNavItems } from "./sideNav"
 import SidebarUserCard from "./SidebarUserCard"
 import { isSidebarHidden } from "./isSidebarHidden"
 import { useAuthStore } from "@/features/auth"
@@ -8,6 +8,7 @@ export default function DesktopSidebar() {
   const isCollapsed = false
   const name = useAuthStore((state) => state.name)
   const email = useAuthStore((state) => state.email)
+  const navItems = useNavItems()
 
   if (isSidebarHidden(location.pathname)) {
     return null;
@@ -37,7 +38,7 @@ export default function DesktopSidebar() {
 
         {/* Navigation Items */}
         <nav className="">
-          {NAV_ITEMS.map((item) => {
+          {navItems.map((item) => {
             const Icon = item.icon
             return (
               <NavLink

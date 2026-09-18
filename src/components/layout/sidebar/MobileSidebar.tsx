@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { X } from "lucide-react";
 import { useLocation, useNavigate } from "react-router";
-import { NAV_ITEMS } from "./sideNav";
+import { useNavItems } from "./sideNav";
 import SidebarUserCard from "./SidebarUserCard";
 import { useMobileSidebarStore } from "@/stores/mobileSidebarStore";
 import { useAuthStore } from "@/features/auth";
@@ -15,6 +15,7 @@ export default function MobileSidebar() {
     const location = useLocation();
     const name = useAuthStore((state) => state.name);
     const email = useAuthStore((state) => state.email);
+    const navItems = useNavItems();
 
     // Close when switching to desktop widths
     useEffect(() => {
@@ -75,7 +76,7 @@ export default function MobileSidebar() {
 
                 {/* Navigation */}
                 <nav className="min-h-0 flex-1 space-y-1 overflow-y-auto py-2.5 sm:space-y-1.5 sm:py-4">
-                    {NAV_ITEMS.map((item) => {
+                    {navItems.map((item) => {
                         const Icon = item.icon;
                         const isActive = location.pathname === item.link;
                         return (

@@ -11,7 +11,7 @@ import { roleHistoryQueryKey } from "./roleHistoryQuery";
 import { roleFormSchema } from "./roleHistorySchema";
 import type { RoleFormValues, RoleRow } from "./roleHistoryType";
 import { toast } from "@/components/ui/toast";
-import Permissions from "../permissions";
+import { ROLE_OPTIONS } from "./roleOptions";
 
 interface AddRoleFormProps {
     open: boolean;
@@ -27,7 +27,7 @@ function initialValues(role?: RoleRow | null): RoleFormValues {
     return {
         name: stringValue(role?.name),
         email: stringValue(role?.email),
-        role: stringValue(role?.role).toLowerCase(),
+        role: stringValue(role?.role).toUpperCase(),
         // startDate: role?.createdAtValue instanceof Date ? role.createdAtValue : new Date(),
     };
 }
@@ -114,17 +114,14 @@ export default function AddRoleForm({ open, onOpenChange, role }: AddRoleFormPro
                         placeholder="Select role"
                         value={watch("role")}
                         error={errors.role?.message}
-                        onValueChange={(role) => setValue("role", role ?? "", { shouldValidate: true })}
-                        options={[
-                            { value: "ADMIN", label: "Admin" },
-                            { value: "EDITOR", label: "Editor" },
-                            { value: "AGENT", label: "Agent" },
-                            { value: "MEMBER", label: "Member" },
-                        ]}
+                        onValueChange={(role) =>
+                            setValue("role", role ?? "", {
+                                shouldDirty: true,
+                                shouldValidate: true,
+                            })
+                        }
+                        options={ROLE_OPTIONS}
                     />
-                    <div>
-                        <Permissions />
-                    </div>
                 </FormGroup>
             </form>
         </Modal>

@@ -8,6 +8,18 @@ export function cn(...inputs: ClassValue[]) {
 export const delay = (ms: number): Promise<void> =>
   new Promise((resolve) => setTimeout(resolve, ms));
 
+/**
+ * Display-friendly casing for raw API values.
+ * "ADMIN" -> "Admin", "SUPER_ADMIN" -> "Super Admin", "" -> "".
+ */
+export function capitalize(value: string): string {
+  return value
+    .split(/[\s_-]+/)
+    .filter(Boolean)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(" ")
+}
+
 export function getInitials(name: string): string {
   return name
     .split(" ")

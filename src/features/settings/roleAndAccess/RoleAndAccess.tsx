@@ -1,24 +1,17 @@
-import { useAuthStore } from "@/features/auth";
+import { useCan } from "@/features/auth";
 import { BasicDetails } from "./basicDetails";
 import RoleHistory from "./roleHistory";
 
 
 export function RoleAndAccess() {
-
-    const user = useAuthStore(data => data.user);
+    const canViewRoles = useCan("settings.roles.view");
 
     return (
         <>
             {/* Basic details */}
             <BasicDetails />
 
-            {user?.role === 'ADMIN' &&
-                <>
-                    {/* <Permissions /> */}
-
-                    <RoleHistory />
-                </>
-            }
+            {canViewRoles && <RoleHistory />}
         </>
     )
 }
