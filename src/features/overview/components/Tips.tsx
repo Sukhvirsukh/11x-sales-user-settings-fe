@@ -1,4 +1,5 @@
-import AppCard from "@/components/design/AppCard";
+import AppSection from "@/components/design/AppSectoin";
+import Heading from "@/components/design/Heading";
 import { Button } from "@/components/ui/button";
 import { ChevronRight } from "lucide-react";
 
@@ -11,15 +12,12 @@ const tips = [
 
 export default function Tips() {
     return (
-        <AppCard
-            header="Tips"
-            headingSize="lg"
-            shadow
-            actions={
-                <Button variant="action">Show all</Button>
-            }
-        >
-            <div className="flex flex-col">
+        <AppSection>
+            <div className="w-full flex items-center justify-between">
+                <Heading>Tips</Heading>
+                <Button size="sm" variant="underline-bare">Show all</Button>
+            </div>
+            <div className="w-full flex flex-col">
                 {tips.map((tip) => (
                     <button
                         key={tip}
@@ -31,6 +29,6 @@ export default function Tips() {
                     </button>
                 ))}
             </div>
-        </AppCard>
+        </AppSection>
     )
 }

@@ -1,3 +1,4 @@
+import PreviewSection from "@/components/design/PreviewSection";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { Overview } from "@/features/overview";
 
@@ -8,9 +9,9 @@ export default function OverviewPage() {
                 title="Overview"
                 subtitle="Track key store metrics and measure the real-world impact of your AI agent."
             >
-                <div className="pb-5">
+                <PreviewSection>
                     <Overview />
-                </div>
+                </PreviewSection>
             </PageHeader>
         </section>
     )

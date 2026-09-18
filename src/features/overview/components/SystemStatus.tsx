@@ -1,16 +1,14 @@
 import AppCard from "@/components/design/AppCard";
 import AppSection from "@/components/design/AppSectoin";
+import Heading from "@/components/design/Heading";
 import { Badge } from "@/components/ui/badge";
 import { Download, MessagesSquare, Sparkles } from "lucide-react";
 
 export default function SystemStatus() {
     return (
-        <AppCard
-            header="System status"
-            headingSize="lg"
-            shadow={true}
-        >
-            <AppSection className="h-auto">
+        <AppSection className="h-auto">
+            <Heading>System Status</Heading>
+            <AppCard shadow={false} padding="sm">
                 <div className="w-full">
                     <div className="border-b border-border flex items-center justify-between w-full py-1.5">
                         <p className="block text-sm font-semibold">Agent Name</p>
@@ -40,7 +38,7 @@ export default function SystemStatus() {
                         </div>
                     </div>
                 </div>
-            </AppSection>
-        </AppCard>
+            </AppCard>
+        </AppSection>
     )
 }

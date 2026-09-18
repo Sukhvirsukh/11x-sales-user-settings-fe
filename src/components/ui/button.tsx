@@ -29,6 +29,10 @@ const buttonVariants = cva(
         bare:
           "border-transparent bg-transparent hover:bg-zinc-50",
 
+        // Underlined text action with the same compact spacing as bare buttons
+        "underline-bare":
+          "border-transparent bg-transparent text-border-gray underline underline-offset-2 hover:bg-transparent hover:text-foreground",
+
         // Simple Link
         link:
           "text-blue-600 underline-offset-4 hover:underline dark:text-blue-400",
@@ -54,6 +58,10 @@ const buttonVariants = cva(
     compoundVariants: [
       {
         variant: "bare",
+        className: "p-0 md:p-0",
+      },
+      {
+        variant: "underline-bare",
         className: "p-0 md:p-0",
       },
     ],

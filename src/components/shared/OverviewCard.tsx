@@ -1,4 +1,4 @@
-import AppCard from "../design/AppCard";
+import AppSection from "../design/AppSectoin";
 import Heading from "../design/Heading";
 
 interface OverviewCardProps {
@@ -9,11 +9,9 @@ interface OverviewCardProps {
 
 export default function OverviewCard({ title, numbers, icon }: OverviewCardProps) {
     return (
-        <AppCard
-            shadow={true}
-        >
+        <AppSection>
             <div className="flex items-start gap-4">
-                <div className="w-9 h-9 bg-section-bg rounded-[10px] flex items-center justify-center">
+                <div className="w-9 h-9 bg-white rounded-[10px] flex items-center justify-center">
                     {icon}
                 </div>
                 <div>
@@ -25,6 +23,6 @@ export default function OverviewCard({ title, numbers, icon }: OverviewCardProps
                     </Heading>
                 </div>
             </div>
-        </AppCard>
+        </AppSection>
     )
 }

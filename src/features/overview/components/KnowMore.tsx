@@ -1,8 +1,9 @@
 import { useRef } from "react";
 import { ChevronLeft, ChevronRight, Play } from "lucide-react";
 
-import AppCard from "@/components/design/AppCard";
 import { Button } from "@/components/ui/button";
+import AppSection from "@/components/design/AppSectoin";
+import Heading from "@/components/design/Heading";
 
 const videos = [
     { title: "The best thing you can do for your store" },
@@ -24,22 +25,19 @@ export default function KnowMore() {
     };
 
     return (
-        <AppCard
-            header="Know more"
-            headingSize="lg"
-            shadow
-            actions={
-                <Button variant="action">Show all</Button>
-            }
-        >
-            <div className="relative">
+        <AppSection>
+            <div className="w-full flex items-center justify-between">
+                <Heading>Know more</Heading>
+                <Button size="sm" variant="underline-bare">Show all</Button>
+            </div>
+            <div className="w-full relative">
                 <div
                     ref={carouselRef}
                     className="flex snap-x snap-mandatory gap-2 overflow-x-auto scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
                 >
                     {videos.map((video) => (
                         <article key={video.title} className="w-[65%] shrink-0 snap-start">
-                            <div className="flex aspect-[1.75] items-center justify-center rounded-[6px] bg-muted">
+                            <div className="flex aspect-[1.75] items-center justify-center rounded-[6px] bg-gray">
                                 <button
                                     type="button"
                                     aria-label={`Watch ${video.title}`}
@@ -59,7 +57,7 @@ export default function KnowMore() {
                     size="icon"
                     aria-label="Previous videos"
                     onClick={() => scroll("previous")}
-                    className="absolute left-0 top-[34px] size-8 -translate-x-1/2 rounded-full bg-background p-0 shadow-panel hover:bg-light"
+                    className="absolute left-4 top-[34px] size-8 -translate-x-1/2 rounded-full bg-background p-0 shadow-panel hover:bg-light"
                 >
                     <ChevronLeft className="size-4 text-ghost" />
                 </Button>
@@ -69,11 +67,11 @@ export default function KnowMore() {
                     size="icon"
                     aria-label="Next videos"
                     onClick={() => scroll("next")}
-                    className="absolute right-0 top-[34px] size-8 translate-x-1/2 rounded-full bg-background p-0 shadow-panel hover:bg-light"
+                    className="absolute right-4 top-[34px] size-8 translate-x-1/2 rounded-full bg-background p-0 shadow-panel hover:bg-light"
                 >
                     <ChevronRight className="size-4 text-ghost" />
                 </Button>
             </div>
-        </AppCard>
+        </AppSection>
     )
 }
