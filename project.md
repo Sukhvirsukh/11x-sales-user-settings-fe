@@ -59,6 +59,14 @@ Defined in `src/config/routes.tsx` (`createBrowserRouter`, all pages lazy-loaded
 
 `AppLayout` wraps all protected routes; the `/sign-in`, `/sign-up`, and `/forgot-password` routes sit outside it. The router root has `errorElement: <ErrorPage />`.
 
+Inside `AppLayout` every protected page renders through `RouteGuard`, which is the single enforcement point for access:
+
+- A route declares the capability it needs in `handle: { permission: "…" } ` (typed with `satisfies RouteHandle`), e.g. `{ path: "plan", element: <Plan />, handle: { permission: "settings.plan.view" } }`.
+- `RouteGuard` reads `useMatches()`, takes the **deepest** match that declares a permission (so a parent's declaration covers its children), and checks it against the signed-in role. Routes without a `handle` (the `*` catch-all) stay open to every signed-in user.
+- A blocked visit redirects to the role's own home route. If that home is itself blocked (unknown role, misconfigured policy) `ForbiddenPage` (403) renders instead, so a blocked route can never bounce or loop.
+
+Route entries therefore name **capabilities, never roles** — the role → permission policy lives in one file (`src/features/auth/permissions.ts`).
+
 ## Folder Structure
 
 ```text
@@ -177,10 +185,13 @@ src/
 │   ├── auth/
 │   │   ├── AuthForm.tsx
 │   │   ├── Background.tsx           # Decorative SVG auth background
+│   │   ├── RouteGuard.tsx           # Route-level access enforcement (reads handle.permission)
 │   │   ├── authApi.ts               # Auth requests via shared apiFetch
 │   │   ├── authStorage.ts           # JWT storage helpers (vitalb.jwt key)
 │   │   ├── authStore.ts             # Persisted auth state (Zustand)
 │   │   ├── authTypes.ts             # AuthResponse, AuthUser, AuthApiUser, store, form types
+│   │   ├── permissions.ts           # Role → permission policy (single source of truth)
+│   │   ├── usePermissions.ts        # useRole / usePermissions / useCan hooks
 │   │   └── index.ts
 │   ├── chatSettings/
 │   │   ├── Channels.tsx             # Channel cards + visibility link
@@ -254,7 +265,7 @@ src/
 │   │   │   ├── planTypes.ts
 │   │   │   └── index.ts
 │   │   ├── roleAndAccess/
-│   │   │   ├── RoleAndAccess.tsx    # BasicDetails + Admin-only Permissions/RoleHistory
+│   │   │   ├── RoleAndAccess.tsx    # BasicDetails + RoleHistory (gated by settings.roles.view)
 │   │   │   ├── basicDetails/
 │   │   │   │   ├── BasicDetails.tsx
 │   │   │   │   ├── BasicDetailsForm.tsx
@@ -262,10 +273,8 @@ src/
 │   │   │   │   ├── basicDetailsSchema.ts
 │   │   │   │   ├── basicDetailsTypes.ts
 │   │   │   │   └── index.ts
-│   │   │   ├── permissions/
-│   │   │   │   ├── Permissions.tsx  # Permission toggles + dark mode toggle
-│   │   │   │   └── index.ts
 │   │   │   ├── roleHistory/
+│   │   │   │   ├── Permissions.tsx  # Permission toggles
 │   │   │   │   ├── RoleHistory.tsx  # Roles table (CustomTable) + search + Add role
 │   │   │   │   ├── AddRoleForm.tsx
 │   │   │   │   ├── DeleteRole.tsx
@@ -323,6 +332,7 @@ src/
 │   ├── ForgotPassword.tsx
 │   ├── AskMePage.tsx
 │   ├── ErrorPage.tsx                # Reuses AppCard + Button for reload/home
+│   ├── ForbiddenPage.tsx            # 403 shown by RouteGuard when no redirect would help
 │   ├── NotFoundPage.tsx             # Catch-all 404 (big 404 + nav shortcuts)
 │   ├── SettingsPage.tsx             # Tabs + Outlet
 │   ├── chatSettings/
@@ -385,20 +395,24 @@ Use these tokens via Tailwind classes (e.g. `bg-background`, `text-primary`, `bo
 
 Defined in `src/components/layout/sidebar/sideNav.ts`:
 
-1. Overview (`/`) — OverviewIcon
-2. Contacts (`/contacts`) — ContactsIcon
-3. Conversations (`/conversations`) — ConversationsIcon
-4. Reports (`/reports`) — ReportsIcon
-5. Chat configure (`/chat-settings`) — ChatConfigurationIcon
-6. AI training (`/ai-training`) — AiTrainingIcon
-7. Settings (`/settings`) — SettingsIcon
-8. Ask me (`/ask-me`) — AskMeIcon
+1. Overview (`/`) — OverviewIcon — `overview.view`
+2. Contacts (`/contacts`) — ContactsIcon — `contacts.view`
+3. Conversations (`/conversations`) — ConversationsIcon — `conversations.view`
+4. Reports (`/reports`) — ReportsIcon — `reports.view`
+5. Chat configure (`/chat-settings`) — ChatConfigurationIcon — `chatSettings.view`
+6. AI training (`/ai-training`) — AiTrainingIcon — `aiTraining.view`
+7. Settings (`/settings`) — SettingsIcon — `settings.profile.view`
+8. Ask me (`/ask-me`) — AskMeIcon — `askMe.view`
+
+Each item carries the `permission` that mirrors its route's `handle.permission`; `useNavItems()` returns only what the signed-in role may open, so the sidebar and the 404 page can never link to a page the guard would reject.
 
 ## Architecture Notes
 
 - `App.tsx` wraps `RouterProvider` in a `Suspense` fallback because routes are lazy-loaded. `main.tsx` nests `RootErrorBoundary > QueryClientProvider > Toaster > App`.
 - `ErrorPage` reuses `AppCard` and `Button` for reload/home recovery. The router's root `errorElement` handles route errors, and `RootErrorBoundary` catches rendering failures. Unmatched paths fall through to the `*` route → `NotFoundPage`, which renders inside `AppLayout` and lists the `NAV_ITEMS` as shortcuts.
-- The persisted auth store (`src/features/auth/authStore.ts`) exposes `user`, `name`, `email`, and `role`. Sign-in/sign-up populate these via `setUser`; `authApi.ts` reads `user.role`. `RoleAndAccess` gates admin-only sections behind `user?.role === 'ADMIN'`.
+- The persisted auth store (`src/features/auth/authStore.ts`) exposes `user`, `name`, `email`, and `role`. Sign-in/sign-up populate these via `setUser`; `authApi.ts` reads `user.role`.
+- **Access control is centralised in `src/features/auth/permissions.ts`** — roles, capabilities, and the role → capability map. Components never compare role strings; they ask a capability question via `useCan("…")` (or `usePermissions()` when filtering a list), and routes declare the capability they need in `handle.permission` for `RouteGuard` to enforce. Changing what a role can do is a one-line edit in that file, and the sidebar, settings tabs, 404 shortcuts, and route guard all follow.
+- Roles are Admin, Editor, and Member (`AuthUser.role`; the API may return any casing, `normalizeRole` handles it and unknown roles fail closed with zero capabilities). Admin is the account owner, cannot be assigned from the role form, and holds every capability — including the whole role history. Editor reaches every top-level page, but in Settings sees only their own basic details (no role history, plan, payments, or store). Member is limited to Conversations, Reports, and their own basic details; `getHomeRoute(role)` sends them to `/conversations` when a route is blocked.
 - Auth token is stored as `vitalb.jwt` in localStorage via helpers in `authStorage.ts`.
 - `AppLayout` guards protected routes with `getAuthToken()` from `authStorage` and redirects unauthenticated users to `/sign-in` (preserving the origin in `state.from`).
 - All API requests use `VITE_AUTH_API_BASE_URL` (root `.env`) through the shared `apiFetch` wrapper (`src/lib/api.ts`). It prefixes `/api` to endpoints, attaches the Bearer token by default (optionally `auth: false`), and surfaces errors via toast. Restart the Vite dev server after changing env vars.
@@ -425,7 +439,8 @@ Hosted on Netlify. `netlify.toml` pins the build (`command = "pnpm build"`, `pub
 ## Key Conventions
 
 - Use `cn()` from `src/lib/utils.ts` for conditional Tailwind classes.
-- Shared utils in `src/lib/utils.ts`: `delay()`, `getInitials()`, `debounce()`, `dateFormater(date, format?)` ("numeric" → `d/m/yyyy`, "long" → `d MMM yyyy`).
+- Shared utils in `src/lib/utils.ts`: `delay()`, `getInitials()`, `debounce()`, `capitalize()` (display-casing API values: `"SUPER_ADMIN"` → `"Super Admin"`), `dateFormater(date, format?)` ("numeric" → `d/m/yyyy`, "long" → `d MMM yyyy`).
+- Never compare `role` strings in a component: gate UI with `useCan(permission)` and protect pages with `handle.permission`. Growing a permission list means adding a `Permission` literal and assigning it in `ROLE_PERMISSIONS`.
 - Prefer semantic design tokens (`bg-background`, `text-primary`) over hardcoded colors.
 - Use PascalCase for components, camelCase with `use` prefix for hooks.
 - Use kebab-case for folder names (note `features/ai-training/` follows this).

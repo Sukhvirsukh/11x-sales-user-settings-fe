@@ -1,4 +1,5 @@
 import { apiFetch } from "@/lib/api";
+import { capitalize } from "@/lib/utils";
 import { format as formatDate } from "date-fns";
 import type { RoleFormValues, RolePayload, RoleResponse, RoleRow } from "./roleHistoryType";
 
@@ -9,7 +10,7 @@ function toRoleRow(role: RoleResponse): RoleRow {
         id: role.id,
         name: role.name,
         email: role.email,
-        role: role.role,
+        role: capitalize(role.role),
         status: role.status,
         createdAt: createdAtValue ? formatDate(createdAtValue, "MMM d, yyyy") : "-",
         createdAtValue,

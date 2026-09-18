@@ -2,14 +2,17 @@ import { ArrowLeft, Compass, Home } from "lucide-react";
 import { NavLink, useLocation, useNavigate } from "react-router";
 import Heading from "@/components/design/Heading";
 import { Button } from "@/components/ui/button";
-import { NAV_ITEMS } from "@/components/layout/sidebar/sideNav";
+import { useNavItems } from "@/components/layout/sidebar/sideNav";
 import PreviewSection from "@/components/design/PreviewSection";
 import AppSection from "@/components/design/AppSectoin";
+import { getHomeRoute, useRole } from "@/features/auth";
 
 export default function NotFoundPage() {
     const { pathname } = useLocation();
     const navigate = useNavigate();
-    const destinations = NAV_ITEMS.filter((item) => item.link !== "/");
+    const role = useRole();
+    const destinations = useNavItems().filter((item) => item.link !== "/");
+    const homePath = getHomeRoute(role);
 
     return (
 
@@ -39,7 +42,7 @@ export default function NotFoundPage() {
                         </p>
 
                         <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
-                            <Button className="gap-2" onClick={() => navigate("/")}>
+                            <Button className="gap-2" onClick={() => navigate(homePath)}>
                                 <Home aria-hidden className="size-4" />
                                 Back to dashboard
                             </Button>

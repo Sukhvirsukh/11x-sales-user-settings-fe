@@ -9,6 +9,7 @@ import { useStoreQuery } from "./storeQuery";
 import { useMemo, useState } from "react";
 import TableSkeleton from "@/components/shared/skeletons/TableSkeletons";
 import SearchField from "@/components/shared/SearchField";
+import { useCan } from "@/features/auth";
 
 const columns: Column[] = [
     { key: "name", header: "Store Name", width: "280px" },
@@ -32,6 +33,7 @@ const columns: Column[] = [
 
 export function Store() {
     const { data = [], isLoading, error } = useStoreQuery();
+    const canManageStore = useCan("settings.store.manage");
     const [search, setSearch] = useState("");
     const [editStore, setEditStore] = useState<Record<string, unknown> | null>(null);
     const [isOpen, setIsOpen] = useState(false);
@@ -85,14 +87,14 @@ export function Store() {
                 title="Store"
                 columns={columns}
                 data={filteredData}
-                selectable
+                selectable={canManageStore}
                 getRowId={(row) => String(row.id)}
-                bulkActions={(rows, deselectRows) => (
+                bulkActions={canManageStore ? ((rows, deselectRows) => (
                     <Button variant="destructive" size="xs" onClick={() => requestDelete(rows, deselectRows)}>
                         <Trash className="size-3.5" />
                         Delete selected
                     </Button>
-                )}
+                )) : undefined}
                 emptyMessage={search ? "No matching stores found" : "No stores found"}
                 emptyDescription={search ? "Try a different search term." : "Stores connected to your account will appear here."}
                 emptyState={
@@ -103,22 +105,26 @@ export function Store() {
                 headerActions={
                     <div className="flex items-center gap-2.5">
                         <SearchField onSearchChange={setSearch} />
-                        <Button variant="primary" size="sm" onClick={openCreateStore}>
-                            Add store
-                            <Plus className="ml-0.5 size-2 md:ml-2 md:size-4" />
-                        </Button>
+                        {canManageStore && (
+                            <Button variant="primary" size="sm" onClick={openCreateStore}>
+                                Add store
+                                <Plus className="ml-0.5 size-2 md:ml-2 md:size-4" />
+                            </Button>
+                        )}
                     </div>
                 }
-                rowActions={(row) => (
+                rowActions={canManageStore ? ((row) => (
                     <div className="flex items-center gap-2">
                         <Button variant="bare" size="sm" onClick={() => openEditStore(row)} aria-label="Edit store">
                             <SquarePen className="size-4 text-gray" />
                         </Button>
-                        <Button variant="bare" size="sm" onClick={() => requestDelete([row])} aria-label="Delete store">
-                            <Trash className="size-4 text-gray" />
-                        </Button>
+                        {canManageStore && (
+                            <Button variant="bare" size="sm" onClick={() => requestDelete([row])} aria-label="Delete store">
+                                <Trash className="size-4 text-gray" />
+                            </Button>
+                        )}
                     </div>
-                )}
+                )) : undefined}
                 className="w-full"
             />
             <AddStore

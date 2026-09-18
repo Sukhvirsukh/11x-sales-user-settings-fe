@@ -12,7 +12,11 @@ export default function MobileTopbar() {
     return (
         <div className="flex w-full items-center justify-between gap-3 md:hidden">
             <div className="flex min-w-0 items-center gap-2.5">
-                <div className="h-[21px] w-[25px] shrink-0 rounded bg-primary" />
+                <img
+                    src="/logo.svg"
+                    alt=""
+                    className="size-7 shrink-0 object-contain"
+                />
                 <span className="truncate text-lg font-semibold text-foreground">
                     Vitalb
                 </span>
