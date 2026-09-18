@@ -40,27 +40,27 @@ export default function PerformanceMatrix() {
     };
 
     return (
-        <AppCard
-            shadow
-            header="Performance metrics"
-            headingSize="lg"
+        <AppSection
+            className="h-auto"
         >
+            <Heading>Performance Matrix</Heading>
             <CustomTabs
                 tabs={tabs}
                 value={activeTab}
                 onValueChange={handleTabChange}
-                className="gap-4"
+                className="gap-4 [&_[data-slot=tabs-trigger][data-active]]:!bg-transparent [&_[data-slot=tabs-trigger][data-active]]:!shadow-none"
                 listClassName="!h-auto grid w-full grid-cols-3 gap-2 border-b border-border"
-                triggerClassName="h-auto min-w-0 rounded-none px-0 pb-2 text-sm text-ghost hover:bg-transparent focus-visible:!border-transparent focus-visible:!ring-0 focus-visible:!outline-none data-active:!border-x-0 data-active:!border-t-0 data-active:!border-b-2 data-active:!border-primary data-active:!bg-transparent data-active:!shadow-none data-active:!font-normal after:!bottom-[-1px] after:!bg-primary"
+                triggerClassName="h-auto min-w-0 rounded-none border-0 !bg-transparent px-0 pb-2 text-sm font-normal text-ghost shadow-none hover:!bg-transparent focus-visible:!border-transparent focus-visible:!ring-0 focus-visible:!outline-none data-active:!border-x-0 data-active:!border-t-0 data-active:!border-b-2 data-active:!border-gray data-active:!bg-transparent data-active:!font-bold data-active:!shadow-none after:hidden lg:text-base"
                 contentClassName="mt-0"
             >
                 <div className="space-y-2">
                     {metrics[activeTab as keyof typeof metrics].map((metric) => (
-                        <AppSection
+                        <AppCard
                             key={metric.name}
-                            className="gap-2.5"
+                            shadow={false}
+                            padding="sm"
                         >
-                            <div className="flex w-full items-start justify-between gap-6">
+                            <div className="flex w-full items-start justify-between gap-6 mb-1.5">
                                 <span className="min-w-0 flex-1 text-base text-foreground">
                                     {metric.name}
                                 </span>
@@ -71,10 +71,10 @@ export default function PerformanceMatrix() {
                             <Button variant='ghost' size='sm' className="px-2.5! py-1.5! text-xs">
                                 Enabled
                             </Button>
-                        </AppSection>
+                        </AppCard>
                     ))}
                 </div>
             </CustomTabs>
-        </AppCard>
+        </AppSection>
     )
 }

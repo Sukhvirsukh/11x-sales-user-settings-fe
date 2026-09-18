@@ -11,7 +11,7 @@ import KnowMore from "./components/KnowMore";
 
 export function Overview() {
     return (
-        <div className="grid w-full grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_350px]">
+        <div className="grid w-full grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_308px]">
             <div className="flex flex-col gap-4">
                 <div className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-3">
                     <OverviewCard

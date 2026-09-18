@@ -94,6 +94,7 @@
 
   --color-section-border: var(--section-border);
   --color-section-bg: var(--section-bg);
+  --color-slider-track: var(--slider-track);
 
   --color-table-header: var(--table-header);
 
@@ -132,6 +133,7 @@
     --primary: #3576F3;
     --primary-hover: #236efa;
     --primary-foreground: #ffffff;
+    --slider-track: #CDDDFB;
 
     /* Borders */
     --border: #e2e8f0;
