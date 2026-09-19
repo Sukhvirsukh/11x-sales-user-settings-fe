@@ -65,7 +65,7 @@ Inside `AppLayout` every protected page renders through `RouteGuard`, which is t
 - `RouteGuard` reads `useMatches()`, takes the **deepest** match that declares a permission (so a parent's declaration covers its children), and checks it against the signed-in role. Routes without a `handle` (the `*` catch-all) stay open to every signed-in user.
 - A blocked visit redirects to the role's own home route. If that home is itself blocked (unknown role, misconfigured policy) `ForbiddenPage` (403) renders instead, so a blocked route can never bounce or loop.
 
-Route entries therefore name **capabilities, never roles** — the role → permission policy lives in one file (`src/features/auth/permissions.ts`).
+Route entries therefore name **capabilities, never roles** — the grants themselves come from the backend, and `src/features/auth/permissions.ts` only declares the catalog of sections/actions the UI can render and check.
 
 ## Folder Structure
 
@@ -190,8 +190,10 @@ src/
 │   │   ├── authStorage.ts           # JWT storage helpers (vitalb.jwt key)
 │   │   ├── authStore.ts             # Persisted auth state (Zustand)
 │   │   ├── authTypes.ts             # AuthResponse, AuthUser, AuthApiUser, store, form types
-│   │   ├── permissions.ts           # Role → permission policy (single source of truth)
-│   │   ├── usePermissions.ts        # useRole / usePermissions / useCan hooks
+│   │   ├── permissionSchema.ts      # Zod schemas + types for the permissions payload
+│   │   ├── permissions.ts           # Permission catalog + parse / payload helpers
+│   │   ├── permissionsDefaultData.ts # Per-role default grants (temporary fallback)
+│   │   ├── usePermissions.ts        # usePermissions / useCan hooks
 │   │   └── index.ts
 │   ├── chatSettings/
 │   │   ├── Channels.tsx             # Channel cards + visibility link
@@ -274,7 +276,7 @@ src/
 │   │   │   │   ├── basicDetailsTypes.ts
 │   │   │   │   └── index.ts
 │   │   │   ├── roleHistory/
-│   │   │   │   ├── Permissions.tsx  # Permission toggles
+│   │   │   │   ├── Permissions.tsx  # Permission matrix (CustomTable)
 │   │   │   │   ├── RoleHistory.tsx  # Roles table (CustomTable) + search + Add role
 │   │   │   │   ├── AddRoleForm.tsx
 │   │   │   │   ├── DeleteRole.tsx
@@ -404,15 +406,16 @@ Defined in `src/components/layout/sidebar/sideNav.ts`:
 7. Settings (`/settings`) — SettingsIcon — `settings.profile.view`
 8. Ask me (`/ask-me`) — AskMeIcon — `askMe.view`
 
-Each item carries the `permission` that mirrors its route's `handle.permission`; `useNavItems()` returns only what the signed-in role may open, so the sidebar and the 404 page can never link to a page the guard would reject.
+Each item carries the `permission` that mirrors its route's `handle.permission`; `useNavItems()` returns only destinations the signed-in user's API payload actually grants a `view` capability for, so the sidebar and the 404 page can never link to a page the guard would reject.
 
 ## Architecture Notes
 
 - `App.tsx` wraps `RouterProvider` in a `Suspense` fallback because routes are lazy-loaded. `main.tsx` nests `RootErrorBoundary > QueryClientProvider > Toaster > App`.
 - `ErrorPage` reuses `AppCard` and `Button` for reload/home recovery. The router's root `errorElement` handles route errors, and `RootErrorBoundary` catches rendering failures. Unmatched paths fall through to the `*` route → `NotFoundPage`, which renders inside `AppLayout` and lists the `NAV_ITEMS` as shortcuts.
-- The persisted auth store (`src/features/auth/authStore.ts`) exposes `user`, `name`, `email`, and `role`. Sign-in/sign-up populate these via `setUser`; `authApi.ts` reads `user.role`.
-- **Access control is centralised in `src/features/auth/permissions.ts`** — roles, capabilities, and the role → capability map. Components never compare role strings; they ask a capability question via `useCan("…")` (or `usePermissions()` when filtering a list), and routes declare the capability they need in `handle.permission` for `RouteGuard` to enforce. Changing what a role can do is a one-line edit in that file, and the sidebar, settings tabs, 404 shortcuts, and route guard all follow.
-- Roles are Admin, Editor, and Member (`AuthUser.role`; the API may return any casing, `normalizeRole` handles it and unknown roles fail closed with zero capabilities). Admin is the account owner, cannot be assigned from the role form, and holds every capability — including the whole role history. Editor reaches every top-level page, but in Settings sees only their own basic details (no role history, plan, payments, or store). Member is limited to Conversations, Reports, and their own basic details; `getHomeRoute(role)` sends them to `/conversations` when a route is blocked.
+- The persisted auth store (`src/features/auth/authStore.ts`) exposes `user`, `name`, `email`, `role`, and the normalized `permissions` list. Sign-in/sign-up populate these via `setUser`; `authApi.ts` reads `user.role` and `user.permissions`.
+- **Access control is dynamic and backend-driven, with temporary role defaults.** `src/features/auth/permissions.ts` declares `PERMISSION_GROUPS` — the catalog of sections and the actions each supports — plus the parse/serialise helpers; it holds no role → capability policy. A user's backend `permissions` payload is an **array of section objects**, e.g. `[{ overview: { view: true } }, { "settings.roles": { view: true, edit: true } }]`. Section keys may contain dots, and a capability is the flattened `section.action` (for example `settings.roles.edit`). The full API and database contract — endpoints, payload examples, SQL and edge cases — lives in `permissions.md`.
+- Components never compare role strings; they ask a capability question via `useCan("…")` (or `usePermissions()` when filtering a list), and routes declare the capability they need in `handle.permission` for `RouteGuard` to enforce. The sidebar, settings tabs, and 404 shortcuts consume the same normalized permission list persisted in `authStore`, so only destinations whose **view** capability is granted are ever shown. `setUser` treats a backend `permissions` payload as authoritative (including an explicit empty payload); only when that field is absent does it resolve and store the role fallback from `permissionsDefaultData.ts`. There `ADMIN` gets the whole catalog, `EDITOR` gets every permission outside Settings and, inside it, only basic details (view + edit) — no team roles, plan, payments or store, and `MEMBER` gets conversations, `reports.view` + `reports.create` (generate report) and their own basic details (view/edit). An unknown role gets nothing — the policy fails closed. Either way a user lands on their first reachable page via `getHomeRoute(permissions)`.
+- The role form (`features/settings/roleAndAccess/roleHistory/`) builds a role's grants as a `CustomTable` matrix (sections × actions, a checkbox in every cell) driven entirely by `PERMISSION_GROUPS` × `PERMISSION_ACTIONS`, so a new section needs no UI edit and any action can be granted to any role — there is no reserved/Admin-only capability. Its columns are View, Create / Edit and Delete: `create` and `edit` share one checkbox (create implies edit) and toggling it writes both actions, while the payload still carries them as separate keys. The form prefills the matrix from `permissionValuesFrom` + `getDefaultPermissions`: selecting a role ticks that role's defaults (re-picking the same role is a no-op, so saved grants survive), and opening an edit prefers the grants saved on the row but falls back to the role's defaults when the row carries none — which is what the API returns today. `Permissions` tightens the shared table's cell padding through `CustomTable`'s `className` (the same `[&_td]:…` pattern the role table uses) rather than changing `CustomTable`. One `Controller name="permissions"` owns the whole map, and `toPermissionPayload` serialises it back to the array shape for POST/PATCH `/admin/users`; `toPermissionValues` expands a response into the editable map (keeping unknown sections so a save never drops them). The backend must persist and return this shape, and enforce authorization — this repository is only the frontend integration.
 - Auth token is stored as `vitalb.jwt` in localStorage via helpers in `authStorage.ts`.
 - `AppLayout` guards protected routes with `getAuthToken()` from `authStorage` and redirects unauthenticated users to `/sign-in` (preserving the origin in `state.from`).
 - All API requests use `VITE_AUTH_API_BASE_URL` (root `.env`) through the shared `apiFetch` wrapper (`src/lib/api.ts`). It prefixes `/api` to endpoints, attaches the Bearer token by default (optionally `auth: false`), and surfaces errors via toast. Restart the Vite dev server after changing env vars.
@@ -440,7 +443,7 @@ Hosted on Netlify. `netlify.toml` pins the build (`command = "pnpm build"`, `pub
 
 - Use `cn()` from `src/lib/utils.ts` for conditional Tailwind classes.
 - Shared utils in `src/lib/utils.ts`: `delay()`, `getInitials()`, `debounce()`, `capitalize()` (display-casing API values: `"SUPER_ADMIN"` → `"Super Admin"`), `dateFormater(date, format?)` ("numeric" → `d/m/yyyy`, "long" → `d MMM yyyy`).
-- Never compare `role` strings in a component: gate UI with `useCan(permission)` and protect pages with `handle.permission`. Growing a permission list means adding a `Permission` literal and assigning it in `ROLE_PERMISSIONS`.
+- Never compare `role` strings in a component: gate UI with `useCan(permission)` and protect pages with `handle.permission`. Adding a page or action means adding a `PERMISSION_GROUPS` entry (which the permissions table renders automatically); granting it stays a backend payload, never a frontend edit.
 - Prefer semantic design tokens (`bg-background`, `text-primary`) over hardcoded colors.
 - Use PascalCase for components, camelCase with `use` prefix for hooks.
 - Use kebab-case for folder names (note `features/ai-training/` follows this).

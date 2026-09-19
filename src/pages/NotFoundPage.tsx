@@ -5,14 +5,14 @@ import { Button } from "@/components/ui/button";
 import { useNavItems } from "@/components/layout/sidebar/sideNav";
 import PreviewSection from "@/components/design/PreviewSection";
 import AppSection from "@/components/design/AppSectoin";
-import { getHomeRoute, useRole } from "@/features/auth";
+import { getHomeRoute, usePermissions } from "@/features/auth";
 
 export default function NotFoundPage() {
     const { pathname } = useLocation();
     const navigate = useNavigate();
-    const role = useRole();
+    const permissions = usePermissions();
     const destinations = useNavItems().filter((item) => item.link !== "/");
-    const homePath = getHomeRoute(role);
+    const homePath = getHomeRoute(permissions);
 
     return (
 

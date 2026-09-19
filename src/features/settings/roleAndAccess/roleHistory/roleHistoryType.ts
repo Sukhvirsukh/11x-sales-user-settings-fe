@@ -1,13 +1,10 @@
 import type { z } from "zod";
 import type { roleFormSchema } from "./roleHistorySchema";
+import type { PermissionPayload, PermissionValues } from "@/features/auth/permissionSchema";
 
 export type RoleFormValues = z.infer<typeof roleFormSchema>;
 
-export interface RolePermissions {
-    add: boolean;
-    edit: boolean;
-    delete: boolean;
-}
+export type RolePermissions = PermissionValues;
 
 export interface RoleResponse {
     id: string;
@@ -16,12 +13,13 @@ export interface RoleResponse {
     name: string;
     role: string;
     status: boolean;
-    permissions: RolePermissions;
+    permissions?: unknown;
     ownerId: string;
     createdAt: string;
 }
 
 export interface RoleRow extends Record<string, unknown> {
+    permissions?: RolePermissions;
     id: string;
     name: string;
     email: string;
@@ -32,6 +30,7 @@ export interface RoleRow extends Record<string, unknown> {
 }
 
 export interface RolePayload {
+    permissions: PermissionPayload;
     name: string;
     email: string;
     role: string;

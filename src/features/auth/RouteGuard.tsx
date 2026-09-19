@@ -1,7 +1,7 @@
 import { Navigate, Outlet, useLocation, useMatches, type UIMatch } from "react-router";
 import ForbiddenPage from "@/pages/ForbiddenPage";
 import { getHomeRoute, isPermission, type Permission } from "./permissions";
-import { usePermissions, useRole } from "./usePermissions";
+import { usePermissions } from "./usePermissions";
 
 /** A route opts into protection by declaring `handle: { permission: "..." }`. */
 export type RouteHandle = { permission?: Permission };
@@ -27,7 +27,6 @@ function requiredPermission(matches: UIMatch[]): Permission | undefined {
  * redirecting again, so a blocked route can never bounce or loop.
  */
 export default function RouteGuard() {
-    const role = useRole();
     const permissions = usePermissions();
     const matches = useMatches();
     const { pathname } = useLocation();
@@ -35,6 +34,6 @@ export default function RouteGuard() {
 
     if (!required || permissions.has(required)) return <Outlet />;
 
-    const home = getHomeRoute(role);
+    const home = getHomeRoute(permissions);
     return pathname === home ? <ForbiddenPage /> : <Navigate to={home} replace />;
 }

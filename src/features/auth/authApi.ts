@@ -25,6 +25,7 @@ function getUser(
     name,
     email: user.email,
     role: user.role,
+    permissions: user.permissions,
     phone: user.phone,
   };
 }

@@ -4,8 +4,23 @@ export { useAuthStore } from "./authStore";
 export { authRequest } from "./authApi";
 export { AUTH_TOKEN_STORAGE_KEY, getAuthToken, storeAuthToken, clearAuthToken } from "./authStorage";
 export { default as RouteGuard } from "./RouteGuard";
-export { useCan, usePermissions, useRole } from "./usePermissions";
-export { APP_ROLES, PERMISSIONS, can, getHomeRoute, getPermissions, isPermission, normalizeRole } from "./permissions";
+export { useCan, usePermissions } from "./usePermissions";
+export {
+  PERMISSION_GROUPS,
+  getHomeRoute,
+  getPermissions,
+  isPermission,
+  parsePermissionValues,
+  permissionValuesFrom,
+  toPermissionPayload,
+  toPermissionValues,
+} from "./permissions";
+export {
+  ALL_PERMISSIONS,
+  EDITOR_PERMISSIONS,
+  MEMBER_PERMISSIONS,
+  getDefaultPermissions,
+} from "./permissionsDefaultData";
 export type { RouteHandle } from "./RouteGuard";
-export type { AppRole, Permission } from "./permissions";
+export type { Permission, PermissionGroup } from "./permissions";
 export type { AuthUser, AuthResponse, AuthStore, AuthFormProps } from "./authTypes";

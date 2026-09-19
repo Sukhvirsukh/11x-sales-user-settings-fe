@@ -1,5 +1,6 @@
 import { apiFetch } from "@/lib/api";
 import { capitalize } from "@/lib/utils";
+import { toPermissionPayload, toPermissionValues } from "@/features/auth/permissions";
 import { format as formatDate } from "date-fns";
 import type { RoleFormValues, RolePayload, RoleResponse, RoleRow } from "./roleHistoryType";
 
@@ -11,6 +12,7 @@ function toRoleRow(role: RoleResponse): RoleRow {
         name: role.name,
         email: role.email,
         role: capitalize(role.role),
+        permissions: toPermissionValues(role.permissions),
         status: role.status,
         createdAt: createdAtValue ? formatDate(createdAtValue, "MMM d, yyyy") : "-",
         createdAtValue,
@@ -27,6 +29,7 @@ function toRolePayload(values: RoleFormValues): RolePayload {
         name: values.name.trim(),
         email: values.email.trim().toLowerCase(),
         role: values.role.toUpperCase(),
+        permissions: toPermissionPayload(values.permissions),
         status: true,
     };
 }

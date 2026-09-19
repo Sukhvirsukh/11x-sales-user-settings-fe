@@ -1,24 +1,22 @@
 import { useMemo } from "react";
 import { useAuthStore } from "./authStore";
-import { getPermissions, normalizeRole, type AppRole, type Permission } from "./permissions";
-
-/** The signed-in user's role, normalized. `null` until a role is known (fails closed). */
-export function useRole(): AppRole | null {
-    const role = useAuthStore((state) => state.user?.role ?? state.role);
-    return useMemo(() => normalizeRole(role), [role]);
-}
+import type { Permission } from "./permissions";
 
 /**
- * Capabilities of the signed-in user. The reference is stable while the role is
- * unchanged, so it is safe to depend on from `useMemo` when filtering lists.
+ * Capabilities of the signed-in user, resolved once by `authStore.setUser`.
+ *
+ * This is the single read path for every check in the app — the route guard, the
+ * sidebar, the settings tabs and every `useCan` call. The reference is stable
+ * while its inputs are unchanged, so it is safe to depend on from `useMemo` when
+ * filtering lists.
  */
 export function usePermissions(): ReadonlySet<Permission> {
-    const role = useRole();
-    return useMemo(() => getPermissions(role), [role]);
+    const permissions = useAuthStore((state) => state.permissions);
+    return useMemo(() => new Set(permissions), [permissions]);
 }
 
 /**
- * One capability check, e.g. `useCan("settings.store.manage")`. Reads as a
+ * One capability check, e.g. `useCan("settings.store.edit")`. Reads as a
  * permission question so UI affordances stay decoupled from role names.
  */
 export function useCan(permission: Permission): boolean {
