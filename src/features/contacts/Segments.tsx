@@ -4,8 +4,10 @@ import SearchField from "@/components/shared/SearchField"
 import TableSkeleton from "@/components/shared/skeletons/TableSkeletons"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { debounce } from "@/lib/utils"
 import { Download, Plus, Trash } from "lucide-react"
-import { useMemo, useState } from "react"
+import { useRef, useState } from "react"
+import { useSearchParams } from "react-router"
 import DeleteContacts from "./DeleteContacts"
 import { useSegmentsQuery } from "./contactQuery"
 import type { Segment } from "./contactType"
@@ -31,12 +33,14 @@ const columns: Column[] = [
     { key: "activeUsers", header: "Active Users", align: "right" },
 ]
 
-/** Every displayed column is searchable. */
-const searchKeys = columns.map((column) => column.key)
-
 export default function Segments() {
-    const { data = [], isLoading, error } = useSegmentsQuery()
-    const [search, setSearch] = useState("")
+    const [searchParams, setSearchParams] = useSearchParams()
+    const setSearchParamsRef = useRef(setSearchParams)
+    setSearchParamsRef.current = setSearchParams
+    const search = searchParams.get("search") ?? ""
+    const pageParam = Number(searchParams.get("page"))
+    const page = Number.isInteger(pageParam) && pageParam > 0 ? pageParam : 1
+
     const [deleteRequest, setDeleteRequest] = useState<{
         rows: Segment[]
         onDeleted?: (ids: string[]) => void
@@ -44,18 +48,33 @@ export default function Segments() {
     const [isDeleteOpen, setIsDeleteOpen] = useState(false)
     const [isAddOpen, setIsAddOpen] = useState(false)
 
+    const { data, isLoading, error } = useSegmentsQuery(page, search.trim())
+    const segments = data?.items ?? []
+    const total = data?.total ?? 0
+    const pageSize = data?.pageSize ?? 10
+
     if (error) throw error
 
-    const filteredData = useMemo(() => {
-        const query = search.trim().toLowerCase()
-        if (!query) return data
+    const handleSearchChange = useRef(
+        debounce((value: string) => {
+            setSearchParamsRef.current((currentParams) => {
+                const nextParams = new URLSearchParams(currentParams)
+                if (value) nextParams.set("search", value)
+                else nextParams.delete("search")
+                nextParams.delete("page")
+                return nextParams
+            }, { replace: true })
+        }),
+    ).current
 
-        return data.filter((row) =>
-            searchKeys.some((key) =>
-                String(row[key as keyof Segment] ?? "").toLowerCase().includes(query)
-            )
-        )
-    }, [data, search])
+    function handlePageChange(nextPage: number) {
+        setSearchParams((currentParams) => {
+            const nextParams = new URLSearchParams(currentParams)
+            if (nextPage === 1) nextParams.delete("page")
+            else nextParams.set("page", String(nextPage))
+            return nextParams
+        })
+    }
 
     function handleDeleteModalChange(open: boolean) {
         setIsDeleteOpen(open)
@@ -76,9 +95,10 @@ export default function Segments() {
             <CustomTable
                 title="All segaments"
                 columns={columns}
-                data={filteredData}
+                data={segments}
                 selectable
                 getRowId={(row) => row.id}
+                pagination={{ page, pageSize, total, onPageChange: handlePageChange }}
                 bulkActions={(rows, deselectRows) => (
                     <Button variant="destructive" size="xs" onClick={() => requestDelete(rows, deselectRows)}>
                         <Trash className="size-3.5" />
@@ -92,7 +112,7 @@ export default function Segments() {
                 ) : undefined}
                 headerActions={
                     <div className="flex items-center gap-2.5">
-                        <SearchField onSearchChange={setSearch} />
+                        <SearchField onSearchChange={handleSearchChange} />
                         <Button variant="primary" size="sm" onClick={() => setIsAddOpen(true)}>
                             Add segment
                             <Plus className="ml-0.5 size-2 md:ml-2 md:size-4" />
