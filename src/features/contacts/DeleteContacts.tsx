@@ -2,10 +2,10 @@ import { Banner } from "@/components/design/Banner";
 import Modal from "@/components/design/Modal";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteSegaments, deleteUserProfiles } from "./contactsApi";
-import { segamentsQueryKey, userProfilesQueryKey } from "./contactQuery";
+import { segmentsQueryKey, userProfilesQueryKey } from "./contactQuery";
 import { toast } from "@/components/ui/toast";
 
-export type ContactKind = "segament" | "userProfile";
+export type ContactKind = "segment" | "userProfile";
 
 const CONTACT_LABELS: Record<ContactKind, {
     singular: string;
@@ -13,10 +13,10 @@ const CONTACT_LABELS: Record<ContactKind, {
     queryKey: readonly unknown[];
     remove: (ids: string[]) => Promise<string[]>;
 }> = {
-    segament: {
-        singular: "segament",
-        plural: "segaments",
-        queryKey: segamentsQueryKey,
+    segment: {
+        singular: "segment",
+        plural: "segments",
+        queryKey: segmentsQueryKey,
         remove: deleteSegaments,
     },
     userProfile: {

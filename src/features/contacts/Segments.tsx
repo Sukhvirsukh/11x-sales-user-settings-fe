@@ -113,7 +113,7 @@ export default function Segments() {
             />
             <AddSegment open={isAddOpen} onOpenChange={handleAddModalChange} />
             <DeleteContacts
-                kind="segament"
+                kind="segment"
                 open={isDeleteOpen}
                 onOpenChange={handleDeleteModalChange}
                 rows={deleteRequest?.rows ?? []}

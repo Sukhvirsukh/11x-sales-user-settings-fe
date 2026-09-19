@@ -15,7 +15,7 @@ import { roleFormSchema } from "./roleHistorySchema";
 
 import type { RoleFormValues, RoleRow } from "./roleHistoryType";
 import { ROLE_OPTIONS } from "./roleOptions";
-import Permissions from "./Permissions";
+// import Permissions from "./Permissions";
 import { permissionValuesFrom, toPermissionValues } from "@/features/auth/permissions";
 import { getDefaultPermissions } from "@/features/auth/permissionsDefaultData";
 
