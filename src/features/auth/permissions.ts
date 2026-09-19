@@ -1,98 +1,175 @@
 /**
- * Role-based access control — the whole policy, declared once.
+ * Dynamic access control.
  *
- * Nothing in the app branches on a role string. Components ask a capability
- * question (`useCan("settings.roles.create")`), and routes declare what they need
- * in `handle.permission`, which `RouteGuard` enforces. Adding a capability, or
- * moving one between roles, is a single edit here — the navigation, the settings
- * tabs and the route guard all read from this map.
+ * The backend owns the policy: a user carries a `permissions` payload shaped as
+ * an array of section objects, for example
+ *
+ * ```json
+ * [
+ *   { "overview": { "view": true } },
+ *   { "contacts": { "view": true } },
+ *   { "settings.roles": { "view": true, "edit": true } }
+ * ]
+ * ```
+ *
+ * `PERMISSION_GROUPS` below is the catalog of sections and actions the UI knows
+ * how to render and check — it is *not* a grant. Nothing here hardcodes which
+ * role may do what: the grants always come from the API, so any action can be
+ * given to any role without touching this file. Components ask a capability
+ * question (`useCan("settings.roles.create")`) and routes declare what they need
+ * in `handle.permission`, which `RouteGuard` enforces.
  */
 
-/** Workspace roles. `ADMIN` owns the account and is never assignable from the role form. */
-export const APP_ROLES = ["ADMIN", "EDITOR", "MEMBER"] as const;
+import { PERMISSION_ACTIONS, type PermissionPayload, type PermissionValues } from "./permissionSchema";
 
-export type AppRole = (typeof APP_ROLES)[number];
+/** A capability, named `section.action` — e.g. `overview.view`, `settings.roles.edit`. */
+export type Permission = string;
 
-/** Every capability in the app, named `area.action`. */
-export const PERMISSIONS = [
-    // top-level pages
-    "overview.view",
-    "contacts.view",
-    "conversations.view",
-    "reports.view",
-    "chatSettings.view",
-    "aiTraining.view",
-    "askMe.view",
-    // settings
-    "settings.profile.view",
-    "settings.roles.view",
-    "settings.roles.edit",
-    "settings.roles.create",
-    "settings.roles.delete",
-    "settings.plan.view",
-    "settings.payments.view",
-    "settings.store.view",
-    "settings.store.manage",
-] as const;
-
-export type Permission = (typeof PERMISSIONS)[number];
+export type PermissionGroup = {
+    /** Key used in the API payload; may itself contain dots (`settings.roles`). */
+    section: string;
+    /** Human label for the permissions table. */
+    label: string;
+};
 
 /**
- * - `ADMIN` — the owner: every capability, billing and role management included.
- * - `EDITOR` — runs day-to-day work on every page; the whole team role history belongs
- *   to the owner, so inside Settings an editor sees only their own basic details.
- * - `MEMBER` — a restricted seat: conversations and reports, plus their basic details.
+ * Every section in the app — the one place a new page is declared. Each section
+ * offers the full set of `PERMISSION_ACTIONS`, so the permissions table has a
+ * checkbox in every cell and any action can be granted to any role.
  */
-const ROLE_PERMISSIONS: Record<AppRole, readonly Permission[]> = {
-    ADMIN: PERMISSIONS,
-    EDITOR: [
-        "overview.view",
-        "contacts.view",
-        "conversations.view",
-        "reports.view",
-        "chatSettings.view",
-        "aiTraining.view",
-        "askMe.view",
-        "settings.profile.view",
-    ],
-    MEMBER: ["conversations.view", "reports.view", "settings.profile.view"],
-};
+export const PERMISSION_GROUPS: readonly PermissionGroup[] = [
+    { section: "overview", label: "Overview" },
+    { section: "contacts", label: "Contacts" },
+    { section: "conversations", label: "Conversations" },
+    { section: "reports", label: "Reports" },
+    { section: "chatSettings", label: "Chat settings" },
+    { section: "aiTraining", label: "AI training" },
+    { section: "askMe", label: "Ask me" },
+    { section: "settings.profile", label: "Basic details" },
+    { section: "settings.roles", label: "Team roles" },
+    { section: "settings.plan", label: "Plan" },
+    { section: "settings.payments", label: "Payments" },
+    { section: "settings.store", label: "Stores" },
+];
 
-/** Where each role lands — after sign-in, and after a blocked route visit. */
-const HOME_ROUTE_BY_ROLE: Record<AppRole, string> = {
-    ADMIN: "/",
-    EDITOR: "/",
-    MEMBER: "/conversations",
-};
+/** Ordered landing pages, most preferred first. */
+const HOME_ROUTES: { path: string; permission: Permission }[] = [
+    { path: "/", permission: "overview.view" },
+    { path: "/conversations", permission: "conversations.view" },
+    { path: "/reports", permission: "reports.view" },
+    { path: "/contacts", permission: "contacts.view" },
+    { path: "/chat-settings", permission: "chatSettings.view" },
+    { path: "/ai-training", permission: "aiTraining.view" },
+    { path: "/ask-me", permission: "askMe.view" },
+    { path: "/settings/role-n-access", permission: "settings.profile.view" },
+];
 
 const NO_PERMISSIONS: ReadonlySet<Permission> = new Set();
 
-const ROLE_PERMISSION_SETS = new Map<AppRole, ReadonlySet<Permission>>(
-    APP_ROLES.map((role) => [role, new Set<Permission>(ROLE_PERMISSIONS[role])]),
-);
-
-/** Accepts the API's casing and padding (`"admin"`, `" Editor "`); unknown values become `null`. */
-export function normalizeRole(role?: string | null): AppRole | null {
-    const value = role?.trim().toUpperCase();
-    return (APP_ROLES as readonly string[]).includes(value ?? "") ? (value as AppRole) : null;
+function isPlainObject(value: unknown): value is Record<string, unknown> {
+    return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
-/** Capabilities of a role. An unknown or missing role gets none — the policy fails closed. */
-export function getPermissions(role?: string | null): ReadonlySet<Permission> {
-    const normalized = normalizeRole(role);
-    return (normalized && ROLE_PERMISSION_SETS.get(normalized)) || NO_PERMISSIONS;
+/**
+ * Reads the API payload (an array of section objects, or a single nested object)
+ * into `{ section: { action: boolean } }`. Sections the catalog does not know
+ * are kept, so a newer backend never loses grants when saved from the role form.
+ * Anything malformed is ignored — the policy fails closed.
+ */
+export function parsePermissionValues(raw: unknown): PermissionValues {
+    const values: PermissionValues = {};
+    const sources = Array.isArray(raw) ? raw : isPlainObject(raw) ? [raw] : [];
+
+    for (const source of sources) {
+        if (!isPlainObject(source)) continue;
+        for (const [section, actions] of Object.entries(source)) {
+            if (!isPlainObject(actions)) continue;
+            const sectionValues = values[section] ?? {};
+            for (const [action, granted] of Object.entries(actions)) {
+                if (typeof granted === "boolean") sectionValues[action] = granted;
+            }
+            values[section] = sectionValues;
+        }
+    }
+
+    return values;
 }
 
-export function can(role: string | null | undefined, permission: Permission): boolean {
-    return getPermissions(role).has(permission);
+/** Every catalog section/action set to `false` — the base of an editable map. */
+function emptyPermissionValues(): PermissionValues {
+    const values: PermissionValues = {};
+
+    for (const { section: key } of PERMISSION_GROUPS) {
+        const section: Record<string, boolean> = {};
+        for (const action of PERMISSION_ACTIONS) section[action] = false;
+        values[key] = section;
+    }
+
+    return values;
 }
 
-export function getHomeRoute(role?: string | null): string {
-    const normalized = normalizeRole(role);
-    return normalized ? HOME_ROUTE_BY_ROLE[normalized] : "/";
+/**
+ * Turns a flat capability set (`["overview.view"]`) into the form's nested map,
+ * seeding every catalog checkbox — used to prefill the role form with the
+ * selected role's defaults.
+ */
+export function permissionValuesFrom(permissions: Iterable<Permission>): PermissionValues {
+    const values = emptyPermissionValues();
+
+    for (const permission of permissions) {
+        const separator = permission.lastIndexOf(".");
+        if (separator <= 0) continue;
+        const section = values[permission.slice(0, separator)];
+        if (section) section[permission.slice(separator + 1)] = true;
+    }
+
+    return values;
 }
 
-/** Narrows arbitrary route `handle` data to a known permission. */
+/**
+ * A fresh editable copy for the role form: every catalog section/action present
+ * (so the table has a checkbox for each) overlaid with what the API returned.
+ */
+export function toPermissionValues(savedPermissions?: unknown): PermissionValues {
+    const saved = parsePermissionValues(savedPermissions);
+    const values = emptyPermissionValues();
+
+    // Preserve grants the catalog does not render yet, so saving never drops them.
+    for (const [section, actions] of Object.entries(saved)) {
+        values[section] = { ...values[section], ...actions };
+    }
+
+    return values;
+}
+
+/** `{ overview: { view: true } }` → `[{ overview: { view: true } }]` — the API's array shape. */
+export function toPermissionPayload(values: PermissionValues): PermissionPayload {
+    return Object.entries(values).map(([section, actions]) => ({ [section]: actions }));
+}
+
+/**
+ * Capabilities the user holds, flattened to `section.action` keys. A missing or
+ * malformed payload grants nothing — `usePermissions` falls back to the role
+ * defaults from `permissionsDefaultData.ts` in that case.
+ */
+export function getPermissions(savedPermissions?: unknown): ReadonlySet<Permission> {
+    const permissions: Permission[] = [];
+
+    for (const [section, actions] of Object.entries(parsePermissionValues(savedPermissions))) {
+        for (const [action, granted] of Object.entries(actions)) {
+            if (granted) permissions.push(`${section}.${action}`);
+        }
+    }
+
+    return permissions.length > 0 ? new Set(permissions) : NO_PERMISSIONS;
+}
+
+/** Where to send a user: their most preferred reachable page. */
+export function getHomeRoute(permissions: ReadonlySet<Permission>): string {
+    return HOME_ROUTES.find(({ permission }) => permissions.has(permission))?.path ?? "/";
+}
+
+/** Narrows arbitrary route `handle` data to a capability name. */
 export function isPermission(value: unknown): value is Permission {
-    return typeof value === "string" && (PERMISSIONS as readonly string[]).includes(value);
+    return typeof value === "string" && value.includes(".");
 }

@@ -35,3 +35,4 @@ _redirects
 .env.development
 
 roles-and-permissions.md
+permissions.md

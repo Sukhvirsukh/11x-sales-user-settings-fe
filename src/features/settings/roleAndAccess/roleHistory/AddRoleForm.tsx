@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { FormGroup } from "@/components/design/FormGroup";
@@ -12,6 +12,9 @@ import { roleFormSchema } from "./roleHistorySchema";
 import type { RoleFormValues, RoleRow } from "./roleHistoryType";
 import { toast } from "@/components/ui/toast";
 import { ROLE_OPTIONS } from "./roleOptions";
+import Permissions from "./Permissions";
+import { permissionValuesFrom, toPermissionValues } from "@/features/auth/permissions";
+import { getDefaultPermissions } from "@/features/auth/permissionsDefaultData";
 
 interface AddRoleFormProps {
     open: boolean;
@@ -24,10 +27,17 @@ function stringValue(value: unknown): string {
 }
 
 function initialValues(role?: RoleRow | null): RoleFormValues {
+    const roleName = stringValue(role?.role);
+    const saved = toPermissionValues(role?.permissions);
+    // The API does not return grants yet, so an edit would otherwise open with
+    // every box empty — fall back to the role's defaults in that case.
+    const hasSavedGrants = Object.values(saved).some((section) => Object.values(section).some(Boolean));
+
     return {
         name: stringValue(role?.name),
         email: stringValue(role?.email),
-        role: stringValue(role?.role).toUpperCase(),
+        role: roleName.toUpperCase(),
+        permissions: hasSavedGrants ? saved : permissionValuesFrom(getDefaultPermissions(roleName)),
         // startDate: role?.createdAtValue instanceof Date ? role.createdAtValue : new Date(),
     };
 }
@@ -39,13 +49,14 @@ export default function AddRoleForm({ open, onOpenChange, role }: AddRoleFormPro
         register,
         handleSubmit,
         reset,
-        watch,
+        control,
         setValue,
         formState: { errors },
     } = useForm<RoleFormValues>({
         resolver: zodResolver(roleFormSchema),
         defaultValues: initialValues(role),
     });
+    const selectedRole = useWatch({ control, name: "role" });
 
     useEffect(() => {
         if (open) reset(initialValues(role));
@@ -65,13 +76,6 @@ export default function AddRoleForm({ open, onOpenChange, role }: AddRoleFormPro
                 description: isEditing
                     ? "The role has been updated successfully."
                     : "The role has been added successfully.",
-            })
-        },
-        onError: async (err) => {
-            toast.add({
-                type: "error",
-                title: isEditing ? "Role updated" : "Role added",
-                description: err.message,
             })
         }
     });
@@ -112,16 +116,26 @@ export default function AddRoleForm({ open, onOpenChange, role }: AddRoleFormPro
                     <SelectField
                         label="Role"
                         placeholder="Select role"
-                        value={watch("role")}
+                        value={selectedRole}
                         error={errors.role?.message}
-                        onValueChange={(role) =>
-                            setValue("role", role ?? "", {
+                        onValueChange={(nextRole) => {
+                            // Re-picking the same role must not wipe permissions already
+                            // loaded from the API (or customised by hand).
+                            if (!nextRole || nextRole === selectedRole) return;
+
+                            setValue("role", nextRole, {
                                 shouldDirty: true,
                                 shouldValidate: true,
-                            })
-                        }
+                            });
+                            // Tick the boxes this role starts with; every one stays editable.
+                            setValue("permissions", permissionValuesFrom(getDefaultPermissions(nextRole)), {
+                                shouldDirty: true,
+                                shouldValidate: true,
+                            });
+                        }}
                         options={ROLE_OPTIONS}
                     />
+                    <Permissions control={control} disabled={!selectedRole || saveRoleMutation.isPending} />
                 </FormGroup>
             </form>
         </Modal>

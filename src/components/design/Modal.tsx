@@ -47,11 +47,11 @@ export default function Modal({
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
             {trigger && <DialogTrigger render={trigger} />}
-            <DialogContent showCloseButton={false} className="max-w-md gap-0 rounded-[10px] border-0 bg-popover p-0 ring-0 shadow-panel max-sm:bg-transparent">
-                <div aria-hidden="true" className="max-sm:absolute max-sm:top-0 max-sm:right-[25px] max-sm:left-[25px] max-sm:h-20 z-[-1] max-sm:rounded-t-[20px] max-sm:bg-primary" />
-                <div className="max-sm:mt-2 max-sm:rounded-t-[10px] max-sm:bg-popover">
+            <DialogContent showCloseButton={false} className="flex max-h-[80vh] max-w-md flex-col overflow-hidden gap-0 rounded-[10px] border-0 bg-popover p-0 ring-0 shadow-panel max-sm:max-h-[80vh] max-sm:overflow-hidden max-sm:bg-transparent">
+                <div aria-hidden="true" className="absolute max-sm:top-0 max-sm:right-[25px] max-sm:left-[25px] max-sm:h-20 z-[-1] max-sm:rounded-t-[20px] max-sm:bg-primary" />
+                <div className="flex min-h-0 flex-col max-sm:mt-2 max-sm:rounded-t-[10px] max-sm:bg-popover">
                     {title && (
-                        <DialogHeader className="flex flex-row justify-between items-center py-2.5 px-4 bg-table-header rounded-t-[10px]">
+                        <DialogHeader className="flex shrink-0 flex-row justify-between items-center py-2.5 px-4 bg-table-header rounded-t-[10px]">
                             <DialogTitle className="text-lg font-semibold font-inter">
                                 {title}
                             </DialogTitle>
@@ -61,10 +61,10 @@ export default function Modal({
                         </DialogHeader>
                     )}
 
-                    <div className="px-4 py-3.5">{children}</div>
+                    <div className="min-h-0 overflow-y-auto px-4 py-3.5">{children}</div>
 
                     {(primaryAction || secondaryAction || closeAction) && (
-                        <div className="flex items-start gap-2.5 px-4 pb-4 w-full">
+                        <div className="flex shrink-0 items-start gap-2.5 px-4 pb-4 w-full">
                             {primaryAction && (
                                 <Button
                                     onClick={primaryAction.onClick}

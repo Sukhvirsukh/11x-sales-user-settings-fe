@@ -40,6 +40,7 @@ export default function BasicDetailsForm() {
                 email: updatedUser.email ?? user?.email,
                 phone: updatedUser.phone ?? user?.phone,
                 role: updatedUser.role ?? user?.role,
+                permissions: updatedUser.permissions ?? user?.permissions,
             });
             setIsOpen(false);
         },

@@ -1,7 +1,9 @@
 import { z } from "zod";
 import { isValidRole } from "./roleOptions";
+import { permissionValuesSchema } from "@/features/auth/permissionSchema";
 
 export const roleFormSchema = z.object({
+    permissions: permissionValuesSchema,
     name: z.string().trim().min(1, "Name is required"),
     email: z.string().trim().min(1, "Email is required").email("Enter a valid email"),
     role: z

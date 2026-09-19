@@ -34,6 +34,8 @@ const MOBILE_FILL = "minmax(0, 1fr)"
 
 type CustomTableProps<T extends Record<string, unknown> = Record<string, unknown>> = {
     title?: string
+    /** Optional supporting line rendered under the title. */
+    description?: string
     columns: Column[]
     data: T[]
     headerActions?: ReactNode
@@ -72,6 +74,7 @@ type CustomTableProps<T extends Record<string, unknown> = Record<string, unknown
 
 export default function CustomTable<T extends Record<string, unknown>>({
     title,
+    description,
     columns,
     data,
     headerActions,
@@ -159,12 +162,19 @@ export default function CustomTable<T extends Record<string, unknown>>({
     return (
         <AppSection className={className}>
             {/* Header bar */}
-            {(title || headerActions) && (
+            {(title || description || headerActions) && (
                 <div className="flex flex-wrap justify-between items-center gap-2 w-full">
-                    {title && (
-                        <Heading size="md" className="text-[14px] md:text-base leading-none">
-                            {title}
-                        </Heading>
+                    {(title || description) && (
+                        <div className="min-w-0">
+                            {title && (
+                                <Heading size="md" className="text-[14px] md:text-base leading-none">
+                                    {title}
+                                </Heading>
+                            )}
+                            {description && (
+                                <p className="mt-1 text-sm text-muted-foreground">{description}</p>
+                            )}
+                        </div>
                     )}
                     {headerActions && <div className="min-w-0 max-w-full">{headerActions}</div>}
                 </div>

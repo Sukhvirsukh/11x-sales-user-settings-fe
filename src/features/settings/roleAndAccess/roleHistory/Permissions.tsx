@@ -1,102 +1,115 @@
-import AppSection from "@/components/design/AppSectoin";
-import Heading from "@/components/design/Heading";
-import { ToggleField } from "@/components/design/ToggleField";
-import { useState } from "react";
+import { Controller, type Control } from "react-hook-form";
+import CustomTable, { type Column } from "@/components/design/CustomTable";
+import { Checkbox } from "@/components/ui/checkbox";
+import type { PermissionAction } from "@/features/auth/permissionSchema";
+import { PERMISSION_GROUPS } from "@/features/auth/permissions";
+import type { RoleFormValues } from "./roleHistoryType";
 
-interface PermissionProps {
-    name: string
-    isChecked: boolean
-    onToggle: () => void
-}
+type PermissionRow = {
+    section: string;
+    label: string;
+};
 
-const allPermissions = [
-    { name: "View Conversations", key: "view-conversations" },
-    { name: "Reply to customers", key: "reply-to-customers" },
-    { name: "View payments", key: "view-payments" },
-    { name: "Change billing", key: "change-billing" },
-    { name: "Manage team permissions", key: "manage-team-permissions" },
-    { name: "Delete workspace", key: "delete-workspace" },
-]
+type PermissionColumn = {
+    key: string;
+    label: string;
+    /** Actions this column grants together. */
+    actions: readonly PermissionAction[];
+};
 
-export function Permission({ name, isChecked, onToggle }: PermissionProps) {
+/**
+ * The table's columns — `PERMISSION_ACTIONS` grouped for display. `create` and
+ * `edit` share one checkbox because being able to create something means being
+ * able to edit it; toggling it writes both actions at once.
+ */
+const PERMISSION_COLUMNS: readonly PermissionColumn[] = [
+    { key: "view", label: "View", actions: ["view"] },
+    { key: "create", label: "Changes", actions: ["create", "edit"] },
+    { key: "delete", label: "Delete", actions: ["delete"] },
+];
+
+/** One row per catalog section; every row offers every action. */
+const rows: PermissionRow[] = PERMISSION_GROUPS.map(({ section, label }) => ({ section, label }));
+
+/**
+ * Tightens the shared table's cell padding without changing `CustomTable`. A
+ * plain `[&_td]`/`[&_th]` utility outranks the table's own `px-5 py-2.5`
+ * (descendant selector vs. single class), so no `!` or `md:` override is needed.
+ */
+const compactCells = "[&_th]:px-3 [&_th]:py-2 [&_td]:px-3 [&_td]:py-1.5";
+
+/**
+ * The permission matrix: sections down the side, actions across the top. It is
+ * driven entirely by `PERMISSION_GROUPS`, so a new section shows up here without
+ * any change — and every action can be granted to any role.
+ *
+ * A single `Controller` owns the whole `permissions` map, so toggling a checkbox
+ * rewrites just that section instead of relying on dotted field paths.
+ */
+export default function Permissions({ control, disabled = false }: {
+    control: Control<RoleFormValues>;
+    disabled?: boolean;
+}) {
     return (
-        <div className="flex justify-between items-center w-full py-1">
-            <p className="text-foreground font-inter text-base leading-none w-fit">
-                {name}
-            </p>
-            <ToggleField
-                pressed={isChecked}
-                onPressedChange={onToggle}
-            />
-        </div>
-    )
-}
+        <Controller
+            name="permissions"
+            control={control}
+            render={({ field }) => {
+                const values = field.value;
 
-export default function Permissions() {
+                function setActions(section: string, actions: readonly PermissionAction[], granted: boolean) {
+                    const sectionValues = { ...values[section] };
+                    for (const action of actions) sectionValues[action] = granted;
+                    field.onChange({ ...values, [section]: sectionValues });
+                }
 
-    const [permissions, setPermissions] = useState<Record<string, boolean>>({
-        "view-conversations": true,
-        "reply-to-customers": true,
-        "view-payments": false,
-        "change-billing": false,
-        "manage-team-permissions": false,
-        "delete-workspace": false
-    });
-    const toggleHandler = (permissionName: string) => {
-        setPermissions((prevPermissions) => ({
-            ...prevPermissions,
-            [permissionName]: !prevPermissions[permissionName],
-        }));
-    };
-
-    return (
-        <div className="flex flex-col md:flex-row items-stretch gap-3.5 w-full">
-            <AppSection className="w-full md:w-auto md:flex-[4_1_0%] min-w-0 h-auto! self-stretch">
-                <Heading size="md" className="font-medium">
-                    Permissions
-                </Heading>
-                <div className="flex flex-col items-start w-full">
+                const columns: Column[] = [
                     {
-                        allPermissions.map((permission) => (
-                            <Permission
-                                key={permission.key}
-                                name={permission.name}
-                                isChecked={permissions[permission.name]}
-                                onToggle={() => toggleHandler(permission.name)}
-                            />
-                        ))
-                    }
-                </div>
-            </AppSection>
-            {/* <AppSection className="w-full md:w-auto md:flex-[1_1_0%] min-w-0 md:min-w-[250px] !h-auto self-stretch">
-                <Heading size="lg" className="font-medium">
-                    Other Infomation
-                </Heading>
-                <div className="flex items-start w-full">
-                    <DetailGroup className="pl-0!">
-                        <DetailItem
-                            label="Mode"
-                            value={
-                                <div className="flex items-center gap-2">
-                                    <p className="text-base">{isDarkMode ? "Dark Mode" : "Light Mode"}</p>
-                                    <ToggleField
-                                        pressed={isDarkMode}
-                                        onPressedChange={setIsDarkMode}
-                                        aria-label="Toggle dark mode"
+                        key: "label",
+                        header: "Section",
+                        width: "180px",
+                        render: (value) => <span className="font-medium">{String(value ?? "")}</span>,
+                    },
+                    ...PERMISSION_COLUMNS.map((column) => ({
+                        key: column.key,
+                        header: column.label,
+                        align: "center" as const,
+                        width: column.actions.length > 1 ? "104px" : "64px",
+                        render: (_value: unknown, row: Record<string, unknown>) => {
+                            const { section, label } = row as PermissionRow;
+                            // A merged column counts as granted when any of its actions is —
+                            // basic details, for instance, is editable without being creatable.
+                            const granted = column.actions.some(
+                                (action) => values[section]?.[action] === true,
+                            );
+
+                            return (
+                                // `align` only sets `text-align`, which cannot move the
+                                // checkbox (it is a `flex` box), so centre it here to match
+                                // the column header on desktop.
+                                <div className="flex md:justify-center">
+                                    <Checkbox
+                                        checked={granted}
+                                        onCheckedChange={(checked) => setActions(section, column.actions, checked)}
+                                        disabled={true}
+                                        aria-label={`${label}: ${column.label}`}
                                     />
                                 </div>
-                            }
-                        />
+                            );
+                        },
+                    })),
+                ];
 
-                    </DetailGroup>
-                    <DetailGroup>
-                        <DetailItem
-                            label="Version"
-                            value="V12.1"
-                        />
-                    </DetailGroup>
-                </div>
-            </AppSection> */}
-        </div>
-    )
+                return (
+                    <CustomTable
+                        title="Permissions"
+                        description="Grant any action to any role. Create and edit are granted together."
+                        columns={columns}
+                        data={rows}
+                        className={compactCells}
+                    />
+                );
+            }}
+        />
+    );
 }

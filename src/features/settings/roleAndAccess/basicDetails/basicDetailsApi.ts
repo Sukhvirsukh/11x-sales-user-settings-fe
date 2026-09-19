@@ -27,5 +27,6 @@ export async function updateProfile(
         email: profile.email ?? values.email.trim().toLowerCase(),
         phone: profile.phone ?? values.phone.trim(),
         role: profile.role,
+        permissions: profile.permissions,
     };
 }

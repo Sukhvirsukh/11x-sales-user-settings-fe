@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import PreviewSection from "@/components/design/PreviewSection";
 import AppSection from "@/components/design/AppSectoin";
 import { getHomeRoute } from "@/features/auth/permissions";
-import { useRole } from "@/features/auth/usePermissions";
+import { usePermissions } from "@/features/auth/usePermissions";
 
 /**
  * Rendered by `RouteGuard` when a route cannot be reached and redirecting would
@@ -14,7 +14,7 @@ import { useRole } from "@/features/auth/usePermissions";
 export default function ForbiddenPage() {
     const { pathname } = useLocation();
     const navigate = useNavigate();
-    const role = useRole();
+    const permissions = usePermissions();
 
     return (
         <PreviewSection>
@@ -43,7 +43,7 @@ export default function ForbiddenPage() {
                         </p>
 
                         <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
-                            <Button className="gap-2" onClick={() => navigate(getHomeRoute(role))}>
+                            <Button className="gap-2" onClick={() => navigate(getHomeRoute(permissions))}>
                                 <Home aria-hidden className="size-4" />
                                 Back to home
                             </Button>

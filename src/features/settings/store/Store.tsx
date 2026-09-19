@@ -33,7 +33,11 @@ const columns: Column[] = [
 
 export function Store() {
     const { data = [], isLoading, error } = useStoreQuery();
-    const canManageStore = useCan("settings.store.manage");
+    // Each affordance asks for the capability it needs, so any grant the backend
+    // makes (create / edit / delete independently) shows up here unchanged.
+    const canCreateStore = useCan("settings.store.create");
+    const canEditStore = useCan("settings.store.edit");
+    const canDeleteStore = useCan("settings.store.delete");
     const [search, setSearch] = useState("");
     const [editStore, setEditStore] = useState<Record<string, unknown> | null>(null);
     const [isOpen, setIsOpen] = useState(false);
@@ -87,9 +91,9 @@ export function Store() {
                 title="Store"
                 columns={columns}
                 data={filteredData}
-                selectable={canManageStore}
+                selectable={canDeleteStore}
                 getRowId={(row) => String(row.id)}
-                bulkActions={canManageStore ? ((rows, deselectRows) => (
+                bulkActions={canDeleteStore ? ((rows, deselectRows) => (
                     <Button variant="destructive" size="xs" onClick={() => requestDelete(rows, deselectRows)}>
                         <Trash className="size-3.5" />
                         Delete selected
@@ -105,7 +109,7 @@ export function Store() {
                 headerActions={
                     <div className="flex items-center gap-2.5">
                         <SearchField onSearchChange={setSearch} />
-                        {canManageStore && (
+                        {canCreateStore && (
                             <Button variant="primary" size="sm" onClick={openCreateStore}>
                                 Add store
                                 <Plus className="ml-0.5 size-2 md:ml-2 md:size-4" />
@@ -113,12 +117,14 @@ export function Store() {
                         )}
                     </div>
                 }
-                rowActions={canManageStore ? ((row) => (
+                rowActions={canEditStore || canDeleteStore ? ((row) => (
                     <div className="flex items-center gap-2">
-                        <Button variant="bare" size="sm" onClick={() => openEditStore(row)} aria-label="Edit store">
-                            <SquarePen className="size-4 text-gray" />
-                        </Button>
-                        {canManageStore && (
+                        {canEditStore && (
+                            <Button variant="bare" size="sm" onClick={() => openEditStore(row)} aria-label="Edit store">
+                                <SquarePen className="size-4 text-gray" />
+                            </Button>
+                        )}
+                        {canDeleteStore && (
                             <Button variant="bare" size="sm" onClick={() => requestDelete([row])} aria-label="Delete store">
                                 <Trash className="size-4 text-gray" />
                             </Button>

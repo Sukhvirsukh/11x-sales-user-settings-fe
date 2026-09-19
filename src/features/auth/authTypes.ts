@@ -8,6 +8,7 @@ export type AuthApiResponse = {
 };
 
 export type AuthApiUser = {
+  permissions?: unknown;
   id?: string;
   name?: string | null;
   email?: string;
@@ -21,6 +22,7 @@ export type AuthRequestValues = {
 };
 
 export interface AuthUser {
+  permissions?: unknown;
   id?: string;
   name: string;
   email?: string;
