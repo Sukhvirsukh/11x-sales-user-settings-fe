@@ -5,7 +5,7 @@ import { Outlet, useLocation, useNavigate } from "react-router";
 
 const mainTabs = [
     { id: "user-profile-details", label: "User profile details", path: "/contacts/user-profile-details" },
-    { id: "segaments", label: "Segaments", path: "/contacts/segaments" }
+    { id: "segments", label: "Segments", path: "/contacts/segments" }
 ];
 
 export default function ContactPage() {

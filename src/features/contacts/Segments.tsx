@@ -6,10 +6,10 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Download, Plus, Trash } from "lucide-react"
 import { useMemo, useState } from "react"
-import AddSegament from "./AddSegament"
 import DeleteContacts from "./DeleteContacts"
-import { useSegamentsQuery } from "./contactQuery"
-import type { Segament } from "./contactType"
+import { useSegmentsQuery } from "./contactQuery"
+import type { Segment } from "./contactType"
+import AddSegment from "./AddSegment"
 
 
 const columns: Column[] = [
@@ -34,11 +34,11 @@ const columns: Column[] = [
 /** Every displayed column is searchable. */
 const searchKeys = columns.map((column) => column.key)
 
-export default function Segaments() {
-    const { data = [], isLoading, error } = useSegamentsQuery()
+export default function Segments() {
+    const { data = [], isLoading, error } = useSegmentsQuery()
     const [search, setSearch] = useState("")
     const [deleteRequest, setDeleteRequest] = useState<{
-        rows: Segament[]
+        rows: Segment[]
         onDeleted?: (ids: string[]) => void
     } | null>(null)
     const [isDeleteOpen, setIsDeleteOpen] = useState(false)
@@ -52,7 +52,7 @@ export default function Segaments() {
 
         return data.filter((row) =>
             searchKeys.some((key) =>
-                String(row[key as keyof Segament] ?? "").toLowerCase().includes(query)
+                String(row[key as keyof Segment] ?? "").toLowerCase().includes(query)
             )
         )
     }, [data, search])
@@ -62,7 +62,7 @@ export default function Segaments() {
         if (!open) setDeleteRequest(null)
     }
 
-    function requestDelete(rows: Segament[], onDeleted?: (ids: string[]) => void) {
+    function requestDelete(rows: Segment[], onDeleted?: (ids: string[]) => void) {
         setDeleteRequest({ rows, onDeleted })
         setIsDeleteOpen(true)
     }
@@ -94,7 +94,7 @@ export default function Segaments() {
                     <div className="flex items-center gap-2.5">
                         <SearchField onSearchChange={setSearch} />
                         <Button variant="primary" size="sm" onClick={() => setIsAddOpen(true)}>
-                            Add segament
+                            Add segment
                             <Plus className="ml-0.5 size-2 md:ml-2 md:size-4" />
                         </Button>
                     </div>
@@ -111,7 +111,7 @@ export default function Segaments() {
                 )}
                 className="w-full md:[&_th:nth-child(2)]:pl-0 md:[&_td:first-child:has([role=checkbox])+td]:pl-0"
             />
-            <AddSegament open={isAddOpen} onOpenChange={handleAddModalChange} />
+            <AddSegment open={isAddOpen} onOpenChange={handleAddModalChange} />
             <DeleteContacts
                 kind="segament"
                 open={isDeleteOpen}

@@ -44,7 +44,7 @@ const AssignedToMe = lazy(() => import("@/features/conversations/assignedToMe"))
 const Archived = lazy(() => import("@/features/conversations/archived"));
 
 const UserProfileDetails = lazy(() => import("@/features/contacts/UserProfileDetails"));
-const Segaments = lazy(() => import("@/features/contacts/Segaments"));
+const Segments = lazy(() => import("@/features/contacts/Segments"));
 
 function GuestOnlyRoute() {
   return getAuthToken() ? <Navigate to="/" replace /> : <Outlet />;
@@ -84,7 +84,7 @@ export const router = createBrowserRouter([
                 children: [
                   { index: true, element: <Navigate to="user-profile-details" replace /> },
                   { path: "user-profile-details", element: <UserProfileDetails /> },
-                  { path: "segaments", element: <Segaments /> },
+                  { path: "segments", element: <Segments /> },
                 ]
               },
               {
