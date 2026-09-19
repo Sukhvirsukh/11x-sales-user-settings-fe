@@ -30,7 +30,7 @@ export default function SearchField({ onSearchChange, showMobilePanel = true }: 
                             </Button>
                         }
                     />
-                    <PopoverContent side="top" align="end" sideOffset={8} className="w-[255px] max-w-[calc(100vw-2rem)] rounded-[10px] border border-blue-200 bg-white! p-3 shadow-blue ring-0! md:hidden">
+                    <PopoverContent side="top" align="end" sideOffset={8} className="w-[255px] max-w-[calc(100vw-2rem)] rounded-[10px] border border-blue-200 bg-white! p-3 shadow-blue ring-0! dark:border-interactive-active-border dark:bg-popover! md:hidden">
                         <InputField
                             aria-label="Search knowledge base"
                             value={search}

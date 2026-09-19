@@ -1,6 +1,6 @@
 export default function Background() {
   return (
-    <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-0 overflow-hidden bg-table-header">
+    <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-0 overflow-hidden bg-table-header-background">
       <div className="absolute -left-[11px] -top-5 h-[800px] w-[1408px]">
         <svg width="18" height="24" viewBox="0 0 18 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-[29px] h-[43px] absolute left-0 top-0 ">
           <path d="M-11 23.3C-11 23.3 -0.2 15.2 2.9 2C6 -11.2 17.5 -20 17.5 -20" stroke="#3576F3" strokeOpacity="0.2" strokeWidth="0.88" strokeMiterlimit="10" />

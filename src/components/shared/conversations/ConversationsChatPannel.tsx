@@ -21,13 +21,13 @@ function ConversationList({ selectedId, onSelect }: { selectedId: number; onSele
                     type="button"
                     onClick={() => onSelect(conversation.id)}
                     className={`w-full border-l-2 p-1.5 text-left cursor-pointer transition-colors ${conversation.id === selectedId
-                        ? "border-primary bg-active-bg"
-                        : "border-transparent hover:bg-light"
+                        ? "border-primary bg-interactive-active-background"
+                        : "border-transparent hover:bg-surface-subtle"
                         }`}
                 >
                     <div className="flex items-center justify-between gap-1.5">
                         <span className="flex min-w-0 items-center gap-1 mb-1.5">
-                            <span aria-hidden className="size-2 shrink-0 rounded-full bg-black" />
+                            <span aria-hidden className="size-2 shrink-0 rounded-full bg-content-strong" />
                             <span className="truncate text-sm font-bold text-foreground">{conversation.name}</span>
                         </span>
                         <span className="shrink-0 text-xs font-semibold">{conversation.time}</span>
@@ -110,12 +110,12 @@ function CustomerDetails({ conversation }: { conversation: Conversation }) {
             <div className="border-t border-section-border pt-4">
                 <div className="mb-3 flex items-center justify-between gap-2">
                     <Heading size="md" className="font-semibold">Customer details</Heading>
-                    <ChevronRight className="size-4 text-gray" />
+                    <ChevronRight className="size-4 text-content-muted" />
                 </div>
                 <dl className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-2 text-sm">
                     {details.map((detail) => (
                         <Fragment key={detail.label}>
-                            <dt className="text-ghost">{detail.label}</dt>
+                            <dt className="text-content-muted">{detail.label}</dt>
                             <dd className="truncate text-foreground">{detail.value}</dd>
                         </Fragment>
                     ))}
@@ -125,7 +125,7 @@ function CustomerDetails({ conversation }: { conversation: Conversation }) {
             <div className="border-t border-section-border pt-4">
                 <div className="mb-2.5 flex items-center justify-between gap-2">
                     <Heading size="md" className="font-semibold">Share URL</Heading>
-                    <ChevronRight className="size-4 text-gray" />
+                    <ChevronRight className="size-4 text-content-muted" />
                 </div>
                 <CopyField value={conversation.shareUrl} />
             </div>

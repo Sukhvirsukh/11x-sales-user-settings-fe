@@ -96,7 +96,7 @@ export function CustomTabs({
                             "transition-all duration-150",
                             "hover:bg-gray-50",
                             /* Active state – must override base tabs styles */
-                            "data-active:!border-border-tab data-active:!bg-card-nested data-active:!font-medium data-active:!text-foreground data-active:!shadow-panel",
+                            "data-active:!border-tab-active-border data-active:!bg-surface-raised data-active:!font-medium data-active:!text-foreground data-active:!shadow-panel",
                             /* Icons */
                             "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg]:size-3.5",
                             triggerClassName,

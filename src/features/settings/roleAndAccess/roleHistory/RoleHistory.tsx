@@ -131,12 +131,12 @@ export default function RoleHistory() {
                     <div className="flex items-center gap-2">
                         {canEditRole && (
                             <Button variant="bare" size="sm" onClick={() => openEditRole(row)} aria-label="Edit role">
-                                <SquarePen className="size-4 text-gray" />
+                                <SquarePen className="size-4 text-content-muted" />
                             </Button>
                         )}
                         {canDeleteRole && (
                             <Button variant="bare" size="sm" onClick={() => requestDelete([row])} aria-label="Delete role">
-                                <Trash className="size-4 text-gray" />
+                                <Trash className="size-4 text-content-muted" />
                             </Button>
                         )}
                     </div>

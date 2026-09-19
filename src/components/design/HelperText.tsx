@@ -9,7 +9,7 @@ export interface HelperTextProps extends HTMLAttributes<HTMLParagraphElement> {
 function HelperText({ children, className, ...props }: HelperTextProps) {
     return (
         <p
-            className={cn("text-sm leading-snug text-ghost", className)}
+            className={cn("text-sm leading-snug text-content-muted", className)}
             {...props}
         >
             {children}

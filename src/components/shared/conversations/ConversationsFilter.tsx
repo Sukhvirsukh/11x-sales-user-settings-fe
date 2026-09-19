@@ -17,7 +17,7 @@ function FilterGroup({ title, options }: { title: string; options: FilterOption[
         <section className="flex w-full flex-col gap-2.5">
             <div className="flex items-center justify-between gap-2">
                 <Heading size="md">{title}</Heading>
-                <span className="text-xs text-ghost">{selected.length} selected</span>
+                <span className="text-xs text-content-muted">{selected.length} selected</span>
             </div>
             <Separator className="bg-section-border" />
             <div className="flex flex-col gap-2.5">

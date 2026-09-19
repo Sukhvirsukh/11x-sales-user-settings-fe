@@ -24,7 +24,7 @@ function ActionCard({
         <div
             className={cn(
                 "flex gap-3",
-                variant === "default" && "rounded-[10px] bg-white p-2.5 md:p-4",
+                variant === "default" && "rounded-[10px] bg-white p-2.5 dark:bg-surface-raised md:p-4",
                 variant === "bare" && "rounded-none border-0 bg-transparent p-0",
                 className
             )}

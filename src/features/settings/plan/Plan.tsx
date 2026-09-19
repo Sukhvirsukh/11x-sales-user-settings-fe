@@ -32,7 +32,7 @@ function PlanCard({ plan, isCurrent, isUpgradePending, isUpgrading, onUpgrade }:
                 styles.card,
                 "flex min-w-0 flex-col",
                 isMostPopular
-                    ? "relative z-10 rounded-[10px] bg-white shadow-[0_0_18px_4px_rgba(53,118,243,0.25)]"
+                    ? "relative z-10 rounded-[10px] bg-white shadow-[0_0_18px_4px_rgba(53,118,243,0.25)] dark:bg-surface-raised dark:shadow-blue"
                     : "py-0.5"
             )}
         >
@@ -40,18 +40,18 @@ function PlanCard({ plan, isCurrent, isUpgradePending, isUpgrading, onUpgrade }:
                 className={cn(
                     "flex min-h-15 items-center justify-between px-5 py-2.5",
                     isMostPopular
-                        ? "border-b rounded-t-[9px] border-transparent bg-table-header px-5"
+                        ? "border-b rounded-t-[9px] border-transparent bg-table-header-background px-5"
                         : "mx-5 border-b border-border px-0"
                 )}
             >
                 <div className="min-w-0">
-                    <h3 className={cn("text-sm font-normal", isMostPopular ? "text-black" : "text-ghost")}>
+                    <h3 className={cn("text-sm font-normal", isMostPopular ? "text-content-strong" : "text-content-muted")}>
                         {name}
                     </h3>
-                    <p className="mt-1 text-lg font-medium text-black">Starting at INR {priceInr}</p>
+                    <p className="mt-1 text-lg font-medium text-content-strong">Starting at INR {priceInr}</p>
                 </div>
                 {isMostPopular && (
-                    <Badge indigator={false} className="rounded-full bg-[#F5FFBB] text-black">
+                    <Badge indigator={false} className="rounded-full bg-[#F5FFBB] text-content-strong dark:text-[#1E1E1E]">
                         Most popular
                     </Badge>
                 )}
@@ -59,8 +59,8 @@ function PlanCard({ plan, isCurrent, isUpgradePending, isUpgrading, onUpgrade }:
             <div className="flex flex-1 flex-col px-5 pb-5 pt-4">
                 <ul className="flex flex-col gap-4">
                     {features.map((feature) => (
-                        <li key={feature} className="flex items-start gap-2 text-base text-[#4D4D4D]">
-                            <Check aria-hidden="true" className="size-4 shrink-0 text-ghost" />
+                        <li key={feature} className="flex items-start gap-2 text-base text-[#4D4D4D] dark:text-content-muted">
+                            <Check aria-hidden="true" className="size-4 shrink-0 text-content-muted" />
                             <span>{feature}</span>
                         </li>
                     ))}
@@ -147,10 +147,10 @@ export function Plan() {
                 <div className="flex w-full items-center justify-between">
                     <Heading size="lg">Plan</Heading>
                     <div className="flex items-center gap-2 lg:hidden">
-                        <Button variant="secondary" size="sm" className="size-6 rounded-md bg-white p-0!" aria-label="Show previous plan" onClick={() => showPlan(-1)}>
+                        <Button variant="secondary" size="sm" className="size-6 rounded-md bg-white p-0! dark:bg-surface-raised" aria-label="Show previous plan" onClick={() => showPlan(-1)}>
                             <ChevronLeft aria-hidden="true" className="size-3.5" />
                         </Button>
-                        <Button variant="secondary" size="sm" className="size-6 rounded-md bg-white p-0!" aria-label="Show next plan" onClick={() => showPlan(1)}>
+                        <Button variant="secondary" size="sm" className="size-6 rounded-md bg-white p-0! dark:bg-surface-raised" aria-label="Show next plan" onClick={() => showPlan(1)}>
                             <ChevronRight aria-hidden="true" className="size-3.5" />
                         </Button>
                     </div>

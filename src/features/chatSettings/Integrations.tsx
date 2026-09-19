@@ -49,7 +49,7 @@ const ToggleAction = memo(function ToggleAction({
     return (
         <Button
             variant='secondary'
-            className={`gap-2 px-2! py-1.5! rounded-[10px] ${active ? 'bg-badge-active-bg' : ''}`}
+            className={`gap-2 px-2! py-1.5! rounded-[10px] ${active ? 'bg-badge-active-background' : ''}`}
             onClick={onToggle}
             disabled={disabled}
             aria-disabled={disabled}

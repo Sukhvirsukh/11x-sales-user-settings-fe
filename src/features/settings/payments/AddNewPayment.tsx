@@ -72,23 +72,23 @@ export function CardPayment() {
                     id={defaultPaymentId}
                     name="defaultPaymentMethod"
                 />
-                <Label htmlFor={defaultPaymentId} className="cursor-pointer text-sm text-gray">
+                <Label htmlFor={defaultPaymentId} className="cursor-pointer text-sm text-content-muted">
                     Save as default payment method
                 </Label>
             </div>
-            <AppSection className="h-auto gap-2.5 rounded-[4px] bg-table-header">
+            <AppSection className="h-auto gap-2.5 rounded-[4px] bg-table-header-background">
                 <dl className="flex w-full flex-col gap-2 text-sm">
                     <div className="flex items-center justify-between gap-3">
-                        <dt className="text-gray">Total charges</dt>
+                        <dt className="text-content-muted">Total charges</dt>
                         <dd className="">INR 650</dd>
                     </div>
                     <div className="flex items-center justify-between gap-3">
-                        <dt className="text-gray">Apply offer</dt>
+                        <dt className="text-content-muted">Apply offer</dt>
                         <dd className="">INR 65</dd>
                     </div>
                     <div className="flex items-center justify-between gap-3">
                         <dt>
-                            <Label htmlFor={otherOfferId} className="text-sm font-normal text-gray">
+                            <Label htmlFor={otherOfferId} className="text-sm font-normal text-content-muted">
                                 Other offer
                             </Label>
                         </dt>
@@ -97,15 +97,15 @@ export function CardPayment() {
                                 id={otherOfferId}
                                 name="otherOffer"
                                 placeholder="Enter here"
-                                containerClassName="h-[22px] rounded-[6px] border-ghost px-2"
-                                className="text-xs placeholder:text-ghost"
+                                containerClassName="h-[22px] rounded-[6px] border-content-muted px-2"
+                                className="text-xs placeholder:text-content-muted"
                             />
                         </dd>
                     </div>
                 </dl>
                 <Separator className="bg-primary/30" />
                 <dl className="flex w-full items-center justify-between gap-3 text-sm">
-                    <dt className="text-gray">Total payment</dt>
+                    <dt className="text-content-muted">Total payment</dt>
                     <dd className="">INR 600</dd>
                 </dl>
             </AppSection>

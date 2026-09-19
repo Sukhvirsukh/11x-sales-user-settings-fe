@@ -192,7 +192,7 @@ export default function CustomTable<T extends Record<string, unknown>>({
                     <div
                         aria-label="Bulk actions"
                         role="group"
-                        className="z-10 flex w-full flex-wrap items-center justify-between gap-3 rounded-lg border border-section-border bg-table-header px-4 py-2 md:absolute md:inset-x-0 md:top-0 md:h-10 md:flex-nowrap md:rounded-none md:border-0 md:px-5 md:py-0"
+                        className="z-10 flex w-full flex-wrap items-center justify-between gap-3 rounded-lg border border-section-border bg-table-header-background px-4 py-2 md:absolute md:inset-x-0 md:top-0 md:h-10 md:flex-nowrap md:rounded-none md:border-0 md:px-5 md:py-0"
                     >
                         <div className="flex items-center gap-3">
                             <SelectAllCheckbox />
@@ -210,7 +210,7 @@ export default function CustomTable<T extends Record<string, unknown>>({
                 )}
                 <Table className="block md:table">
                     <TableHeader className="hidden md:table-header-group [&_tr]:border-b-0">
-                        <TableRow className="bg-table-header hover:bg-section-bg border-0 rounded-[10px]">
+                        <TableRow className="bg-table-header-background hover:bg-section-background border-0 rounded-[10px]">
                             {selectable && (
                                 <TableHead className="w-14 px-5 py-2.5">
                                     <SelectAllCheckbox />
@@ -237,7 +237,7 @@ export default function CustomTable<T extends Record<string, unknown>>({
                             <TableRow
                                 key={displayedRowIds[rowIndex]}
                                 style={mobileRowStyle}
-                                className="grid grid-cols-2 overflow-hidden rounded-lg border! border-section-border bg-card-nested px-2 py-0 hover:bg-card-nested md:table-row md:rounded-none md:border-0! md:bg-transparent md:p-0 md:hover:bg-transparent"
+                                className="grid grid-cols-2 overflow-hidden rounded-lg border! border-section-border bg-surface-raised px-2 py-0 hover:bg-surface-raised md:table-row md:rounded-none md:border-0! md:bg-transparent md:p-0 md:hover:bg-transparent"
                             >
                                 {selectable && (
                                     <TableCell className="col-span-2 border-b border-section-border px-1 py-2 md:border-0 md:px-5">
@@ -251,7 +251,7 @@ export default function CustomTable<T extends Record<string, unknown>>({
                                 {columns.map((col) => (
                                     <TableCell
                                         key={col.key}
-                                        className={`${col.key === "select" ? "hidden" : "block"} min-w-0 whitespace-normal break-words ${mobileColumns.indexOf(col) < lastMobileRowStart ? "border-b" : "border-b-0"} border-section-border px-1 py-2 text-left text-[14px] font-normal text-black md:table-cell md:border-0 md:whitespace-nowrap md:px-5 ${col.align === "right" ? "md:text-right" : col.align === "center" ? "md:text-center" : "md:text-left"}`}
+                                        className={`${col.key === "select" ? "hidden" : "block"} min-w-0 whitespace-normal break-words ${mobileColumns.indexOf(col) < lastMobileRowStart ? "border-b" : "border-b-0"} border-section-border px-1 py-2 text-left text-[14px] font-normal text-content-strong md:table-cell md:border-0 md:whitespace-nowrap md:px-5 ${col.align === "right" ? "md:text-right" : col.align === "center" ? "md:text-center" : "md:text-left"}`}
                                     >
                                         {col.header && (
                                             <span className="mb-1 block font-semibold md:hidden">
@@ -264,7 +264,7 @@ export default function CustomTable<T extends Record<string, unknown>>({
                                     </TableCell>
                                 ))}
                                 {rowActions && (
-                                    <TableCell className="block min-w-0 px-1 py-2 text-left text-[14px] font-normal text-black md:table-cell md:px-5 md:text-right">
+                                    <TableCell className="block min-w-0 px-1 py-2 text-left text-[14px] font-normal text-content-strong md:table-cell md:px-5 md:text-right">
                                         <span className="mb-1 block font-semibold md:hidden">Action</span>
                                         <div className="flex items-center md:justify-end">
                                             {rowActions(row)}
@@ -308,12 +308,12 @@ export default function CustomTable<T extends Record<string, unknown>>({
                 {/* Empty state */}
                 {data.length === 0 && (
                     emptyState ?? (
-                        <div className="flex w-full flex-col items-center justify-center gap-2 rounded-lg border border-section-border bg-card-nested px-4 py-10 text-center md:rounded-none md:border-0 md:py-16">
-                            <span className="flex size-10 items-center justify-center rounded-full bg-section-bg text-primary">
+                        <div className="flex w-full flex-col items-center justify-center gap-2 rounded-lg border border-section-border bg-surface-raised px-4 py-10 text-center md:rounded-none md:border-0 md:py-16">
+                            <span className="flex size-10 items-center justify-center rounded-full bg-section-background text-primary">
                                 <Inbox aria-hidden="true" className="size-5" />
                             </span>
-                            <p className="text-sm font-medium text-black">{emptyMessage}</p>
-                            <p className="text-sm text-ghost">{emptyDescription}</p>
+                            <p className="text-sm font-medium text-content-strong">{emptyMessage}</p>
+                            <p className="text-sm text-content-muted">{emptyDescription}</p>
                             {emptyStateAction && <div className="mt-2">{emptyStateAction}</div>}
                         </div>
                     )

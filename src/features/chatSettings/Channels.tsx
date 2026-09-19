@@ -10,10 +10,10 @@ import AppCard from "@/components/design/AppCard";
 const VitaChatIcon = memo(function VitaChatIcon() {
     return (
         <div className="flex items-center justify-center relative">
-            <div className="relative size-9 shrink-0 overflow-hidden rounded-full border border-black/15 bg-white md:size-10">
+            <div className="relative size-9 shrink-0 overflow-hidden rounded-full border border-content-strong/15 bg-white dark:bg-surface-raised md:size-10">
                 <div className="absolute inset-x-0 bottom-0 h-1/2 bg-primary" />
             </div>
-            <span className="absolute top-1 right-0.5 size-2 rounded-full bg-status-online" />
+            <span className="absolute top-1 right-0.5 size-2 rounded-full bg-status-online-accent" />
         </div>
     );
 });
@@ -52,7 +52,7 @@ export default function Channels() {
                             <p className="text-base font-semibold text-foreground md:text-lg">
                                 Link to chat
                             </p>
-                            <p className="mt-1 text-gray">
+                            <p className="mt-1 text-content-muted">
                                 Use the following link to the standalone chat page
                             </p>
                             <div className="mt-2 min-w-0">
@@ -67,7 +67,7 @@ export default function Channels() {
                             <p className="text-base font-semibold text-foreground md:text-lg">
                                 Embedded chat (iframe)
                             </p>
-                            <p className="mt-1 text-gray">
+                            <p className="mt-1 text-content-muted">
                                 Add the following code into the HTML code of your page
                             </p>
                             <div className="mt-2 min-w-0">
@@ -79,9 +79,9 @@ export default function Channels() {
                         </div>
                     </div>
 
-                    <div className="hidden w-px shrink-0 bg-border-light lg:block" />
+                    <div className="hidden w-px shrink-0 bg-divider lg:block" />
 
-                    <div className="min-w-0 border-t border-border-light pt-2.5 lg:w-[min(100%,280px)] lg:shrink-0 lg:border-t-0 lg:pt-0">
+                    <div className="min-w-0 border-t border-divider pt-2.5 lg:w-[min(100%,280px)] lg:shrink-0 lg:border-t-0 lg:pt-0">
                         <p className="text-base font-medium text-foreground md:text-lg">
                             QR code
                         </p>

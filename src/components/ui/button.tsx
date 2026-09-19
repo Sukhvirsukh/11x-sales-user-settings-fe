@@ -15,23 +15,23 @@ const buttonVariants = cva(
 
         // Dark Outline / Black Border (as seen in middle "Generate")
         outline:
-          "border-black bg-transparent text-black hover:bg-zinc-100",
+          "border-content-strong bg-transparent text-content-strong hover:bg-zinc-100 dark:hover:bg-muted",
 
         // Gray outline
         secondary:
-          "border-ghost bg-transparent text-ghost hover:bg-zinc-50",
+          "border-content-muted bg-transparent text-content-muted hover:bg-zinc-50 dark:hover:bg-muted",
 
         // Same as secondary
         ghost:
-          "border-ghost bg-transparent text-ghost hover:bg-zinc-50",
+          "border-content-muted bg-transparent text-content-muted hover:bg-zinc-50 dark:hover:bg-muted",
 
         // No border, no background — just children
         bare:
-          "border-transparent bg-transparent hover:bg-zinc-50",
+          "border-transparent bg-transparent hover:bg-zinc-50 dark:hover:bg-muted",
 
         // Underlined text action with the same compact spacing as bare buttons
         "underline-bare":
-          "border-transparent bg-transparent text-border-gray underline underline-offset-2 hover:bg-transparent hover:text-foreground",
+          "border-transparent bg-transparent text-content-muted underline underline-offset-2 hover:bg-transparent hover:text-foreground",
 
         // Simple Link
         link:
@@ -39,11 +39,11 @@ const buttonVariants = cva(
 
         // Compact text action, used for inline card actions such as "Show all".
         action:
-          "!h-auto !rounded-none !p-0 md:!p-0 !text-sm md:!text-sm font-normal text-ghost underline underline-offset-2 hover:bg-transparent hover:text-foreground",
+          "!h-auto !rounded-none !p-0 md:!p-0 !text-sm md:!text-sm font-normal text-content-muted underline underline-offset-2 hover:bg-transparent hover:text-foreground",
 
         // destructive
         destructive:
-          "bg-danger text-white hover:bg-danger-dark",
+          "bg-danger text-white hover:bg-danger-strong",
 
       },
       size: {

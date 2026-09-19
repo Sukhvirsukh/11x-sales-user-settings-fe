@@ -162,7 +162,7 @@ export default function AddStore({ open, onOpenChange, store }: AddStoreProps) {
                         render={({ field }) => (
                             <div className="flex items-center gap-2">
                                 <Checkbox id="isDefault" checked={field.value} onCheckedChange={field.onChange} />
-                                <Label htmlFor="isDefault" className="cursor-pointer text-sm text-gray">
+                                <Label htmlFor="isDefault" className="cursor-pointer text-sm text-content-muted">
                                     Set as default
                                 </Label>
                             </div>
@@ -174,7 +174,7 @@ export default function AddStore({ open, onOpenChange, store }: AddStoreProps) {
                         render={({ field }) => (
                             <div className="flex items-center gap-2">
                                 <Checkbox id="status" checked={field.value} onCheckedChange={field.onChange} />
-                                <Label htmlFor="status" className="cursor-pointer text-sm text-gray">
+                                <Label htmlFor="status" className="cursor-pointer text-sm text-content-muted">
                                     Is active
                                 </Label>
                             </div>

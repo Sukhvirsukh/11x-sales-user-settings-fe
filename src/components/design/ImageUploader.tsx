@@ -137,10 +137,10 @@ export default function ImageUploader({
 
             <div
                 className={cn(
-                    "relative flex h-[34px] items-center overflow-hidden rounded-xl border border-border-soft px-3.5 transition-all focus-within:border-border-soft focus-within:ring-2 focus-within:ring-blue-400/20 dark:border-slate-800",
-                    "bg-card-nested focus-within:bg-card-nested",
+                    "relative flex h-[34px] items-center overflow-hidden rounded-xl border border-field-border px-3.5 transition-all focus-within:border-field-border focus-within:ring-2 focus-within:ring-blue-400/20 dark:border-slate-800",
+                    "bg-surface-raised focus-within:bg-surface-raised",
                     variant === "light"
-                        ? "border-section-border bg-light focus-within:border-section-border focus-within:bg-light dark:bg-slate-800/60 dark:focus-within:bg-slate-800/60"
+                        ? "border-section-border bg-surface-subtle focus-within:border-section-border focus-within:bg-surface-subtle dark:bg-slate-800/60 dark:focus-within:bg-slate-800/60"
                         : "",
                     isDragging && "border-primary bg-primary/5",
                     disabled && "cursor-not-allowed opacity-50",

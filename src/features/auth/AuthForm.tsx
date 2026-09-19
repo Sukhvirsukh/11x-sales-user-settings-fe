@@ -17,13 +17,13 @@ export default function AuthForm({
     withSocials = false,
 }: AuthFormProps) {
     return (
-        <main className="flex min-h-screen items-center justify-center bg-table-header px-4 py-10">
+        <main className="flex min-h-screen items-center justify-center bg-table-header-background px-4 py-10">
             <div className="isolate relative z-10 w-full max-w-[500px]">
                 <div
                     aria-hidden="true"
                     className="absolute inset-x-[25px] -bottom-3 z-[-1] h-12 rounded-full bg-primary/20 blur-xl"
                 />
-                <div className="relative z-0 rounded-[20px] border border-black/5 bg-white p-7.5 shadow-[0_0_4px_rgb(0_0_0/0.12)]">
+                <div className="relative z-0 rounded-[20px] border border-content-strong/5 bg-white p-7.5 shadow-[0_0_4px_rgb(0_0_0/0.12)] dark:border-section-border dark:bg-surface-raised dark:shadow-auth">
                 <div className="flex items-center justify-center gap-2">
                     <img
                         src="/logo.svg"
@@ -45,11 +45,11 @@ export default function AuthForm({
 
                 {withSocials && <div className="mt-7.5 flex flex-col items-center gap-5">
                     <div className="flex w-full items-center gap-3">
-                        <span className="h-px flex-1 bg-black/10" />
-                        <span className="shrink-0 text-sm text-ghost">
+                        <span className="h-px flex-1 bg-content-strong/10" />
+                        <span className="shrink-0 text-sm text-content-muted">
                             Or continue with
                         </span>
-                        <span className="h-px flex-1 bg-black/10" />
+                        <span className="h-px flex-1 bg-content-strong/10" />
                     </div>
 
                     <div className="flex items-center gap-8">

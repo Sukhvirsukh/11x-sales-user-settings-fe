@@ -23,7 +23,7 @@ export default function TrackingSettings() {
                                 type="checkbox"
                                 checked={field.value}
                                 onChange={(event) => field.onChange(event.target.checked)}
-                                className="size-4 shrink-0 cursor-pointer rounded-[3px] border border-border-soft transition-colors checked:border-foreground checked:bg-foreground"
+                                className="size-4 shrink-0 cursor-pointer rounded-[3px] border border-field-border transition-colors checked:border-foreground checked:bg-foreground"
                             />
                         )}
                     />

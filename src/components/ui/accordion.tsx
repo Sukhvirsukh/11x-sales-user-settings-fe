@@ -25,7 +25,7 @@ function AccordionItem({
       data-variant={variant}
       className={cn(
         "h-fit min-w-0",
-        variant === "inset" && "not-last:border-b not-last:border-border-light",
+        variant === "inset" && "not-last:border-b not-last:border-divider",
         variant === "card" && "rounded-[10px] border border-border bg-card px-4",
         className
       )}

@@ -39,11 +39,11 @@ export default function CopyField({
                 <button
                     type="button"
                     onClick={handleCopy}
-                    className="flex items-center justify-center text-gray hover:text-foreground transition-colors"
+                    className="flex items-center justify-center text-content-muted hover:text-foreground transition-colors"
                     aria-label={copied ? "Copied" : "Copy to clipboard"}
                 >
                     {copied ? (
-                        <Check className="size-4 text-status-online" />
+                        <Check className="size-4 text-status-online-accent" />
                     ) : (
                         <Copy className="size-4" />
                     )}

@@ -16,7 +16,7 @@ export interface ChatMessageProps {
 }
 
 const actionClassName =
-  "text-sm text-black transition-colors hover:text-primary";
+  "text-sm text-content-strong transition-colors hover:text-primary";
 
 export function ChatMessage({
   id,
@@ -70,8 +70,8 @@ export function ChatMessage({
         ))}
 
       <div className={isUser ? "max-w-[227px]" : "w-fit max-w-full min-w-0"}>
-        <div className={`max-w-full rounded-[10px] bg-table-header p-2.5 ${bubbleClassName}`}>
-          <p className="text-sm leading-none whitespace-pre-wrap text-black">{content}</p>
+        <div className={`max-w-full rounded-[10px] bg-table-header-background p-2.5 ${bubbleClassName}`}>
+          <p className="text-sm leading-none whitespace-pre-wrap text-content-strong">{content}</p>
         </div>
 
         {/* Feedback row for bot messages */}
@@ -107,7 +107,7 @@ export function ChatMessage({
                 <button
                   type="button"
                   onClick={() => onLike(id)}
-                  className="flex items-center justify-center text-black transition-colors hover:text-primary"
+                  className="flex items-center justify-center text-content-strong transition-colors hover:text-primary"
                   aria-label="Good response"
                 >
                   <ThumbsUpIcon className="size-3.5" />
@@ -117,7 +117,7 @@ export function ChatMessage({
                 <button
                   type="button"
                   onClick={() => onDislike(id)}
-                  className="flex items-center justify-center text-black transition-colors hover:text-primary"
+                  className="flex items-center justify-center text-content-strong transition-colors hover:text-primary"
                   aria-label="Bad response"
                 >
                   <ThumbsDownIcon className="size-3.5" />
@@ -127,7 +127,7 @@ export function ChatMessage({
                 <button
                   type="button"
                   onClick={() => onApprove(id)}
-                  className="flex items-center justify-center text-black transition-colors hover:text-primary"
+                  className="flex items-center justify-center text-content-strong transition-colors hover:text-primary"
                   aria-label="Approve response"
                 >
                   <CheckIcon className="size-4" />
@@ -139,7 +139,7 @@ export function ChatMessage({
 
         {/* Correction editor */}
         {isEditing && (
-          <div className="mt-1.5 rounded-xl border border-border bg-white p-2 shadow-sm">
+          <div className="mt-1.5 rounded-xl border border-border bg-white p-2 shadow-sm dark:bg-surface-raised">
             <textarea
               value={correctionDraft}
               onChange={(e) => setCorrectionDraft(e.target.value)}

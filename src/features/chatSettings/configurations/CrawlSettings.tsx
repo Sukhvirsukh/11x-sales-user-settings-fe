@@ -20,7 +20,7 @@ export default function CrawlSettings() {
         <SectionHeader heading="Crawl settings">
             <AppCard>
                 <div className="grid min-w-0 grid-cols-1 gap-4 lg:grid-cols-[1fr_201px] lg:gap-5">
-                    <div className="flex min-w-0 flex-col gap-5 lg:border-r lg:border-border-light lg:pr-5">
+                    <div className="flex min-w-0 flex-col gap-5 lg:border-r lg:border-divider lg:pr-5">
                         <div className="flex w-full flex-col gap-1.5">
 
                             <Controller
@@ -66,7 +66,7 @@ export default function CrawlSettings() {
 
                         <ul className=" text-sm leading-relaxed">
                             <li className="flex items-start gap-2.5">
-                                <span className="mt-1.5 size-2 shrink-0 rounded-full bg-ghost" />
+                                <span className="mt-1.5 size-2 shrink-0 rounded-full bg-content-muted" />
                                 <div>
                                     For tags, just use the name of the tag:
                                     <br />
@@ -76,21 +76,21 @@ export default function CrawlSettings() {
                                 </div>
                             </li>
                             <li className="flex items-start gap-2.5">
-                                <span className="mt-1.5 size-2 shrink-0 rounded-full bg-ghost" />
+                                <span className="mt-1.5 size-2 shrink-0 rounded-full bg-content-muted" />
                                 <div>
                                     For IDs, use brackets: e.g.
                                     <br />
-                                    <code className="rounded bg-border-light px-1 py-0.5 text-sm text-foreground">
+                                    <code className="rounded bg-divider px-1 py-0.5 text-sm text-foreground">
                                         [id*=&quot;id-name&quot;]
                                     </code>
                                 </div>
                             </li>
                             <li className="flex items-start gap-2.5">
-                                <span className="mt-1.5 size-2 shrink-0 rounded-full bg-ghost" />
+                                <span className="mt-1.5 size-2 shrink-0 rounded-full bg-content-muted" />
                                 <div>
                                     For classes, use brackets: e.g.
                                     <br />
-                                    <code className="rounded bg-border-light px-1 py-0.5 text-sm text-foreground">
+                                    <code className="rounded bg-divider px-1 py-0.5 text-sm text-foreground">
                                         [class*=&quot;class-name&quot;]
                                     </code>
                                 </div>

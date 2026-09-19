@@ -167,7 +167,7 @@ function LoadedChatBox({ fields, onClose, className = "" }: ChatBoxProps & { fie
             <p className="truncate text-base font-semibold tracking-[0.02em]">
               {aiAgentName}
             </p>
-            <span className="inline-flex items-center gap-[7px] rounded-[44px] bg-status-online! px-1.5 py-[3px] text-[10px] font-medium tracking-[0.04em] text-success-strong">
+            <span className="inline-flex items-center gap-[7px] rounded-[44px] bg-status-online-accent! px-1.5 py-[3px] text-[10px] font-medium tracking-[0.04em] text-success-strong">
               <span
                 className="size-1.5 rounded-full"
                 style={{ backgroundColor: notificationColor }}

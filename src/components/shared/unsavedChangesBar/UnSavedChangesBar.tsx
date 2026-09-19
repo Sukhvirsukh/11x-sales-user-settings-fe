@@ -72,7 +72,7 @@ export function UnSavedChangesBar({
       aria-label="Unsaved changes"
       aria-live="polite"
       className={cn(
-        "flex shrink-0 flex-row flex-wrap items-center justify-between gap-x-3 gap-y-2 border-border bg-white px-4 py-3",
+        "flex shrink-0 flex-row flex-wrap items-center justify-between gap-x-3 gap-y-2 border-border bg-white px-4 py-3 dark:bg-surface-raised",
         isInlineBottom && "py-2",
         isInlineTop && "order-first",
         isFixed

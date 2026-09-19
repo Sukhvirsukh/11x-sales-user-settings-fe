@@ -97,10 +97,10 @@ const SelectField = React.forwardRef<
                         ref={ref}
                         id={selectId}
                         className={cn(
-                            "h-[34px] w-full rounded-xl border border-border-soft px-3.5 transition-all focus-visible:border-border-soft focus-visible:ring-2 focus-visible:ring-blue-400/20 dark:border-slate-800 data-placeholder:text-slate-400 dark:data-placeholder:text-slate-500",
+                            "h-[34px] w-full rounded-xl border border-field-border px-3.5 transition-all focus-visible:border-field-border focus-visible:ring-2 focus-visible:ring-blue-400/20 dark:border-slate-800 data-placeholder:text-slate-400 dark:data-placeholder:text-slate-500",
                             variant === "light"
-                                ? "bg-light border-section-border focus-visible:bg-light focus-visible:border-section-border dark:bg-slate-800/60 dark:focus-visible:bg-slate-800/60"
-                                : "bg-card-nested focus-visible:bg-card-nested",
+                                ? "bg-surface-subtle border-section-border focus-visible:bg-surface-subtle focus-visible:border-section-border dark:bg-slate-800/60 dark:focus-visible:bg-slate-800/60"
+                                : "bg-surface-raised focus-visible:bg-surface-raised",
                             containerClassName,
                             error && "border-danger focus-visible:border-danger",
                             disabled && "opacity-50 cursor-not-allowed",
@@ -122,8 +122,8 @@ const SelectField = React.forwardRef<
                             // Match the trigger surface so the dropdown reads as part of the field.
                             "font-sans",
                             variant === "light"
-                                ? "border-section-border bg-light dark:border-slate-800 dark:bg-slate-800"
-                                : "border-border-soft bg-card-nested dark:border-slate-800",
+                                ? "border-section-border bg-surface-subtle dark:border-slate-800 dark:bg-slate-800"
+                                : "border-field-border bg-surface-raised dark:border-slate-800",
                             contentClassName
                         )}
                     >

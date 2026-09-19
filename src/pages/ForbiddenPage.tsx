@@ -21,7 +21,7 @@ export default function ForbiddenPage() {
             <AppSection>
                 <div className="w-full">
                     <div className="relative flex flex-col items-center text-center">
-                        <span className="flex items-center gap-2 rounded-full border border-section-border bg-section-bg px-3 py-1 text-xs font-medium tracking-[0.08em] text-primary uppercase">
+                        <span className="flex items-center gap-2 rounded-full border border-section-border bg-section-background px-3 py-1 text-xs font-medium tracking-[0.08em] text-primary uppercase">
                             <ShieldX aria-hidden className="size-3.5" />
                             Error 403
                         </span>
@@ -36,7 +36,7 @@ export default function ForbiddenPage() {
 
                         <p className="mt-2 max-w-xl text-sm text-muted-foreground">
                             Your account has no access to{" "}
-                            <code className="rounded-md border border-border-subtle bg-light px-1.5 py-0.5 break-all text-foreground">
+                            <code className="rounded-md border border-border-subtle bg-surface-subtle px-1.5 py-0.5 break-all text-foreground">
                                 {pathname}
                             </code>
                             . Ask an admin if you believe that’s wrong.

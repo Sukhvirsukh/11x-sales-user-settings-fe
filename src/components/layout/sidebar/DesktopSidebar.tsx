@@ -47,8 +47,8 @@ export default function DesktopSidebar() {
                 title={isCollapsed ? item.label : undefined}
                 className={({ isActive }) =>
                   `w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-base transition-all ${isActive
-                    ? "border border-active-border bg-active-bg font-medium text-foreground shadow-2xs"
-                    : "border border-transparent text-foreground hover:bg-active-bg"
+                    ? "border border-interactive-active-border bg-interactive-active-background font-medium text-foreground shadow-2xs"
+                    : "border border-transparent text-foreground hover:bg-interactive-active-background"
                   } ${isCollapsed ? "justify-center px-0" : ""}`
                 }
               >

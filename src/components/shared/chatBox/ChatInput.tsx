@@ -69,7 +69,7 @@ export function ChatInput({
               aria-label="Attach image"
               disabled={disabled}
               onClick={() => imageInputRef.current?.click()}
-              className="flex size-5 shrink-0 items-center justify-center text-ghost transition-colors hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
+              className="flex size-5 shrink-0 items-center justify-center text-content-muted transition-colors hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
             >
               <ImageIcon className="size-3.5" />
             </button>

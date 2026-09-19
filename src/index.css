@@ -43,60 +43,54 @@
   --text-3xl--line-height: 1.75rem;
   /* 28px */
 
-  /* Color Mappings */
+  /* Semantic color utilities */
   --color-background: var(--background);
   --color-popover: var(--popover);
   --color-popover-foreground: var(--popover-foreground);
   --color-sidebar: var(--sidebar-bg);
-  --color-card-bg: var(--card-bg);
-  --color-card-nested: var(--card-nested-bg);
+  --color-surface-raised: var(--surface-raised);
+  --color-surface-subtle: var(--surface-subtle);
+  --color-app-section-background: var(--app-section-background);
+  --color-preview-section-background: var(--preview-section-background);
+  --color-app-card-background: var(--app-card-background);
   --color-muted: var(--muted);
-  --color-light-gray: var(--light-gray);
+
+  --color-content-strong: var(--content-strong);
+  --color-content-muted: var(--content-muted);
+
   --color-danger: var(--danger);
+  --color-danger-surface: var(--danger-surface);
+  --color-danger-strong: var(--danger-strong);
   --color-success: var(--success);
-  --color-danger-light: var(--danger-light);
-  --color-danger-dark: var(--danger-dark);
-  --color-success-light: var(--success-light);
+  --color-success-surface: var(--success-surface);
   --color-warning: var(--warning);
-  --color-warning-light: var(--warning-light);
-  --color-light: var(--light);
+  --color-warning-surface: var(--warning-surface);
 
   --color-primary: color-mix(in srgb, var(--primary) calc(100% * var(--tw-bg-opacity, 1)), transparent);
   --color-primary-hover: var(--primary-hover);
-  --color-primary-fg: var(--primary-foreground);
+  --color-primary-contrast: var(--primary-foreground);
 
-  --color-border-subtle: var(--border-subtle);
-  --color-border-blue: var(--border-blue);
   --color-border: var(--border);
-  --color-border-light: var(--border-light);
-  --color-border-soft: var(--border-soft);
-  --color-border-tab: var(--border-tab);
+  --color-border-subtle: var(--border-subtle);
+  --color-divider: var(--divider);
+  --color-field-border: var(--field-border);
+  --color-tab-active-border: var(--tab-active-border);
   --color-input: var(--input);
-  --color-black: var(--black);
 
-  --color-label: var(--label-text);
+  --color-interactive-active-background: var(--interactive-active-background);
+  --color-interactive-active-border: var(--interactive-active-border);
 
-  --color-active-bg: var(--active-item-bg);
-  --color-active-border: var(--active-item-border);
-
-  --color-badge-active-bg: var(--badge-active-bg);
+  --color-badge-active-background: var(--badge-active-background);
   --color-badge-active-text: var(--badge-active-text);
   --color-badge-active-dot: var(--badge-active-dot);
-  --color-status-online: var(--status-online);
-  --color-badge-inactive-bg: var(--badge-inactive-bg);
+  --color-status-online-accent: var(--status-online-accent);
+  --color-badge-inactive-background: var(--badge-inactive-background);
   --color-badge-inactive-dot: var(--badge-inactive-dot);
 
-  --color-border-gray: var(--gray);
-  --color-border-tab: var(--border-tab);
-  --color-gray: var(--gray);
-  --color-ghost: var(--ghost);
-  --color-chat-bg: var(--chat-bg);
-
   --color-section-border: var(--section-border);
-  --color-section-bg: var(--section-bg);
+  --color-section-background: var(--section-background);
   --color-slider-track: var(--slider-track);
-
-  --color-table-header: var(--table-header);
+  --color-table-header-background: var(--table-header-background);
 
   /* Shadows */
   --shadow-blue: 0 2px 6px rgba(55, 118, 243, 0.15), 0 6px 18px rgba(55, 118, 243, 0.10);
@@ -116,18 +110,27 @@
     --popover: #FFF;
     --popover-foreground: var(--foreground);
     --sidebar-bg: #ffffff;
-    --light: #F7F8FB;
-    --card-bg: #f8fafd;
-    --card-nested-bg: #ffffff;
+    --surface-raised: #ffffff;
+    --surface-subtle: #F7F8FB;
+    --app-section-background: rgba(232, 238, 251, 0.50);
+    --preview-section-background: #ffffff;
+    --app-card-background: #F8FAFD;
     --muted: #F1F1F1;
-    --light-gray: #F7F7F7;
+
+    /* Content */
+    --foreground: #0f172a;
+    --muted-foreground: #64748b;
+    --content-strong: #000;
+    --content-muted: #808080;
+
+    /* Feedback */
     --danger: #FF7B7E;
-    --danger-light:  #FFDBDB;
-    --danger-dark: #FF0000;
+    --danger-surface: #FFDBDB;
+    --danger-strong: #FF0000;
     --success: #47941E;
-    --success-light: #E4F5E6;
+    --success-surface: #E4F5E6;
     --warning: #A16207;
-    --warning-light: #FEF9C3;
+    --warning-surface: #FEF9C3;
 
     /* Brand Primary Colors */
     --primary: #3576F3;
@@ -137,124 +140,106 @@
 
     /* Borders */
     --border: #e2e8f0;
-    --border-light: #e6e6e8;
-    --border-soft: rgba(0, 0, 0, 0.21);
+    --divider: #e6e6e8;
+    --field-border: rgba(0, 0, 0, 0.21);
     --input: #c7c7cc;
-  --border-subtle: #edf2f7;
-  --border-blue: #dbeafe;
-  --border-gray: #808080;
+    --border-subtle: #edf2f7;
     --ring: #2f6df3;
     --border-strong: #c7c7cc;
 
-    /* Typography / Text Colors */
-    --foreground: #0f172a;
-    --muted-foreground: #64748b;
-    --label-text: #94a3b8;
-
-    /* Active Nav Item & Tab States */
-    --active-item-bg: #f0f7ff;
-    --active-item-border: #dbeafe;
-    --active-tab-bg: #ffffff;
-    --active-tab-border: #e2e8f0;
+    /* Interactive states */
+    --interactive-active-background: #f0f7ff;
+    --interactive-active-border: #dbeafe;
+    --tab-active-border: #DADADA;
 
     /* Badges & Status Indicators */
-    --badge-active-bg: #E5FFD8;
-    --badge-inactive-bg: #FFDBDB;
+    --badge-active-background: #E5FFD8;
+    --badge-inactive-background: #FFDBDB;
     --badge-active-text: #808080;
     --badge-active-dot: #127557;
     --badge-inactive-dot: #B42318;
-    --status-online: #D1EFC0;
+    --status-online-accent: #D1EFC0;
 
-    /* Secondary Action Items */
-    --secondary-button-bg: #e2e8f0;
-    --secondary-button-hover: #cbd5e1;
+    /* Structured content */
+    --section-border: rgba(53, 118, 243, 0.20);
+    --section-background: rgba(232, 238, 251, 0.50);
+    --table-header-background: #E8EEFB;
 
-    /* Tab border */
-    --border-tab: #DADADA;
-
-  /* Chat */
-  --chat-bg: #EEEEEE;
-
-  /* Section */
-  --section-border: rgba(53, 118, 243, 0.20);
-  --section-bg: rgba(232, 238, 251, 0.50);
-
-  /* black */
-  --black: #000;
-  --gray: #808080;
-  --ghost: #808080;
-
-  /* Table color */
-  --table-header: #E8EEFB
+    /* Data visualisation */
+    --chart-axis: #858585;
+    --chart-grid: #a1a1aa;
+    --chart-high-marker: #4b9d22;
+    --chart-low-marker: #636363;
+    --chart-marker-border: #171717;
   }
 
   .dark {
     color-scheme: dark;
 
-    /* Neutral slate surfaces: canvas, panels, then raised content. */
-    --background: #101318;
-    --popover: #222831;
+    /* Deep navy surfaces with clear elevation between the app layers. */
+    --background: #070B14;
+    --popover: #111C2F;
     --popover-foreground: var(--foreground);
-    --sidebar-bg: #171c23;
-    --light: #222831;
-    --card-bg: #1a2028;
-    --card-nested-bg: #222831;
-    --muted: #2b333f;
-    --light-gray: #252c36;
+    --sidebar-bg: #0B1322;
+    --surface-raised: #111C2F;
+    --surface-subtle: #0D1728;
+    --app-section-background: #101F36;
+    --preview-section-background: #0C1626;
+    --app-card-background: #172A46;
+    --muted: #19263C;
 
-    /* Brand & status colors retain contrast on dark surfaces. */
-    --primary: #3673df;
-    --primary-hover: #326bd0;
+    /* Brighter brand and feedback colors against the deeper canvas. */
+    --primary: #5B8CFF;
+    --primary-hover: #74A0FF;
     --primary-foreground: #ffffff;
-    --danger: #cc3e4b;
-    --danger-light: #352126;
-    --danger-dark: #bb3442;
-    --success: #7ad5a4;
-    --success-light: #1b3028;
-    --warning: #e9bf6b;
-    --warning-light: #332c20;
+    --danger: #FF8290;
+    --danger-surface: #3A1C2A;
+    --danger-strong: #FF5D70;
+    --success: #62D9A2;
+    --success-surface: #14352C;
+    --warning: #F5C96A;
+    --warning-surface: #3A2E17;
 
     /* Borders & typography */
-    --border: #343d49;
-    --border-light: #303843;
-    --border-soft: #46515f;
-    --input: #647184;
-    --border-subtle: #29313b;
-    --border-blue: #344d70;
-    --border-gray: #647184;
-    --border-strong: #647184;
-    --ring: #8ab4ff;
-    --foreground: #e8edf4;
-    --muted-foreground: #aab5c4;
-    --label-text: #aab5c4;
-    --black: #e8edf4;
-    --gray: #aab5c4;
-    --ghost: #aab5c4;
+    --border: #263A59;
+    --divider: #20324D;
+    --field-border: #3A5275;
+    --input: #536D94;
+    --border-subtle: #182842;
+    --border-strong: #5B7196;
+    --ring: #8CB2FF;
+    --foreground: #EDF3FC;
+    --muted-foreground: #A5B5CC;
+    --content-strong: #FFFFFF;
+    --content-muted: #9AABC4;
 
-    /* Navigation, tables, and section surfaces */
-    --active-item-bg: #233249;
-    --active-item-border: #3c567c;
-    --active-tab-bg: #293341;
-    --active-tab-border: #46515f;
-    --section-border: #343d49;
-    --section-bg: #1a2028;
-    --table-header: #252e3b;
-    --chat-bg: #222831;
-    --border-tab: #343d49;
-    --secondary-button-bg: #2b333f;
-    --secondary-button-hover: #364150;
+    /* Navigation, tables, and section surfaces carry a restrained blue tint. */
+    --interactive-active-background: #142B4D;
+    --interactive-active-border: #3D67A3;
+    --tab-active-border: #3A5780;
+    --section-border: rgb(91 140 255 / 0.28);
+    --section-background: rgb(18 31 52 / 0.88);
+    --table-header-background: #162640;
+    --slider-track: #29446F;
 
-    --badge-active-bg: #1b352b;
-    --badge-inactive-bg: #38242b;
-    --badge-active-text: #9be0bb;
-    --badge-active-dot: #7ad5a4;
-    --badge-inactive-dot: #f19ca4;
-    --status-online: #294b3a;
+    --badge-active-background: #16392F;
+    --badge-inactive-background: #3A202B;
+    --badge-active-text: #A5EBC9;
+    --badge-active-dot: #62D9A2;
+    --badge-inactive-dot: #FF8290;
+    --status-online-accent: #245943;
 
-    /* Subtle depth without the light theme's blue glow. */
-    --shadow-blue: 0 2px 6px rgb(0 0 0 / 0.18), 0 6px 18px rgb(0 0 0 / 0.16);
-    --shadow-auth: 0 10px 24px rgb(0 0 0 / 0.24), 0 20px 40px rgb(0 0 0 / 0.2);
-    --shadow-panel: 0 1px 3px rgb(0 0 0 / 0.2), 0 8px 24px rgb(0 0 0 / 0.24);
+    /* Data visualisation */
+    --chart-axis: #8FA3C1;
+    --chart-grid: #3A5275;
+    --chart-high-marker: #62D9A2;
+    --chart-low-marker: #8FA3C1;
+    --chart-marker-border: #D9E5F7;
+
+    /* Blue-black depth helps raised panels stand out without a harsh glow. */
+    --shadow-blue: 0 0 0 1px rgb(91 140 255 / 0.06), 0 12px 30px rgb(0 5 16 / 0.32);
+    --shadow-auth: 0 16px 36px rgb(0 5 16 / 0.36), 0 28px 64px rgb(0 5 16 / 0.28);
+    --shadow-panel: 0 1px 2px rgb(0 5 16 / 0.38), 0 14px 36px rgb(0 5 16 / 0.30);
   }
 
   /* Set default font size (14px) and family globally */

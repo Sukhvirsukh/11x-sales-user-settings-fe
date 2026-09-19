@@ -4,22 +4,22 @@ import { cn } from "@/lib/utils"
 
 const variants = {
     success: {
-        className: "border-success/20 bg-success-light",
+        className: "border-success/20 bg-success-surface",
         iconClassName: "text-success",
         icon: CircleCheck,
     },
     destructive: {
-        className: "border-danger-dark/20 bg-danger-light",
+        className: "border-danger-strong/20 bg-danger-surface",
         iconClassName: "text-badge-inactive-dot",
         icon: OctagonX,
     },
     info: {
-        className: "border-section-border bg-section-bg",
+        className: "border-section-border bg-section-background",
         iconClassName: "text-primary",
         icon: Info,
     },
     warning: {
-        className: "border-warning/20 bg-warning-light",
+        className: "border-warning/20 bg-warning-surface",
         iconClassName: "text-warning",
         icon: TriangleAlert,
     },
@@ -50,7 +50,7 @@ export function Banner({
             data-slot="banner"
             data-variant={variant}
             className={cn(
-                "flex w-full items-start gap-3 rounded-[10px] border p-4 text-sm text-black shadow-panel",
+                "flex w-full items-start gap-3 rounded-[10px] border p-4 text-sm text-content-strong shadow-panel",
                 variantClassName,
                 className,
             )}

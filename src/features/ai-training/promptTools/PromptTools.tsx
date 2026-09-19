@@ -19,10 +19,10 @@ interface ActionCardProps {
 function ActionCard({ heading, content, isChecked = false, onToggle }: ActionCardProps) {
 
     return (
-        <div className="flex w-full border border-section-border items-start gap-3 rounded-[10px] p-2.5 text-sm text-black">
+        <div className="flex w-full border border-section-border items-start gap-3 rounded-[10px] p-2.5 text-sm text-content-strong">
             <div className="d-block w-full">
                 <Heading size="md">{heading}</Heading>
-                <p className="text-gray mt-2 text-sm">{content}</p>
+                <p className="text-content-muted mt-2 text-sm">{content}</p>
             </div>
             {onToggle && <ToggleField
                 pressed={isChecked}
@@ -68,11 +68,11 @@ export function PromptTools() {
                                         className="p-2"
                                     >
                                         <p className="text-sm font-medium mb-1">Learn how to use prompt tools</p>
-                                        <ul className="list-disc space-y-1 text-sm text-gray pl-2.5">
-                                            <li className="text-sm text-gray"   >Your name is Karl ai</li>
-                                            <li className="text-sm text-gray"   >Your goal is to aware the user to know about the product variants</li>
-                                            <li className="text-sm text-gray"   >Stay on brand related copy</li>
-                                            <li className="text-sm text-gray"   >Defend the brand loyalty</li>
+                                        <ul className="list-disc space-y-1 text-sm text-content-muted pl-2.5">
+                                            <li className="text-sm text-content-muted"   >Your name is Karl ai</li>
+                                            <li className="text-sm text-content-muted"   >Your goal is to aware the user to know about the product variants</li>
+                                            <li className="text-sm text-content-muted"   >Stay on brand related copy</li>
+                                            <li className="text-sm text-content-muted"   >Defend the brand loyalty</li>
                                         </ul>
                                     </Banner>
                                 </div>
