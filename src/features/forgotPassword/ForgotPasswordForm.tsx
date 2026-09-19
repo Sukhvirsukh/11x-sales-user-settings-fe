@@ -61,11 +61,11 @@ export function ForgotPasswordForm() {
                         {...register("email")}
                     />
 
-                    <p className="text-right text-sm text-ghost">
+                    <p className="text-right text-sm text-content-muted">
                         New here?{" "}
                         <Link
                             to="/sign-up"
-                            className="font-medium text-ghost underline underline-offset-2"
+                            className="font-medium text-content-muted underline underline-offset-2"
                         >
                             Sign up
                         </Link>

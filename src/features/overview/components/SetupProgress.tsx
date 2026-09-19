@@ -8,7 +8,7 @@ export default function SetupProgress() {
         <AppSection>
             <Heading>Setup progress</Heading>
             <div className="flex flex-col gap-4">
-                <div className="flex items-center justify-between gap-3 rounded-[10px] bg-white p-2.5">
+                <div className="flex items-center justify-between gap-3 rounded-[10px] bg-surface-raised p-2.5">
                     <span className="text-base text-foreground">2 of 4 steps completed</span>
                     <Slider
                         aria-label="Setup progress"
@@ -24,17 +24,17 @@ export default function SetupProgress() {
                     </div>
 
                     <div className="flex items-start gap-3">
-                        <Circle className="mt-0.5 size-5 shrink-0 text-border-gray" aria-hidden />
+                        <Circle className="mt-0.5 size-5 shrink-0 text-content-muted" aria-hidden />
                         <div>
                             <p className="text-base font-medium text-foreground">Wait for Vitalb to index your site</p>
-                            <p className="mt-1 text-sm leading-4 text-ghost">
+                            <p className="mt-1 text-sm leading-4 text-content-muted">
                                 We’re crawling your store to build the agent’s knowledge base. You’ll be notified when it’s ready.
                             </p>
                         </div>
                     </div>
 
                     <div className="flex items-start gap-3">
-                        <Circle className="mt-0.5 size-5 shrink-0 text-border-gray" aria-hidden />
+                        <Circle className="mt-0.5 size-5 shrink-0 text-content-muted" aria-hidden />
                         <p className="text-base font-medium text-foreground">Test & Train your agent</p>
                     </div>
                     <div className="flex items-start gap-3">

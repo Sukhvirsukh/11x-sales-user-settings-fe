@@ -94,7 +94,7 @@ export function PageHeader({
                 {isChatOpen && (
                     <>
                         <div
-                            className="fixed inset-0 z-40 bg-black/40 backdrop-blur-xs lg:hidden"
+                            className="fixed inset-0 z-40 bg-content-strong/40 backdrop-blur-xs lg:hidden"
                             aria-label="Close test chat"
                             onClick={closeChat}
                         />

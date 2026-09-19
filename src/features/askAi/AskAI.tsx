@@ -18,14 +18,14 @@ export function AskAI() {
                         <Heading size="md" className="mb-4 font-semibold">History</Heading>
                         <div className="flex flex-col gap-[30px]">
                             <div>
-                                <p className="text-sm text-gray">Today</p>
+                                <p className="text-sm text-content-muted">Today</p>
                                 <ul className="my-1 space-y-1 text-base">
                                     <li className="my-2">Integrate shopify with vitalb..</li>
                                     <li className="my-2">How to add shopify</li>
                                 </ul>
                             </div>
                             <div>
-                                <p className="text-sm text-gray">Yesterday</p>
+                                <p className="text-sm text-content-muted">Yesterday</p>
                                 <ul className="my-1 space-y-1 text-base">
                                     <li className="my-2">Integrate shopify with vitalb..</li>
                                     <li className="my-2">How to add shopify</li>

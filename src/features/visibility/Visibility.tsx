@@ -55,7 +55,7 @@ export default function Visibility() {
 
     if (!query.data || !isFormReady) {
         return (
-            <div className="flex h-full items-center justify-center text-sm text-ghost">
+            <div className="flex h-full items-center justify-center text-sm text-content-muted">
                 <Spinner className="size-10 text-primary" />
             </div>
         );

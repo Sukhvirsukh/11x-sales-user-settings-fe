@@ -16,7 +16,7 @@ export default function ChatSettingsPage() {
                 title="Chat settings"
                 subtitle="Customize how your AI interact with your customer"
             >
-                <div className="relative min-w-0 rounded-[10px] border border-blue-100/70 px-2.5 shadow-blue md:px-4">
+                <div className="relative min-w-0 rounded-[10px] border border-panel-accent-border/70 px-2.5 shadow-blue md:px-4">
                     <Accordion defaultValue={["channels"]}>
                         <AccordionItem value="channels">
                             <AccordionTrigger>Channels</AccordionTrigger>

@@ -10,7 +10,7 @@ function Label({ children, className, ...props }: LabelProps) {
     return (
         <label
             className={cn(
-                "text-base font-medium text-slate-800 dark:text-slate-200",
+                "text-base font-medium text-field-text",
                 className
             )}
             {...props}

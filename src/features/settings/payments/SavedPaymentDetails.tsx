@@ -16,10 +16,10 @@ export default function SavedPaymentDetails() {
                 actions={
                     <>
                         <Button variant="bare" size="sm">
-                            <SquarePen className="size-4 text-gray" />
+                            <SquarePen className="size-4 text-content-muted" />
                         </Button>
                         <Button variant="bare" size="sm">
-                            <Trash className="size-4 text-gray" />
+                            <Trash className="size-4 text-content-muted" />
                         </Button>
                     </>
                 }
@@ -48,10 +48,10 @@ export default function SavedPaymentDetails() {
                 actions={
                     <>
                         <Button variant="bare" size="sm">
-                            <SquarePen className="size-4 text-gray" />
+                            <SquarePen className="size-4 text-content-muted" />
                         </Button>
                         <Button variant="bare" size="sm">
-                            <Trash className="size-4 text-gray" />
+                            <Trash className="size-4 text-content-muted" />
                         </Button>
                     </>
                 }

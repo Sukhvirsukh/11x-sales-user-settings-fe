@@ -69,10 +69,10 @@ export default function PaymentHistory() {
             rowActions={() => (
                 <div className="flex items-center gap-2">
                     <Button variant="bare" size="sm">
-                        <SquarePen className="size-4 text-gray" />
+                        <SquarePen className="size-4 text-content-muted" />
                     </Button>
                     <Button variant="bare" size="sm">
-                        <Trash className="size-4 text-gray" />
+                        <Trash className="size-4 text-content-muted" />
                     </Button>
                 </div>
             )}

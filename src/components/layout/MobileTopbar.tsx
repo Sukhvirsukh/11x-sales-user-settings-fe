@@ -25,7 +25,7 @@ export default function MobileTopbar() {
             <div className="flex shrink-0 items-center gap-2">
                 <Button
                     variant="outline"
-                    className="h-auto border-black px-3 py-1.5 text-base rounded-[10px]"
+                    className="h-auto border-content-strong px-3 py-1.5 text-base rounded-[10px]"
                     onClick={toggleChat}
                     aria-pressed={isChatOpen}
                 >
@@ -38,7 +38,7 @@ export default function MobileTopbar() {
                     type="button"
                     aria-label="Open menu"
                     onClick={open}
-                    className="flex shrink-0 items-center justify-center rounded-[10px] border border-primary/20 bg-card-nested p-2 text-muted-foreground"
+                    className="flex shrink-0 items-center justify-center rounded-[10px] border border-primary/20 bg-surface-raised p-2 text-muted-foreground"
                 >
                     <Menu className="size-4" strokeWidth={2} />
                 </button>

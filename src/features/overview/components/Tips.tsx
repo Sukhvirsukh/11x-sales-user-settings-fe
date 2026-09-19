@@ -25,7 +25,7 @@ export default function Tips() {
                         className="flex items-center cursor-pointer justify-between gap-3 py-1.5 text-left text-base text-foreground transition-colors hover:text-primary"
                     >
                         <span>{tip}</span>
-                        <ChevronRight className="size-4 shrink-0 text-ghost" aria-hidden />
+                        <ChevronRight className="size-4 shrink-0 text-content-muted" aria-hidden />
                     </button>
                 ))}
             </div>

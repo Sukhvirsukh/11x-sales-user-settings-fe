@@ -80,7 +80,7 @@ export default function SignInForm() {
                             <button
                                 type="button"
                                 onClick={() => setShowPassword((prev) => !prev)}
-                                className="text-ghost transition-colors hover:text-foreground"
+                                className="text-content-muted transition-colors hover:text-foreground"
                                 aria-label={
                                     showPassword
                                         ? "Hide password"
@@ -101,11 +101,11 @@ export default function SignInForm() {
                             Forgot Password
                         </Button>
 
-                        <p className="text-right text-sm text-ghost">
+                        <p className="text-right text-sm text-content-muted">
                             New here?{" "}
                             <Link
                                 to="/sign-up"
-                                className="font-medium text-ghost underline underline-offset-2"
+                                className="font-medium text-content-muted underline underline-offset-2"
                             >
                                 Sign up
                             </Link>

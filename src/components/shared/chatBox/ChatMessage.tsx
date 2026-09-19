@@ -16,14 +16,14 @@ export interface ChatMessageProps {
 }
 
 const actionClassName =
-  "text-sm text-black transition-colors hover:text-primary";
+  "text-sm text-content-strong transition-colors hover:text-primary";
 
 export function ChatMessage({
   id,
   content,
   sender,
   avatar,
-  primaryColor = "blue",
+  primaryColor = "var(--widget-primary)",
   onCorrect,
   onDebug,
   onLike,
@@ -63,15 +63,15 @@ export function ChatMessage({
         ) : (
           <span
             aria-hidden
-            className="flex h-[30px] w-[30px] shrink-0 items-center justify-center rounded-full border border-primary bg-primary p-0.5 text-[16px] font-extrabold leading-none text-white"
+            className="flex h-[30px] w-[30px] shrink-0 items-center justify-center rounded-full border border-primary bg-primary p-0.5 text-[16px] font-extrabold leading-none text-primary-contrast"
           >
             V
           </span>
         ))}
 
       <div className={isUser ? "max-w-[227px]" : "w-fit max-w-full min-w-0"}>
-        <div className={`max-w-full rounded-[10px] bg-table-header p-2.5 ${bubbleClassName}`}>
-          <p className="text-sm leading-none whitespace-pre-wrap text-black">{content}</p>
+        <div className={`max-w-full rounded-[10px] bg-table-header-background p-2.5 ${bubbleClassName}`}>
+          <p className="text-sm leading-none whitespace-pre-wrap text-content-strong">{content}</p>
         </div>
 
         {/* Feedback row for bot messages */}
@@ -107,7 +107,7 @@ export function ChatMessage({
                 <button
                   type="button"
                   onClick={() => onLike(id)}
-                  className="flex items-center justify-center text-black transition-colors hover:text-primary"
+                  className="flex items-center justify-center text-content-strong transition-colors hover:text-primary"
                   aria-label="Good response"
                 >
                   <ThumbsUpIcon className="size-3.5" />
@@ -117,7 +117,7 @@ export function ChatMessage({
                 <button
                   type="button"
                   onClick={() => onDislike(id)}
-                  className="flex items-center justify-center text-black transition-colors hover:text-primary"
+                  className="flex items-center justify-center text-content-strong transition-colors hover:text-primary"
                   aria-label="Bad response"
                 >
                   <ThumbsDownIcon className="size-3.5" />
@@ -127,7 +127,7 @@ export function ChatMessage({
                 <button
                   type="button"
                   onClick={() => onApprove(id)}
-                  className="flex items-center justify-center text-black transition-colors hover:text-primary"
+                  className="flex items-center justify-center text-content-strong transition-colors hover:text-primary"
                   aria-label="Approve response"
                 >
                   <CheckIcon className="size-4" />
@@ -139,7 +139,7 @@ export function ChatMessage({
 
         {/* Correction editor */}
         {isEditing && (
-          <div className="mt-1.5 rounded-xl border border-border bg-white p-2 shadow-sm">
+          <div className="mt-1.5 rounded-xl border border-border bg-widget-surface p-2 shadow-sm">
             <textarea
               value={correctionDraft}
               onChange={(e) => setCorrectionDraft(e.target.value)}
@@ -158,7 +158,7 @@ export function ChatMessage({
               <button
                 type="button"
                 onClick={handleSaveCorrection}
-                className="rounded-md px-2 py-1 text-micro font-medium text-white transition-opacity hover:opacity-90"
+                className="rounded-md px-2 py-1 text-micro font-medium text-primary-contrast transition-opacity hover:opacity-90"
                 style={{ backgroundColor: primaryColor }}
               >
                 Save correction

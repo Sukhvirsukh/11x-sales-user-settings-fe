@@ -5,45 +5,45 @@ import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
   // Base styles: pill shape (rounded-xl/2xl), font adjustments, transitions
-  "inline-flex shrink-0 items-center justify-center cursor-pointer rounded-xl border border-transparent text-sm font-medium whitespace-nowrap transition-colors outline-none select-none focus-visible:ring-2 focus-visible:ring-blue-500/50 disabled:pointer-events-none disabled:opacity-50",
+  "inline-flex shrink-0 items-center justify-center cursor-pointer rounded-xl border border-transparent text-sm font-medium whitespace-nowrap transition-colors outline-none select-none focus-visible:ring-2 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50",
   {
     variants: {
       variant: {
         // Primary Blue (as seen in "Generate" & "Submit")
         primary:
-          "bg-primary text-white hover:bg-primary-hover",
+          "bg-primary text-primary-contrast hover:bg-primary-hover",
 
         // Dark Outline / Black Border (as seen in middle "Generate")
         outline:
-          "border-black bg-transparent text-black hover:bg-zinc-100",
+          "border-content-strong bg-transparent text-content-strong hover:bg-control-hover-strong",
 
         // Gray outline
         secondary:
-          "border-ghost bg-transparent text-ghost hover:bg-zinc-50",
+          "border-content-muted bg-transparent text-content-muted hover:bg-control-hover",
 
         // Same as secondary
         ghost:
-          "border-ghost bg-transparent text-ghost hover:bg-zinc-50",
+          "border-content-muted bg-transparent text-content-muted hover:bg-control-hover",
 
         // No border, no background — just children
         bare:
-          "border-transparent bg-transparent hover:bg-zinc-50",
+          "border-transparent bg-transparent hover:bg-control-hover",
 
         // Underlined text action with the same compact spacing as bare buttons
         "underline-bare":
-          "border-transparent bg-transparent text-border-gray underline underline-offset-2 hover:bg-transparent hover:text-foreground",
+          "border-transparent bg-transparent text-content-muted underline underline-offset-2 hover:bg-transparent hover:text-foreground",
 
         // Simple Link
         link:
-          "text-blue-600 underline-offset-4 hover:underline dark:text-blue-400",
+          "text-link underline-offset-4 hover:underline",
 
         // Compact text action, used for inline card actions such as "Show all".
         action:
-          "!h-auto !rounded-none !p-0 md:!p-0 !text-sm md:!text-sm font-normal text-ghost underline underline-offset-2 hover:bg-transparent hover:text-foreground",
+          "!h-auto !rounded-none !p-0 md:!p-0 !text-sm md:!text-sm font-normal text-content-muted underline underline-offset-2 hover:bg-transparent hover:text-foreground",
 
         // destructive
         destructive:
-          "bg-danger text-white hover:bg-danger-dark",
+          "bg-danger text-primary-contrast hover:bg-danger-strong",
 
       },
       size: {

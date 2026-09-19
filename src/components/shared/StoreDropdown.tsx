@@ -30,13 +30,13 @@ export function StoreDropdown({
         <Select defaultValue={defaultValue} onValueChange={onValueChange}>
             <SelectTrigger
                 className={cn(
-                    "p-2.5 text-base gap-1 bg-transparent border-ghost text-ghost rounded-[10px] w-21! h-9.75!",
+                    "p-2.5 text-base gap-1 bg-transparent border-content-muted text-content-muted rounded-[10px] w-21! h-9.75!",
                     className
                 )}
             >
                 <SelectValue />
             </SelectTrigger>
-            <SelectContent className="bg-background border-ghost rounded-[10px]">
+            <SelectContent className="bg-background border-content-muted rounded-[10px]">
                 {stores.map((store) => (
                     <SelectItem key={store.value} value={store.value}>
                         {store.label}

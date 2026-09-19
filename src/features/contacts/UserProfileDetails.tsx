@@ -82,7 +82,7 @@ export default function UserProfileDetails() {
                 rowActions={(row) => (
                     <div className="flex items-center gap-2">
                         <Button variant="bare" size="sm" onClick={() => requestDelete([row])}>
-                            <Trash className="size-4 text-gray" />
+                            <Trash className="size-4 text-content-muted" />
                         </Button>
                     </div>
                 )}

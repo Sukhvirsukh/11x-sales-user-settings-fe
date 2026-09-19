@@ -121,12 +121,12 @@ export function Store() {
                     <div className="flex items-center gap-2">
                         {canEditStore && (
                             <Button variant="bare" size="sm" onClick={() => openEditStore(row)} aria-label="Edit store">
-                                <SquarePen className="size-4 text-gray" />
+                                <SquarePen className="size-4 text-content-muted" />
                             </Button>
                         )}
                         {canDeleteStore && (
                             <Button variant="bare" size="sm" onClick={() => requestDelete([row])} aria-label="Delete store">
-                                <Trash className="size-4 text-gray" />
+                                <Trash className="size-4 text-content-muted" />
                             </Button>
                         )}
                     </div>

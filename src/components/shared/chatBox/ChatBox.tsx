@@ -36,18 +36,18 @@ export function ChatBox({ onClose, className = "", fields: previewFields }: Chat
 
   if (error) {
     return (
-      <div className={`flex h-full flex-col items-center justify-center gap-3 overflow-hidden rounded-[10px] bg-white shadow-xl ${className}`}>
+      <div className={`flex h-full flex-col items-center justify-center gap-3 overflow-hidden rounded-[10px] bg-widget-surface shadow-xl ${className}`}>
         <Button variant="bare" onClick={onClose}  >
-          <XIcon className="size-8 text-red-500" />
+          <XIcon className="size-8 text-widget-error" />
         </Button>
-        <p className="text-sm text-red-600">Failed to load chat settings.</p>
+        <p className="text-sm text-widget-error-strong">Failed to load chat settings.</p>
       </div>
     );
   }
 
   if (isLoading && !fields) {
     return (
-      <div className={`flex h-full items-center justify-center overflow-hidden rounded-[10px] bg-white shadow-xl ${className}`}>
+      <div className={`flex h-full items-center justify-center overflow-hidden rounded-[10px] bg-widget-surface shadow-xl ${className}`}>
         <Spinner className="size-6 text-primary" />
       </div>
     );
@@ -55,8 +55,8 @@ export function ChatBox({ onClose, className = "", fields: previewFields }: Chat
 
   if (!fields) {
     return (
-      <div className={`flex h-full items-center justify-center overflow-hidden rounded-[10px] bg-white shadow-xl ${className}`}>
-        <p className="text-sm text-zinc-400">No chat configuration found.</p>
+      <div className={`flex h-full items-center justify-center overflow-hidden rounded-[10px] bg-widget-surface shadow-xl ${className}`}>
+        <p className="text-sm text-widget-empty">No chat configuration found.</p>
       </div>
     );
   }
@@ -156,7 +156,7 @@ function LoadedChatBox({ fields, onClose, className = "" }: ChatBoxProps & { fie
   }
 
   return (
-    <div className={`flex  h-full flex-col overflow-hidden rounded-[10px] bg-white shadow-xl ${className}`}>
+    <div className={`flex  h-full flex-col overflow-hidden rounded-[10px] bg-widget-surface shadow-xl ${className}`}>
       {/* Header */}
       <div
         className="flex shrink-0 items-center justify-between gap-2 px-5 pb-[15px] pt-[25px]"
@@ -167,7 +167,7 @@ function LoadedChatBox({ fields, onClose, className = "" }: ChatBoxProps & { fie
             <p className="truncate text-base font-semibold tracking-[0.02em]">
               {aiAgentName}
             </p>
-            <span className="inline-flex items-center gap-[7px] rounded-[44px] bg-status-online! px-1.5 py-[3px] text-[10px] font-medium tracking-[0.04em] text-success-strong">
+            <span className="inline-flex items-center gap-[7px] rounded-[44px] bg-status-online-accent! px-1.5 py-[3px] text-[10px] font-medium tracking-[0.04em] text-success-strong">
               <span
                 className="size-1.5 rounded-full"
                 style={{ backgroundColor: notificationColor }}
@@ -181,7 +181,7 @@ function LoadedChatBox({ fields, onClose, className = "" }: ChatBoxProps & { fie
             type="button"
             aria-label="Close chat"
             onClick={onClose}
-            className="flex size-5 shrink-0 items-center justify-center text-2xl leading-none text-[#808080] transition-colors hover:text-foreground"
+            className="flex size-5 shrink-0 items-center justify-center text-2xl leading-none text-widget-muted transition-colors hover:text-widget-foreground"
           >
             <XIcon className="size-4" />
           </button>
@@ -248,7 +248,7 @@ function LoadedChatBox({ fields, onClose, className = "" }: ChatBoxProps & { fie
           <div className="flex gap-2">
             <button
               type="button"
-              className="h-[38px] rounded-[10.4px] px-2.5 py-2.5 text-sm font-medium text-white transition-opacity hover:opacity-90"
+              className="h-[38px] rounded-[10.4px] px-2.5 py-2.5 text-sm font-medium text-primary-contrast transition-opacity hover:opacity-90"
               style={{ backgroundColor: primaryColor }}
               onClick={onClose}
             >
@@ -257,7 +257,7 @@ function LoadedChatBox({ fields, onClose, className = "" }: ChatBoxProps & { fie
             <button
               type="button"
               onClick={handleClear}
-              className="h-[38px] rounded-[10.4px] border-[1.23px] border-[#808080] bg-card px-2.5 py-2.5 text-sm font-medium text-[#808080] transition-colors hover:bg-muted"
+              className="h-[38px] rounded-[10.4px] border-[1.23px] border-widget-muted bg-widget-surface px-2.5 py-2.5 text-sm font-medium text-widget-muted transition-colors hover:bg-muted"
             >
               Clear Chat
             </button>

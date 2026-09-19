@@ -102,10 +102,10 @@ export default function Segaments() {
                 rowActions={(row) => (
                     <div className="flex items-center gap-2">
                         <Button variant="bare" size="sm" onClick={() => { }}>
-                            <Download className="size-4 text-gray" />
+                            <Download className="size-4 text-content-muted" />
                         </Button>
                         <Button variant="bare" size="sm" onClick={() => requestDelete([row])}>
-                            <Trash className="size-4 text-gray" />
+                            <Trash className="size-4 text-content-muted" />
                         </Button>
                     </div>
                 )}

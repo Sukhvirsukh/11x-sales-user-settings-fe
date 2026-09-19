@@ -45,17 +45,17 @@ const InputField = React.forwardRef<HTMLInputElement, InputFieldProps>(
                 {/* Input Outer Container (Handles borders, icons, pill background) */}
                 <div
                     className={cn(
-                        "relative flex h-[34px] w-full items-center rounded-xl border border-border-soft px-3.5 transition-all [--input-autofill-bg:var(--card-nested-bg)] focus-within:border-border-soft focus-within:ring-2 focus-within:ring-blue-400/20 dark:border-slate-800",
-                        "bg-card-nested focus-within:bg-card-nested",
+                        "relative flex h-[34px] w-full items-center rounded-xl border border-control-border-subtle px-3.5 transition-all [--input-autofill-bg:var(--surface-raised)] focus-within:border-field-border focus-within:ring-2 focus-within:ring-focus-ring/20",
+                        "bg-surface-raised focus-within:bg-surface-raised",
                         variant === "light"
-                            ? "bg-light border-section-border [--input-autofill-bg:var(--light)] focus-within:bg-light focus-within:border-section-border dark:bg-slate-800/60 dark:focus-within:bg-slate-800/60"
+                            ? "bg-field-subtle-background border-section-border [--input-autofill-bg:var(--field-subtle-background)] focus-within:bg-field-subtle-background focus-within:border-section-border"
                             : "",
                         containerClassName,
                         error && "border-danger focus-within:border-danger"
                     )}
                 >
                     {startIcon && (
-                        <div className="mr-2.5 flex items-center justify-center text-ghost">
+                        <div className="mr-2.5 flex items-center justify-center text-content-muted">
                             {startIcon}
                         </div>
                     )}
@@ -82,7 +82,7 @@ const InputField = React.forwardRef<HTMLInputElement, InputFieldProps>(
                     />
 
                     {endIcon && (
-                        <div className="ml-2.5 flex items-center justify-center text-ghost">
+                        <div className="ml-2.5 flex items-center justify-center text-content-muted">
                             {endIcon}
                         </div>
                     )}

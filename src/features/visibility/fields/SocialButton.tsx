@@ -39,7 +39,7 @@ export default function SocialButton() {
 
       <div className="flex flex-col gap-3">
         <label className="flex items-center gap-3">
-          <WhatsAppIcon className="h-5 w-5 shrink-0 text-[#25D366]" />
+          <WhatsAppIcon className="h-5 w-5 shrink-0 text-whatsapp-brand" />
           <span className="flex-1 text-muted-foreground">
             Connect WhatsApp
           </span>
@@ -51,7 +51,7 @@ export default function SocialButton() {
           />
         </label>
         <label className="flex items-center gap-3">
-          <InstagramIcon className="h-5 w-5 shrink-0 text-[#E4405F]" />
+          <InstagramIcon className="h-5 w-5 shrink-0 text-instagram-brand" />
           <span className="flex-1 text-muted-foreground">
             Connect Instagram
           </span>

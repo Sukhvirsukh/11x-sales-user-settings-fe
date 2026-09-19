@@ -37,7 +37,7 @@ export default function KnowMore() {
                 >
                     {videos.map((video) => (
                         <article key={video.title} className="w-[65%] shrink-0 snap-start">
-                            <div className="flex aspect-[1.75] items-center justify-center rounded-[6px] bg-gray">
+                            <div className="flex aspect-[1.75] items-center justify-center rounded-[6px] bg-content-muted">
                                 <button
                                     type="button"
                                     aria-label={`Watch ${video.title}`}
@@ -57,9 +57,9 @@ export default function KnowMore() {
                     size="icon"
                     aria-label="Previous videos"
                     onClick={() => scroll("previous")}
-                    className="absolute left-4 top-[34px] size-8 -translate-x-1/2 rounded-full bg-background p-0 shadow-panel hover:bg-light"
+                    className="absolute left-4 top-[34px] size-8 -translate-x-1/2 rounded-full bg-background p-0 shadow-panel hover:bg-surface-subtle"
                 >
-                    <ChevronLeft className="size-4 text-ghost" />
+                    <ChevronLeft className="size-4 text-content-muted" />
                 </Button>
                 <Button
                     type="button"
@@ -67,9 +67,9 @@ export default function KnowMore() {
                     size="icon"
                     aria-label="Next videos"
                     onClick={() => scroll("next")}
-                    className="absolute right-4 top-[34px] size-8 translate-x-1/2 rounded-full bg-background p-0 shadow-panel hover:bg-light"
+                    className="absolute right-4 top-[34px] size-8 translate-x-1/2 rounded-full bg-background p-0 shadow-panel hover:bg-surface-subtle"
                 >
-                    <ChevronRight className="size-4 text-ghost" />
+                    <ChevronRight className="size-4 text-content-muted" />
                 </Button>
             </div>
         </AppSection>

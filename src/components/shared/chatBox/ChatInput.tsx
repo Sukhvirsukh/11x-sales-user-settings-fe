@@ -16,7 +16,7 @@ export function ChatInput({
   onImageUpload,
   placeholder = "Type a message...",
   disabled = false,
-  primaryColor = "blue",
+  primaryColor = "var(--widget-primary)",
   variant = "light",
 }: ChatInputProps) {
   const [value, setValue] = useState("");
@@ -61,7 +61,7 @@ export function ChatInput({
         disabled={disabled}
         variant={variant}
         containerClassName="h-[42px] rounded-[10px] px-2.5"
-        className="min-w-0 text-xs tracking-[0.02em] text-foreground placeholder:text-[#808080]"
+        className="min-w-0 text-xs tracking-[0.02em] text-foreground placeholder:text-widget-muted"
         endIcon={
           <div className="flex items-center gap-2">
             <button
@@ -69,7 +69,7 @@ export function ChatInput({
               aria-label="Attach image"
               disabled={disabled}
               onClick={() => imageInputRef.current?.click()}
-              className="flex size-5 shrink-0 items-center justify-center text-ghost transition-colors hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
+              className="flex size-5 shrink-0 items-center justify-center text-content-muted transition-colors hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
             >
               <ImageIcon className="size-3.5" />
             </button>
@@ -78,7 +78,7 @@ export function ChatInput({
               onClick={handleSend}
               disabled={!value.trim() || disabled}
               aria-label="Send message"
-              className="flex size-[22px] shrink-0 items-center justify-center rounded-full text-sm leading-none text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
+              className="flex size-[22px] shrink-0 items-center justify-center rounded-full text-sm leading-none text-primary-contrast transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
               style={{ backgroundColor: primaryColor }}
             >
               <ArrowUpIcon className="size-3.5" />

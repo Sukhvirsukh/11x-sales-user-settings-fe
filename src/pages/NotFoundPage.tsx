@@ -20,7 +20,7 @@ export default function NotFoundPage() {
             <AppSection>
                 <div className="w-full">
                     <div className="relative flex flex-col items-center text-center">
-                        <span className="flex items-center gap-2 rounded-full border border-section-border bg-section-bg px-3 py-1 text-xs font-medium tracking-[0.08em] text-primary uppercase">
+                        <span className="flex items-center gap-2 rounded-full border border-section-border bg-section-background px-3 py-1 text-xs font-medium tracking-[0.08em] text-primary uppercase">
                             <Compass aria-hidden className="size-3.5" />
                             Error 404
                         </span>
@@ -35,7 +35,7 @@ export default function NotFoundPage() {
 
                         <p className="mt-2 max-w-xl text-sm text-muted-foreground">
                             We couldn’t find{" "}
-                            <code className="rounded-md border border-border-subtle bg-light px-1.5 py-0.5 break-all text-foreground">
+                            <code className="rounded-md border border-border-subtle bg-surface-subtle px-1.5 py-0.5 break-all text-foreground">
                                 {pathname}
                             </code>
                             . It may have been moved, renamed, or never existed.
@@ -63,7 +63,7 @@ export default function NotFoundPage() {
                                     <NavLink
                                         key={item.label}
                                         to={item.link}
-                                        className="flex items-center gap-2 rounded-lg border border-section-border px-2.5 py-2 text-sm text-foreground transition-all hover:border-active-border hover:bg-active-bg"
+                                        className="flex items-center gap-2 rounded-lg border border-section-border px-2.5 py-2 text-sm text-foreground transition-all hover:border-interactive-active-border hover:bg-interactive-active-background"
                                     >
                                         <Icon className="size-5 shrink-0 text-muted-foreground" />
                                         <span className="truncate">{item.label}</span>

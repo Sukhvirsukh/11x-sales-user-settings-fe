@@ -62,7 +62,7 @@ export default function ResetPasswordForm() {
         <button
             type="button"
             onClick={() => setShowPasswords((current) => !current)}
-            className="text-ghost transition-colors hover:text-foreground"
+            className="text-content-muted transition-colors hover:text-foreground"
             aria-label={visibilityLabel}
         >
             {showPasswords ? (
@@ -115,11 +115,11 @@ export default function ResetPasswordForm() {
                         {...register("confirmPassword")}
                     />
                     <div className="flex justify-end items-center">
-                        <p className="text-right text-sm text-ghost">
+                        <p className="text-right text-sm text-content-muted">
                             Have an account?{" "}
                             <Link
                                 to="/sign-in"
-                                className="font-medium text-ghost underline underline-offset-2"
+                                className="font-medium text-content-muted underline underline-offset-2"
                             >
                                 Sign in
                             </Link>

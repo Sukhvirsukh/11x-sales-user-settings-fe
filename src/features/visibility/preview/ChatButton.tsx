@@ -53,7 +53,7 @@ function SendIcon({ size = 10, className }: { size?: number; className?: string 
 
 /** Type bar — rounded input-style trigger with leading status dot */
 export function TypeBarButton({
-    primaryColor = "#2F6DF3",
+    primaryColor = "var(--widget-primary)",
     placeholder = "Ask AI...",
     size = 56,
     className,
@@ -64,7 +64,7 @@ export function TypeBarButton({
             type="button"
             aria-label="Open chat"
             className={cn(
-                "flex items-center gap-2 rounded-2xl border border-border bg-white px-3 shadow-lg transition-shadow hover:shadow-xl",
+                "flex items-center gap-2 rounded-2xl border border-border bg-widget-surface px-3 shadow-lg transition-shadow hover:shadow-xl",
                 className,
             )}
             style={{ width: "min(100%, 260px)", height: Math.max(size * 0.65, 40) }}
@@ -74,7 +74,7 @@ export function TypeBarButton({
                 className="size-2.5 shrink-0 rounded-full"
                 style={{ backgroundColor: primaryColor, opacity: 0.55 }}
             />
-            <span className="min-w-0 flex-1 truncate text-left text-[11px] text-muted-foreground">
+            <span className="min-w-0 flex-1 truncate text-left text-[11px] text-widget-muted">
                 {placeholder}
             </span>
         </button>
@@ -83,7 +83,7 @@ export function TypeBarButton({
 
 /** Compact bar — square icon button */
 export function CompactBarButton({
-    primaryColor = "#2F6DF3",
+    primaryColor = "var(--widget-primary)",
     size = 56,
     className,
     ...props
@@ -103,14 +103,14 @@ export function CompactBarButton({
             }}
             {...props}
         >
-            <ChatIcon size={size * 0.45} className="text-white" />
+            <ChatIcon size={size * 0.45} className="text-primary-contrast" />
         </button>
     );
 }
 
 /** Classic bar — pill input with send control */
 export function ClassicBarButton({
-    primaryColor = "#2F6DF3",
+    primaryColor = "var(--widget-primary)",
     placeholder = "Type a message",
     size = 56,
     className,
@@ -121,20 +121,20 @@ export function ClassicBarButton({
             type="button"
             aria-label="Open chat"
             className={cn(
-                "flex items-center gap-2 rounded-full border border-border bg-white px-3 shadow-lg transition-shadow hover:shadow-xl",
+                "flex items-center gap-2 rounded-full border border-border bg-widget-surface px-3 shadow-lg transition-shadow hover:shadow-xl",
                 className,
             )}
             style={{ width: "min(100%, 260px)", height: Math.max(size * 0.65, 40) }}
             {...props}
         >
-            <span className="min-w-0 flex-1 truncate text-center text-[11px] text-muted-foreground">
+            <span className="min-w-0 flex-1 truncate text-center text-[11px] text-widget-muted">
                 {placeholder}
             </span>
             <span
                 className="flex size-6 shrink-0 items-center justify-center rounded-full"
                 style={{ backgroundColor: primaryColor }}
             >
-                <SendIcon className="text-white" />
+                <SendIcon className="text-primary-contrast" />
             </span>
         </button>
     );
@@ -142,7 +142,7 @@ export function ClassicBarButton({
 
 /** Custom — rectangular input-style trigger */
 export function CustomBarButton({
-    primaryColor = "#2F6DF3",
+    primaryColor = "var(--widget-primary)",
     placeholder = "Type your query here...",
     size = 56,
     className,
@@ -153,7 +153,7 @@ export function CustomBarButton({
             type="button"
             aria-label="Open chat"
             className={cn(
-                "flex items-center gap-2 rounded-lg border border-border bg-white px-3 shadow-lg transition-shadow hover:shadow-xl",
+                "flex items-center gap-2 rounded-lg border border-border bg-widget-surface px-3 shadow-lg transition-shadow hover:shadow-xl",
                 className,
             )}
             style={{ width: "min(100%, 260px)", height: Math.max(size * 0.65, 40) }}
@@ -163,7 +163,7 @@ export function CustomBarButton({
                 className="size-2 shrink-0 rounded-full"
                 style={{ backgroundColor: primaryColor }}
             />
-            <span className="min-w-0 flex-1 truncate text-left text-[11px] text-muted-foreground">
+            <span className="min-w-0 flex-1 truncate text-left text-[11px] text-widget-muted">
                 {placeholder}
             </span>
         </button>

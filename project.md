@@ -376,22 +376,23 @@ Imports `tailwindcss`, `tw-animate-css`, `shadcn/tailwind.css`, and the Inter va
 Theme values are defined twice: `:root` (light) and `.dark` (dark palette). Tokens are mapped into Tailwind's `@theme` so they're usable as utilities.
 
 - **Font scale**: custom `--text-*` sizes — xs 10px, sm 12px, base 14px, lg 16px, xl 18px, 2xl 20px, 3xl 24px (with custom line heights). Body defaults to 14px Inter (`--font-sans`); `--font-geist` is also declared.
-- **Backgrounds**: `--background` (#FFF), `--popover` (#FFF), `--sidebar-bg` (#ffffff), `--card-bg` (#f8fafd), `--card-nested-bg` (#ffffff), `--light` (#F7F8FB), `--muted` (#F1F1F1), `--light-gray` (#F7F7F7)
+- **Surfaces**: `--background` (#FFF), `--popover` (#FFF), `--sidebar-bg` (#ffffff), `--surface-raised` (#ffffff), `--surface-subtle` (#F7F8FB), `--muted` (#F1F1F1). The three primary container primitives have dedicated layers: `--preview-section-background` (#FFF), `--app-section-background` (the pale blue section tint), and `--app-card-background` (#FFF). Their dark values progressively lighten from preview → section → nested card so hierarchy remains visible.
 - **Primary**: `--primary` (#3576F3), `--primary-hover` (#236efa), `--primary-foreground` (#ffffff), `--ring` (#2f6df3)
-- **Borders**: `--border` (#e2e8f0), `--border-subtle` (#edf2f7), `--border-blue` (#dbeafe), `--border-light` (#e6e6e8), `--border-soft` (rgba(0,0,0,0.21)), `--border-strong` (#c7c7cc), `--border-tab` (#DADADA), `--border-gray` (#808080), `--input` (#c7c7cc)
-- **Text**: `--foreground` (#0f172a), `--muted-foreground` (#64748b), `--popover-foreground`, `--label-text` (#94a3b8), `--gray`/`--ghost` (#808080), `--black` (#000)
-- **Active states**: `--active-item-bg` (#f0f7ff), `--active-item-border` (#dbeafe), `--active-tab-bg` (#ffffff), `--active-tab-border` (#e2e8f0)
-- **Badges**: `--badge-active-bg` (#E5FFD8), `--badge-active-text` (#808080), `--badge-active-dot` (#127557), `--badge-inactive-bg` (#FFDBDB), `--badge-inactive-dot` (#B42318) — default/destructive variants render a trailing status dot
-- **Status**: `--status-online` (#D1EFC0), `--danger` (#FF7B7E), `--danger-light` (#FFDBDB), `--danger-dark` (#FF0000), `--success` (#47941E), `--success-light` (#E4F5E6), `--warning` (#A16207), `--warning-light` (#FEF9C3)
-- **Secondary**: `--secondary-button-bg` (#e2e8f0), `--secondary-button-hover` (#cbd5e1)
-- **Chat**: `--chat-bg` (#EEEEEE)
-- **Section**: `--section-border` (rgba(53,118,243,0.20)), `--section-bg` (rgba(232,238,251,0.50))
-- **Table**: `--table-header` (#E8EEFB)
-- **Shadows**: `--shadow-blue`, `--shadow-auth`, `--shadow-panel`
+- **Borders**: `--border` (#e2e8f0), `--border-subtle` (#edf2f7), `--divider` (#e6e6e8), `--field-border` (rgba(0,0,0,0.21)), `--border-strong` (#c7c7cc), `--tab-active-border` (#DADADA), `--input` (#c7c7cc)
+- **Content**: `--foreground` (#0f172a), `--muted-foreground` (#64748b), `--popover-foreground`, `--content-strong` (#000), `--content-muted` (#808080)
+- **Active states**: `--interactive-active-background` (#f0f7ff), `--interactive-active-border` (#dbeafe)
+- **Badges**: `--badge-active-background` (#E5FFD8), `--badge-active-text` (#808080), `--badge-active-dot` (#127557), `--badge-inactive-background` (#FFDBDB), `--badge-inactive-dot` (#B42318) — default/destructive variants render a trailing status dot
+- **Status**: `--status-online-accent` (#D1EFC0), `--danger` (#FF7B7E), `--danger-surface` (#FFDBDB), `--danger-strong` (#FF0000), `--success` (#47941E), `--success-surface` (#E4F5E6), `--warning` (#A16207), `--warning-surface` (#FEF9C3)
+- **Structured content**: `--section-border` (rgba(53,118,243,0.20)), `--section-background` (rgba(232,238,251,0.50)), `--table-header-background` (#E8EEFB)
+- **Data visualisation**: `--chart-axis`, `--chart-grid`, `--chart-high-marker`, `--chart-low-marker`, `--chart-marker-border` keep chart contrast theme-aware without changing chart data.
+- **Component presentation**: semantic tokens cover control borders/hover states, validation, toast/dialog styling, chart tooltips, plan promotion, social brands, and the theme-independent storefront widget preview.
+- **Shadows**: `--shadow-blue`, `--shadow-auth`, `--shadow-panel`, `--auth-card-shadow`, `--toast-shadow`, `--dialog-shadow`, `--plan-selected-shadow`
 
-The `.dark` block overrides the same variables (slate surfaces, adjusted brand/status colors, darker shadows). Dark mode is toggled by adding `.dark` to `document.documentElement` (see `Permissions.tsx`) and the choice is persisted in `localStorage` under the `theme` key.
+The `.dark` block overrides the same variables with a layered deep-navy canvas, brighter blue interactive states, higher-contrast status colors, and blue-black panel shadows. Dark mode is toggled by adding `.dark` to `document.documentElement` (see `SidebarThemeToggle.tsx`) and the choice is persisted in `localStorage` under the `theme` key.
 
 Use these tokens via Tailwind classes (e.g. `bg-background`, `text-primary`, `border-border-subtle`) rather than hardcoded hex values.
+
+Literal hex values are intentionally retained only where color is application data rather than presentation styling: `ColorSelector.tsx` presets/defaults (valid values for `input[type="color"]` and backend submission) and self-contained static SVG/brand artwork.
 
 ## Navigation Items
 

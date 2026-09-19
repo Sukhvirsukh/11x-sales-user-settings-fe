@@ -51,12 +51,12 @@ export default function Modal({
                 <div aria-hidden="true" className="absolute max-sm:top-0 max-sm:right-[25px] max-sm:left-[25px] max-sm:h-20 z-[-1] max-sm:rounded-t-[20px] max-sm:bg-primary" />
                 <div className="flex min-h-0 flex-col max-sm:mt-2 max-sm:rounded-t-[10px] max-sm:bg-popover">
                     {title && (
-                        <DialogHeader className="flex shrink-0 flex-row justify-between items-center py-2.5 px-4 bg-table-header rounded-t-[10px]">
+                        <DialogHeader className="flex shrink-0 flex-row justify-between items-center py-2.5 px-4 bg-table-header-background rounded-t-[10px]">
                             <DialogTitle className="text-lg font-semibold font-inter">
                                 {title}
                             </DialogTitle>
                             <DialogClose className="p-1 cursor-pointer">
-                                <X size={16} className="text-[#1E1E1E]" />
+                                <X size={16} className="text-modal-close" />
                             </DialogClose>
                         </DialogHeader>
                     )}

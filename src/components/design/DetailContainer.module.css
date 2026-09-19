@@ -17,7 +17,7 @@
 }
 
 .withHeader {
-    border-top: 1px solid var(--border-tab);
+    border-top: 1px solid var(--tab-active-border);
     padding-top: 10px;
 }
 

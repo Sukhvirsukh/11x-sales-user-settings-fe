@@ -19,7 +19,7 @@ export function DetailItem({ label, value, labelWidth }: {
 }) {
     return (
         <div className="w-full min-w-0">
-            <p className={cn("mb-2.5 text-sm text-gray", labelWidth)}>{label}</p>
+            <p className={cn("mb-2.5 text-sm text-content-muted", labelWidth)}>{label}</p>
             <div className="break-words text-base">{value}</div>
         </div>
     );

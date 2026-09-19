@@ -20,7 +20,7 @@ export function BasicDetails() {
 
                 <DetailContainer
                     leading={
-                        <div className="flex size-[60px] shrink-0 items-center justify-center overflow-hidden rounded-full bg-section-bg font-medium text-primary">
+                        <div className="flex size-[60px] shrink-0 items-center justify-center overflow-hidden rounded-full bg-section-background font-medium text-primary">
                             {avatarUrl ? (
                                 <img src={avatarUrl} className="size-full object-cover" alt="Profile" />
                             ) : (

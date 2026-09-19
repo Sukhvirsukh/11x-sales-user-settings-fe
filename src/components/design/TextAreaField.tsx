@@ -43,11 +43,11 @@ const TextAreaField = React.forwardRef<HTMLTextAreaElement, TextAreaFieldProps>(
                     id={textareaId}
                     ref={ref}
                     className={cn(
-                        "min-h-[80px] w-full rounded-xl border border-border-soft px-3.5 py-2 transition-all focus-visible:border-border-soft focus-visible:ring-2 focus-visible:ring-blue-400/20 dark:border-slate-800",
-                        "bg-card-nested focus-visible:bg-card-nested",
-                        "text-sm text-slate-800 placeholder:text-slate-400 dark:text-slate-200",
+                        "min-h-[80px] w-full rounded-xl border border-control-border-subtle px-3.5 py-2 transition-all focus-visible:border-field-border focus-visible:ring-2 focus-visible:ring-focus-ring/20",
+                        "bg-surface-raised focus-visible:bg-surface-raised",
+                        "text-sm text-field-text placeholder:text-placeholder",
                         variant === "light"
-                            ? "bg-light border-section-border focus-visible:bg-light focus-visible:border-section-border dark:bg-slate-800/60 dark:focus-visible:bg-slate-800/60"
+                            ? "bg-field-subtle-background border-section-border focus-visible:bg-field-subtle-background focus-visible:border-section-border"
                             : "",
                         containerClassName,
                         className,

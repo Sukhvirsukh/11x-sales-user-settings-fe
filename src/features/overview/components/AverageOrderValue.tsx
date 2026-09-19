@@ -14,12 +14,12 @@ export default function AverageOrderValue() {
                 />
                 <div className="flex mt-2 flex-wrap items-center gap-x-2 gap-y-1">
                     <span className="text-3xl font-semibold leading-none text-foreground">117</span>
-                    <span className="rounded-sm bg-success-light px-1.5 py-1 text-xs font-medium text-success">+12%</span>
-                    <span className="text-sm text-ghost">For this month</span>
+                    <span className="rounded-sm bg-success-surface px-1.5 py-1 text-xs font-medium text-success">+12%</span>
+                    <span className="text-sm text-content-muted">For this month</span>
                 </div>
             </div>
 
-            <div className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-ghost">
+            <div className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-content-muted">
                 <div className="flex items-center gap-2">
                     <span className="h-4 w-2 bg-primary" aria-hidden />
                     <span><strong className="font-medium text-foreground">117</strong> total order received by Vitalb</span>

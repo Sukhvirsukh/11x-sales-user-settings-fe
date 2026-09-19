@@ -33,7 +33,7 @@ export default function SidebarUserCard({ isCollapsed, name, email, avatarUrl }:
                 render={
                     <button
                         type="button"
-                        className={`rounded-[10px] bg-table-header cursor-pointer border border-primary/20 py-2 px-1.5 flex w-full items-center transition-all ${isCollapsed ? "justify-center p-1.5" : "justify-between"
+                        className={`rounded-[10px] bg-table-header-background cursor-pointer border border-primary/20 py-2 px-1.5 flex w-full items-center transition-all ${isCollapsed ? "justify-center p-1.5" : "justify-between"
                             }`}
                         aria-label="Open account menu"
                     />
@@ -52,10 +52,10 @@ export default function SidebarUserCard({ isCollapsed, name, email, avatarUrl }:
                     }
                     {!isCollapsed && (
                         <div className="flex flex-col text-left min-w-0">
-                            <span className="truncate text-foreground">
+                            <span className="truncate text-sidebar-user-name">
                                 {name}
                             </span>
-                            <span className="truncate text-sm text-muted-foreground">
+                            <span className="truncate text-sm text-sidebar-user-email">
                                 {email}
                             </span>
                         </div>
@@ -75,7 +75,7 @@ export default function SidebarUserCard({ isCollapsed, name, email, avatarUrl }:
                 sideOffset={8}
                 className="w-max max-w-[calc(100vw-2rem)] gap-0 overflow-hidden rounded-[10px] border-0 bg-popover! p-0 shadow-blue ring-0!"
             >
-                <div className="flex items-center justify-center gap-3 bg-table-header px-3 py-3 text-center">
+                <div className="flex items-center justify-center gap-3 bg-table-header-background px-3 py-3 text-center">
                     {avatarUrl ? (
                         <img src={avatarUrl} alt={name} className="size-10 shrink-0 rounded-full border border-section-border object-cover" />
                     ) : (
@@ -88,12 +88,12 @@ export default function SidebarUserCard({ isCollapsed, name, email, avatarUrl }:
                         <p className="break-all text-xs text-muted-foreground">{email}</p>
                     </div>
                 </div>
-                <div className="flex items-center justify-between gap-3 border-b border-border-light px-3 py-2.5 text-sm">
+                <div className="flex items-center justify-between gap-3 border-b border-divider px-3 py-2.5 text-sm">
                     <span className="flex items-center gap-2.5 text-foreground dark:text-muted-foreground">
                         <Info className="size-4 shrink-0 text-muted-foreground" aria-hidden="true" />
                         Version
                     </span>
-                    <span className="rounded-md bg-table-header px-2 py-0.5 text-xs font-medium text-muted-foreground">
+                    <span className="rounded-md bg-table-header-background px-2 py-0.5 text-xs font-medium text-muted-foreground">
                         V12.1
                     </span>
                 </div>
@@ -117,7 +117,7 @@ export default function SidebarUserCard({ isCollapsed, name, email, avatarUrl }:
                         variant="bare"
                         size="sm"
                         onClick={handleLogout}
-                        className="w-full justify-start gap-2.5 px-3 py-1.5! text-danger hover:bg-danger-light"
+                        className="w-full justify-start gap-2.5 px-3 py-1.5! text-danger hover:bg-danger-surface"
                     >
                         <LogOut className="size-4 shrink-0" />
                         Log out
