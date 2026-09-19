@@ -148,9 +148,9 @@ export function toPermissionPayload(values: PermissionValues): PermissionPayload
 }
 
 /**
- * Capabilities the user holds, flattened to `section.action` keys. A missing or
- * malformed payload grants nothing — `usePermissions` falls back to the role
- * defaults from `permissionsDefaultData.ts` in that case.
+ * Capabilities the user holds, flattened to `section.action` keys. A missing,
+ * empty or malformed payload grants nothing. The auth store decides whether an
+ * omitted payload should instead use role defaults.
  */
 export function getPermissions(savedPermissions?: unknown): ReadonlySet<Permission> {
     const permissions: Permission[] = [];

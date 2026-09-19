@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import type { Permission } from "./permissions";
 
 export type AuthApiResponse = {
   accessToken?: string;
@@ -41,6 +42,7 @@ export interface AuthStore {
   email: string | null;
   role: string | null;
   phone: string | null;
+  permissions: Permission[];
   setUser: (user: AuthUser | undefined) => void;
   clearUser: () => void;
 }

@@ -91,7 +91,7 @@ export default function Permissions({ control, disabled = false }: {
                                     <Checkbox
                                         checked={granted}
                                         onCheckedChange={(checked) => setActions(section, column.actions, checked)}
-                                        disabled={true}
+                                        disabled={disabled}
                                         aria-label={`${label}: ${column.label}`}
                                     />
                                 </div>

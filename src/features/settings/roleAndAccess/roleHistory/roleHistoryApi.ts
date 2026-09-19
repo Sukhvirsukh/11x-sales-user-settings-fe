@@ -29,7 +29,7 @@ function toRolePayload(values: RoleFormValues): RolePayload {
         name: values.name.trim(),
         email: values.email.trim().toLowerCase(),
         role: values.role.toUpperCase(),
-        // permissions: toPermissionPayload(values.permissions),
+        permissions: toPermissionPayload(values.permissions),
         status: true,
     };
 }

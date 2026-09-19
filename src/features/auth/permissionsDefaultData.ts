@@ -2,9 +2,9 @@
  * Starting grants per role.
  *
  * TEMPORARY: the API reports `role` but does not send a `permissions` payload
- * yet, so `usePermissions` falls back to the sets below whenever a response
- * carries no grants. Once every response includes `permissions`, this file and
- * its one caller can go.
+ * yet, so the auth store saves the sets below whenever a response omits the
+ * `permissions` field. Once every response includes `permissions`, this file
+ * and its auth-store caller can go.
  *
  * Edit the sets here to change what a role gets by default — nothing else in the
  * app encodes role-based access.

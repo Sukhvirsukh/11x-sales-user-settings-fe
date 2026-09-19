@@ -2,17 +2,20 @@ import { useEffect } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+
 import { FormGroup } from "@/components/design/FormGroup";
 import { InputField } from "@/components/design/InputField";
 import Modal from "@/components/design/Modal";
 import { SelectField } from "@/components/design/SelectField";
+import { toast } from "@/components/ui/toast";
+
 import { createRole, updateRole } from "./roleHistoryApi";
 import { roleHistoryQueryKey } from "./roleHistoryQuery";
 import { roleFormSchema } from "./roleHistorySchema";
+
 import type { RoleFormValues, RoleRow } from "./roleHistoryType";
-import { toast } from "@/components/ui/toast";
 import { ROLE_OPTIONS } from "./roleOptions";
-import Permissions from "./Permissions";
+// import Permissions from "./Permissions";
 import { permissionValuesFrom, toPermissionValues } from "@/features/auth/permissions";
 import { getDefaultPermissions } from "@/features/auth/permissionsDefaultData";
 
@@ -135,7 +138,7 @@ export default function AddRoleForm({ open, onOpenChange, role }: AddRoleFormPro
                         }}
                         options={ROLE_OPTIONS}
                     />
-                    <Permissions control={control} disabled={!selectedRole || saveRoleMutation.isPending} />
+                    {/* <Permissions control={control} disabled={!selectedRole || saveRoleMutation.isPending} /> */}
                 </FormGroup>
             </form>
         </Modal>

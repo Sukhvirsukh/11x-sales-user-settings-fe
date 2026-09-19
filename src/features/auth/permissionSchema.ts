@@ -30,7 +30,7 @@ export type PermissionPayload = z.infer<typeof permissionPayloadSchema>;
 
 /**
  * The same grants folded into one map, keyed by section — the shape the role
- * form edits and `usePermissions()` reads capabilities from.
+ * role form edits before converting them to the API payload.
  */
 export const permissionValuesSchema = z.record(
   z.string(),

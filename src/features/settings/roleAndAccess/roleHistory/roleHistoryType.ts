@@ -30,7 +30,7 @@ export interface RoleRow extends Record<string, unknown> {
 }
 
 export interface RolePayload {
-    // permissions: PermissionPayload;
+    permissions: PermissionPayload;
     name: string;
     email: string;
     role: string;
