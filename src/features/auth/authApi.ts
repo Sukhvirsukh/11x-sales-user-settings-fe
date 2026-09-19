@@ -11,9 +11,9 @@ function getUser(
   if (!user) {
     return fallbackName
       ? {
-          name: fallbackName,
-          email: values?.email,
-        }
+        name: fallbackName,
+        email: values?.email,
+      }
       : undefined;
   }
 
@@ -58,7 +58,9 @@ export function authRefreshRequest(): Promise<AuthUser> {
 
   pendingAuthRefresh = apiFetch<AuthApiResponse>("/auth/profile")
     .then((response) => {
-      const user = getUser(response);
+      const user = getUser({
+        user: response
+      });
 
       if (!user) {
         throw new Error("Profile response did not include a user.");

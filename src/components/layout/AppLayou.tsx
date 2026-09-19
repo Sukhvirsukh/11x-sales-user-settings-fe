@@ -29,9 +29,9 @@ function AppLayout() {
 
         authRefreshRequest()
             .then((refreshedUser) => {
+                delete refreshedUser.permissions
                 if (isActive) setUser(refreshedUser);
-            })
-            .catch(() => {
+            }).catch(() => {
                 if (!isActive) return;
                 clearAuthToken();
                 clearUser();

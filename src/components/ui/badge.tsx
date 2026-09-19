@@ -19,6 +19,8 @@ const badgeVariants = cva(
           "bg-input after:size-1.5 after:rounded-full after:bg-content-muted after:content-[''] md:after:size-[7px] [a]:hover:bg-content-strong/85",
         darkSuccess:
           "bg-success-surface text-success after:size-1.5 after:rounded-full after:bg-success after:content-[''] md:after:size-[7px] [a]:hover:bg-success-surface/80",
+        warning:
+          "bg-badge-warning-background text-warning after:size-1.5 after:rounded-full after:bg-warning after:content-[''] md:after:size-[7px] [a]:hover:bg-badge-warning-background/80",
         destructive:
           "bg-badge-inactive-background text-content-muted after:size-1.5 after:rounded-full after:bg-badge-inactive-dot after:content-[''] md:after:size-[7px] focus-visible:ring-destructive/20 [a]:hover:bg-badge-inactive-background/80",
         destructiveDark:
@@ -42,14 +44,14 @@ function Badge({
   className,
   variant = "default",
   render,
-  indigator = true,
+  indicator = true,
   ...props
-}: useRender.ComponentProps<"span"> & VariantProps<typeof badgeVariants> & { indigator?: boolean }) {
+}: useRender.ComponentProps<"span"> & VariantProps<typeof badgeVariants> & { indicator?: boolean }) {
   return useRender({
     defaultTagName: "span",
     props: mergeProps<"span">(
       {
-        className: cn(badgeVariants({ variant }), !indigator && "after:hidden", className),
+        className: cn(badgeVariants({ variant }), !indicator && "after:hidden", className),
       },
       props
     ),

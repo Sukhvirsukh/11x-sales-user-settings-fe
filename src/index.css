@@ -112,6 +112,7 @@
   --color-status-online-accent: var(--status-online-accent);
   --color-badge-inactive-background: var(--badge-inactive-background);
   --color-badge-inactive-dot: var(--badge-inactive-dot);
+  --color-badge-warning-background: var(--badge-warning-background);
 
   --color-section-border: var(--section-border);
   --color-section-background: var(--section-background);
@@ -238,6 +239,7 @@
     --badge-active-dot: #127557;
     --badge-inactive-dot: #B42318;
     --status-online-accent: #D1EFC0;
+    --badge-warning-background: #FFF4D2;
 
     /* Structured content */
     --section-border: rgba(53, 118, 243, 0.20);
