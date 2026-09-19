@@ -30,6 +30,8 @@ function getUser(
   };
 }
 
+let pendingAuthRefresh: Promise<AuthUser> | null = null;
+
 export async function authRequest<TValues>(
   endpoint: string,
   values: TValues,
@@ -49,4 +51,24 @@ export async function authRequest<TValues>(
     accessToken: authBody.accessToken,
     user: getUser(authBody, values as AuthRequestValues),
   };
+}
+
+export function authRefreshRequest(): Promise<AuthUser> {
+  if (pendingAuthRefresh) return pendingAuthRefresh;
+
+  pendingAuthRefresh = apiFetch<AuthApiResponse>("/auth/profile")
+    .then((response) => {
+      const user = getUser(response);
+
+      if (!user) {
+        throw new Error("Profile response did not include a user.");
+      }
+
+      return user;
+    })
+    .finally(() => {
+      pendingAuthRefresh = null;
+    });
+
+  return pendingAuthRefresh;
 }

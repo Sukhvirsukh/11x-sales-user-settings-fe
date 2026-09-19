@@ -8,21 +8,21 @@ import { FormGroup } from "@/components/design/FormGroup";
 import { InputField } from "@/components/design/InputField";
 import Modal from "@/components/design/Modal";
 import { toast } from "@/components/ui/toast";
-import { segamentFormSchema } from "./contactSchema";
+import { segmentFormSchema } from "./contactSchema";
 import { createSegament } from "./contactsApi";
-import { segamentsQueryKey } from "./contactQuery";
-import type { SegamentFormValues } from "./contactType";
+import { segmentsQueryKey } from "./contactQuery";
+import type { SegmentFormValues } from "./contactType";
 
-interface AddSegamentProps {
+interface AddSegmentProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
 }
 
-const DEFAULT_VALUES: Partial<SegamentFormValues> = {
+const DEFAULT_VALUES: Partial<SegmentFormValues> = {
     name: "",
 };
 
-export default function AddSegament({ open, onOpenChange }: AddSegamentProps) {
+export default function AddSegment({ open, onOpenChange }: AddSegmentProps) {
     const queryClient = useQueryClient();
     const {
         register,
@@ -31,8 +31,8 @@ export default function AddSegament({ open, onOpenChange }: AddSegamentProps) {
         setValue,
         watch,
         formState: { errors },
-    } = useForm<SegamentFormValues>({
-        resolver: zodResolver(segamentFormSchema),
+    } = useForm<SegmentFormValues>({
+        resolver: zodResolver(segmentFormSchema),
         defaultValues: DEFAULT_VALUES,
     });
 
@@ -40,10 +40,10 @@ export default function AddSegament({ open, onOpenChange }: AddSegamentProps) {
         if (open) reset(DEFAULT_VALUES);
     }, [open, reset]);
 
-    const addSegamentMutation = useMutation({
+    const addSegmentMutation = useMutation({
         mutationFn: createSegament,
         onSuccess: async () => {
-            await queryClient.invalidateQueries({ queryKey: segamentsQueryKey });
+            await queryClient.invalidateQueries({ queryKey: segmentsQueryKey });
             onOpenChange(false);
             toast.add({
                 type: "success",
@@ -53,21 +53,21 @@ export default function AddSegament({ open, onOpenChange }: AddSegamentProps) {
         },
     });
 
-    function addSegament(values: SegamentFormValues) {
-        addSegamentMutation.mutate(values);
+    function addSegament(values: SegmentFormValues) {
+        addSegmentMutation.mutate(values);
     }
 
     return (
         <Modal
             open={open}
             onOpenChange={onOpenChange}
-            title="Add segament"
+            title="Add segment"
             primaryAction={{
-                label: addSegamentMutation.isPending ? "Adding..." : "Add segament",
+                label: addSegmentMutation.isPending ? "Adding..." : "Add segment",
                 onClick: handleSubmit(addSegament),
-                disabled: addSegamentMutation.isPending,
+                disabled: addSegmentMutation.isPending,
             }}
-            closeAction={{ label: "Cancel", disabled: addSegamentMutation.isPending }}
+            closeAction={{ label: "Cancel", disabled: addSegmentMutation.isPending }}
         >
             <form onSubmit={handleSubmit(addSegament)} noValidate>
                 <FormGroup gap="sm">

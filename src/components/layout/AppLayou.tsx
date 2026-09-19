@@ -2,24 +2,62 @@ import {
     Navigate,
     Outlet,
     useLocation,
+    useNavigate,
 } from "react-router";
+import { useEffect } from "react";
 import Sidebar from "./sidebar";
 import MobileTopbar from "./MobileTopbar";
-import { getAuthToken } from "@/features/auth/authStorage";
+import { Spinner } from "@/components/ui/spinner";
+import { authRefreshRequest } from "@/features/auth/authApi";
+import { useAuthStore } from "@/features/auth/authStore";
+import { clearAuthToken, getAuthToken } from "@/features/auth/authStorage";
 import { isSidebarHidden } from "./sidebar/isSidebarHidden";
 
 function AppLayout() {
-    const isAuthenticated = Boolean(getAuthToken());
+    const authToken = getAuthToken();
+    const user = useAuthStore((state) => state.user);
+    const setUser = useAuthStore((state) => state.setUser);
+    const clearUser = useAuthStore((state) => state.clearUser);
     const location = useLocation();
     const hasSidebar = isSidebarHidden(location.pathname);
+    const navigate = useNavigate();
 
-    if (!isAuthenticated) {
+    useEffect(() => {
+        if (!authToken || user) return;
+
+        let isActive = true;
+
+        authRefreshRequest()
+            .then((refreshedUser) => {
+                if (isActive) setUser(refreshedUser);
+            })
+            .catch(() => {
+                if (!isActive) return;
+                clearAuthToken();
+                clearUser();
+                navigate("/sign-in", { replace: true });
+            });
+
+        return () => {
+            isActive = false;
+        };
+    }, [authToken, clearUser, setUser, user]);
+
+    if (!authToken) {
         return (
             <Navigate
                 to="/sign-in"
                 replace
                 state={{ from: location }}
             />
+        );
+    }
+
+    if (!user) {
+        return (
+            <div className="flex min-h-screen items-center justify-center bg-background">
+                <Spinner className="size-6 text-primary" />
+            </div>
         );
     }
 

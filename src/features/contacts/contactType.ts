@@ -1,5 +1,5 @@
 import type { z } from "zod"
-import type { segamentFormSchema } from "./contactSchema"
+import type { segmentFormSchema } from "./contactSchema"
 
 export type UserProfile = {
     id: string
@@ -10,16 +10,16 @@ export type UserProfile = {
     startDate: string
 }
 
-export type SegamentStatus = "Active" | "Inactive"
+export type SegmentStatus = "Active" | "Inactive"
 
-export type Segament = {
+export type Segment = {
     id: string
     name: string
-    status: SegamentStatus
+    status: SegmentStatus
     createdAt: string
     activeUsers: number
-    /** Date the segament is scheduled to become active (yyyy-MM-dd). */
+    /** Date the segment is scheduled to become active (yyyy-MM-dd). */
     activeSchedule: string
 }
 
-export type SegamentFormValues = z.infer<typeof segamentFormSchema>
+export type SegmentFormValues = z.infer<typeof segmentFormSchema>
