@@ -64,7 +64,7 @@ function AppLayout() {
     if (hasSidebar) {
         return (
             <div className="flex h-screen gap-0 overflow-hidden bg-background p-5">
-                <main className="-m-5 flex min-w-0 flex-1 flex-col overflow-y-auto p-5">
+                <main className="-m-5 flex min-w-0 flex-1 flex-col overflow-y-auto">
                     <Outlet />
                 </main>
             </div>

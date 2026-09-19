@@ -57,6 +57,7 @@
   --color-surface-subtle: var(--surface-subtle);
   --color-app-section-background: var(--app-section-background);
   --color-preview-section-background: var(--preview-section-background);
+  --color-preview-canvas-background: var(--preview-canvas-background);
   --color-app-card-background: var(--app-card-background);
   --color-muted: var(--muted);
 
@@ -141,6 +142,9 @@
   --color-plan-promotion-foreground: var(--plan-promotion-foreground);
   --color-plan-feature: var(--plan-feature);
   --color-modal-close: var(--modal-close);
+  
+  --color-message-user: var(--message-user);
+  --color-message-bot: var(--message-bot);
 
   /* Shadows */
   --shadow-blue: 0 2px 6px rgba(55, 118, 243, 0.15), 0 6px 18px rgba(55, 118, 243, 0.10);
@@ -171,6 +175,7 @@
     --surface-subtle: #F7F8FB;
     --app-section-background: rgba(232, 238, 251, 0.50);
     --preview-section-background: #ffffff;
+    --preview-canvas-background: #E9E9E9;
     --app-card-background: #ffffff;
     --muted: #F1F1F1;
     --card: #ffffff;
@@ -239,6 +244,10 @@
     --section-background: rgba(232, 238, 251, 0.50);
     --table-header-background: #E8EEFB;
 
+    /**** ChatBox message colors ****/
+    --message-user: #9F9F9F;
+    --message-bot: #EEEEEE;
+
     /* Data visualisation */
     --chart-axis: #858585;
     --chart-grid: #a1a1aa;
@@ -292,6 +301,7 @@
     --surface-subtle: #0D1728;
     --app-section-background: #101F36;
     --preview-section-background: #0C1626;
+    --preview-canvas-background: #0D1728;
     --app-card-background: #172A46;
     --muted: #19263C;
     --card: #111C2F;

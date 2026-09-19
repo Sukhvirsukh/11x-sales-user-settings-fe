@@ -117,9 +117,10 @@ src/
 │   │   ├── OverviewCard.tsx         # Metric card (title, numbers, icon)
 │   │   ├── SearchField.tsx          # Responsive search input (popover on mobile)
 │   │   ├── chatBox/                 # Reusable chat box component
-│   │   │   ├── ChatBox.tsx          # Loaded chat box (visibility preview)
+│   │   │   ├── ChatBox.tsx          # Loaded chat box; optional default messages and product recommendations
 │   │   │   ├── ChatInput.tsx
 │   │   │   ├── ChatMessage.tsx      # User/bot bubble + bot action row (Debug / Make correction / thumbs / ✓)
+│   │   │   ├── ProductRecommendation.tsx # Product row rendered inside a bot message
 │   │   │   ├── type.ts
 │   │   │   └── index.ts
 │   │   ├── conversations/           # Conversations page UI
@@ -376,7 +377,7 @@ Imports `tailwindcss`, `tw-animate-css`, `shadcn/tailwind.css`, and the Inter va
 Theme values are defined twice: `:root` (light) and `.dark` (dark palette). Tokens are mapped into Tailwind's `@theme` so they're usable as utilities.
 
 - **Font scale**: custom `--text-*` sizes — xs 10px, sm 12px, base 14px, lg 16px, xl 18px, 2xl 20px, 3xl 24px (with custom line heights). Body defaults to 14px Inter (`--font-sans`); `--font-geist` is also declared.
-- **Surfaces**: `--background` (#FFF), `--popover` (#FFF), `--sidebar-bg` (#ffffff), `--surface-raised` (#ffffff), `--surface-subtle` (#F7F8FB), `--muted` (#F1F1F1). The three primary container primitives have dedicated layers: `--preview-section-background` (#FFF), `--app-section-background` (the pale blue section tint), and `--app-card-background` (#FFF). Their dark values progressively lighten from preview → section → nested card so hierarchy remains visible.
+- **Surfaces**: `--background` (#FFF), `--popover` (#FFF), `--sidebar-bg` (#ffffff), `--surface-raised` (#ffffff), `--surface-subtle` (#F7F8FB), `--muted` (#F1F1F1). The three primary container primitives have dedicated layers: `--preview-section-background` (#FFF), `--app-section-background` (the pale blue section tint), and `--app-card-background` (#FFF). The visibility editor's nested image canvas uses `--preview-canvas-background`. Their dark values preserve the same visual hierarchy.
 - **Primary**: `--primary` (#3576F3), `--primary-hover` (#236efa), `--primary-foreground` (#ffffff), `--ring` (#2f6df3)
 - **Borders**: `--border` (#e2e8f0), `--border-subtle` (#edf2f7), `--divider` (#e6e6e8), `--field-border` (rgba(0,0,0,0.21)), `--border-strong` (#c7c7cc), `--tab-active-border` (#DADADA), `--input` (#c7c7cc)
 - **Content**: `--foreground` (#0f172a), `--muted-foreground` (#64748b), `--popover-foreground`, `--content-strong` (#000), `--content-muted` (#808080)
