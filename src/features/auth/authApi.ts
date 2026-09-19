@@ -1,5 +1,11 @@
 import { apiFetch } from "@/lib/api";
-import type { AuthApiResponse, AuthRequestValues, AuthResponse, AuthUser } from "./authTypes";
+import type {
+  AuthApiResponse,
+  AuthApiUser,
+  AuthRequestValues,
+  AuthResponse,
+  AuthUser,
+} from "./authTypes";
 
 function getUser(
   response: AuthApiResponse,
@@ -56,10 +62,10 @@ export async function authRequest<TValues>(
 export function authRefreshRequest(): Promise<AuthUser> {
   if (pendingAuthRefresh) return pendingAuthRefresh;
 
-  pendingAuthRefresh = apiFetch<AuthApiResponse>("/auth/profile")
+  pendingAuthRefresh = apiFetch<AuthApiUser>("/auth/profile")
     .then((response) => {
       const user = getUser({
-        user: response
+        user: response,
       });
 
       if (!user) {
