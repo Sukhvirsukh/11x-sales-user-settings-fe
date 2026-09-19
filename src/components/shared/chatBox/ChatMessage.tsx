@@ -1,40 +1,90 @@
-import { CheckIcon, ThumbsDownIcon, ThumbsUpIcon } from "lucide-react";
-import { useState } from "react";
+import { CheckIcon, Pencil, ThumbsDownIcon, ThumbsUpIcon } from "lucide-react";
+import { useState, type PropsWithChildren } from "react";
+import {
+  ProductRecommendation,
+  type ProductRecommendationItem,
+} from "./ProductRecommendation";
 
-export interface ChatMessageProps {
+const messageTextClassName = "whitespace-pre-wrap text-base leading-6";
+
+function AgentMessage({ content, children }: PropsWithChildren<{ content?: string }>) {
+  return (
+    <div className="rounded-[10px] border border-control-border-subtle/20 bg-message-bot/18 p-2.5">
+      {content && <p className={messageTextClassName}>{content}</p>}
+      {children}
+    </div>
+  )
+}
+
+function UserMessage({ content }: { content: string }) {
+  return (
+    <p className={`${messageTextClassName} rounded-[10px] border border-control-border-subtle/20 bg-message-user/20 p-2.5`}>
+      {content}
+    </p>
+  )
+}
+
+interface ChatMessageBase {
   id: string;
-  content: string;
   sender: "user" | "bot";
   timestamp?: Date;
   avatar?: string;
+}
+
+export interface TextChatMessage extends ChatMessageBase {
+  type?: "text";
+  content: string;
+}
+
+export interface ProductRecommendationChatMessage extends ChatMessageBase {
+  type: "product-recommendation";
+  sender: "bot";
+  content?: string;
+  products: ProductRecommendationItem[];
+}
+
+export type ChatMessageData = TextChatMessage | ProductRecommendationChatMessage;
+
+export type ChatMessageProps = ChatMessageData & {
   primaryColor?: string;
   onCorrect?: (messageId: string, correctedContent: string) => void;
   onDebug?: (messageId: string) => void;
   onLike?: (messageId: string) => void;
   onDislike?: (messageId: string) => void;
   onApprove?: (messageId: string) => void;
+};
+
+function ProductRecommendationMessage({
+  content,
+  products,
+}: Pick<ProductRecommendationChatMessage, "content" | "products">) {
+  return (
+    <AgentMessage content={content}>
+      <div className={content ? "mt-2 space-y-2" : "space-y-2"} aria-label="Product recommendations">
+        {products.map((product) => (
+          <ProductRecommendation key={product.id} product={product} />
+        ))}
+      </div>
+    </AgentMessage>
+  );
 }
 
 const actionClassName =
   "text-sm text-content-strong transition-colors hover:text-primary";
 
-export function ChatMessage({
-  id,
-  content,
-  sender,
-  avatar,
-  primaryColor = "var(--widget-primary)",
-  onCorrect,
-  onDebug,
-  onLike,
-  onDislike,
-  onApprove,
-}: ChatMessageProps) {
+export function ChatMessage(props: ChatMessageProps) {
+  const {
+    id,
+    sender,
+    primaryColor = "var(--widget-primary)",
+    onCorrect,
+    onLike,
+    onDislike,
+    onApprove,
+  } = props;
+  const content = props.content ?? "";
   const isUser = sender === "user";
-  const bubbleClassName = isUser
-    ? "rounded-br-none"
-    : "rounded-bl-none";
-  const avatarClassName = "size-[34px] shrink-0 rounded-full border object-cover";
+  const isProductRecommendation = props.type === "product-recommendation";
 
   const [isEditing, setIsEditing] = useState(false);
   const [correctionDraft, setCorrectionDraft] = useState(content);
@@ -51,43 +101,25 @@ export function ChatMessage({
 
   return (
     <div className={`flex w-full items-start gap-2 ${isUser ? "justify-end" : "justify-start"}`}>
-      {/* Bot avatar */}
-      {!isUser &&
-        (avatar ? (
-          <img
-            src={avatar}
-            alt=""
-            className={avatarClassName}
-            style={{ borderColor: primaryColor }}
-          />
-        ) : (
-          <span
-            aria-hidden
-            className="flex h-[30px] w-[30px] shrink-0 items-center justify-center rounded-full border border-primary bg-primary p-0.5 text-[16px] font-extrabold leading-none text-primary-contrast"
-          >
-            V
-          </span>
-        ))}
 
-      <div className={isUser ? "max-w-[227px]" : "w-fit max-w-full min-w-0"}>
-        <div className={`max-w-full rounded-[10px] bg-table-header-background p-2.5 ${bubbleClassName}`}>
-          <p className="text-sm leading-none whitespace-pre-wrap text-content-strong">{content}</p>
+      <div className={isUser ? "relative max-w-[227px]" : isProductRecommendation ? "relative w-full min-w-0" : "relative w-fit max-w-full min-w-0"}>
+        <div>
+          {isProductRecommendation ? (
+            <ProductRecommendationMessage
+              content={props.content}
+              products={props.products}
+            />
+          ) : sender === "bot" ? (
+            <AgentMessage content={content} />
+          ) : (
+            <UserMessage content={content} />
+          )}
         </div>
 
         {/* Feedback row for bot messages */}
         {!isUser && (
           <div className="mt-2 flex items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              {onDebug && (
-                <button
-                  type="button"
-                  onClick={() => onDebug(id)}
-                  className={actionClassName}
-                  aria-label="Debug response"
-                >
-                  Debug
-                </button>
-              )}
               {onCorrect && (
                 <button
                   type="button"
@@ -98,11 +130,14 @@ export function ChatMessage({
                   className={actionClassName}
                   aria-label="Make correction"
                 >
-                  Make correction
+                  <span className="flex items-center gap-1">
+                    <Pencil size={12} />
+                    Create correction
+                  </span>
                 </button>
               )}
             </div>
-            <div className="flex items-center gap-2.5">
+            <div className="flex items-center gap-1">
               {onLike && (
                 <button
                   type="button"
@@ -139,7 +174,7 @@ export function ChatMessage({
 
         {/* Correction editor */}
         {isEditing && (
-          <div className="mt-1.5 rounded-xl border border-border bg-widget-surface p-2 shadow-sm">
+          <div className="absolute z-99 mt-1.5 rounded-xl border border-border bg-widget-surface p-2 shadow-sm">
             <textarea
               value={correctionDraft}
               onChange={(e) => setCorrectionDraft(e.target.value)}

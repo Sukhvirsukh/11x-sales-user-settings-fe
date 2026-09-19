@@ -2,11 +2,12 @@ import { Fragment, useState } from "react"
 import { ChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { SelectField } from "@/components/design/SelectField"
-import { ChatInput, ChatMessage } from "@/components/shared/chatBox"
+import { ChatInput } from "@/components/shared/chatBox"
 import CopyField from "@/components/shared/CopyField"
 import { conversationMessages, conversations, type Conversation, type ConversationMessage } from "./conversationData"
 import AppCard from "@/components/design/AppCard"
 import Heading from "@/components/design/Heading"
+import { ConversationsMessage } from "./ConversationsMessages"
 
 // Feedback, debug and approve endpoints aren't available yet — the controls stay
 // visible so the panel matches the design.
@@ -49,7 +50,7 @@ function MessageHistory({ messages, onCorrect, onSend, alwaysShowChatInput }: {
     const showChatInput = alwaysShowChatInput || isTakeoverActive
 
     return (
-        <AppCard className="flex h-full min-h-0 flex-col" shadow={false}>
+        <AppCard padding="sm" className="flex h-full min-h-0 flex-col" shadow={false}>
             <div className="flex items-center justify-between gap-3 border-b border-section-border pb-3">
                 <p className="text-lg font-medium text-foreground">Conversational history</p>
                 <div className="flex items-center gap-2">
@@ -62,7 +63,7 @@ function MessageHistory({ messages, onCorrect, onSend, alwaysShowChatInput }: {
             </div>
             <div className="flex flex-1 flex-col gap-4 overflow-y-auto py-4">
                 {messages.map((message) => (
-                    <ChatMessage
+                    <ConversationsMessage
                         key={message.id}
                         {...message}
                         onCorrect={message.sender === "bot" ? onCorrect : undefined}

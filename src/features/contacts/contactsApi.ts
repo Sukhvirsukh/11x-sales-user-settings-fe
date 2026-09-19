@@ -1,7 +1,8 @@
 import { format as formatDate } from "date-fns"
 import { delay } from "@/lib/utils"
-import type { Segament, SegamentFormValues, UserProfile } from "./contactType"
-import { segaments, userProfiles } from "./mockContacts"
+import type { Segment, SegmentFormValues, SegmentsResponse, UserProfile } from "./contactType"
+import { userProfiles } from "./mockContacts"
+import { apiFetch } from "@/lib/api"
 
 
 export async function getUserProfiles(): Promise<UserProfile[]> {
@@ -12,36 +13,23 @@ export async function getUserProfiles(): Promise<UserProfile[]> {
 }
 
 
-export async function getSegaments(): Promise<Segament[]> {
-    // const response = await apiFetch<ContactsResponse>("/contacts/segaments");
-    const response = await delay(2000).then(() => [...segaments])
+export async function getSegaments(page = 1, search = ""): Promise<SegmentsResponse> {
+    const params = new URLSearchParams({ page: String(page) });
+    if (search) params.set("search", search);
 
-    return response
+    return apiFetch<SegmentsResponse>(`/contacts/segments?${params.toString()}`);
 }
 
 
-export async function createSegament(values: SegamentFormValues): Promise<Segament> {
-    // const response = await apiFetch<Segament>("/contacts/segaments", {
-    //     method: "POST",
-    //     headers: { "Content-Type": "application/json" },
-    //     body: JSON.stringify(values),
-    // });
-    await delay(500)
-
-    const nextId = String(
-        segaments.reduce((max, segament) => Math.max(max, Number(segament.id) || 0), 0) + 1
-    )
-    const createdSegament: Segament = {
-        id: nextId,
-        name: values.name,
-        status: "Active",
-        createdAt: formatDate(new Date(), "yyyy-MM-dd"),
-        activeUsers: 0,
-        activeSchedule: formatDate(values.activeSchedule, "yyyy-MM-dd"),
-    }
-
-    segaments.push(createdSegament)
-    return createdSegament
+export async function createSegament(values: SegmentFormValues): Promise<Segment> {
+    return apiFetch<Segment>("/contacts/segments", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            name: values.name,
+            activeSchedule: formatDate(values.activeSchedule, "yyyy-MM-dd"),
+        }),
+    })
 }
 
 
@@ -58,13 +46,12 @@ export async function deleteUserProfiles(ids: string[]): Promise<string[]> {
 }
 
 
+/** Deletes one or many segments through the bulk endpoint. */
 export async function deleteSegaments(ids: string[]): Promise<string[]> {
-    // await apiFetch("/contacts/segaments/bulk", { method: "DELETE", body: JSON.stringify({ ids }) });
-    await delay(500)
-
-    ids.forEach((id) => {
-        const index = segaments.findIndex((segament) => segament.id === id)
-        if (index !== -1) segaments.splice(index, 1)
+    await apiFetch("/contacts/segments/bulk", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ids }),
     })
 
     return ids

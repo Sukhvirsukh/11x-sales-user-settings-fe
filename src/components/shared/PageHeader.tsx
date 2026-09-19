@@ -103,14 +103,14 @@ export function PageHeader({
                         <div
                             ref={chatColumnRef}
                             aria-hidden="true"
-                            className="hidden min-[1400px]:block min-[1400px]:w-[min(360px,38%)] min-[1400px]:shrink-0"
+                            className="hidden min-[1400px]:block min-[1400px]:w-[min(410px,38%)] min-[1400px]:shrink-0"
                         />
                         <div
                             style={{
                                 "--chat-left": `${chatPosition.left}px`,
                                 "--chat-width": `${chatPosition.width}px`,
                             } as CSSProperties}
-                            className="fixed inset-x-3 bottom-3 top-3 z-50 rounded-[10px] border border-border bg-card shadow-lg lg:inset-x-auto lg:top-auto lg:right-5 lg:bottom-7 lg:h-[min(600px,calc(100dvh-160px))] lg:w-[360px] min-[1400px]:left-(--chat-left) min-[1400px]:right-auto min-[1400px]:z-30 min-[1400px]:w-(--chat-width)"
+                            className="fixed inset-x-3 bottom-3 top-3 z-50 rounded-[10px] border border-border bg-card shadow-lg lg:inset-x-auto lg:top-auto lg:right-5 lg:bottom-7 lg:h-[min(600px,calc(100dvh-160px))] lg:w-[410px] min-[1400px]:left-(--chat-left) min-[1400px]:right-auto min-[1400px]:z-30 min-[1400px]:w-(--chat-width)"
                         >
                             <ChatBox
                                 onClose={closeChat}

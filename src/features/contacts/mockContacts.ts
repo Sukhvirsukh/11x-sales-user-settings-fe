@@ -1,4 +1,4 @@
-import type { Segament, UserProfile } from "./contactType"
+import type { Segment, UserProfile } from "./contactType"
 
 export const userProfiles: UserProfile[] = [
     {
@@ -19,7 +19,7 @@ export const userProfiles: UserProfile[] = [
     }
 ]
 
-export const segaments: Segament[] = [
+export const segments: Segment[] = [
     {
         id: "1",
         name: "User that chats over 10 conversations",

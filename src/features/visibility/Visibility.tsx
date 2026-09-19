@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router";
-import { ArrowLeft, Maximize2, Minimize2, PanelLeftOpen, X } from "lucide-react";
+import { ArrowLeft, X } from "lucide-react";
 import { UnSavedChangesBar } from "@/components/shared/unsavedChangesBar";
 import ErrorDialog from "@/components/shared/ErrorDialog";
 import {
@@ -90,31 +90,15 @@ export default function Visibility() {
                                 <ArrowLeft className="size-4" />
                                 Back
                             </Button>
-                            <div className="flex items-center">
-                                <Button
-                                    variant="bare"
-                                    size="sm"
-                                    className="md:hidden"
-                                    aria-label="Close settings"
-                                    onClick={() => setIsSettingsOpen(false)}
-                                >
-                                    <X className="size-4" />
-                                </Button>
-                                <Button
-                                    variant="bare"
-                                    size="sm"
-                                    className="hidden md:inline-flex"
-                                    aria-label={isMaximized ? "Minimize settings panel" : "Maximize settings panel"}
-                                    aria-pressed={isMaximized}
-                                    onClick={() => setIsMaximized((current) => !current)}
-                                >
-                                    {isMaximized ? (
-                                        <Minimize2 className="size-4" />
-                                    ) : (
-                                        <Maximize2 className="size-4" />
-                                    )}
-                                </Button>
-                            </div>
+                            <Button
+                                variant="bare"
+                                size="sm"
+                                className="md:hidden"
+                                aria-label="Close settings"
+                                onClick={() => setIsSettingsOpen(false)}
+                            >
+                                <X className="size-4" />
+                            </Button>
                         </header>
 
                         <div className="min-h-0 min-w-0 flex-1 overflow-y-auto px-3 sm:px-4">
@@ -137,18 +121,15 @@ export default function Visibility() {
                         </footer>
                     </aside>
 
-                    <div className="relative flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
-                        <Button
-                            variant="bare"
-                            size="icon"
-                            className="absolute top-3 left-3 z-30 border border-border bg-background/90 shadow-panel backdrop-blur-sm md:hidden"
-                            aria-label="Open settings"
-                            aria-expanded={isSettingsOpen}
-                            onClick={() => setIsSettingsOpen(true)}
-                        >
-                            <PanelLeftOpen className="size-4" />
-                        </Button>
-                        <Preview />
+                    <div
+                        className={`flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-[10px] border border-section-border bg-preview-section-background shadow-blue transition-[flex-basis] duration-300 ease-in-out ${isMaximized ? "md:basis-[30%] md:flex-none" : "min-w-0 flex-1"}`}
+                    >
+                        <Preview
+                            isMaximized={isMaximized}
+                            onToggleMaximize={() => setIsMaximized((current) => !current)}
+                            isSettingsOpen={isSettingsOpen}
+                            onToggleSettings={() => setIsSettingsOpen((current) => !current)}
+                        />
                     </div>
                 </div>
 

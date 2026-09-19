@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ChatMessage, type ChatMessageProps } from "./ChatMessage";
+import { ChatMessage, type ChatMessageData } from "./ChatMessage";
 import { ChatInput } from "./ChatInput";
 import { useChatVisibilityQuery } from "@/features/visibility/visibilityQuery";
 import { XIcon } from "lucide-react";
@@ -7,10 +7,11 @@ import { Spinner } from "@/components/ui/spinner";
 import type { VisibilityFields } from "@/components/shared/chatBox/type";
 import { Button } from "@/components/ui/button";
 
-interface ChatBoxProps {
+export interface ChatBoxProps {
   onClose?: () => void;
   className?: string;
   fields?: VisibilityFields;
+  defaultMessages?: readonly ChatMessageData[];
 }
 
 function useChatFaceUrl(chatFace: File | string | null | undefined) {
@@ -21,7 +22,7 @@ function useChatFaceUrl(chatFace: File | string | null | undefined) {
   }, [chatFace]);
 }
 
-function createWelcomeMessage(content: string): ChatMessageProps {
+function createWelcomeMessage(content: string): ChatMessageData {
   return {
     id: "welcome",
     content,
@@ -30,7 +31,24 @@ function createWelcomeMessage(content: string): ChatMessageProps {
   };
 }
 
-export function ChatBox({ onClose, className = "", fields: previewFields }: ChatBoxProps) {
+function cloneMessage(message: ChatMessageData): ChatMessageData {
+  return message.type === "product-recommendation"
+    ? { ...message, products: message.products.map((product) => ({ ...product })) }
+    : { ...message };
+}
+
+function createInitialMessages(
+  defaultMessages: readonly ChatMessageData[] | undefined,
+  welcomeMessage: string,
+) {
+  return defaultMessages !== undefined
+    ? defaultMessages.map(cloneMessage)
+    : welcomeMessage
+      ? [createWelcomeMessage(welcomeMessage)]
+      : [];
+}
+
+export function ChatBox({ onClose, className = "", fields: previewFields, defaultMessages }: ChatBoxProps) {
   const { data: cachedFields, isLoading, error } = useChatVisibilityQuery();
   const fields = previewFields ?? cachedFields;
 
@@ -61,10 +79,10 @@ export function ChatBox({ onClose, className = "", fields: previewFields }: Chat
     );
   }
 
-  return <LoadedChatBox fields={fields} onClose={onClose} className={className} />;
+  return <LoadedChatBox fields={fields} onClose={onClose} className={className} defaultMessages={defaultMessages} />;
 }
 
-function LoadedChatBox({ fields, onClose, className = "" }: ChatBoxProps & { fields: VisibilityFields }) {
+function LoadedChatBox({ fields, onClose, className = "", defaultMessages }: ChatBoxProps & { fields: VisibilityFields }) {
 
   const {
     aiAgentName,
@@ -73,17 +91,21 @@ function LoadedChatBox({ fields, onClose, className = "" }: ChatBoxProps & { fie
     predefinedMessages,
     placeholderMessage,
     primaryColor,
-    notificationColor,
   } = fields;
 
   const avatarUrl = useChatFaceUrl(chatFace);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const [messages, setMessages] = useState<ChatMessageProps[]>(() =>
-    welcomeMessage ? [createWelcomeMessage(welcomeMessage)] : [],
+  const defaultMessagesRef = useRef<readonly ChatMessageData[] | undefined>(
+    defaultMessages !== undefined ? defaultMessages.map(cloneMessage) : undefined,
+  );
+  const [messages, setMessages] = useState<ChatMessageData[]>(() =>
+    createInitialMessages(defaultMessages, welcomeMessage),
   );
 
   useEffect(() => {
+    if (defaultMessagesRef.current !== undefined) return;
+
     setMessages((current) => {
       const welcome = current.find((message) => message.id === "welcome");
       if (welcome) {
@@ -111,7 +133,7 @@ function LoadedChatBox({ fields, onClose, className = "" }: ChatBoxProps & { fie
   }, [messages]);
 
   function handleSend(content: string) {
-    const userMessage: ChatMessageProps = {
+    const userMessage: ChatMessageData = {
       id: crypto.randomUUID(),
       content,
       sender: "user",
@@ -134,9 +156,7 @@ function LoadedChatBox({ fields, onClose, className = "" }: ChatBoxProps & { fie
   }
 
   function handleClear() {
-    setMessages(
-      welcomeMessage ? [createWelcomeMessage(welcomeMessage)] : [],
-    );
+    setMessages(createInitialMessages(defaultMessagesRef.current, welcomeMessage));
   }
 
   function handleCorrect(messageId: string, correctedContent: string) {
@@ -156,7 +176,7 @@ function LoadedChatBox({ fields, onClose, className = "" }: ChatBoxProps & { fie
   }
 
   return (
-    <div className={`flex  h-full flex-col overflow-hidden rounded-[10px] bg-widget-surface shadow-xl ${className}`}>
+    <div className={`flex  h-full flex-col overflow-hidden w-[400px] rounded-[10px] bg-widget-surface shadow-xl ${className}`}>
       {/* Header */}
       <div
         className="flex shrink-0 items-center justify-between gap-2 px-5 pb-[15px] pt-[25px]"
@@ -164,15 +184,15 @@ function LoadedChatBox({ fields, onClose, className = "" }: ChatBoxProps & { fie
       >
         <div className="flex min-w-0 items-center gap-2">
           <div className="min-w-0 flex items-center gap-2.5">
-            <p className="truncate text-base font-semibold tracking-[0.02em]">
+            <p className="truncate text-lg font-semibold tracking-[0.02em]">
               {aiAgentName}
             </p>
-            <span className="inline-flex items-center gap-[7px] rounded-[44px] bg-status-online-accent! px-1.5 py-[3px] text-[10px] font-medium tracking-[0.04em] text-success-strong">
-              <span
-                className="size-1.5 rounded-full"
-                style={{ backgroundColor: notificationColor }}
-              />
+            <span className="inline-flex items-center gap-1.75 rounded-[10px] bg-badge-active-background! px-2 py-1 text-sm font-medium tracking-[0.04em] text-success-strong">
               Active
+              <span
+                className="size-1.5 rounded-full bg-badge-active-dot"
+              // style={{ backgroundColor: notificationColor }}
+              />
             </span>
           </div>
         </div>
@@ -196,11 +216,6 @@ function LoadedChatBox({ fields, onClose, className = "" }: ChatBoxProps & { fie
               <div key={message.id}>
                 <ChatMessage
                   {...message}
-                  avatar={
-                    message.sender === "bot"
-                      ? (message.avatar ?? avatarUrl ?? undefined)
-                      : message.avatar
-                  }
                   primaryColor={primaryColor}
                   onCorrect={
                     message.sender === "bot" ? handleCorrect : undefined
@@ -248,7 +263,7 @@ function LoadedChatBox({ fields, onClose, className = "" }: ChatBoxProps & { fie
           <div className="flex gap-2">
             <button
               type="button"
-              className="h-[38px] rounded-[10.4px] px-2.5 py-2.5 text-sm font-medium text-primary-contrast transition-opacity hover:opacity-90"
+              className="rounded-[10px] px-4 py-2.5 text-sm font-medium text-primary-contrast transition-opacity hover:opacity-90"
               style={{ backgroundColor: primaryColor }}
               onClick={onClose}
             >
@@ -257,9 +272,9 @@ function LoadedChatBox({ fields, onClose, className = "" }: ChatBoxProps & { fie
             <button
               type="button"
               onClick={handleClear}
-              className="h-[38px] rounded-[10.4px] border-[1.23px] border-widget-muted bg-widget-surface px-2.5 py-2.5 text-sm font-medium text-widget-muted transition-colors hover:bg-muted"
+              className="rounded-[10px] border-[1.23px] border-widget-muted bg-widget-surface px-2.5 py-2.5 text-sm font-medium text-widget-muted transition-colors hover:bg-muted"
             >
-              Clear Chat
+              Cancel
             </button>
           </div>
         )}

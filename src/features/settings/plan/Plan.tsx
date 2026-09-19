@@ -51,7 +51,7 @@ function PlanCard({ plan, isCurrent, isUpgradePending, isUpgrading, onUpgrade }:
                     <p className="mt-1 text-lg font-medium text-content-strong">Starting at INR {priceInr}</p>
                 </div>
                 {isMostPopular && (
-                    <Badge indigator={false} className="rounded-full bg-plan-promotion-background text-plan-promotion-foreground">
+                    <Badge indicator={false} className="rounded-full bg-plan-promotion-background text-plan-promotion-foreground">
                         Most popular
                     </Badge>
                 )}

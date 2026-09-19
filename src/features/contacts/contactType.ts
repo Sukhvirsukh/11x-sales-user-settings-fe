@@ -22,4 +22,11 @@ export type Segment = {
     activeSchedule: string
 }
 
+export type SegmentsResponse = {
+    items: Segment[]
+    page: number
+    pageSize: number
+    total: number
+}
+
 export type SegmentFormValues = z.infer<typeof segmentFormSchema>

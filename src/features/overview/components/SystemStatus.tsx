@@ -27,7 +27,11 @@ export default function SystemStatus() {
                                 <Sparkles size={16} />
                                 <span>AI knowledge</span>
                             </div>
-                            <Badge variant="darkSecondary">Learning</Badge>
+                            <Badge
+                                variant="warning"
+                                indicator={false}
+                                className="py-1.5! px-2!"
+                            >Learning</Badge>
                         </div>
                         <div className="flex items-center justify-between mt-2.5">
                             <div className="flex gap-2">
