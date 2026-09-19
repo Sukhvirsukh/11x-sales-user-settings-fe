@@ -95,7 +95,7 @@ export default function MobileSidebar() {
                             >
                                 <Icon
                                     className={`size-4 shrink-0 sm:size-5 ${
-                                        isActive ? "text-primary" : "text-muted-foreground"
+                                        isActive ? "text-primary" : "text-sidebar-navigation-icon"
                                     }`}
                                 />
                                 <span className="truncate">{item.label}</span>

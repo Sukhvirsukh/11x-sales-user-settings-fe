@@ -45,9 +45,14 @@
 
   /* Semantic color utilities */
   --color-background: var(--background);
+  --color-foreground: var(--foreground);
   --color-popover: var(--popover);
   --color-popover-foreground: var(--popover-foreground);
+  --color-card: var(--card);
   --color-sidebar: var(--sidebar-bg);
+  --color-sidebar-navigation-icon: var(--sidebar-navigation-icon);
+  --color-sidebar-user-name: var(--sidebar-user-name);
+  --color-sidebar-user-email: var(--sidebar-user-email);
   --color-surface-raised: var(--surface-raised);
   --color-surface-subtle: var(--surface-subtle);
   --color-app-section-background: var(--app-section-background);
@@ -57,6 +62,9 @@
 
   --color-content-strong: var(--content-strong);
   --color-content-muted: var(--content-muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-field-text: var(--field-text);
+  --color-placeholder: var(--placeholder);
 
   --color-danger: var(--danger);
   --color-danger-surface: var(--danger-surface);
@@ -65,20 +73,37 @@
   --color-success-surface: var(--success-surface);
   --color-warning: var(--warning);
   --color-warning-surface: var(--warning-surface);
+  --color-destructive: var(--danger);
+  --color-validation-border: var(--validation-border);
+  --color-validation-text: var(--validation-text);
+  --color-success-strong: var(--success-strong);
 
   --color-primary: color-mix(in srgb, var(--primary) calc(100% * var(--tw-bg-opacity, 1)), transparent);
   --color-primary-hover: var(--primary-hover);
   --color-primary-contrast: var(--primary-foreground);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-link: var(--link);
+  --color-brand-muted: var(--brand-muted);
 
   --color-border: var(--border);
   --color-border-subtle: var(--border-subtle);
   --color-divider: var(--divider);
   --color-field-border: var(--field-border);
+  --color-control-border-subtle: var(--control-border-subtle);
   --color-tab-active-border: var(--tab-active-border);
   --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-focus-ring: var(--focus-ring);
+  --color-panel-accent-border: var(--panel-accent-border);
 
   --color-interactive-active-background: var(--interactive-active-background);
   --color-interactive-active-border: var(--interactive-active-border);
+  --color-control-hover: var(--control-hover);
+  --color-control-hover-strong: var(--control-hover-strong);
+  --color-field-subtle-background: var(--field-subtle-background);
+  --color-slider-neutral-track: var(--slider-neutral-track);
 
   --color-badge-active-background: var(--badge-active-background);
   --color-badge-active-text: var(--badge-active-text);
@@ -92,6 +117,31 @@
   --color-slider-track: var(--slider-track);
   --color-table-header-background: var(--table-header-background);
 
+  --color-toast-border: var(--toast-border);
+  --color-toast-foreground: var(--toast-foreground);
+  --color-toast-muted: var(--toast-muted);
+  --color-toast-action: var(--toast-action);
+
+  --color-chart-tooltip-border: var(--chart-tooltip-border);
+  --color-chart-tooltip-background: var(--chart-tooltip-background);
+  --color-chart-tooltip-foreground: var(--chart-tooltip-foreground);
+  --color-chart-tooltip-high: var(--chart-tooltip-high);
+  --color-chart-tooltip-low: var(--chart-tooltip-low);
+
+  --color-widget-surface: var(--widget-surface);
+  --color-widget-foreground: var(--widget-foreground);
+  --color-widget-muted: var(--widget-muted);
+  --color-widget-error: var(--widget-error);
+  --color-widget-error-strong: var(--widget-error-strong);
+  --color-widget-empty: var(--widget-empty);
+
+  --color-whatsapp-brand: var(--whatsapp-brand);
+  --color-instagram-brand: var(--instagram-brand);
+  --color-plan-promotion-background: var(--plan-promotion-background);
+  --color-plan-promotion-foreground: var(--plan-promotion-foreground);
+  --color-plan-feature: var(--plan-feature);
+  --color-modal-close: var(--modal-close);
+
   /* Shadows */
   --shadow-blue: 0 2px 6px rgba(55, 118, 243, 0.15), 0 6px 18px rgba(55, 118, 243, 0.10);
   /* Auth card — soft bluish shadow under the card only */
@@ -101,6 +151,10 @@
   --shadow-panel:
     0 1px 3px rgba(0, 0, 0, 0.03),
     0 8px 24px rgba(0, 0, 0, 0.04);
+  --shadow-toast: var(--toast-shadow);
+  --shadow-dialog: var(--dialog-shadow);
+  --shadow-plan-selected: var(--plan-selected-shadow);
+  --shadow-auth-card: var(--auth-card-shadow);
 }
 
 @layer base {
@@ -110,18 +164,24 @@
     --popover: #FFF;
     --popover-foreground: var(--foreground);
     --sidebar-bg: #ffffff;
+    --sidebar-navigation-icon: #18181b;
+    --sidebar-user-name: #27272a;
+    --sidebar-user-email: #a1a1aa;
     --surface-raised: #ffffff;
     --surface-subtle: #F7F8FB;
     --app-section-background: rgba(232, 238, 251, 0.50);
     --preview-section-background: #ffffff;
-    --app-card-background: #F8FAFD;
+    --app-card-background: #ffffff;
     --muted: #F1F1F1;
+    --card: #ffffff;
 
     /* Content */
     --foreground: #0f172a;
     --muted-foreground: #64748b;
     --content-strong: #000;
     --content-muted: #808080;
+    --field-text: #1e293b;
+    --placeholder: #94a3b8;
 
     /* Feedback */
     --danger: #FF7B7E;
@@ -131,25 +191,39 @@
     --success-surface: #E4F5E6;
     --warning: #A16207;
     --warning-surface: #FEF9C3;
+    --validation-border: #f87171;
+    --validation-text: #ef4444;
+    --success-strong: #127557;
 
     /* Brand Primary Colors */
     --primary: #3576F3;
     --primary-hover: #236efa;
     --primary-foreground: #ffffff;
+    --secondary: #e2e8f0;
+    --secondary-foreground: #0f172a;
+    --link: #2563eb;
+    --brand-muted: #E8EEFB;
     --slider-track: #CDDDFB;
 
     /* Borders */
     --border: #e2e8f0;
     --divider: #e6e6e8;
     --field-border: rgba(0, 0, 0, 0.21);
+    --control-border-subtle: rgba(0, 0, 0, 0.21);
     --input: #c7c7cc;
     --border-subtle: #edf2f7;
     --ring: #2f6df3;
+    --focus-ring: #60a5fa;
+    --panel-accent-border: #dbeafe;
     --border-strong: #c7c7cc;
 
     /* Interactive states */
     --interactive-active-background: #f0f7ff;
     --interactive-active-border: #dbeafe;
+    --control-hover: #fafafa;
+    --control-hover-strong: #f4f4f5;
+    --field-subtle-background: #F7F8FB;
+    --slider-neutral-track: #cbd5e1;
     --tab-active-border: #DADADA;
 
     /* Badges & Status Indicators */
@@ -171,6 +245,36 @@
     --chart-high-marker: #4b9d22;
     --chart-low-marker: #636363;
     --chart-marker-border: #171717;
+    --chart-tooltip-border: #d4d4d8;
+    --chart-tooltip-background: #ffffff;
+    --chart-tooltip-foreground: #27272a;
+    --chart-tooltip-high: #15803d;
+    --chart-tooltip-low: #52525b;
+
+    /* Component-specific presentation colors */
+    --toast-border: #e4e4e7;
+    --toast-foreground: #27272a;
+    --toast-muted: #a1a1aa;
+    --toast-action: #71717a;
+    --toast-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+    --dialog-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+    --auth-card-shadow: 0 0 4px rgb(0 0 0 / 0.12);
+    --plan-selected-shadow: 0 0 18px 4px rgba(53, 118, 243, 0.25);
+    --whatsapp-brand: #25D366;
+    --instagram-brand: #E4405F;
+    --plan-promotion-background: #F5FFBB;
+    --plan-promotion-foreground: #1E1E1E;
+    --plan-feature: #4D4D4D;
+    --modal-close: #1E1E1E;
+
+    /* Storefront widget preview stays independent from the admin theme. */
+    --widget-surface: #ffffff;
+    --widget-foreground: #000000;
+    --widget-muted: #808080;
+    --widget-error: #ef4444;
+    --widget-error-strong: #dc2626;
+    --widget-empty: #a1a1aa;
+    --widget-primary: #2F6DF3;
   }
 
   .dark {
@@ -181,12 +285,16 @@
     --popover: #111C2F;
     --popover-foreground: var(--foreground);
     --sidebar-bg: #0B1322;
+    --sidebar-navigation-icon: #A5B5CC;
+    --sidebar-user-name: #EDF3FC;
+    --sidebar-user-email: #A5B5CC;
     --surface-raised: #111C2F;
     --surface-subtle: #0D1728;
     --app-section-background: #101F36;
     --preview-section-background: #0C1626;
     --app-card-background: #172A46;
     --muted: #19263C;
+    --card: #111C2F;
 
     /* Brighter brand and feedback colors against the deeper canvas. */
     --primary: #5B8CFF;
@@ -199,23 +307,39 @@
     --success-surface: #14352C;
     --warning: #F5C96A;
     --warning-surface: #3A2E17;
+    --validation-border: #F87171;
+    --validation-text: #FCA5A5;
+    --success-strong: #62D9A2;
 
     /* Borders & typography */
     --border: #263A59;
     --divider: #20324D;
     --field-border: #3A5275;
+    --control-border-subtle: #1E293B;
     --input: #536D94;
     --border-subtle: #182842;
     --border-strong: #5B7196;
     --ring: #8CB2FF;
+    --focus-ring: #60A5FA;
+    --panel-accent-border: #3D67A3;
     --foreground: #EDF3FC;
     --muted-foreground: #A5B5CC;
     --content-strong: #FFFFFF;
     --content-muted: #9AABC4;
+    --field-text: #E2E8F0;
+    --placeholder: #64748B;
+    --secondary: #263A59;
+    --secondary-foreground: #EDF3FC;
+    --link: #60A5FA;
+    --brand-muted: #142B4D;
 
     /* Navigation, tables, and section surfaces carry a restrained blue tint. */
     --interactive-active-background: #142B4D;
     --interactive-active-border: #3D67A3;
+    --control-hover: #19263C;
+    --control-hover-strong: #20324D;
+    --field-subtle-background: #1E293B;
+    --slider-neutral-track: #475569;
     --tab-active-border: #3A5780;
     --section-border: rgb(91 140 255 / 0.28);
     --section-background: rgb(18 31 52 / 0.88);
@@ -235,6 +359,22 @@
     --chart-high-marker: #62D9A2;
     --chart-low-marker: #8FA3C1;
     --chart-marker-border: #D9E5F7;
+    --chart-tooltip-border: #263A59;
+    --chart-tooltip-background: #111C2F;
+    --chart-tooltip-foreground: #EDF3FC;
+    --chart-tooltip-high: #62D9A2;
+    --chart-tooltip-low: #9AABC4;
+
+    --toast-border: #263A59;
+    --toast-foreground: #FFFFFF;
+    --toast-muted: #9AABC4;
+    --toast-action: #A5B5CC;
+    --toast-shadow: 0 14px 36px rgb(0 5 16 / 0.30);
+    --dialog-shadow: 0 14px 36px rgb(0 5 16 / 0.30);
+    --auth-card-shadow: 0 16px 36px rgb(0 5 16 / 0.36), 0 28px 64px rgb(0 5 16 / 0.28);
+    --plan-selected-shadow: 0 0 22px 4px rgb(91 140 255 / 0.22);
+    --plan-feature: #9AABC4;
+    --modal-close: #FFFFFF;
 
     /* Blue-black depth helps raised panels stand out without a harsh glow. */
     --shadow-blue: 0 0 0 1px rgb(91 140 255 / 0.06), 0 12px 30px rgb(0 5 16 / 0.32);

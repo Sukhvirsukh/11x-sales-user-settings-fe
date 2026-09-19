@@ -10,7 +10,7 @@ import AppCard from "@/components/design/AppCard";
 const VitaChatIcon = memo(function VitaChatIcon() {
     return (
         <div className="flex items-center justify-center relative">
-            <div className="relative size-9 shrink-0 overflow-hidden rounded-full border border-content-strong/15 bg-white dark:bg-surface-raised md:size-10">
+            <div className="relative size-9 shrink-0 overflow-hidden rounded-full border border-content-strong/15 bg-surface-raised md:size-10">
                 <div className="absolute inset-x-0 bottom-0 h-1/2 bg-primary" />
             </div>
             <span className="absolute top-1 right-0.5 size-2 rounded-full bg-status-online-accent" />

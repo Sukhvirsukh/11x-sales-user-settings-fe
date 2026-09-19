@@ -5,29 +5,29 @@ import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
   // Base styles: pill shape (rounded-xl/2xl), font adjustments, transitions
-  "inline-flex shrink-0 items-center justify-center cursor-pointer rounded-xl border border-transparent text-sm font-medium whitespace-nowrap transition-colors outline-none select-none focus-visible:ring-2 focus-visible:ring-blue-500/50 disabled:pointer-events-none disabled:opacity-50",
+  "inline-flex shrink-0 items-center justify-center cursor-pointer rounded-xl border border-transparent text-sm font-medium whitespace-nowrap transition-colors outline-none select-none focus-visible:ring-2 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50",
   {
     variants: {
       variant: {
         // Primary Blue (as seen in "Generate" & "Submit")
         primary:
-          "bg-primary text-white hover:bg-primary-hover",
+          "bg-primary text-primary-contrast hover:bg-primary-hover",
 
         // Dark Outline / Black Border (as seen in middle "Generate")
         outline:
-          "border-content-strong bg-transparent text-content-strong hover:bg-zinc-100 dark:hover:bg-muted",
+          "border-content-strong bg-transparent text-content-strong hover:bg-control-hover-strong",
 
         // Gray outline
         secondary:
-          "border-content-muted bg-transparent text-content-muted hover:bg-zinc-50 dark:hover:bg-muted",
+          "border-content-muted bg-transparent text-content-muted hover:bg-control-hover",
 
         // Same as secondary
         ghost:
-          "border-content-muted bg-transparent text-content-muted hover:bg-zinc-50 dark:hover:bg-muted",
+          "border-content-muted bg-transparent text-content-muted hover:bg-control-hover",
 
         // No border, no background — just children
         bare:
-          "border-transparent bg-transparent hover:bg-zinc-50 dark:hover:bg-muted",
+          "border-transparent bg-transparent hover:bg-control-hover",
 
         // Underlined text action with the same compact spacing as bare buttons
         "underline-bare":
@@ -35,7 +35,7 @@ const buttonVariants = cva(
 
         // Simple Link
         link:
-          "text-blue-600 underline-offset-4 hover:underline dark:text-blue-400",
+          "text-link underline-offset-4 hover:underline",
 
         // Compact text action, used for inline card actions such as "Show all".
         action:
@@ -43,7 +43,7 @@ const buttonVariants = cva(
 
         // destructive
         destructive:
-          "bg-danger text-white hover:bg-danger-strong",
+          "bg-danger text-primary-contrast hover:bg-danger-strong",
 
       },
       size: {

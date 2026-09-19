@@ -90,10 +90,10 @@ const DatePicker = React.forwardRef<HTMLButtonElement, DatePickerProps>(
                 {/* Date Picker Trigger Container (Handles borders, pill background) */}
                 <div
                     className={cn(
-                        "relative flex h-[34px] w-full items-center rounded-xl border border-field-border transition-all focus-within:border-field-border focus-within:ring-2 focus-within:ring-blue-400/20 dark:border-slate-800",
+                        "relative flex h-[34px] w-full items-center rounded-xl border border-control-border-subtle transition-all focus-within:border-field-border focus-within:ring-2 focus-within:ring-focus-ring/20",
                         "bg-surface-raised focus-within:bg-surface-raised",
                         variant === "light"
-                            ? "bg-surface-subtle border-section-border focus-within:bg-surface-subtle focus-within:border-section-border dark:bg-slate-800/60 dark:focus-within:bg-slate-800/60"
+                            ? "bg-field-subtle-background border-section-border focus-within:bg-field-subtle-background focus-within:border-section-border"
                             : "",
                         containerClassName,
                         error && "border-danger focus-within:border-danger",
@@ -110,7 +110,7 @@ const DatePicker = React.forwardRef<HTMLButtonElement, DatePickerProps>(
                                     disabled={disabled}
                                     data-empty={!selectedDate}
                                     className={cn(
-                                        "h-full w-full justify-between rounded-[inherit] px-3.5 md:px-3.5 text-left text-sm font-normal text-slate-800 hover:bg-transparent focus-visible:ring-0 dark:text-slate-200 data-[empty=true]:text-slate-400 disabled:cursor-not-allowed",
+                                        "h-full w-full justify-between rounded-[inherit] px-3.5 md:px-3.5 text-left text-sm font-normal text-field-text hover:bg-transparent focus-visible:ring-0 data-[empty=true]:text-placeholder disabled:cursor-not-allowed",
                                         className
                                     )}
                                     aria-describedby={
@@ -140,12 +140,12 @@ const DatePicker = React.forwardRef<HTMLButtonElement, DatePickerProps>(
                             sideOffset={8}
                         >
                             <Calendar
-                                className="p-3 [--cell-radius:10px] [--cell-size:2rem] [&_button[data-day]]:p-0 [&_button[data-day]]:text-sm [&_button[data-day]]:text-inherit [&_button[data-day]:hover]:bg-interactive-active-background [&_button[data-selected-single=true]]:bg-primary [&_button[data-selected-single=true]]:text-white [&_button[data-selected-single=true]:hover]:bg-primary-hover"
+                                className="p-3 [--cell-radius:10px] [--cell-size:2rem] [&_button[data-day]]:p-0 [&_button[data-day]]:text-sm [&_button[data-day]]:text-inherit [&_button[data-day]:hover]:bg-interactive-active-background [&_button[data-selected-single=true]]:bg-primary [&_button[data-selected-single=true]]:text-primary-contrast [&_button[data-selected-single=true]:hover]:bg-primary-hover"
                                 classNames={{
-                                    month_caption: "flex h-(--cell-size) w-full items-center justify-center rounded-lg bg-surface-subtle px-(--cell-size) dark:bg-slate-800",
+                                    month_caption: "flex h-(--cell-size) w-full items-center justify-center rounded-lg bg-field-subtle-background px-(--cell-size)",
                                     caption_label: "text-sm font-medium select-none",
-                                    button_previous: "inline-flex size-(--cell-size) items-center justify-center rounded-lg text-content-muted transition-colors hover:bg-interactive-active-background hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/20 aria-disabled:opacity-50",
-                                    button_next: "inline-flex size-(--cell-size) items-center justify-center rounded-lg text-content-muted transition-colors hover:bg-interactive-active-background hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/20 aria-disabled:opacity-50",
+                                    button_previous: "inline-flex size-(--cell-size) items-center justify-center rounded-lg text-content-muted transition-colors hover:bg-interactive-active-background hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring/20 aria-disabled:opacity-50",
+                                    button_next: "inline-flex size-(--cell-size) items-center justify-center rounded-lg text-content-muted transition-colors hover:bg-interactive-active-background hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring/20 aria-disabled:opacity-50",
                                     weekday: "flex-1 text-sm font-normal text-content-muted select-none",
                                     today: "rounded-[10px] bg-interactive-active-background text-primary",
                                     outside: "text-content-muted opacity-50",

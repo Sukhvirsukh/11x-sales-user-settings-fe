@@ -97,9 +97,9 @@ const SelectField = React.forwardRef<
                         ref={ref}
                         id={selectId}
                         className={cn(
-                            "h-[34px] w-full rounded-xl border border-field-border px-3.5 transition-all focus-visible:border-field-border focus-visible:ring-2 focus-visible:ring-blue-400/20 dark:border-slate-800 data-placeholder:text-slate-400 dark:data-placeholder:text-slate-500",
+                            "h-[34px] w-full rounded-xl border border-control-border-subtle px-3.5 transition-all focus-visible:border-field-border focus-visible:ring-2 focus-visible:ring-focus-ring/20 data-placeholder:text-placeholder",
                             variant === "light"
-                                ? "bg-surface-subtle border-section-border focus-visible:bg-surface-subtle focus-visible:border-section-border dark:bg-slate-800/60 dark:focus-visible:bg-slate-800/60"
+                                ? "bg-field-subtle-background border-section-border focus-visible:bg-field-subtle-background focus-visible:border-section-border"
                                 : "bg-surface-raised focus-visible:bg-surface-raised",
                             containerClassName,
                             error && "border-danger focus-visible:border-danger",
@@ -122,8 +122,8 @@ const SelectField = React.forwardRef<
                             // Match the trigger surface so the dropdown reads as part of the field.
                             "font-sans",
                             variant === "light"
-                                ? "border-section-border bg-surface-subtle dark:border-slate-800 dark:bg-slate-800"
-                                : "border-field-border bg-surface-raised dark:border-slate-800",
+                                ? "border-section-border bg-field-subtle-background"
+                                : "border-control-border-subtle bg-surface-raised",
                             contentClassName
                         )}
                     >

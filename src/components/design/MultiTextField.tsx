@@ -98,11 +98,11 @@ export function MultiTextField({
 
             <div
                 className={cn(
-                    "relative flex min-h-[90px] w-full flex-wrap items-start gap-1.5 rounded-xl border border-field-border px-3.5 py-2 transition-all focus-within:border-field-border focus-within:ring-2 focus-within:ring-blue-400/20 dark:border-slate-800",
+                    "relative flex min-h-[90px] w-full flex-wrap items-start gap-1.5 rounded-xl border border-control-border-subtle px-3.5 py-2 transition-all focus-within:border-field-border focus-within:ring-2 focus-within:ring-focus-ring/20",
                     "bg-surface-raised focus-within:bg-surface-raised",
-                    variant === "light" && "border-section-border bg-surface-subtle focus-within:border-section-border focus-within:bg-surface-subtle dark:bg-slate-800/60 dark:focus-within:bg-slate-800/60",
+                    variant === "light" && "border-section-border bg-field-subtle-background focus-within:border-section-border focus-within:bg-field-subtle-background",
                     error &&
-                    "border-red-400 focus-within:border-red-400 focus-within:ring-red-400/20",
+                    "border-validation-border focus-within:border-validation-border focus-within:ring-validation-border/20",
                     disabled && "pointer-events-none opacity-50",
                     containerClassName
                 )}
@@ -147,7 +147,7 @@ export function MultiTextField({
             </div>
 
             {error ? (
-                <span id={errorId} className="text-xs text-red-500">
+                <span id={errorId} className="text-xs text-validation-text">
                     {error}
                 </span>
             ) : null}

@@ -23,7 +23,7 @@ export default function AuthForm({
                     aria-hidden="true"
                     className="absolute inset-x-[25px] -bottom-3 z-[-1] h-12 rounded-full bg-primary/20 blur-xl"
                 />
-                <div className="relative z-0 rounded-[20px] border border-content-strong/5 bg-white p-7.5 shadow-[0_0_4px_rgb(0_0_0/0.12)] dark:border-section-border dark:bg-surface-raised dark:shadow-auth">
+                <div className="relative z-0 rounded-[20px] border border-content-strong/5 bg-surface-raised p-7.5 shadow-auth-card dark:border-section-border">
                 <div className="flex items-center justify-center gap-2">
                     <img
                         src="/logo.svg"

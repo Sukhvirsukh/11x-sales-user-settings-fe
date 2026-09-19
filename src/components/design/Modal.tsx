@@ -56,7 +56,7 @@ export default function Modal({
                                 {title}
                             </DialogTitle>
                             <DialogClose className="p-1 cursor-pointer">
-                                <X size={16} className="text-[#1E1E1E] dark:text-content-strong" />
+                                <X size={16} className="text-modal-close" />
                             </DialogClose>
                         </DialogHeader>
                     )}

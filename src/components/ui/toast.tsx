@@ -50,7 +50,7 @@ function Toast({
     <ToastPrimitive.Root
       data-slot="toast"
       className={cn(
-        "group/toast pointer-events-auto absolute right-0 top-0 z-[calc(1000-var(--toast-index))] w-full origin-top rounded-[10px] border border-zinc-200 bg-white text-zinc-800 shadow-[0_2px_8px_rgba(15,23,42,0.08)] will-change-transform outline-none select-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 dark:border-border dark:bg-popover dark:text-content-strong dark:shadow-panel",
+        "group/toast pointer-events-auto absolute right-0 top-0 z-[calc(1000-var(--toast-index))] w-full origin-top rounded-[10px] border border-toast-border bg-popover text-toast-foreground shadow-toast will-change-transform outline-none select-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50",
         "[--gap:0.75rem] [--height:var(--toast-frontmost-height,var(--toast-height))] [--offset-y:calc(var(--toast-offset-y)+(var(--toast-index)*var(--gap))+var(--toast-swipe-movement-y))] [--peek:0.75rem] [--scale:calc(max(0,1-(var(--toast-index)*0.1)))] [--shrink:calc(1-var(--scale))]",
         "h-(--height) [transform:translateX(var(--toast-swipe-movement-x))_translateY(calc(var(--toast-swipe-movement-y)+(var(--toast-index)*var(--peek))+(var(--shrink)*var(--height))))_scale(var(--scale))] [transition:transform_500ms_cubic-bezier(0.22,1,0.36,1),opacity_500ms,height_150ms]",
         "after:absolute after:bottom-full after:left-0 after:h-[calc(var(--gap)+1px)] after:w-full after:content-['']",
@@ -85,7 +85,7 @@ function ToastTitle({
         "text-sm font-semibold",
         toastType === "success" && "text-success!",
         toastType === "error" && "text-danger!",
-        toastType !== "success" && toastType !== "error" && "text-zinc-900! dark:text-content-strong!",
+        toastType !== "success" && toastType !== "error" && "text-toast-foreground!",
         className
       )}
       {...props}
@@ -113,7 +113,7 @@ function ToastDescription({
   return (
     <ToastPrimitive.Description
       data-slot="toast-description"
-      className={cn("text-sm text-zinc-400 dark:text-content-muted", className)}
+      className={cn("text-sm text-toast-muted", className)}
       {...props}
     />
   )
@@ -150,7 +150,7 @@ function ToastClose({
         "bg-transparent  hover:bg-transparent",
         toastType === "success" && "text-success! hover:opacity-70",
         toastType === "error" && "text-danger! hover:opacity-70",
-        toastType !== "success" && toastType !== "error" && "border-zinc-500 text-zinc-500 hover:opacity-70 dark:border-field-border dark:text-content-muted",
+        toastType !== "success" && toastType !== "error" && "border-toast-action text-toast-action hover:opacity-70",
         className
       )}
       {...props}

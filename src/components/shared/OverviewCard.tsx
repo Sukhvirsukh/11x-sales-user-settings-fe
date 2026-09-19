@@ -11,7 +11,7 @@ export default function OverviewCard({ title, numbers, icon }: OverviewCardProps
     return (
         <AppSection>
             <div className="flex items-start gap-4">
-                <div className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-white dark:bg-surface-raised">
+                <div className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-surface-raised">
                     {icon}
                 </div>
                 <div>

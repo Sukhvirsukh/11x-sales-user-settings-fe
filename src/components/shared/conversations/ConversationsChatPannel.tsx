@@ -77,7 +77,7 @@ function MessageHistory({ messages, onCorrect, onSend, alwaysShowChatInput }: {
                 <ChatInput
                     onSend={onSend}
                     placeholder="Ask Vitalb"
-                    primaryColor="#000000"
+                    primaryColor="var(--widget-foreground)"
                 />
             )}
         </AppCard>

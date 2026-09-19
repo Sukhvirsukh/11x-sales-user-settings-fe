@@ -52,10 +52,10 @@ export default function SidebarUserCard({ isCollapsed, name, email, avatarUrl }:
                     }
                     {!isCollapsed && (
                         <div className="flex flex-col text-left min-w-0">
-                            <span className="truncate text-foreground">
+                            <span className="truncate text-sidebar-user-name">
                                 {name}
                             </span>
-                            <span className="truncate text-sm text-muted-foreground">
+                            <span className="truncate text-sm text-sidebar-user-email">
                                 {email}
                             </span>
                         </div>

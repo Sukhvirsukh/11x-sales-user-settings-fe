@@ -28,7 +28,7 @@ export default function ErrorDialog({
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent
                 showCloseButton={false}
-                className="gap-0 rounded-[10px] border border-danger-strong bg-danger-surface p-4 text-zinc-800 shadow-[0_2px_8px_rgba(15,23,42,0.08)] ring-0 dark:text-content-strong dark:shadow-panel"
+                className="gap-0 rounded-[10px] border border-danger-strong bg-danger-surface p-4 text-toast-foreground shadow-dialog ring-0"
             >
                 <DialogHeader className="pr-8">
                     <DialogTitle className="flex items-center gap-2 text-sm font-semibold text-danger">
@@ -37,9 +37,9 @@ export default function ErrorDialog({
                         </span>
                         {title}
                     </DialogTitle>
-                    {description && <DialogDescription className="text-sm text-zinc-400 dark:text-content-muted">{description}</DialogDescription>}
+                    {description && <DialogDescription className="text-sm text-toast-muted">{description}</DialogDescription>}
                     {errors.length > 0 && (
-                        <ul className="list-disc space-y-1 pl-5 text-sm text-zinc-400 dark:text-content-muted">
+                        <ul className="list-disc space-y-1 pl-5 text-sm text-toast-muted">
                             {errors.map((error, index) => <li key={`${error}-${index}`}>{error}</li>)}
                         </ul>
                     )}

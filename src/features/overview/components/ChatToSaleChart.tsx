@@ -69,8 +69,8 @@ export default function ChatToSaleChart() {
                     </ResponsiveContainer>
 
                     {CALLOUTS.map(({ label, value, className }) => (
-                        <div key={value} className={`pointer-events-none absolute z-10 hidden -translate-y-1/2 rounded border border-zinc-300 bg-white px-1.5 py-0.5 text-xs text-zinc-800 shadow-sm dark:border-border dark:bg-popover dark:text-content-strong sm:block ${className}`}>
-                            {label}<span className={label === "High " ? "text-green-700 dark:text-success" : "text-zinc-600 dark:text-content-muted"}>{value}</span>
+                        <div key={value} className={`pointer-events-none absolute z-10 hidden -translate-y-1/2 rounded border border-chart-tooltip-border bg-chart-tooltip-background px-1.5 py-0.5 text-xs text-chart-tooltip-foreground shadow-sm sm:block ${className}`}>
+                            {label}<span className={label === "High " ? "text-chart-tooltip-high" : "text-chart-tooltip-low"}>{value}</span>
                         </div>
                     ))}
                 </div>

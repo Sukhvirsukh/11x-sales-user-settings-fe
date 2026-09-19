@@ -8,7 +8,7 @@ export default function SetupProgress() {
         <AppSection>
             <Heading>Setup progress</Heading>
             <div className="flex flex-col gap-4">
-                <div className="flex items-center justify-between gap-3 rounded-[10px] bg-white p-2.5 dark:bg-surface-raised">
+                <div className="flex items-center justify-between gap-3 rounded-[10px] bg-surface-raised p-2.5">
                     <span className="text-base text-foreground">2 of 4 steps completed</span>
                     <Slider
                         aria-label="Setup progress"

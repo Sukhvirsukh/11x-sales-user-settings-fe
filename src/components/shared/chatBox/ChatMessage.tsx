@@ -23,7 +23,7 @@ export function ChatMessage({
   content,
   sender,
   avatar,
-  primaryColor = "blue",
+  primaryColor = "var(--widget-primary)",
   onCorrect,
   onDebug,
   onLike,
@@ -63,7 +63,7 @@ export function ChatMessage({
         ) : (
           <span
             aria-hidden
-            className="flex h-[30px] w-[30px] shrink-0 items-center justify-center rounded-full border border-primary bg-primary p-0.5 text-[16px] font-extrabold leading-none text-white"
+            className="flex h-[30px] w-[30px] shrink-0 items-center justify-center rounded-full border border-primary bg-primary p-0.5 text-[16px] font-extrabold leading-none text-primary-contrast"
           >
             V
           </span>
@@ -139,7 +139,7 @@ export function ChatMessage({
 
         {/* Correction editor */}
         {isEditing && (
-          <div className="mt-1.5 rounded-xl border border-border bg-white p-2 shadow-sm dark:bg-surface-raised">
+          <div className="mt-1.5 rounded-xl border border-border bg-widget-surface p-2 shadow-sm">
             <textarea
               value={correctionDraft}
               onChange={(e) => setCorrectionDraft(e.target.value)}
@@ -158,7 +158,7 @@ export function ChatMessage({
               <button
                 type="button"
                 onClick={handleSaveCorrection}
-                className="rounded-md px-2 py-1 text-micro font-medium text-white transition-opacity hover:opacity-90"
+                className="rounded-md px-2 py-1 text-micro font-medium text-primary-contrast transition-opacity hover:opacity-90"
                 style={{ backgroundColor: primaryColor }}
               >
                 Save correction

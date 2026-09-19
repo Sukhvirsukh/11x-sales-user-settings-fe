@@ -55,7 +55,7 @@ export default function DesktopSidebar() {
                 {({ isActive }) => (
                   <>
                     <Icon
-                      className={`size-5 shrink-0 ${isActive ? "text-primary" : "text-muted-foreground"}`}
+                      className={`size-5 shrink-0 ${isActive ? "text-primary" : "text-sidebar-navigation-icon"}`}
                     />
                     {!isCollapsed && (
                       <span className="truncate">{item.label}</span>

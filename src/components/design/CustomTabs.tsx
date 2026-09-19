@@ -42,7 +42,7 @@ export interface CustomTabsProps {
  * Design tokens (derived from screenshots):
  *  – Pill shape: rounded-md (6 px)
  *  – Height: 27 px
- *  – Border: 1 px solid #DADADA (inactive) / border-subtle (active)
+ *  – Active state: bordered pill without a bottom indicator
  *  – Shadow: subtle blue-tinted drop-shadow on active state
  *  – Font: 14 px, font-medium, black text
  *  – Padding: 7 px horizontal
@@ -94,9 +94,9 @@ export function CustomTabs({
                             "border border-transparent bg-transparent",
                             "text-sm font-normal text-foreground",
                             "transition-all duration-150",
-                            "hover:bg-gray-50",
+                            "hover:bg-control-hover",
                             /* Active state – must override base tabs styles */
-                            "data-active:!border-tab-active-border data-active:!bg-surface-raised data-active:!font-medium data-active:!text-foreground data-active:!shadow-panel",
+                            "after:hidden data-active:!border-tab-active-border data-active:!bg-surface-raised data-active:!font-medium data-active:!text-foreground data-active:!shadow-panel",
                             /* Icons */
                             "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg]:size-3.5",
                             triggerClassName,

@@ -11,7 +11,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         ref={ref}
         data-slot="input"
         className={cn(
-          "h-full w-full bg-transparent text-sm text-slate-800 outline-none placeholder:text-slate-400 disabled:cursor-not-allowed disabled:opacity-50 dark:text-slate-200",
+          "h-full w-full bg-transparent text-sm text-field-text outline-none placeholder:text-placeholder disabled:cursor-not-allowed disabled:opacity-50",
           className
         )}
         {...props}
