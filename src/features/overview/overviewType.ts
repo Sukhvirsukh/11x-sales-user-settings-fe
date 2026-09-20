@@ -35,6 +35,21 @@ export interface AverageOrderValueSummary {
     breakdown: OrderValueBreakdown[];
 }
 
+/** A single agent row in the system status panel. */
+export interface SystemStatusAgent {
+    /** Agent name, e.g. "AI replies". */
+    name: string;
+    /** Icon key, e.g. "chat". */
+    icon: string;
+    /** Status label, e.g. "Active". */
+    status: string;
+}
+
+/** System status panel on the Overview dashboard. */
+export interface SystemStatusSummary {
+    agents: SystemStatusAgent[];
+}
+
 /** A single headline metric on the Overview dashboard. */
 export interface OverviewStat {
     /** Human-readable name, e.g. "Total replies". */
@@ -59,4 +74,5 @@ export interface OverviewResponse {
     chatToSaleConversion: TrendPanel;
     actionTrends: TrendPanel;
     averageOrderValue: AverageOrderValueSummary;
+    systemStatus: SystemStatusSummary;
 }

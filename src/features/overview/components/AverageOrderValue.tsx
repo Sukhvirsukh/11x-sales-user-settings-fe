@@ -44,12 +44,12 @@ function OrderValueSummary({ value, changePercent, period, progressPercent, brea
 
 interface AverageOrderValueProps {
     /** `averageOrderValue` section of the Overview response. */
-    summary?: AverageOrderValueSummary;
+    panel?: AverageOrderValueSummary;
     /** True while the Overview request is in flight. */
     isLoading?: boolean;
 }
 
-export default function AverageOrderValue({ summary, isLoading = false }: AverageOrderValueProps) {
+export default function AverageOrderValue({ panel, isLoading = false }: AverageOrderValueProps) {
     if (isLoading) {
         return (
             <AppSection>
@@ -58,7 +58,7 @@ export default function AverageOrderValue({ summary, isLoading = false }: Averag
         );
     }
 
-    if (!summary) {
+    if (!panel) {
         return (
             <AppSection>
                 <p className="flex h-32 w-full items-center justify-center text-sm text-content-muted">
@@ -70,7 +70,7 @@ export default function AverageOrderValue({ summary, isLoading = false }: Averag
 
     return (
         <AppSection>
-            <OrderValueSummary {...summary} />
+            <OrderValueSummary {...panel} />
         </AppSection>
     );
 }
