@@ -17,8 +17,12 @@ import { useVisibilityQuery, visibilityQueryKey } from "./visibilityQuery";
 import { requiredFieldsSchema } from "./fields/validations";
 import { saveVisibility } from "./visibilityApi";
 import ResetVisibilityModal from "./ResetVisibilityModal";
+import { Button } from "@/components/ui/button";
+import { ChevronLeft } from "lucide-react";
+import { useNavigate } from "react-router";
 
 export default function Visibility() {
+    const navigate = useNavigate();
     const query = useVisibilityQuery();
     const queryClient = useQueryClient();
     const form = useForm<VisibilityFields>();
@@ -97,6 +101,16 @@ export default function Visibility() {
     return (
         <FormProvider {...form}>
             <div className="flex h-full min-h-0 min-w-0 flex-col">
+                <div >
+                    <Button
+                        variant="bare"
+                        className="flex items-center gap-1 pb-2.5! pl-0! text-base"
+                        onClick={() => navigate('/chat-settings')}
+                    >
+                        <ChevronLeft size={18} /> Back to settings
+                    </Button>
+                </div>
+
                 <div className="relative flex min-h-0 flex-1 flex-row items-stretch gap-3.5">
                     {isSettingsOpen && (
                         <button
@@ -108,10 +122,10 @@ export default function Visibility() {
                     )}
 
                     <aside
-                        className={`flex min-h-0 min-w-0 flex-col gap-2 transition-[flex-basis,transform] duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] ${isSettingsOpen
+                        className={`flex min-h-0 min-w-0 flex-col gap-2 transition-[flex-basis,transform] duration-300 ease-in-out ${isSettingsOpen
                             ? "absolute inset-y-0 left-0 z-50 w-full"
                             : "pointer-events-none absolute inset-y-0 left-0 z-50 w-full -translate-x-full"
-                            } md:pointer-events-auto md:relative md:inset-auto md:z-auto md:max-h-full md:w-auto md:shrink-0 md:self-stretch md:translate-x-0 ${isMaximized ? "md:basis-[70%]" : "md:basis-[30%] md:max-w-75"}`}
+                            } md:pointer-events-auto md:relative md:inset-auto md:z-auto md:max-h-full md:w-auto md:shrink-0 md:self-stretch md:translate-x-0 ${isMaximized ? "md:basis-[calc(100%-500px-0.875rem)]" : "md:basis-[30%] md:max-w-75"}`}
                     >
                         <div className="flex min-h-0 min-w-0 max-h-full flex-initial flex-col overflow-hidden rounded-[10px] border border-border bg-background shadow-blue">
                             <div className="min-h-0 min-w-0 flex-1 overflow-y-auto px-3 sm:px-4">
@@ -136,7 +150,7 @@ export default function Visibility() {
                     </aside>
 
                     <div
-                        className={`relative flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-[10px] border border-section-border bg-preview-section-background shadow-blue transition-[flex-basis] duration-300 ease-in-out ${isMaximized ? "md:basis-[30%] md:flex-none" : "min-w-0 flex-1"}`}
+                        className="relative flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-[10px] border border-section-border bg-preview-section-background shadow-blue"
                     >
                         <Preview
                             isMaximized={isMaximized}

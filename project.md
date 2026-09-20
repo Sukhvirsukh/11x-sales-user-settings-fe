@@ -109,6 +109,7 @@ src/
 │   ├── shared/                      # reusable application components
 │   │   ├── StoreDropdown.tsx        # Store selection dropdown
 │   │   ├── SectionHeader.tsx        # Section header component
+│   │   ├── InfoModal.tsx            # Reusable confirmation modal
 │   │   ├── ActionCard.tsx           # Action card component
 │   │   ├── CopyField.tsx            # Copy field component
 │   │   ├── PageHeader.tsx           # Page header component (title/subtitle + children)

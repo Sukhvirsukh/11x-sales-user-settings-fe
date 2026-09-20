@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useFormContext } from "react-hook-form";
-import { Banner } from "@/components/design/Banner";
-import Modal from "@/components/design/Modal";
+import InfoModal from "@/components/shared/InfoModal";
 import { Button } from "@/components/ui/button";
 import { resetToDefault } from "./visibilityApi";
 import { visibilityQueryKey } from "./visibilityQuery";
@@ -23,34 +22,28 @@ export default function ResetVisibilityModal() {
     });
 
     return (
-        <Modal
-            open={open}
-            onOpenChange={(nextOpen) => {
-                if (!resetMutation.isPending) setOpen(nextOpen);
-            }}
-            trigger={
-                <Button variant="outline" size="full">
-                    Reset to default
-                </Button>
-            }
-            title="Reset visibility settings"
-            primaryAction={{
-                label: resetMutation.isPending ? "Resetting..." : "Reset to default",
-                onClick: () => resetMutation.mutate(),
-                disabled: resetMutation.isPending,
-                variant: "destructive",
-            }}
-            closeAction={{
-                label: "Cancel",
-                disabled: resetMutation.isPending,
-            }}
-        >
-            <Banner variant="warning" isIcon>
-                <p>
-                    Are you sure you want to reset all visibility settings to their defaults?
-                    Your current settings will be replaced.
-                </p>
-            </Banner>
-        </Modal>
+        <>
+            <Button
+                variant="outline"
+                size="full"
+                onClick={() => setOpen(true)}
+            >
+                Reset to default
+            </Button>
+
+            <InfoModal
+                open={open}
+                onOpenChange={(nextOpen) => {
+                    if (!resetMutation.isPending) setOpen(nextOpen);
+                }}
+                title="Reset visibility settings"
+                description="Are you sure you want to proceed with new settings?"
+                confirmLabel={resetMutation.isPending ? "Resetting..." : "Yes sure"}
+                cancelLabel="Cancel"
+                confirmDisabled={resetMutation.isPending}
+                cancelDisabled={resetMutation.isPending}
+                onConfirm={() => resetMutation.mutate()}
+            />
+        </>
     );
 }

@@ -7,6 +7,7 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { X } from "lucide-react";
 import { type ReactElement, type ReactNode } from "react";
 
@@ -32,6 +33,10 @@ interface ModalProps {
     primaryAction?: ModalAction;
     secondaryAction?: ModalAction;
     closeAction?: ModalCloseAction;
+    contentClassName?: string;
+    headerClassName?: string;
+    titleClassName?: string;
+    actionsClassName?: string;
 }
 
 export default function Modal({
@@ -43,16 +48,29 @@ export default function Modal({
     primaryAction,
     secondaryAction,
     closeAction,
+    contentClassName,
+    headerClassName,
+    titleClassName,
+    actionsClassName,
 }: ModalProps) {
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
             {trigger && <DialogTrigger render={trigger} />}
-            <DialogContent showCloseButton={false} className="flex max-h-[80vh] max-w-md flex-col overflow-hidden gap-0 rounded-[10px] border-0 bg-popover p-0 ring-0 shadow-panel max-sm:max-h-[80vh] max-sm:overflow-hidden max-sm:bg-transparent">
+            <DialogContent
+                showCloseButton={false}
+                className={cn(
+                    "flex max-h-[80vh] max-w-md flex-col overflow-hidden gap-0 rounded-[10px] border-0 bg-popover p-0 ring-0 shadow-panel max-sm:max-h-[80vh] max-sm:overflow-hidden max-sm:bg-transparent",
+                    contentClassName,
+                )}
+            >
                 <div aria-hidden="true" className="absolute max-sm:top-0 max-sm:right-[25px] max-sm:left-[25px] max-sm:h-20 z-[-1] max-sm:rounded-t-[20px] max-sm:bg-primary" />
                 <div className="flex min-h-0 flex-col max-sm:mt-2 max-sm:rounded-t-[10px] max-sm:bg-popover">
                     {title && (
-                        <DialogHeader className="flex shrink-0 flex-row justify-between items-center py-2.5 px-4 bg-table-header-background rounded-t-[10px]">
-                            <DialogTitle className="text-lg font-semibold font-inter">
+                        <DialogHeader className={cn(
+                            "flex shrink-0 flex-row justify-between items-center py-2.5 px-4 bg-table-header-background rounded-t-[10px]",
+                            headerClassName,
+                        )}>
+                            <DialogTitle className={cn("text-lg font-semibold font-inter", titleClassName)}>
                                 {title}
                             </DialogTitle>
                             <DialogClose className="p-1 cursor-pointer">
@@ -64,7 +82,10 @@ export default function Modal({
                     <div className="min-h-0 overflow-y-auto px-4 py-3.5">{children}</div>
 
                     {(primaryAction || secondaryAction || closeAction) && (
-                        <div className="flex shrink-0 items-start gap-2.5 px-4 pb-4 w-full">
+                        <div className={cn(
+                            "flex shrink-0 items-start gap-2.5 px-4 pb-4 w-full",
+                            actionsClassName,
+                        )}>
                             {primaryAction && (
                                 <Button
                                     onClick={primaryAction.onClick}
