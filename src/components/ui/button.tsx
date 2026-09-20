@@ -27,7 +27,7 @@ const buttonVariants = cva(
 
         // No border, no background — just children
         bare:
-          "border-transparent bg-transparent hover:bg-control-hover",
+          "border-transparent bg-transparent p-0 hover:bg-control-hover md:p-0",
 
         // Underlined text action
         "underline-bare":
