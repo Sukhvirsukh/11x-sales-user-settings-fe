@@ -44,7 +44,7 @@ export default function InfoModal({
                 disabled: cancelDisabled,
             }}
         >
-            <p className="text-xl font-medium">{description}</p>
+            <p className="text-center text-xl font-medium">{description}</p>
         </Modal>
     );
 }

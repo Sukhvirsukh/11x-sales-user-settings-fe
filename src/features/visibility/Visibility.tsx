@@ -27,7 +27,6 @@ export default function Visibility() {
     const queryClient = useQueryClient();
     const form = useForm<VisibilityFields>();
     const [isMaximized, setIsMaximized] = useState(false);
-    const [isSettingsOpen, setIsSettingsOpen] = useState(false);
     const [isFormReady, setIsFormReady] = useState(false);
     const [errorDialogOpen, setErrorDialogOpen] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string | undefined>();
@@ -100,35 +99,23 @@ export default function Visibility() {
 
     return (
         <FormProvider {...form}>
-            <div className="flex h-full min-h-0 min-w-0 flex-col">
-                <div >
+            <div className="flex min-h-full min-w-0 flex-col md:h-full md:min-h-0">
+                <div className="pb-5 md:py-0">
                     <Button
                         variant="bare"
-                        className="flex items-center gap-1 p-2.5! mb-2.5 text-base"
+                        className="flex items-center gap-1 p-0! mb-0 text-base md:p-2.5! md:mb-2.5"
                         onClick={() => navigate('/chat-settings')}
                     >
                         <ChevronLeft size={18} /> Back to settings
                     </Button>
                 </div>
 
-                <div className="relative flex min-h-0 flex-1 flex-row items-stretch gap-3.5">
-                    {isSettingsOpen && (
-                        <button
-                            type="button"
-                            aria-label="Close settings"
-                            className="absolute inset-0 z-40 bg-muted/80 md:hidden"
-                            onClick={() => setIsSettingsOpen(false)}
-                        />
-                    )}
-
+                <div className="relative flex flex-col items-stretch gap-3.5 md:min-h-0 md:flex-1 md:flex-row">
                     <aside
-                        className={`flex min-h-0 min-w-0 flex-col gap-2 transition-[flex-basis,transform] duration-300 ease-in-out ${isSettingsOpen
-                            ? "absolute inset-y-0 left-0 z-50 w-full"
-                            : "pointer-events-none absolute inset-y-0 left-0 z-50 w-full -translate-x-full"
-                            } md:pointer-events-auto md:relative md:inset-auto md:z-auto md:max-h-full md:w-auto md:shrink-0 md:self-stretch md:translate-x-0 ${isMaximized ? "md:basis-[calc(100%-500px-0.875rem)]" : "md:basis-[30%] md:max-w-75"}`}
+                        className={`flex min-w-0 shrink-0 flex-col gap-2 md:min-h-0 md:max-h-full md:w-auto md:self-stretch md:transition-[flex-basis,max-width] md:duration-500 md:ease-in-out motion-reduce:transition-none ${isMaximized ? "md:basis-[calc(100%-500px-0.875rem)] md:max-w-[calc(100%-500px-0.875rem)]" : "md:basis-[30%] md:max-w-75"}`}
                     >
-                        <div className="flex min-h-0 min-w-0 max-h-full flex-initial flex-col overflow-hidden rounded-[10px] border border-border bg-background shadow-blue">
-                            <div className="min-h-0 min-w-0 flex-1 overflow-y-auto px-3 sm:px-4">
+                        <div className="flex min-w-0 flex-col overflow-hidden rounded-[10px] border border-border bg-background shadow-blue md:min-h-0 md:max-h-full md:flex-1">
+                            <div className="min-w-0 px-3 sm:px-4 md:min-h-0 md:flex-1 md:overflow-y-auto">
                                 <Accordion>
                                     {allAccordions.map((tab) => (
                                         <AccordionItem key={tab.id} value={tab.id}>
@@ -150,13 +137,11 @@ export default function Visibility() {
                     </aside>
 
                     <div
-                        className="relative flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-[10px] border border-section-border bg-preview-section-background shadow-blue"
+                        className="relative flex h-150 min-w-0 shrink-0 flex-col overflow-hidden rounded-[10px] border border-section-border bg-preview-section-background shadow-blue md:h-auto md:min-h-0 md:flex-1 md:shrink"
                     >
                         <Preview
                             isMaximized={isMaximized}
                             onToggleMaximize={() => setIsMaximized((current) => !current)}
-                            isSettingsOpen={isSettingsOpen}
-                            onToggleSettings={() => setIsSettingsOpen((current) => !current)}
                         />
 
                         <UnSavedChangesBar

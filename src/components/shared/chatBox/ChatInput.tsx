@@ -61,7 +61,7 @@ export function ChatInput({
         disabled={disabled}
         variant={variant}
         containerClassName="h-[42px] rounded-[10px] px-2.5"
-        className="min-w-0 text-sm tracking-[0.02em] text-foreground placeholder:text-widget-muted"
+        className="min-w-0 text-sm tracking-[0.02em] text-foreground placeholder:text-widget-muted max-sm:text-sm max-sm:placeholder:text-sm"
         endIcon={
           <div className="flex items-center gap-2">
             <button

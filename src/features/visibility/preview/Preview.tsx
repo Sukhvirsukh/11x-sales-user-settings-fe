@@ -3,26 +3,26 @@ import { ChatBox } from "@/components/shared/chatBox";
 import { Button } from "@/components/ui/button";
 import { useVisibilityForm } from "../VisibilityFormContext";
 import { useState, type CSSProperties } from "react";
-import { Maximize2, Minimize2, PanelLeft, PanelLeftClose } from "lucide-react";
+import { Maximize2, Minimize2 } from "lucide-react";
 import { ChatBubbleButton, isBarBubbleType } from "./ChatButton";
 
 type ChatBoxStyle = CSSProperties & Record<
-    "--chat-box-bottom" | "--chat-box-max-height" | "--chat-box-mobile-bottom" | "--chat-box-mobile-max-height",
+    | "--chat-box-bottom"
+    | "--chat-box-max-height"
+    | "--chat-box-mobile-bottom"
+    | "--chat-box-mobile-max-height"
+    | "--chat-box-edge",
     string
 >;
 
 interface PreviewProps {
     isMaximized: boolean;
     onToggleMaximize: () => void;
-    isSettingsOpen: boolean;
-    onToggleSettings: () => void;
 }
 
 export default function Preview({
     isMaximized,
     onToggleMaximize,
-    isSettingsOpen,
-    onToggleSettings,
 }: PreviewProps) {
     const { fields } = useVisibilityForm();
 
@@ -42,32 +42,20 @@ export default function Preview({
         "--chat-box-max-height": `calc(100% - ${bottom + size + 12 + 8}px)`,
         "--chat-box-mobile-bottom": `${bottom}px`,
         "--chat-box-mobile-max-height": `calc(100% - ${bottom + 8}px)`,
-        ...(fields.position === "left" ? { left: edge } : { right: edge }),
+        "--chat-box-edge": `${edge}px`,
     };
+    const chatBoxPositionClassName = fields.position === "left"
+        ? "left-[var(--chat-box-edge)] max-sm:left-[clamp(0px,var(--chat-box-edge),calc(100%_-_320px))]"
+        : "right-[var(--chat-box-edge)] max-sm:right-[clamp(0px,var(--chat-box-edge),calc(100%_-_320px))]";
 
     return (
         <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
-            <header className="flex shrink-0 items-center justify-between px-3 pt-3.5 pb-2 md:px-5 md:pt-5 md:pb-2">
+            <header className="flex shrink-0 items-center justify-between p-5 pb-2">
                 <h2 className="text-lg font-semibold text-foreground">
                     Preview
                 </h2>
 
-                <div className="flex items-center gap-0.5">
-                    <Button
-                        variant="bare"
-                        size="sm"
-                        className="md:hidden"
-                        aria-label={isSettingsOpen ? "Hide settings" : "Show settings"}
-                        aria-expanded={isSettingsOpen}
-                        onClick={onToggleSettings}
-                    >
-                        {isSettingsOpen ? (
-                            <PanelLeftClose className="size-4" />
-                        ) : (
-                            <PanelLeft className="size-4" />
-                        )}
-                    </Button>
-
+                <div className="hidden items-center gap-0.5 md:flex">
                     <Button
                         variant="bare"
                         size="sm"
@@ -84,7 +72,7 @@ export default function Preview({
                 </div>
             </header>
 
-            <div className="flex min-h-0 flex-1 flex-col px-3 pb-3 pt-2.5 md:px-5 md:pb-5">
+            <div className="flex min-h-0 flex-1 flex-col pt-[10px] md:px-5 md:pb-5">
                 <div className="relative isolate w-full flex-1 overflow-hidden bg-preview-canvas-background">
                     <img
                         src={previewBackground}
@@ -95,7 +83,7 @@ export default function Preview({
 
                     {isChatOpen && (
                         <div
-                            className="absolute z-30 h-105 w-[min(100%,410px)] max-h-[var(--chat-box-max-height)] bottom-[var(--chat-box-bottom)] max-sm:h-[560px] max-sm:max-h-[var(--chat-box-mobile-max-height)] max-sm:bottom-[var(--chat-box-mobile-bottom)]"
+                            className={`absolute z-30 h-105 w-[320px] max-w-[410px] max-h-[var(--chat-box-max-height)] bottom-[var(--chat-box-bottom)] md:w-[410px] max-sm:h-[430px] max-sm:max-h-[var(--chat-box-mobile-max-height)] max-sm:max-w-full max-sm:bottom-[var(--chat-box-mobile-bottom)] ${chatBoxPositionClassName}`}
                             style={chatBoxStyle}
                         >
                             <ChatBox
