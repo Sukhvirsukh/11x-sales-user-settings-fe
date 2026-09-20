@@ -258,26 +258,6 @@ function LoadedChatBox({ fields, onClose, className = "", defaultMessages }: Cha
           primaryColor={primaryColor}
           onSend={handleSend}
         />
-
-        {onClose && (
-          <div className="flex gap-2">
-            <button
-              type="button"
-              className="rounded-[10px] px-4 py-2.5 text-sm font-medium text-primary-contrast transition-opacity hover:opacity-90"
-              style={{ backgroundColor: primaryColor }}
-              onClick={onClose}
-            >
-              Save
-            </button>
-            <button
-              type="button"
-              onClick={handleClear}
-              className="rounded-[10px] border-[1.23px] border-widget-muted bg-widget-surface px-2.5 py-2.5 text-sm font-medium text-widget-muted transition-colors hover:bg-muted"
-            >
-              Cancel
-            </button>
-          </div>
-        )}
       </div>
     </div>
   );

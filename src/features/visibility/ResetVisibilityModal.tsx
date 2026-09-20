@@ -29,7 +29,7 @@ export default function ResetVisibilityModal() {
                 if (!resetMutation.isPending) setOpen(nextOpen);
             }}
             trigger={
-                <Button variant="secondary" size="full">
+                <Button variant="outline" size="full">
                     Reset to default
                 </Button>
             }

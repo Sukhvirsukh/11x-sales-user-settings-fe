@@ -18,6 +18,8 @@ interface UnSavedChangesBarProps {
   edge?: "top" | "bottom";
   dialogTitle?: string;
   dialogDescription?: string;
+  /** Overrides the Save button color (e.g. the widget's primary color). */
+  primaryColor?: string;
 }
 
 export function UnSavedChangesBar({
@@ -31,6 +33,7 @@ export function UnSavedChangesBar({
   edge,
   dialogTitle,
   dialogDescription,
+  primaryColor,
 }: UnSavedChangesBarProps) {
   const [isSaving, setIsSaving] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -90,14 +93,19 @@ export function UnSavedChangesBar({
       <div className="ml-auto flex shrink-0 flex-nowrap items-center gap-2">
         <Button
           type="button"
-          variant="outline"
+          variant="secondary"
           size="sm"
           onClick={onDiscard}
           disabled={busy}
         >
           Discard
         </Button>
-        <Button type="button" onClick={handleSave} disabled={busy}>
+        <Button
+          type="button"
+          onClick={handleSave}
+          disabled={busy}
+          style={primaryColor ? { backgroundColor: primaryColor } : undefined}
+        >
           {busy ? "Saving..." : "Save"}
         </Button>
       </div>
