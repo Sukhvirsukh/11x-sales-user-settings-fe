@@ -1,3 +1,40 @@
+/** A single month in a monthly trend series. */
+export interface TrendPoint {
+    /** Month label, e.g. "Jan". */
+    month: string;
+    /** Value for that month, e.g. 19800. */
+    value: number;
+}
+
+/** A titled monthly trend, with the range it covers. */
+export interface TrendPanel {
+    /** Panel title, e.g. "Total Chat-to-Sale conversion". */
+    title: string;
+    /** Range the series covers, e.g. "This month". */
+    range: string;
+    series: TrendPoint[];
+}
+
+/** A single line in the average order value breakdown. */
+export interface OrderValueBreakdown {
+    /** What the number counts, e.g. "total order received by Vitalb". */
+    label: string;
+    value: number;
+}
+
+/** Average order value panel on the Overview dashboard. */
+export interface AverageOrderValueSummary {
+    /** Current average order value, e.g. 117. */
+    value: number;
+    /** Change against the previous period, as a percentage. */
+    changePercent: number;
+    /** Human-readable period, e.g. "For this month". */
+    period: string;
+    /** How full the progress bar is, as a percentage (0–100). */
+    progressPercent: number;
+    breakdown: OrderValueBreakdown[];
+}
+
 /** A single headline metric on the Overview dashboard. */
 export interface OverviewStat {
     /** Human-readable name, e.g. "Total replies". */
@@ -16,25 +53,10 @@ export interface OverviewStats {
     resolutionRate: OverviewStat;
 }
 
-/** A single month in the chat-to-sale trend. */
-export interface ChatToSalePoint {
-    /** Month label, e.g. "Jan". */
-    month: string;
-    /** Conversions for that month, e.g. 19800. */
-    value: number;
-}
-
-/** Chat-to-sale conversion panel on the Overview dashboard. */
-export interface ChatToSaleConversion {
-    /** Panel title, e.g. "Total Chat-to-Sale conversion". */
-    title: string;
-    /** Range the series covers, e.g. "This month". */
-    range: string;
-    series: ChatToSalePoint[];
-}
-
 /** Response of `GET /overview`. */
 export interface OverviewResponse {
     stats: OverviewStats;
-    chatToSaleConversion: ChatToSaleConversion;
+    chatToSaleConversion: TrendPanel;
+    actionTrends: TrendPanel;
+    averageOrderValue: AverageOrderValueSummary;
 }
