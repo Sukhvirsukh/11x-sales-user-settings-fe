@@ -3,7 +3,6 @@ import {
     ComposedChart,
     Line,
     ReferenceDot,
-    ReferenceLine,
     ResponsiveContainer,
     XAxis,
     YAxis,
@@ -12,67 +11,108 @@ import {
 import { SelectField } from "@/components/design/SelectField";
 import AppSection from "@/components/design/AppSectoin";
 import Heading from "@/components/design/Heading";
+import { Skeleton } from "@/components/ui/skeleton";
+import { formatNumber } from "@/lib/utils";
+import type { TrendPanel } from "../overviewType";
+import { RANGES, calloutPosition, extremes, rangeOptionValue, scaleFor, toChartData } from "./trendChart";
 
-const chartData = [
-    { month: 0, actions: 8900 },
-    { month: 1, actions: 9000 },
-    { month: 2, actions: 14500 },
-    { month: 2.4, actions: 16200 },
-    { month: 3, actions: 16800 },
-    { month: 4, actions: 5900 },
-    { month: 5, actions: 10500 },
-    { month: 5.6, actions: 15800 },
-    { month: 6, actions: 19800 },
-];
+/** Renders the trend, marking the peak and trough of the series. */
+function TrendChart({ title, range, series }: TrendPanel) {
+    const chartData = toChartData(series);
+    const scale = scaleFor(series.map(({ value }) => value));
+    const { highest, lowest } = extremes(chartData);
 
-const months = ["Jan", "Feb", "Mar", "April", "May", "June", "July"];
+    const callouts = [
+        { label: "High ", tone: "text-success", point: highest },
+        { label: "Low ", tone: "text-content-muted", point: lowest },
+    ];
 
-const callouts = [
-    { label: "Low ", value: "8.9K", className: "left-[15%] top-[67%]", high: false },
-    { label: "High ", value: "16K", className: "left-[34%] top-[24%]", high: true },
-    { label: "Low ", value: "5.9K", className: "left-[59%] top-[68%]", high: false },
-    { label: "High ", value: "15.8K", className: "left-[76%] top-[25%]", high: true },
-];
-
-export default function ActionTrend() {
     return (
-        <AppSection>
+        <>
             <div className="w-full flex items-center justify-between">
-                <Heading>Action trend</Heading>
+                <Heading>{title}</Heading>
                 <div className="w-[100px]">
                     <SelectField
                         className="rounded-[10px] h-7! px-2.5 py-1.5 text-sm"
-                        defaultValue="this-month"
-                        options={[
-                            { label: "This month", value: "this-month" },
-                            { label: "Last month", value: "last-month" },
-                            { label: "Last 90 days", value: "last-90-days" },
-                        ]}
+                        defaultValue={rangeOptionValue(range)}
+                        options={RANGES}
                     />
                 </div>
             </div>
             <div className="relative h-[180px] w-full sm:h-[190px]">
                 <ResponsiveContainer width="100%" height="100%">
                     <ComposedChart data={chartData} margin={{ top: 8, right: 0, bottom: 0, left: -12 }}>
-                        <XAxis dataKey="month" type="number" domain={[0, 6]} ticks={[0, 1, 2, 3, 4, 5, 6]} tickFormatter={(value) => months[value] ?? ""} axisLine={false} tickLine={false} tick={{ fill: "var(--content-muted)", fontSize: 12 }} dy={10} />
-                        <YAxis domain={[5000, 20000]} ticks={[5000, 10000, 15000, 20000]} tickFormatter={(value) => `${value / 1000}K`} axisLine={false} tickLine={false} tick={{ fill: "var(--content-muted)", fontSize: 12 }} width={48} />
-                        <ReferenceLine x={3} stroke="var(--border-strong)" strokeDasharray="2 2" />
-                        <ReferenceLine x={5.2} stroke="var(--border-strong)" strokeDasharray="2 2" />
-                        <Area type="linear" dataKey="actions" stroke="none" fill="url(#action-trend-fill)" baseValue={5000} isAnimationActive={false} />
-                        <Line type="linear" dataKey="actions" stroke="var(--primary)" strokeWidth={1.25} strokeDasharray="2 2" dot={false} activeDot={false} isAnimationActive={false} />
-                        <ReferenceDot x={0} y={8900} r={3.5} fill="var(--content-muted)" stroke="var(--foreground)" />
-                        <ReferenceDot x={2.4} y={16200} r={3.5} fill="var(--success)" stroke="var(--foreground)" />
-                        <ReferenceDot x={4} y={5900} r={3.5} fill="var(--content-muted)" stroke="var(--foreground)" />
-                        <ReferenceDot x={5.6} y={15800} r={3.5} fill="var(--success)" stroke="var(--foreground)" />
+                        <XAxis
+                            dataKey="index"
+                            type="number"
+                            domain={[0, chartData.length - 1]}
+                            ticks={chartData.map(({ index }) => index)}
+                            tickFormatter={(index) => series[index]?.month ?? ""}
+                            axisLine={false}
+                            tickLine={false}
+                            tick={{ fill: "var(--content-muted)", fontSize: 12 }}
+                            dy={10}
+                        />
+                        <YAxis
+                            domain={[scale.from, scale.to]}
+                            ticks={scale.ticks}
+                            tickFormatter={(value) => formatNumber(value)}
+                            axisLine={false}
+                            tickLine={false}
+                            tick={{ fill: "var(--content-muted)", fontSize: 12 }}
+                            width={48}
+                        />
+                        <Area type="linear" dataKey="value" stroke="none" fill="var(--surface-raised)" baseValue={scale.from} isAnimationActive={false} />
+                        <Line type="linear" dataKey="value" stroke="var(--primary)" strokeWidth={1.25} strokeDasharray="2 2" dot={false} activeDot={false} isAnimationActive={false} />
+                        <ReferenceDot x={highest.index} y={highest.value} r={3.5} fill="var(--success)" stroke="var(--foreground)" />
+                        <ReferenceDot x={lowest.index} y={lowest.value} r={3.5} fill="var(--content-muted)" stroke="var(--foreground)" />
                     </ComposedChart>
                 </ResponsiveContainer>
 
-                {callouts.map(({ label, value, className, high }) => (
-                    <div key={value} className={`pointer-events-none absolute z-10 hidden -translate-y-1/2 rounded border border-border bg-background px-1.5 py-0.5 text-xs text-foreground shadow-sm sm:block ${className}`}>
-                        {label}<span className={high ? "text-success" : "text-content-muted"}>{value}</span>
+                {callouts.map(({ label, tone, point }) => (
+                    <div
+                        key={label}
+                        style={calloutPosition(point, chartData.length, scale)}
+                        className="pointer-events-none absolute z-10 hidden -translate-y-1/2 rounded border border-border bg-background px-1.5 py-0.5 text-xs text-foreground shadow-sm sm:block"
+                    >
+                        {label}
+                        <span className={tone}>{formatNumber(point.value)}</span>
                     </div>
                 ))}
             </div>
+        </>
+    );
+}
+
+interface ActionTrendProps {
+    /** `actionTrends` section of the Overview response. */
+    panel?: TrendPanel;
+    /** True while the Overview request is in flight. */
+    isLoading?: boolean;
+}
+
+export default function ActionTrend({ panel, isLoading = false }: ActionTrendProps) {
+    if (isLoading) {
+        return (
+            <AppSection>
+                <Skeleton className="h-56 w-full" />
+            </AppSection>
+        );
+    }
+
+    if (!panel || panel.series.length === 0) {
+        return (
+            <AppSection>
+                <p className="flex h-[180px] w-full items-center justify-center text-sm text-content-muted">
+                    No action trend data for this range.
+                </p>
+            </AppSection>
+        );
+    }
+
+    return (
+        <AppSection>
+            <TrendChart {...panel} />
         </AppSection>
     );
 }

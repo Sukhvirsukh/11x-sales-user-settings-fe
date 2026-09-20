@@ -2,16 +2,12 @@ import { useRef } from "react";
 import { ChevronLeft, ChevronRight, Play } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import AppSection from "@/components/design/AppSectoin";
 import Heading from "@/components/design/Heading";
+import type { KnowMoreItem } from "../overviewType";
 
-const videos = [
-    { title: "The best thing you can do for your store" },
-    { title: "Ai can take all the responsibility" },
-    { title: "Make every customer conversation count" },
-];
-
-export default function KnowMore() {
+function Carousel({ items }: { items: KnowMoreItem[] }) {
     const carouselRef = useRef<HTMLDivElement>(null);
 
     const scroll = (direction: "previous" | "next") => {
@@ -25,7 +21,7 @@ export default function KnowMore() {
     };
 
     return (
-        <AppSection>
+        <>
             <div className="w-full flex items-center justify-between">
                 <Heading>Know more</Heading>
                 <Button size="sm" variant="underline-bare">Show all</Button>
@@ -35,18 +31,21 @@ export default function KnowMore() {
                     ref={carouselRef}
                     className="flex snap-x snap-mandatory gap-2 overflow-x-auto scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
                 >
-                    {videos.map((video) => (
-                        <article key={video.title} className="w-[65%] shrink-0 snap-start">
+                    {items.map((item) => (
+                        <article key={item.title} className="w-[65%] shrink-0 snap-start">
                             <div className="flex aspect-[1.75] items-center justify-center rounded-[6px] bg-content-muted">
-                                <button
-                                    type="button"
-                                    aria-label={`Watch ${video.title}`}
-                                    className="flex size-9 cursor-pointer items-center justify-center rounded-full bg-border transition-transform hover:scale-105 focus-visible:outline-2 focus-visible:outline-primary"
-                                >
-                                    <Play className="ml-0.5 size-4 fill-background text-background" />
-                                </button>
+                                {/* Only videos get a play affordance; other types show the thumbnail alone. */}
+                                {item.type === "video" && (
+                                    <button
+                                        type="button"
+                                        aria-label={`Watch ${item.title}`}
+                                        className="flex size-9 cursor-pointer items-center justify-center rounded-full bg-border transition-transform hover:scale-105 focus-visible:outline-2 focus-visible:outline-primary"
+                                    >
+                                        <Play className="ml-0.5 size-4 fill-background text-background" />
+                                    </button>
+                                )}
                             </div>
-                            <p className="mt-2 line-clamp-2 text-sm leading-4 text-foreground">{video.title}</p>
+                            <p className="mt-2 line-clamp-2 text-sm leading-4 text-foreground">{item.title}</p>
                         </article>
                     ))}
                 </div>
@@ -72,6 +71,39 @@ export default function KnowMore() {
                     <ChevronRight className="size-4 text-content-muted" />
                 </Button>
             </div>
+        </>
+    )
+}
+
+interface KnowMoreProps {
+    /** `knowMore` section of the Overview response. */
+    items?: KnowMoreItem[];
+    /** True while the Overview request is in flight. */
+    isLoading?: boolean;
+}
+
+export default function KnowMore({ items, isLoading = false }: KnowMoreProps) {
+    if (isLoading) {
+        return (
+            <AppSection>
+                <Skeleton className="h-44 w-full" />
+            </AppSection>
+        );
+    }
+
+    if (!items || items.length === 0) {
+        return (
+            <AppSection>
+                <p className="flex h-44 w-full items-center justify-center text-sm text-content-muted">
+                    Nothing to show yet.
+                </p>
+            </AppSection>
+        );
+    }
+
+    return (
+        <AppSection>
+            <Carousel items={items} />
         </AppSection>
     )
 }
