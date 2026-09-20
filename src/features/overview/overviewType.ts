@@ -16,7 +16,25 @@ export interface OverviewStats {
     resolutionRate: OverviewStat;
 }
 
+/** A single month in the chat-to-sale trend. */
+export interface ChatToSalePoint {
+    /** Month label, e.g. "Jan". */
+    month: string;
+    /** Conversions for that month, e.g. 19800. */
+    value: number;
+}
+
+/** Chat-to-sale conversion panel on the Overview dashboard. */
+export interface ChatToSaleConversion {
+    /** Panel title, e.g. "Total Chat-to-Sale conversion". */
+    title: string;
+    /** Range the series covers, e.g. "This month". */
+    range: string;
+    series: ChatToSalePoint[];
+}
+
 /** Response of `GET /overview`. */
 export interface OverviewResponse {
     stats: OverviewStats;
+    chatToSaleConversion: ChatToSaleConversion;
 }

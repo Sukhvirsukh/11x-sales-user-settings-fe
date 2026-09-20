@@ -3,7 +3,6 @@ import {
     ComposedChart,
     Line,
     ReferenceDot,
-    ReferenceLine,
     ResponsiveContainer,
     XAxis,
     YAxis,
@@ -12,69 +11,146 @@ import {
 import Heading from "@/components/design/Heading";
 import { SelectField } from "@/components/design/SelectField";
 import AppSection from "@/components/design/AppSectoin";
+import { Skeleton } from "@/components/ui/skeleton";
+import { formatNumber } from "@/lib/utils";
+import type { ChatToSaleConversion, ChatToSalePoint } from "../overviewType";
 
-const chartData = [
-    4800, 11100, 19800, 8700, 11900, 10800, 9000, 12400, 14300, 9800,
-    13200, 12300, 13200, 10600, 13800, 11400, 11300, 9200, 11600, 9000,
-    13100, 8800, 10200, 11700, 11700, 10500, 13700, 11700, 14400, 11800,
-    12200, 10200, 9400, 11700, 10100,
-].map((sales, day) => ({ day, sales }));
-
-const monthTicks = [
-    { day: 0, label: "Jan" }, { day: 6, label: "Feb" }, { day: 11, label: "Mar" },
-    { day: 17, label: "April" }, { day: 22, label: "May" }, { day: 28, label: "June" },
-    { day: 33, label: "July" },
+const RANGES = [
+    { label: "This month", value: "this-month" },
+    { label: "Last month", value: "last-month" },
+    { label: "Last 90 days", value: "last-90-days" },
 ];
 
-const CALLOUTS = [
-    { label: "High ", value: "19.8K", className: "left-[11%] top-1" },
-    { label: "Low ", value: "8.9K", className: "left-[25%] top-[58%]" },
-    { label: "High ", value: "14.2K", className: "left-[46%] top-[31%]" },
-    { label: "Low ", value: "8.2K", className: "left-[56%] top-[66%]" },
-];
+/** Number of grid lines on the y-axis. */
+const Y_TICKS = 4;
 
-export default function ChatToSaleChart() {
+/** A series point plus its index, which is what the x-axis plots against. */
+type ChartPoint = ChatToSalePoint & { index: number };
+
+/** Y-axis bounds and ticks that always fit the series. */
+function scaleFor(values: number[]) {
+    const min = Math.min(...values);
+    const max = Math.max(...values);
+    // Pad the range so the line never touches the edges. When every point is the
+    // same, pad by the value itself so the axis still has a height.
+    const padding = (max - min || max) * 0.1;
+    const from = Math.max(0, min - padding);
+    const to = max + padding;
+    const step = (to - from) / (Y_TICKS - 1);
+
+    return { from, to, ticks: Array.from({ length: Y_TICKS }, (_, index) => from + step * index) };
+}
+
+/** Places a callout over its point, clamped so the label stays inside the plot area. */
+function calloutPosition(point: ChartPoint, count: number, scale: ReturnType<typeof scaleFor>) {
+    const left = count > 1 ? (point.index / (count - 1)) * 90 + 4 : 50;
+    const top = ((scale.to - point.value) / (scale.to - scale.from)) * 100;
+
+    return { left: `${Math.min(left, 86)}%`, top: `${Math.min(Math.max(top, 10), 90)}%` };
+}
+
+/** Renders the trend, marking the peak and trough of the series. */
+function ConversionTrend({ title, range, series }: ChatToSaleConversion) {
+    const chartData: ChartPoint[] = series.map((point, index) => ({ ...point, index }));
+    const scale = scaleFor(series.map(({ value }) => value));
+
+    // Safe without an initial value: the caller never renders an empty series.
+    const highest = chartData.reduce((max, point) => (point.value > max.value ? point : max));
+    const lowest = chartData.reduce((min, point) => (point.value < min.value ? point : min));
+
+    const callouts = [
+        { label: "High ", tone: "text-chart-tooltip-high", point: highest },
+        { label: "Low ", tone: "text-chart-tooltip-low", point: lowest },
+    ];
+
     return (
-        <AppSection className="h-auto">
-            <div className="w-full">
-                <div className="mb-4 flex items-center justify-between gap-4">
-                    <Heading size="lg">Total Chat-to-Sale conversion</Heading>
-                    <div className="">
-                        <SelectField
-                            className="h-7 "
-                            defaultValue="this-month"
-                            options={[
-                                { label: "This month", value: "this-month" },
-                                { label: "Last month", value: "last-month" },
-                                { label: "Last 90 days", value: "last-90-days" },
-                            ]}
-                        />
-                    </div>
-                </div>
-
-                <div className="relative h-45 w-full sm:h-47.5">
-                    <ResponsiveContainer width="100%" height="100%">
-                        <ComposedChart data={chartData} margin={{ top: 8, right: 10, bottom: 0, left: -12 }}>
-                            <XAxis dataKey="day" type="number" domain={[0, 34]} ticks={monthTicks.map(({ day }) => day)} tickFormatter={(day) => monthTicks.find((tick) => tick.day === day)?.label ?? ""} axisLine={false} tickLine={false} tick={{ fill: "var(--chart-axis)", fontSize: 12 }} dy={10} />
-                            <YAxis domain={[5000, 20000]} ticks={[5000, 10000, 15000, 20000]} tickFormatter={(value) => `${value / 1000}K`} axisLine={false} tickLine={false} tick={{ fill: "var(--chart-axis)", fontSize: 12 }} width={48} />
-                            <ReferenceLine x={13} stroke="var(--chart-grid)" strokeDasharray="2 2" />
-                            <ReferenceLine x={28} stroke="var(--chart-grid)" strokeDasharray="2 2" />
-                            <Area type="linear" dataKey="sales" stroke="none" fill="var(--surface-raised)" baseValue={5000} isAnimationActive={false} />
-                            <Line type="linear" dataKey="sales" stroke="var(--primary)" strokeWidth={1.25} dot={false} activeDot={false} isAnimationActive={false} />
-                            <ReferenceDot x={2} y={19800} r={3.5} fill="var(--chart-high-marker)" stroke="var(--chart-marker-border)" />
-                            <ReferenceDot x={10} y={9800} r={3.5} fill="var(--chart-low-marker)" stroke="var(--chart-marker-border)" />
-                            <ReferenceDot x={15} y={13800} r={3.5} fill="var(--chart-high-marker)" stroke="var(--chart-marker-border)" />
-                            <ReferenceDot x={22} y={8800} r={3.5} fill="var(--chart-low-marker)" stroke="var(--chart-marker-border)" />
-                        </ComposedChart>
-                    </ResponsiveContainer>
-
-                    {CALLOUTS.map(({ label, value, className }) => (
-                        <div key={value} className={`pointer-events-none absolute z-10 hidden -translate-y-1/2 rounded border border-chart-tooltip-border bg-chart-tooltip-background px-1.5 py-0.5 text-xs text-chart-tooltip-foreground shadow-sm sm:block ${className}`}>
-                            {label}<span className={label === "High " ? "text-chart-tooltip-high" : "text-chart-tooltip-low"}>{value}</span>
-                        </div>
-                    ))}
+        <div className="w-full">
+            <div className="mb-4 flex items-center justify-between gap-4">
+                <Heading size="lg">{title}</Heading>
+                <div className="">
+                    <SelectField
+                        className="h-7 "
+                        // The API sends the range as a display label; map it back to an option value.
+                        defaultValue={RANGES.find((option) => option.label === range)?.value ?? RANGES[0].value}
+                        options={RANGES}
+                    />
                 </div>
             </div>
+
+            <div className="relative h-45 w-full sm:h-47.5">
+                <ResponsiveContainer width="100%" height="100%">
+                    <ComposedChart data={chartData} margin={{ top: 8, right: 10, bottom: 0, left: -12 }}>
+                        <XAxis
+                            dataKey="index"
+                            type="number"
+                            domain={[0, chartData.length - 1]}
+                            ticks={chartData.map(({ index }) => index)}
+                            tickFormatter={(index) => series[index]?.month ?? ""}
+                            axisLine={false}
+                            tickLine={false}
+                            tick={{ fill: "var(--chart-axis)", fontSize: 12 }}
+                            dy={10}
+                        />
+                        <YAxis
+                            domain={[scale.from, scale.to]}
+                            ticks={scale.ticks}
+                            tickFormatter={(value) => formatNumber(value)}
+                            axisLine={false}
+                            tickLine={false}
+                            tick={{ fill: "var(--chart-axis)", fontSize: 12 }}
+                            width={48}
+                        />
+                        <Area type="linear" dataKey="value" stroke="none" fill="white" baseValue={scale.from} isAnimationActive={false} />
+                        <Line type="linear" dataKey="value" stroke="var(--primary)" strokeWidth={1.25} dot={false} activeDot={false} isAnimationActive={false} />
+                        <ReferenceDot x={highest.index} y={highest.value} r={3.5} fill="var(--chart-high-marker)" stroke="var(--chart-marker-border)" />
+                        <ReferenceDot x={lowest.index} y={lowest.value} r={3.5} fill="var(--chart-low-marker)" stroke="var(--chart-marker-border)" />
+                    </ComposedChart>
+                </ResponsiveContainer>
+
+                {callouts.map(({ label, tone, point }) => (
+                    <div
+                        key={label}
+                        style={calloutPosition(point, chartData.length, scale)}
+                        className="pointer-events-none absolute z-10 hidden -translate-y-1/2 rounded border border-chart-tooltip-border bg-chart-tooltip-background px-1.5 py-0.5 text-xs text-chart-tooltip-foreground shadow-sm sm:block"
+                    >
+                        {label}
+                        <span className={tone}>{formatNumber(point.value)}</span>
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+}
+
+interface ChatToSaleChartProps {
+    /** Chat-to-sale section of the Overview response. */
+    conversion?: ChatToSaleConversion;
+    /** True while the Overview request is in flight. */
+    isLoading?: boolean;
+}
+
+export default function ChatToSaleChart({ conversion, isLoading = false }: ChatToSaleChartProps) {
+    if (isLoading) {
+        return (
+            <AppSection className="h-auto">
+                <Skeleton className="h-60 w-full" />
+            </AppSection>
+        );
+    }
+
+    if (!conversion || conversion.series.length === 0) {
+        return (
+            <AppSection className="h-auto">
+                <p className="flex h-45 w-full items-center justify-center text-sm text-content-muted">
+                    No conversion data for this range.
+                </p>
+            </AppSection>
+        );
+    }
+
+    return (
+        <AppSection className="h-auto">
+            <ConversionTrend {...conversion} />
         </AppSection>
     );
 }

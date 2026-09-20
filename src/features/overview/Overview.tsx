@@ -55,7 +55,7 @@ export function Overview() {
                         <OverviewCard key={metric.title} {...metric} />
                     ))}
                 </div>
-                <ChatToSaleChart />
+                <ChatToSaleChart conversion={data?.chatToSaleConversion} isLoading={isLoading} />
                 <div className="grid min-w-0 grid-cols-1 items-start gap-4 sm:grid-cols-2">
                     <PerformanceMatrix />
                     <div className="flex flex-col gap-4">
