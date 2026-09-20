@@ -47,7 +47,7 @@ export function PageHeader({
 
     return (
         <div className="flex h-full flex-col">
-            <header className="mb-2 md:mb-6 flex flex-col gap-4 py-2.5 md:flex-row md:items-start md:justify-between">
+            <header className="mb-2.5 md:mb-6 flex flex-col gap-4 py-2.5 md:flex-row md:items-start md:justify-between">
                 <div className="flex min-w-0 items-center gap-3">
                     {backTo && (
                         <Button
@@ -64,7 +64,7 @@ export function PageHeader({
                     )}
 
                     <div className="min-w-0">
-                        <h1 className="mb-1 text-2xl font-semibold tracking-[2%] md:text-3xl">
+                        <h1 className="mb-1 text-[22px] font-semibold tracking-[2%] md:text-3xl">
                             {title}
                         </h1>
                         {subtitle && (

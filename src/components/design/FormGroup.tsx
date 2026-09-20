@@ -11,12 +11,12 @@ const formGroupVariants = cva("", {
             3: "md:grid md:grid-cols-3",
         },
         gap: {
-            xs: "gap-2",       // 8px
-            sm: "gap-2.5",     // 10px
-            md: "gap-[14px]",  // 14px
-            lg: "gap-4",       // 16px
-            xl: "gap-5",       // 20px
-            "2xl": "gap-7",    // 28px
+            xs: "gap-2.5 md:gap-2",       // 10px mobile, 8px desktop
+            sm: "gap-2.5",                // 10px
+            md: "gap-2.5 md:gap-[14px]",  // 10px mobile, 14px desktop
+            lg: "gap-2.5 md:gap-4",       // 10px mobile, 16px desktop
+            xl: "gap-2.5 md:gap-5",       // 10px mobile, 20px desktop
+            "2xl": "gap-2.5 md:gap-7",    // 10px mobile, 28px desktop
         },
     },
     defaultVariants: {

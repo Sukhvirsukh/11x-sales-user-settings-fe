@@ -1,5 +1,5 @@
 import { memo } from "react";
-import { Download, Paintbrush, QrCode } from "lucide-react";
+import { Download, QrCode, SquarePen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import CopyField from "@/components/shared/CopyField";
 import ActionCard from "@/components/shared/ActionCard";
@@ -23,9 +23,9 @@ const VisibilityAction = memo(function VisibilityAction() {
     const navigate = useNavigate();
 
     return (
-        <Button className="gap-2 border-0! px-4 py-2 md:py-2.5" onClick={() => navigate('/chat-settings/visibility')}>
+        <Button className="gap-2 border-0! px-2 py-1.5 md:py-2.5" onClick={() => navigate('/chat-settings/visibility')}>
             Visibility
-            <Paintbrush className="size-4" />
+            <SquarePen className="h-4 w-4" />
         </Button>
     );
 });
@@ -43,6 +43,8 @@ export default function Channels() {
                 title="Vita chat"
                 subtitle="Talk to Vita lab directly on site"
                 actions={<VisibilityAction />}
+                contentClassName="flex-row items-center justify-between"
+                actionsClassName="self-center"
             />
 
             <AppCard>
@@ -52,7 +54,7 @@ export default function Channels() {
                             <p className="text-base font-semibold text-foreground md:text-lg">
                                 Link to chat
                             </p>
-                            <p className="mt-1 text-content-muted">
+                            <p className="mt-1 text-sm md:text-base text-content-muted">
                                 Use the following link to the standalone chat page
                             </p>
                             <div className="mt-2 min-w-0">
@@ -67,7 +69,7 @@ export default function Channels() {
                             <p className="text-base font-semibold text-foreground md:text-lg">
                                 Embedded chat (iframe)
                             </p>
-                            <p className="mt-1 text-content-muted">
+                            <p className="mt-1 text-sm md:text-base text-content-muted">
                                 Add the following code into the HTML code of your page
                             </p>
                             <div className="mt-2 min-w-0">
@@ -82,7 +84,7 @@ export default function Channels() {
                     <div className="hidden w-px shrink-0 bg-divider lg:block" />
 
                     <div className="min-w-0 border-t border-divider pt-2.5 lg:w-[min(100%,280px)] lg:shrink-0 lg:border-t-0 lg:pt-0">
-                        <p className="text-base font-medium text-foreground md:text-lg">
+                        <p className="text-base font-semibold text-foreground md:text-lg">
                             QR code
                         </p>
                         <p className="mt-0.5 text-sm text-muted-foreground">

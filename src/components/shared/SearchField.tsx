@@ -25,7 +25,7 @@ export default function SearchField({ onSearchChange, showMobilePanel = true }: 
                 <Popover>
                     <PopoverTrigger
                         render={
-                            <Button variant="ghost" size="sm" className="size-[35px] md:hidden" aria-label="Search knowledge base">
+                            <Button variant="ghost" size="sm" className="size-9.25 md:hidden" aria-label="Search knowledge base">
                                 <Search className="size-4" />
                             </Button>
                         }
@@ -53,6 +53,7 @@ export default function SearchField({ onSearchChange, showMobilePanel = true }: 
                     onChange={(event) => handleSearchChange(event.target.value)}
                     placeholder="Search"
                     startIcon={<Search className="size-4" />}
+                    containerClassName="h-[37px]"
                     endIcon={
                         <ListFilter className="size-4" />
                     }
