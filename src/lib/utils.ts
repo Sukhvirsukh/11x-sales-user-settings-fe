@@ -45,6 +45,31 @@ export function debounce<TArgs extends unknown[]>(
 }
 
 
+export type NumberFormat = "compact" | "percent";
+
+const compactNumberFormatter = new Intl.NumberFormat("en", {
+  notation: "compact",
+  maximumFractionDigits: 1,
+});
+
+/**
+ * Display-friendly number formatting for API values.
+ * Accepts numbers or numeric strings and returns "—" for anything missing or
+ * non-numeric, so NaN never reaches the UI.
+ * "compact": 40000 -> "40K". "percent": 70 -> "70%".
+ */
+export function formatNumber(
+  value: number | string | null | undefined,
+  format: NumberFormat = "compact",
+): string {
+  if (typeof value === "string" && value.trim() === "") return "—";
+
+  const number = typeof value === "string" ? Number(value) : value;
+  if (typeof number !== "number" || !Number.isFinite(number)) return "—";
+
+  return format === "percent" ? `${number}%` : compactNumberFormatter.format(number);
+}
+
 export type DateFormat = "numeric" | "long";
 
 export function dateFormater(

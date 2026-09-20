@@ -24,10 +24,11 @@ const columns: Column[] = [
         header: "Status",
         align: "center",
         render: (value) => {
+            const pending = value === "pending"
             const isActive = value === true
             return (
-                <Badge variant={isActive ? "default" : "destructive"}>
-                    {isActive ? "Active" : "Inactive"}
+                <Badge variant={pending ? "warning" : isActive ? "default" : "destructive"}>
+                    {pending ? "Pending" : isActive ? "Active" : "Inactive"}
                 </Badge>
             )
         },
