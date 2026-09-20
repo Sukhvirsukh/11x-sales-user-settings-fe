@@ -230,8 +230,9 @@ src/
 │   ├── resetPassword/               # Token-based password reset form, schema, and API
 │   ├── overview/
 │   │   ├── Overview.tsx             # Dashboard grid (metrics + charts + widgets)
-│   │   ├── overviewApi.ts           # (empty placeholder)
-│   │   ├── overviewType.ts
+│   │   ├── overviewApi.ts           # getOverview (GET /overview headline metrics)
+│   │   ├── overviewQuery.ts         # useOverviewQuery + overviewQueryKey
+│   │   ├── overviewType.ts          # OverviewResponse (stats: label/value/displayValue)
 │   │   ├── components/
 │   │   │   ├── ActionTrend.tsx
 │   │   │   ├── AverageOrderValue.tsx
@@ -429,8 +430,8 @@ Each item carries the `permission` that mirrors its route's `handle.permission`;
 - The `unsavedChangesBar` shared component provides a warning system for unsaved changes.
 - `components/shared/chatBox/` holds the shared chat primitives: `ChatBox` (visibility preview), `ChatInput`, and `ChatMessage`, which renders the user/bot bubbles plus the bot action row (Debug / Make correction / thumbs / approve ✓). `ChatMessage` is used by both the visibility preview and the conversations panel, so tweaks to it show up in both places.
 - **Ask AI feature** (`src/features/askAi/`): AI chat assistant at `/ask-me`, composed of `AskAI.tsx` (chat + history banner) and `AskAIChat.tsx` (messages, input, file attachment). Uses `PreviewSection`, `AppSection`, and `Banner`.
-- **Overview feature** (`src/features/overview/`): dashboard grid of metric `OverviewCard`s plus Recharts-based widgets (`ChatToSaleChart`, `PerformanceMatrix`, `ActionTrend`, `AverageOrderValue`) and side widgets (`SystemStatus`, `Tips`, `SetupProgress`, `KnowMore`).
-- Known placeholders / dead files: `features/overview/overviewApi.ts`, `features/conversations/conversationsFilterStore.ts`, and `src/assets/auth/Background.tsx` are empty.
+- **Overview feature** (`src/features/overview/`): dashboard grid of metric `OverviewCard`s fed by `GET /overview` through `useOverviewQuery`. The metrics arrive nested under `stats` (`stats.totalReplies`, `stats.disputeChat`, `stats.resolutionRate`), each `{ label, value, displayValue }`; `headlineMetrics` in `Overview.tsx` consumes only `value` and formats it with `formatNumber`. The grid also holds Recharts widgets (`ChatToSaleChart`, `PerformanceMatrix`, `ActionTrend`, `AverageOrderValue`) and side widgets (`SystemStatus`, `Tips`, `SetupProgress`, `KnowMore`).
+- Known placeholders / dead files: `features/conversations/conversationsFilterStore.ts` and `src/assets/auth/Background.tsx` are empty.
 
 ## Deployment
 
@@ -439,8 +440,8 @@ Hosted on Netlify. `netlify.toml` pins the build (`command = "pnpm build"`, `pub
 ## Key Conventions
 
 - Use `cn()` from `src/lib/utils.ts` for conditional Tailwind classes.
-- Shared utils in `src/lib/utils.ts`: `delay()`, `getInitials()`, `debounce()`, `capitalize()` (display-casing API values: `"SUPER_ADMIN"` → `"Super Admin"`), `dateFormater(date, format?)` ("numeric" → `d/m/yyyy`, "long" → `d MMM yyyy`).
-- Never compare `role` strings in a component: gate UI with `useCan(permission)` and protect pages with `handle.permission`. Growing a permission list means adding a `Permission` literal and assigning it in `ROLE_PERMISSIONS`.
+- Shared utils in `src/lib/utils.ts`: `delay()`, `getInitials()`, `debounce()`, `capitalize()` (display-casing API values: `"SUPER_ADMIN"` → `"Super Admin"`), `dateFormater(date, format?)` ("numeric" → `d/m/yyyy`, "long" → `d MMM yyyy`), `formatNumber(value, format?)` ("compact" → `40K`, "percent" → `70%`; missing/non-numeric → `—`).
+- Never compare `role` strings in a component: gate UI with `useCan(permission)` and protect pages with `handle.permission`. Adding a page or action means adding a `PERMISSION_GROUPS` entry (which the permissions table renders automatically); granting it stays a backend payload, never a frontend edit.
 - Prefer semantic design tokens (`bg-background`, `text-primary`) over hardcoded colors.
 - Use PascalCase for components, camelCase with `use` prefix for hooks.
 - Use kebab-case for folder names (note `features/ai-training/` follows this).
