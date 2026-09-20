@@ -4,16 +4,41 @@ import { Banner } from "@/components/design/Banner";
 import { FormGroup } from "@/components/design/FormGroup";
 import Heading from "@/components/design/Heading";
 import { TextAreaField } from "@/components/design/TextAreaField";
-import Label from "@/components/design/Label";
-import { useId } from "react";
 import { ToggleField } from "@/components/design/ToggleField";
+import { UnSavedChangesBar } from "@/components/shared/unsavedChangesBar";
+import { toast } from "@/components/ui/toast";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { promptToolsQueryKey, usePromptToolsQuery } from "./promptQuery";
+import { savePromptTools } from "./promptToolsApi";
+import type { PromptToolsFormValues, PromptToolsResponse } from "./promptType";
 
+const DEFAULT_VALUES: PromptToolsFormValues = {
+    humanHelpSupport: "",
+    additionalInstructions: "",
+    knowledgeSearchEnabled: false,
+    escalateConversationsEnabled: false,
+    orderLookupEnabled: false,
+    skipConversationEnabled: false,
+};
+
+function toFormValues(data: PromptToolsResponse): PromptToolsFormValues {
+    return {
+        humanHelpSupport: data.humanHelpSupport ?? "",
+        additionalInstructions: data.additionalInstructions ?? "",
+        knowledgeSearchEnabled: data.knowledgeSearchEnabled,
+        escalateConversationsEnabled: data.escalateConversationsEnabled,
+        orderLookupEnabled: data.orderLookupEnabled,
+        skipConversationEnabled: data.skipConversationEnabled,
+    };
+}
 
 interface ActionCardProps {
     heading: string,
     content: string,
     isChecked?: boolean,
-    onToggle?: () => void
+    onToggle?: (pressed: boolean) => void
 }
 
 function ActionCard({ heading, content, isChecked = false, onToggle }: ActionCardProps) {
@@ -36,7 +61,32 @@ function ActionCard({ heading, content, isChecked = false, onToggle }: ActionCar
 }
 
 export function PromptTools() {
-    const instructionsId = useId();
+    const { data, isLoading, isError } = usePromptToolsQuery();
+    const queryClient = useQueryClient();
+    const form = useForm<PromptToolsFormValues>({
+        defaultValues: DEFAULT_VALUES,
+    });
+    const { register, reset, setValue, watch } = form;
+    const saveMutation = useMutation({
+        mutationFn: savePromptTools,
+        onSuccess: (savedData) => {
+            queryClient.setQueryData(promptToolsQueryKey, savedData);
+            reset(toFormValues(savedData));
+            toast.add({
+                type: "success",
+                title: "Prompt tools saved",
+                description: "Your prompt tools have been updated.",
+            });
+        },
+    });
+
+    useEffect(() => {
+        if (data) reset(toFormValues(data));
+    }, [data, reset]);
+
+    if (isLoading) return <div role="status">Loading prompt tools...</div>;
+    if (isError) return <div role="alert">Unable to load prompt tools.</div>;
+
     return (
         <>
             <AppSection>
@@ -46,20 +96,17 @@ export function PromptTools() {
                         <TextAreaField
                             label="Human help support"
                             placeholder="E.g: In order to reach to our team send us an email at support@example.com"
-                        // value={fields.disclaimerMessage}
-                        // onChange={(e) => setField("disclaimerMessage", e.target.value)}
+                            {...register("humanHelpSupport")}
                         />
                         <div className="flex flex-col gap-2">
-                            <Label htmlFor={instructionsId}>Additional instructions</Label>
                             <div className="flex flex-wrap items-stretch gap-4">
                                 <div className="flex min-w-0 flex-[1_1_300px]">
                                     <TextAreaField
-                                        id={instructionsId}
+                                        label="Additional instructions"
                                         wrapperClassName="flex-1"
                                         className="flex-1"
                                         placeholder="Enter your instructions here"
-                                    // value={fields.disclaimerMessage}
-                                    // onChange={(e) => setField("disclaimerMessage", e.target.value)}
+                                        {...register("additionalInstructions")}
                                     />
                                 </div>
                                 <div className="flex w-full min-w-0 sm:w-[20%] sm:min-w-[250px] sm:shrink-0">
@@ -88,30 +135,39 @@ export function PromptTools() {
                     <ActionCard
                         heading="Knowledge search"
                         content="Give Vitalb the ability to perform the functionality"
-                        isChecked={true}
-                        onToggle={() => { }}
+                        isChecked={watch("knowledgeSearchEnabled")}
+                        onToggle={(enabled) => setValue("knowledgeSearchEnabled", enabled, { shouldDirty: true })}
                     />
                     <ActionCard
                         heading="Escalate conversations"
                         content="Give Vitalb access to escalate conversations to your support team when needed"
-                        isChecked={false}
-                        onToggle={() => { }}
+                        isChecked={watch("escalateConversationsEnabled")}
+                        onToggle={(enabled) => setValue("escalateConversationsEnabled", enabled, { shouldDirty: true })}
                     />
                     <ActionCard
                         heading="Order lookup with custom API"
                         content="Give Vitalb the ability to provide information for the product order and delivery"
-                        isChecked={true}
-                        onToggle={() => { }}
+                        isChecked={watch("orderLookupEnabled")}
+                        onToggle={(enabled) => setValue("orderLookupEnabled", enabled, { shouldDirty: true })}
                     />
                     <ActionCard
                         heading="Skip Conversation"
                         content="Give Vitalb the ability to skip coversation"
-                        isChecked={false}
-                        onToggle={() => { }}
+                        isChecked={watch("skipConversationEnabled")}
+                        onToggle={(enabled) => setValue("skipConversationEnabled", enabled, { shouldDirty: true })}
                     />
                 </div>
 
             </AppSection>
+            <UnSavedChangesBar
+                isDirty={form.formState.isDirty}
+                saving={saveMutation.isPending}
+                placement="fixed"
+                onSave={async () => {
+                    await saveMutation.mutateAsync(form.getValues());
+                }}
+                onDiscard={() => reset(data ? toFormValues(data) : DEFAULT_VALUES)}
+            />
         </>
     )
 }

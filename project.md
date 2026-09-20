@@ -177,7 +177,10 @@ src/
 │   │   │   ├── knowledgeBaseTypes.ts
 │   │   │   └── index.ts
 │   │   └── promptTools/
-│   │       ├── PromptTools.tsx
+│   │       ├── PromptTools.tsx       # React Hook Form + fixed unsaved-changes save bar
+│   │       ├── promptToolsApi.ts      # GET/PUT prompt-tools API requests
+│   │       ├── promptQuery.ts         # TanStack Query hook
+│   │       ├── promptType.ts          # API response and form value types
 │   │       └── index.ts
 │   ├── askAi/
 │   │   ├── AskAI.tsx                # Chat area + history banner

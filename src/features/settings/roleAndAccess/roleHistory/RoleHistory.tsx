@@ -25,7 +25,7 @@ const columns: Column[] = [
         align: "center",
         render: (value) => {
             const pending = value === "pending"
-            const isActive = value === true
+            const isActive = value === 'active'
             return (
                 <Badge variant={pending ? "warning" : isActive ? "default" : "destructive"}>
                     {pending ? "Pending" : isActive ? "Active" : "Inactive"}
