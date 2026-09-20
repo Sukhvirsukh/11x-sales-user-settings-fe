@@ -72,7 +72,7 @@ function AccordionContent({
     >
       <AppSection
         data-slot="accordion-content-section"
-        className='w-full'
+        className='w-full mb-4'
       >
         <div className="w-full">
           {children}
