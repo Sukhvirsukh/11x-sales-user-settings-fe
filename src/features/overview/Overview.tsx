@@ -66,8 +66,8 @@ export function Overview() {
             </div>
             <div className="flex flex-col gap-4">
                 <SystemStatus panel={data?.systemStatus} isLoading={isLoading} />
-                <Tips />
-                <SetupProgress />
+                <Tips tips={data?.tips} isLoading={isLoading} />
+                <SetupProgress panel={data?.setupProgress} isLoading={isLoading} />
                 <KnowMore />
             </div>
         </div>

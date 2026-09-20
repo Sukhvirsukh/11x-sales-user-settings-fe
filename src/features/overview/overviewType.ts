@@ -50,6 +50,32 @@ export interface SystemStatusSummary {
     agents: SystemStatusAgent[];
 }
 
+/** A single actionable tip on the Overview dashboard. */
+export interface OverviewTip {
+    /** Tip text, e.g. "Setup Escalate Conversations". */
+    title: string;
+    /** Path the tip links to. */
+    href: string;
+}
+
+/** A single step in the setup progress checklist. */
+export interface SetupStep {
+    /** Step text, e.g. "Customise the chat to fit your brand". */
+    title: string;
+    completed: boolean;
+}
+
+/** Setup progress panel on the Overview dashboard. */
+export interface SetupProgressSummary {
+    /** Steps already done, e.g. 2. */
+    completedSteps: number;
+    /** Steps in total, e.g. 4. */
+    totalSteps: number;
+    /** Completion as a percentage (0–100). */
+    percent: number;
+    steps: SetupStep[];
+}
+
 /** A single headline metric on the Overview dashboard. */
 export interface OverviewStat {
     /** Human-readable name, e.g. "Total replies". */
@@ -75,4 +101,6 @@ export interface OverviewResponse {
     actionTrends: TrendPanel;
     averageOrderValue: AverageOrderValueSummary;
     systemStatus: SystemStatusSummary;
+    tips: OverviewTip[];
+    setupProgress: SetupProgressSummary;
 }
