@@ -64,7 +64,7 @@ export function PageHeader({
                     )}
 
                     <div className="min-w-0">
-                        <h1 className="mb-1 text-[22px] font-semibold tracking-[2%] md:text-3xl">
+                        <h1 className="mb-1.5 text-[22px] font-semibold tracking-[2%] md:text-3xl">
                             {title}
                         </h1>
                         {subtitle && (

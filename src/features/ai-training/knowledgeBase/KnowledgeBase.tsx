@@ -159,7 +159,6 @@ export function KnowledgeBase() {
                         {/* <AddRoleForm /> */}
                         <Button
                             variant="primary"
-                            size="sm"
                             onClick={() => setIsAddModalOpen(true)}
                         >
                             Add knowledge

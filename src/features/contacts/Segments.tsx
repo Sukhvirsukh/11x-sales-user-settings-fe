@@ -113,7 +113,7 @@ export default function Segments() {
                 headerActions={
                     <div className="flex items-center gap-2.5">
                         <SearchField onSearchChange={handleSearchChange} />
-                        <Button variant="primary" size="sm" onClick={() => setIsAddOpen(true)}>
+                        <Button variant="primary" onClick={() => setIsAddOpen(true)}>
                             Add segment
                             <Plus className="ml-0.5 size-2 md:ml-2 md:size-4" />
                         </Button>

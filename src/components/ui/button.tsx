@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
   // Base styles: pill shape (rounded-xl/2xl), font adjustments, transitions
-  "inline-flex shrink-0 items-center justify-center cursor-pointer rounded-xl border border-transparent px-2 py-1.5 text-sm font-medium whitespace-nowrap transition-colors outline-none select-none focus-visible:ring-2 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 md:px-4 md:py-2.5 md:text-base",
+  "inline-flex shrink-0 items-center justify-center cursor-pointer rounded-xl border border-transparent font-medium whitespace-nowrap transition-colors outline-none select-none focus-visible:ring-2 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50",
   {
     variants: {
       variant: {
@@ -27,7 +27,7 @@ const buttonVariants = cva(
 
         // No border, no background — just children
         bare:
-          "border-transparent bg-transparent p-0 hover:bg-control-hover md:p-0",
+          "border-transparent bg-transparent hover:bg-control-hover",
 
         // Underlined text action
         "underline-bare":
@@ -48,13 +48,19 @@ const buttonVariants = cva(
       },
       size: {
         icon: "size-9 p-0 md:p-0",
-        xsm: "rounded-[10px]",
-        xs: "rounded-[10px]",
-        sm: "rounded-[10px]",
-        default: "rounded-[10px]",
-        full: "w-full rounded-[10px]",
+        xsm: "rounded-[10px] px-2 py-1.5 text-sm",
+        xs: "h-7 rounded-md px-2 text-[11px]",
+        sm: "rounded-[10px] px-2.5 py-1.5 text-sm md:p-2",
+        default: "rounded-[10px] px-2 py-1.5 text-sm md:px-4 md:py-[9px] md:text-base",
+        full: "w-full rounded-[10px] px-2.5 py-1.5 text-sm md:h-10 md:px-5 md:py-0 md:text-base",
       },
     },
+    compoundVariants: [
+      {
+        variant: "bare",
+        className: "p-0 md:p-0",
+      },
+    ],
     defaultVariants: {
       variant: "primary",
       size: "default",

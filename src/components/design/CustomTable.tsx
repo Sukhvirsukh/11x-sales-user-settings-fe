@@ -167,7 +167,7 @@ export default function CustomTable<T extends Record<string, unknown>>({
                     {(title || description) && (
                         <div className="min-w-0">
                             {title && (
-                                <Heading size="md" className="text-[14px] md:text-base leading-none">
+                                <Heading size="md" className="text-[14px] md:text-[16px] leading-none">
                                     {title}
                                 </Heading>
                             )}

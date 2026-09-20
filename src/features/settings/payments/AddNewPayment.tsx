@@ -124,9 +124,9 @@ export default function AddNewPayment() {
     return (
         <Modal
             trigger={
-                <Button variant="primary" size="sm" className="">
+                <Button variant="primary" className="">
                     New Payment
-                    <Plus className="md:ml-2 ml-0.5 md:size-4 size-2" />
+                    <Plus className="ml-0.5 size-2 md:ml-2 md:size-3.5" />
                 </Button>
             }
             title="Edit details"

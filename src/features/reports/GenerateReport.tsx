@@ -52,7 +52,7 @@ export default function GenerateReport() {
     return (
         <Modal
             trigger={
-                <Button variant="primary" size="sm" onClick={() => setIsOpen(true)}>
+                <Button variant="primary" onClick={() => setIsOpen(true)}>
                     Generate Report
                     <Plus className="md:ml-2 ml-0.5 md:size-4 size-2" />
                 </Button>
