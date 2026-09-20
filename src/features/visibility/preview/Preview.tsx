@@ -62,17 +62,19 @@ export default function Preview({
                         aria-label={isMaximized ? "Minimize preview" : "Maximize preview"}
                         aria-pressed={isMaximized}
                         onClick={onToggleMaximize}
+                        className="p-0!"
                     >
                         {isMaximized ? (
-                            <Minimize2 className="size-4" />
+                            <Maximize2 className="size-3.5 text-foreground" />
+
                         ) : (
-                            <Maximize2 className="size-4" />
+                            <Minimize2 className="size-3.5 text-foreground" />
                         )}
                     </Button>
                 </div>
             </header>
 
-            <div className="flex min-h-0 flex-1 flex-col pt-[10px] md:px-5 md:pb-5">
+            <div className="flex min-h-0 flex-1 flex-col pt-2.5 md:px-5 md:pb-5">
                 <div className="relative isolate w-full flex-1 overflow-hidden bg-preview-canvas-background">
                     <img
                         src={previewBackground}

@@ -8,6 +8,8 @@ export interface ActionCardProps {
     icon?: ReactNode;
     actions?: ReactNode;
     className?: string;
+    contentClassName?: string;
+    actionsClassName?: string;
     variant?: "default" | "bare";
 }
 
@@ -18,6 +20,8 @@ function ActionCard({
     icon,
     actions,
     className,
+    contentClassName,
+    actionsClassName,
     variant = "default",
 }: ActionCardProps) {
     return (
@@ -31,10 +35,13 @@ function ActionCard({
         >
             {icon ? <div className="shrink-0 self-start">{icon}</div> : null}
 
-            <div className="flex min-w-0 flex-1 flex-col gap-2.5 md:flex-row md:items-center md:justify-between md:gap-4">
+            <div className={cn(
+                "flex min-w-0 flex-1 flex-col gap-2.5 md:flex-row md:items-center md:justify-between md:gap-4",
+                contentClassName,
+            )}>
                 <div className="min-w-0">
-                    <div className="flex min-w-0 flex-wrap items-center gap-2">
-                        <p className={`truncate text-base font-medium text-foreground ${badge ? "mb-1.5" : ""}`}>
+                    <div className="mb-1.5 flex min-w-0 flex-nowrap items-center gap-2">
+                        <p className={`min-w-0 truncate text-base font-medium text-foreground ${badge ? "mb-1.5" : ""}`}>
                             {title}
                         </p>
                         {badge}
@@ -45,7 +52,10 @@ function ActionCard({
                 </div>
 
                 {actions ? (
-                    <div className="flex shrink-0 flex-wrap items-center gap-2 self-start md:self-auto">
+                    <div className={cn(
+                        "flex shrink-0 flex-wrap items-center gap-2 self-start md:self-auto",
+                        actionsClassName,
+                    )}>
                         {actions}
                     </div>
                 ) : null}

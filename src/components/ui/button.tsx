@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
   // Base styles: pill shape (rounded-xl/2xl), font adjustments, transitions
-  "inline-flex shrink-0 items-center justify-center cursor-pointer rounded-xl border border-transparent text-sm font-medium whitespace-nowrap transition-colors outline-none select-none focus-visible:ring-2 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50",
+  "inline-flex shrink-0 items-center justify-center cursor-pointer rounded-xl border border-transparent px-2 py-1.5 text-sm font-medium whitespace-nowrap transition-colors outline-none select-none focus-visible:ring-2 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 md:px-4 md:py-2.5 md:text-base",
   {
     variants: {
       variant: {
@@ -29,7 +29,7 @@ const buttonVariants = cva(
         bare:
           "border-transparent bg-transparent hover:bg-control-hover",
 
-        // Underlined text action with the same compact spacing as bare buttons
+        // Underlined text action
         "underline-bare":
           "border-transparent bg-transparent text-content-muted underline underline-offset-2 hover:bg-transparent hover:text-foreground",
 
@@ -37,9 +37,9 @@ const buttonVariants = cva(
         link:
           "text-link underline-offset-4 hover:underline",
 
-        // Compact text action, used for inline card actions such as "Show all".
+        // Underlined action used for inline card actions such as "Show all".
         action:
-          "!h-auto !rounded-none !p-0 md:!p-0 !text-sm md:!text-sm font-normal text-content-muted underline underline-offset-2 hover:bg-transparent hover:text-foreground",
+          "h-auto rounded-none text-content-muted underline underline-offset-2 hover:bg-transparent hover:text-foreground",
 
         // destructive
         destructive:
@@ -47,24 +47,14 @@ const buttonVariants = cva(
 
       },
       size: {
-        icon: "size-9",
-        xsm: "px-[8px] py-[6px] rounded-[10px] text-sm",
-        xs: "h-7 px-2 text-[11px] rounded-md",
-        sm: "px-[10px] py-[6px] text-[12px] md:p-[8px] md:text-sm rounded-[10px]",
-        default: "px-[10px] py-[6px] text-[12px] md:p-[10px] md:text-base rounded-[10px]",
-        full: "w-full px-[10px] py-[6px] text-[12px] md:h-10 md:px-5 md:py-0 md:text-base rounded-[10px]",
+        icon: "size-9 p-0 md:p-0",
+        xsm: "rounded-[10px]",
+        xs: "rounded-[10px]",
+        sm: "rounded-[10px]",
+        default: "rounded-[10px]",
+        full: "w-full rounded-[10px]",
       },
     },
-    compoundVariants: [
-      {
-        variant: "bare",
-        className: "p-0 md:p-0",
-      },
-      {
-        variant: "underline-bare",
-        className: "p-0 md:p-0",
-      },
-    ],
     defaultVariants: {
       variant: "primary",
       size: "default",
