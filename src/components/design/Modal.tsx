@@ -67,7 +67,7 @@ export default function Modal({
                 <div className="flex min-h-0 flex-col max-sm:mt-2 max-sm:rounded-t-[10px] max-sm:bg-popover">
                     {title && (
                         <DialogHeader className={cn(
-                            "flex shrink-0 flex-row justify-between items-center py-2.5 px-4 bg-table-header-background rounded-t-[10px]",
+                            "flex shrink-0 flex-row justify-between items-center p-4 bg-table-header-background rounded-t-[10px]",
                             headerClassName,
                         )}>
                             <DialogTitle className={cn("text-lg font-semibold font-inter", titleClassName)}>
