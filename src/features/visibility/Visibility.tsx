@@ -104,7 +104,7 @@ export default function Visibility() {
                 <div >
                     <Button
                         variant="bare"
-                        className="flex items-center gap-1 pb-2.5! pl-0! text-base"
+                        className="flex items-center gap-1 p-2.5! mb-2.5 text-base"
                         onClick={() => navigate('/chat-settings')}
                     >
                         <ChevronLeft size={18} /> Back to settings
