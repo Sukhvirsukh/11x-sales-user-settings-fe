@@ -60,7 +60,7 @@ export function Overview() {
                     <PerformanceMatrix />
                     <div className="flex flex-col gap-4">
                         <ActionTrend panel={data?.actionTrends} isLoading={isLoading} />
-                        <AverageOrderValue />
+                        <AverageOrderValue summary={data?.averageOrderValue} isLoading={isLoading} />
                     </div>
                 </div>
             </div>
