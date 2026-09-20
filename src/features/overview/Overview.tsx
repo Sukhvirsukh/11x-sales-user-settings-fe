@@ -57,7 +57,7 @@ export function Overview() {
                 </div>
                 <ChatToSaleChart panel={data?.chatToSaleConversion} isLoading={isLoading} />
                 <div className="grid min-w-0 grid-cols-1 items-start gap-4 sm:grid-cols-2">
-                    <PerformanceMatrix />
+                    <PerformanceMatrix panel={data?.performanceMetrics} isLoading={isLoading} />
                     <div className="flex flex-col gap-4">
                         <ActionTrend panel={data?.actionTrends} isLoading={isLoading} />
                         <AverageOrderValue panel={data?.averageOrderValue} isLoading={isLoading} />

@@ -84,6 +84,27 @@ export interface KnowMoreItem {
     type: string;
 }
 
+/** A single action row in the performance matrix. */
+export interface PerformanceMetric {
+    /** Action name, e.g. "Create discount". */
+    name: string;
+    /** Share of conversations that used this action, as a percentage. */
+    rate: number;
+    /** Current state, e.g. "Enabled". */
+    status: string;
+}
+
+/** Performance matrix panel on the Overview dashboard. */
+export interface PerformanceMetricsSummary {
+    /** Tab labels, e.g. ["Revenue actions", …]. */
+    tabs: string[];
+    /** Tab to open first, matching one of `tabs`. */
+    activeTab: string;
+    revenueActions: PerformanceMetric[];
+    supportActions: PerformanceMetric[];
+    escalationActions: PerformanceMetric[];
+}
+
 /** A single headline metric on the Overview dashboard. */
 export interface OverviewStat {
     /** Human-readable name, e.g. "Total replies". */
@@ -112,4 +133,5 @@ export interface OverviewResponse {
     tips: OverviewTip[];
     setupProgress: SetupProgressSummary;
     knowMore: KnowMoreItem[];
+    performanceMetrics: PerformanceMetricsSummary;
 }
