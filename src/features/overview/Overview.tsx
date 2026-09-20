@@ -68,7 +68,7 @@ export function Overview() {
                 <SystemStatus panel={data?.systemStatus} isLoading={isLoading} />
                 <Tips tips={data?.tips} isLoading={isLoading} />
                 <SetupProgress panel={data?.setupProgress} isLoading={isLoading} />
-                <KnowMore />
+                <KnowMore items={data?.knowMore} isLoading={isLoading} />
             </div>
         </div>
     )

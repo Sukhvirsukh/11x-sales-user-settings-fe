@@ -76,6 +76,14 @@ export interface SetupProgressSummary {
     steps: SetupStep[];
 }
 
+/** A single "know more" item on the Overview dashboard. */
+export interface KnowMoreItem {
+    /** Item title, e.g. "The best thing you can do for your store". */
+    title: string;
+    /** Content type, e.g. "video". */
+    type: string;
+}
+
 /** A single headline metric on the Overview dashboard. */
 export interface OverviewStat {
     /** Human-readable name, e.g. "Total replies". */
@@ -103,4 +111,5 @@ export interface OverviewResponse {
     systemStatus: SystemStatusSummary;
     tips: OverviewTip[];
     setupProgress: SetupProgressSummary;
+    knowMore: KnowMoreItem[];
 }
