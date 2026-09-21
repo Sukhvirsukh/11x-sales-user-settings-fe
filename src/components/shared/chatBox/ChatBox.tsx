@@ -155,10 +155,6 @@ function LoadedChatBox({ fields, onClose, className = "", defaultMessages }: Cha
     }, 500);
   }
 
-  function handleClear() {
-    setMessages(createInitialMessages(defaultMessagesRef.current, welcomeMessage));
-  }
-
   function handleCorrect(messageId: string, correctedContent: string) {
     setMessages((prev) =>
       prev.map((m) =>
