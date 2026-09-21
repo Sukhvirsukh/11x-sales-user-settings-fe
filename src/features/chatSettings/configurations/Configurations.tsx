@@ -68,7 +68,7 @@ export default function Configurations() {
 
     return (
         <FormProvider {...form}>
-            <form className="flex min-w-0 flex-col gap-3.5" aria-busy={isLoading}>
+            <form className="flex min-w-0 flex-col gap-4" aria-busy={isLoading}>
                 <CrawlSettings />
                 <TrackingSettings />
                 <SpamFilter />

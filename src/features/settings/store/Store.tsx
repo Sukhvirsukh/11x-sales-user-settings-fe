@@ -110,9 +110,9 @@ export function Store() {
                     <div className="flex items-center gap-2.5">
                         <SearchField onSearchChange={setSearch} />
                         {canCreateStore && (
-                            <Button variant="primary" size="sm" onClick={openCreateStore}>
+                            <Button variant="primary" onClick={openCreateStore}>
                                 Add store
-                                <Plus className="ml-0.5 size-2 md:ml-2 md:size-4" />
+                                <Plus className="ml-0.5 size-2 md:ml-2 md:size-3.5" />
                             </Button>
                         )}
                     </div>
@@ -121,12 +121,12 @@ export function Store() {
                     <div className="flex items-center gap-2">
                         {canEditStore && (
                             <Button variant="bare" size="sm" onClick={() => openEditStore(row)} aria-label="Edit store">
-                                <SquarePen className="size-4 text-content-muted" />
+                                <SquarePen className="size-3 text-content-muted" />
                             </Button>
                         )}
                         {canDeleteStore && (
                             <Button variant="bare" size="sm" onClick={() => requestDelete([row])} aria-label="Delete store">
-                                <Trash className="size-4 text-content-muted" />
+                                <Trash className="size-3 text-content-muted" />
                             </Button>
                         )}
                     </div>

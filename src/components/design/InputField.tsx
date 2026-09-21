@@ -45,7 +45,7 @@ const InputField = React.forwardRef<HTMLInputElement, InputFieldProps>(
                 {/* Input Outer Container (Handles borders, icons, pill background) */}
                 <div
                     className={cn(
-                        "relative flex h-[34px] w-full items-center rounded-xl border border-control-border-subtle px-3.5 transition-all [--input-autofill-bg:var(--surface-raised)] focus-within:border-field-border focus-within:ring-2 focus-within:ring-focus-ring/20",
+                        "relative flex h-[35px] w-full items-center rounded-xl border border-control-border-subtle px-3.5 transition-all [--input-autofill-bg:var(--surface-raised)] focus-within:border-field-border focus-within:ring-2 focus-within:ring-focus-ring/20",
                         "bg-surface-raised focus-within:bg-surface-raised",
                         variant === "light"
                             ? "bg-field-subtle-background border-section-border [--input-autofill-bg:var(--field-subtle-background)] focus-within:bg-field-subtle-background focus-within:border-section-border"
@@ -65,9 +65,9 @@ const InputField = React.forwardRef<HTMLInputElement, InputFieldProps>(
                         id={inputId}
                         ref={ref}
                         className={cn(
-                            "max-sm:text-xs",
+                            "max-sm:text-sm max-sm:placeholder:text-sm",
                             props.type === "number" &&
-                                "[appearance:textfield] [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none",
+                            "[appearance:textfield] [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none",
                             className,
                         )}
                         aria-describedby={

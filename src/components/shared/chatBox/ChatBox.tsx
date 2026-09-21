@@ -176,10 +176,10 @@ function LoadedChatBox({ fields, onClose, className = "", defaultMessages }: Cha
   }
 
   return (
-    <div className={`flex  h-full flex-col overflow-hidden w-[400px] rounded-[10px] bg-widget-surface shadow-xl ${className}`}>
+    <div className={`flex h-full w-full flex-col overflow-hidden rounded-[10px] bg-widget-surface shadow-xl ${className}`}>
       {/* Header */}
       <div
-        className="flex shrink-0 items-center justify-between gap-2 px-5 pb-[15px] pt-[25px]"
+        className="flex shrink-0 items-center justify-between gap-2 p-5 pb-3.75"
         style={{ backgroundColor: `${primaryColor}22` }}
       >
         <div className="flex min-w-0 items-center gap-2">
@@ -258,26 +258,6 @@ function LoadedChatBox({ fields, onClose, className = "", defaultMessages }: Cha
           primaryColor={primaryColor}
           onSend={handleSend}
         />
-
-        {onClose && (
-          <div className="flex gap-2">
-            <button
-              type="button"
-              className="rounded-[10px] px-4 py-2.5 text-sm font-medium text-primary-contrast transition-opacity hover:opacity-90"
-              style={{ backgroundColor: primaryColor }}
-              onClick={onClose}
-            >
-              Save
-            </button>
-            <button
-              type="button"
-              onClick={handleClear}
-              className="rounded-[10px] border-[1.23px] border-widget-muted bg-widget-surface px-2.5 py-2.5 text-sm font-medium text-widget-muted transition-colors hover:bg-muted"
-            >
-              Cancel
-            </button>
-          </div>
-        )}
       </div>
     </div>
   );

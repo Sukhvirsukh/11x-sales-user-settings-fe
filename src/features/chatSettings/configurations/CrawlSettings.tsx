@@ -19,7 +19,7 @@ export default function CrawlSettings() {
     return (
         <SectionHeader heading="Crawl settings">
             <AppCard>
-                <div className="grid min-w-0 grid-cols-1 gap-4 lg:grid-cols-[1fr_201px] lg:gap-5">
+                <div className="grid min-w-0 grid-cols-1 gap-2.5 md:gap-4 lg:grid-cols-[1fr_201px] lg:gap-5">
                     <div className="flex min-w-0 flex-col gap-5 lg:border-r lg:border-divider lg:pr-5">
                         <div className="flex w-full flex-col gap-1.5">
 

@@ -5,7 +5,7 @@ import {
   type ProductRecommendationItem,
 } from "./ProductRecommendation";
 
-const messageTextClassName = "whitespace-pre-wrap text-base leading-6";
+const messageTextClassName = "whitespace-pre-wrap text-sm leading-5 md:text-base md:leading-6";
 
 function AgentMessage({ content, children }: PropsWithChildren<{ content?: string }>) {
   return (

@@ -25,7 +25,7 @@ const columns: Column[] = [
         align: "center",
         render: (value) => {
             const pending = value === "pending"
-            const isActive = value === true
+            const isActive = value === 'active'
             return (
                 <Badge variant={pending ? "warning" : isActive ? "default" : "destructive"}>
                     {pending ? "Pending" : isActive ? "Active" : "Inactive"}
@@ -121,9 +121,9 @@ export default function RoleHistory() {
                     <div className="flex items-center gap-2.5">
                         <SearchField onSearchChange={setSearch} />
                         {canCreateRole && (
-                            <Button variant="primary" size="sm" onClick={openCreateRole}>
+                            <Button variant="primary" onClick={openCreateRole}>
                                 Add role
-                                <Plus className="ml-0.5 size-2 md:ml-2 md:size-4" />
+                                <Plus className="ml-0.5 size-2 md:ml-2 md:size-3.5" />
                             </Button>
                         )}
                     </div>

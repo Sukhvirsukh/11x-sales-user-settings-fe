@@ -58,7 +58,7 @@ export default function DesktopSidebar() {
                       className={`size-5 shrink-0 ${isActive ? "text-primary" : "text-sidebar-navigation-icon"}`}
                     />
                     {!isCollapsed && (
-                      <span className="truncate">{item.label}</span>
+                      <span className="">{item.label}</span>
                     )}
                   </>
                 )}

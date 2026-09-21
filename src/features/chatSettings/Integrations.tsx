@@ -92,6 +92,8 @@ export default function Integrations() {
                         disabled={isLoading}
                     />
                 }
+                contentClassName="flex-row items-center justify-between"
+                actionsClassName="self-end"
             />
             <div className="separator" />
             <ActionCard
@@ -107,6 +109,8 @@ export default function Integrations() {
                         disabled={isLoading}
                     />
                 }
+                contentClassName="flex-row items-center justify-between"
+                actionsClassName="self-end"
             />
         </div>
     );

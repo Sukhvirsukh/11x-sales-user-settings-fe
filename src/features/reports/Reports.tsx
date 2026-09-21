@@ -36,7 +36,7 @@ export function Reports() {
 
     return (
         <CustomTable
-            title="Role history"
+            title="Reports"
             columns={columns}
             data={data}
             getRowId={(row) => String(row.id)}

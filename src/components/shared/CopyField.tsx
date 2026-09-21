@@ -32,6 +32,7 @@ export default function CopyField({
         <InputField
             value={value}
             readOnly
+            data-copy-field
             className={cn("truncate text-muted-foreground", className)}
             containerClassName={containerClassName}
             variant={variant}

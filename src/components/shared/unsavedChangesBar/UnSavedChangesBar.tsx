@@ -18,6 +18,8 @@ interface UnSavedChangesBarProps {
   edge?: "top" | "bottom";
   dialogTitle?: string;
   dialogDescription?: string;
+  /** Overrides the Save button color (e.g. the widget's primary color). */
+  primaryColor?: string;
 }
 
 export function UnSavedChangesBar({
@@ -31,19 +33,34 @@ export function UnSavedChangesBar({
   edge,
   dialogTitle,
   dialogDescription,
+  primaryColor,
 }: UnSavedChangesBarProps) {
   const [isSaving, setIsSaving] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [isEntered, setIsEntered] = useState(false);
   const busy = saving || isSaving;
   const resolvedEdge = edge ?? (placement === "fixed" ? "top" : "bottom");
   const isFixed = placement === "fixed";
   const isInlineBottom = !isFixed && resolvedEdge === "bottom";
   const isInlineTop = !isFixed && resolvedEdge === "top";
+  // Anchored at the top → drop in from above; anchored at the bottom → rise in from below.
+  const slidesFromTop = resolvedEdge === "top";
   const { isBlocking, proceed, cancel } = useUnsavedChangesWarning({ isDirty });
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  // Slide the bar in from the edge it is anchored to whenever it appears.
+  useEffect(() => {
+    if (!isDirty) {
+      setIsEntered(false);
+      return;
+    }
+
+    const frame = requestAnimationFrame(() => setIsEntered(true));
+    return () => cancelAnimationFrame(frame);
+  }, [isDirty]);
 
   async function handleSave() {
     setIsSaving(true);
@@ -72,7 +89,12 @@ export function UnSavedChangesBar({
       aria-label="Unsaved changes"
       aria-live="polite"
       className={cn(
-        "flex shrink-0 flex-row flex-wrap items-center justify-between gap-x-3 gap-y-2 border-border bg-surface-raised px-4 py-3",
+        "flex shrink-0 flex-row flex-wrap items-center justify-between gap-x-3 gap-y-2 border-border bg-surface-raised px-4 py-3 transition-[transform,opacity] duration-700 ease-in-out",
+        isEntered
+          ? "translate-y-0 opacity-100"
+          : slidesFromTop
+            ? "-translate-y-full opacity-0"
+            : "translate-y-full opacity-0",
         isInlineBottom && "py-2",
         isInlineTop && "order-first",
         isFixed
@@ -90,14 +112,19 @@ export function UnSavedChangesBar({
       <div className="ml-auto flex shrink-0 flex-nowrap items-center gap-2">
         <Button
           type="button"
-          variant="outline"
+          variant="secondary"
           size="sm"
           onClick={onDiscard}
           disabled={busy}
         >
           Discard
         </Button>
-        <Button type="button" onClick={handleSave} disabled={busy}>
+        <Button
+          type="button"
+          onClick={handleSave}
+          disabled={busy}
+          style={primaryColor ? { backgroundColor: primaryColor } : undefined}
+        >
           {busy ? "Saving..." : "Save"}
         </Button>
       </div>
