@@ -132,17 +132,17 @@ export function Store() {
                 )) : undefined}
                 className="w-full"
             />
-            <AddStore
+            {canCreateStore && <AddStore
                 open={isOpen}
                 onOpenChange={handleModalOpenChange}
                 store={editStore}
-            />
-            <DeleteStore
+            />}
+            {canDeleteStore && <DeleteStore
                 open={isDeleteOpen}
                 onOpenChange={handleDeleteModalChange}
                 stores={deleteRequest?.stores ?? []}
                 onDeleted={deleteRequest?.onDeleted}
-            />
+            />}
         </>
 
     );
