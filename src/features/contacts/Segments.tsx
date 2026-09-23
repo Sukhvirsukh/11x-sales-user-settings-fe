@@ -23,8 +23,8 @@ const columns: Column[] = [
         render: (value) => {
             const status = String(value)
             return (
-                <Badge variant={status === "Active" ? "default" : "destructive"}>
-                    {status}
+                <Badge variant={status ? "default" : "destructive"}>
+                    {status ? "Active" : "Inactive"}
                 </Badge>
             )
         },

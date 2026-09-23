@@ -21,6 +21,8 @@ export default function SpamFilter() {
                         type="number"
                         hint="Limit the number of messages a user can send during a period time"
                         {...register("rateLimit")}
+                        max={500}
+                        min={1}
                     />
 
                     <SelectField
@@ -36,6 +38,7 @@ export default function SpamFilter() {
                     <InputField
                         label="Message when limit is reached"
                         placeholder="Enter"
+                        maxLength={500}
                         {...register("messageWhenLimitReached")}
                     />
                 </FormGroup>
