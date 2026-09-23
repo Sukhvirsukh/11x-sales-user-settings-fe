@@ -40,7 +40,7 @@ export default function InfoModal({
             >
                 <div
                     aria-hidden="true"
-                    className="pointer-events-none absolute -left-[135px] -top-[60px] size-[418px] rounded-full bg-primary/5"
+                    className="pointer-events-none absolute -left-33.75 -top-15 size-104.5 rounded-full bg-primary/10"
                 />
 
                 <DialogClose
