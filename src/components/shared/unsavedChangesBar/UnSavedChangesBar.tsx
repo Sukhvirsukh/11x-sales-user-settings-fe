@@ -12,6 +12,8 @@ interface UnSavedChangesBarProps {
   message?: string;
   className?: string;
   saving?: boolean;
+  /** Disables the Save button without hiding the bar, e.g. when the viewer lacks the change permission. */
+  saveDisabled?: boolean;
   /** `inline` participates in page layout; `fixed` overlays the viewport. */
   placement?: "inline" | "fixed";
   /** Defaults to `bottom` for inline bars and `top` for fixed bars. */
@@ -29,6 +31,7 @@ export function UnSavedChangesBar({
   message = "You have unsaved changes",
   className,
   saving = false,
+  saveDisabled = false,
   placement = "inline",
   edge,
   dialogTitle,
@@ -63,6 +66,7 @@ export function UnSavedChangesBar({
   }, [isDirty]);
 
   async function handleSave() {
+    if (saveDisabled) return;
     setIsSaving(true);
     try {
       await onSave();
@@ -122,7 +126,7 @@ export function UnSavedChangesBar({
         <Button
           type="button"
           onClick={handleSave}
-          disabled={busy}
+          disabled={busy || saveDisabled}
           style={primaryColor ? { backgroundColor: primaryColor } : undefined}
         >
           {busy ? "Saving..." : "Save"}

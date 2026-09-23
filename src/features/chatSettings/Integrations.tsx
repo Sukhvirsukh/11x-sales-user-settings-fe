@@ -6,13 +6,14 @@ import { Button } from "@/components/ui/button";
 import shopifyIcon from "@/assets/integrations/shopify.svg";
 import backendIcon from "@/assets/integrations/backend.svg";
 import { useIntegrationsQuery } from "./chatSettingsQuery";
+import { useCan } from "@/features/auth";
 
 const ShopifyIcon = memo(function ShopifyIcon() {
     return (
         <img
             src={shopifyIcon}
             alt=""
-            className="size-10 shrink-0 rounded md:size-[47px]"
+            className="size-10 shrink-0 rounded md:size-11.75"
         />
     );
 });
@@ -22,7 +23,7 @@ const BackendIcon = memo(function BackendIcon() {
         <img
             src={backendIcon}
             alt=""
-            className="size-10 shrink-0 rounded md:size-[47px]"
+            className="size-10 shrink-0 rounded md:size-11.75"
         />
     );
 });
@@ -63,19 +64,26 @@ const ToggleAction = memo(function ToggleAction({
 
 export default function Integrations() {
     const { data, isLoading } = useIntegrationsQuery();
+    // Connecting or disconnecting an integration is a change, so it follows the
+    // section's `create` grant. Without it the buttons stay visible but inert.
+    const canManageIntegrations = useCan("chatSettings.create");
     const [backendActive, setBackendActive] = useState(false);
 
     const shopifyActive = data?.shopify?.connected || false;
 
     const toggleShopify = useCallback(() => {
+        // Guard the action itself, not only the button, so a stray call can never
+        // apply an integration without the grant.
+        if (!canManageIntegrations) return;
         if (!shopifyActive) {
             window.open("https://www.shopify.com/", "_blank");
         }
-    }, []);
+    }, [canManageIntegrations, shopifyActive]);
 
     const toggleBackend = useCallback(() => {
+        if (!canManageIntegrations) return;
         setBackendActive((prev) => !prev);
-    }, []);
+    }, [canManageIntegrations]);
 
     return (
         <div className="flex min-w-0 flex-col gap-2.5 md:gap-4">
@@ -89,7 +97,7 @@ export default function Integrations() {
                     <ToggleAction
                         active={shopifyActive}
                         onToggle={toggleShopify}
-                        disabled={isLoading}
+                        disabled={isLoading || !canManageIntegrations}
                     />
                 }
                 contentClassName="flex-row items-center justify-between"
@@ -106,7 +114,7 @@ export default function Integrations() {
                     <ToggleAction
                         active={backendActive}
                         onToggle={toggleBackend}
-                        disabled={isLoading}
+                        disabled={isLoading || !canManageIntegrations}
                     />
                 }
                 contentClassName="flex-row items-center justify-between"

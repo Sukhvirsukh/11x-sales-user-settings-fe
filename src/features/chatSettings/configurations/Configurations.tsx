@@ -9,6 +9,7 @@ import { saveConfigurations } from "../chatSettingsApi";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { UnSavedChangesBar } from "@/components/shared/unsavedChangesBar";
 import { toast } from "@/components/ui/toast";
+import { useCan } from "@/features/auth";
 
 export type ConfigurationFormValues = Omit<Configuration, "rateLimit" | "rateLimitPerPeriod" | "messageWhenLimitReached"> & {
     rateLimit: string;
@@ -47,10 +48,19 @@ function toConfiguration(values: ConfigurationFormValues): Configuration {
 
 export default function Configurations() {
     const { data, isLoading } = useConfigurationsQuery();
+    // Saving is a change, so it follows the section's `create` grant. Without it
+    // the form stays readable and the Save action is inert — no backend request.
+    const canSaveConfigurations = useCan("chatSettings.create");
     const queryClient = useQueryClient();
     const form = useForm<ConfigurationFormValues>({ defaultValues: DEFAULT_VALUES });
     const saveMutation = useMutation({
-        mutationFn: saveConfigurations,
+        mutationFn: (values: Configuration) => {
+            // Second gate: even a direct mutate() call must not reach the API.
+            if (!canSaveConfigurations) {
+                return Promise.reject(new Error("You do not have permission to change chat settings."));
+            }
+            return saveConfigurations(values);
+        },
         onSuccess: (savedConfiguration) => {
             queryClient.setQueryData(chatSettingsConfigurationsQueryKey, savedConfiguration);
             form.reset(toFormValues(savedConfiguration));
@@ -72,15 +82,17 @@ export default function Configurations() {
                 <CrawlSettings />
                 <TrackingSettings />
                 <SpamFilter />
-                <UnSavedChangesBar
+                {canSaveConfigurations && <UnSavedChangesBar
                     isDirty={form.formState.isDirty}
                     saving={saveMutation.isPending}
+                    saveDisabled={!canSaveConfigurations}
                     placement="fixed"
                     onSave={async () => {
+                        if (!canSaveConfigurations) return;
                         await saveMutation.mutateAsync(toConfiguration(form.getValues()));
                     }}
                     onDiscard={() => form.reset(data ? toFormValues(data) : DEFAULT_VALUES)}
-                />
+                />}
             </form>
         </FormProvider>
     );
