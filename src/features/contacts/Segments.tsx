@@ -4,6 +4,7 @@ import SearchField from "@/components/shared/SearchField"
 import TableSkeleton from "@/components/shared/skeletons/TableSkeletons"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { useCan } from "@/features/auth"
 import { debounce } from "@/lib/utils"
 import { Download, Plus, Trash } from "lucide-react"
 import { useRef, useState } from "react"
@@ -34,6 +35,11 @@ const columns: Column[] = [
 ]
 
 export default function Segments() {
+    // Adding a segment is a change, so the button follows the Contacts create/edit
+    // grant — the permissions table grants the two together under "Changes".
+    const canCreateSegments = useCan("contacts.create")
+    const canEditSegments = useCan("contacts.edit")
+    const canChangeSegments = canCreateSegments || canEditSegments
     const [searchParams, setSearchParams] = useSearchParams()
     const setSearchParamsRef = useRef(setSearchParams)
     setSearchParamsRef.current = setSearchParams
@@ -113,10 +119,12 @@ export default function Segments() {
                 headerActions={
                     <div className="flex items-center gap-2.5">
                         <SearchField onSearchChange={handleSearchChange} />
-                        <Button variant="primary" onClick={() => setIsAddOpen(true)}>
-                            Add segment
-                            <Plus className="ml-0.5 size-2 md:ml-2 md:size-4" />
-                        </Button>
+                        {canChangeSegments && (
+                            <Button variant="primary" onClick={() => setIsAddOpen(true)}>
+                                Add segment
+                                <Plus className="ml-0.5 size-2 md:ml-2 md:size-4" />
+                            </Button>
+                        )}
                     </div>
                 }
                 rowActions={(row) => (
