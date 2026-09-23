@@ -4,9 +4,10 @@ import {
     type KeyboardEvent,
     type ClipboardEvent,
 } from "react";
-import { X } from "lucide-react";
+import { Plus, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import Label from "@/components/design/Label";
 import HelperText from "@/components/design/HelperText";
 
@@ -63,14 +64,26 @@ export function MultiTextField({
         updateTags(tags.filter((tag) => tag !== tagToRemove));
     }
 
+    /**
+     * Turns whatever is typed into a tag. Called on Enter and on blur, so text
+     * the user typed and then clicked away from is not silently discarded (and
+     * the form's dirty state is not missed).
+     */
+    function commitInput() {
+        const next = inputValue.trim();
+        if (disabled || !next) return;
+        if (!tags.includes(next)) updateTags([...tags, next]);
+        setInputValue("");
+    }
+
     function handleKeyDown(e: KeyboardEvent<HTMLInputElement>) {
         if (disabled) return;
 
-        if (e.key === separator && inputValue.trim()) {
-            e.preventDefault();
-            const next = inputValue.trim();
-            if (!tags.includes(next)) updateTags([...tags, next]);
-            setInputValue("");
+        if (e.key === separator) {
+            if (inputValue.trim()) {
+                e.preventDefault();
+                commitInput();
+            }
             return;
         }
 
@@ -124,26 +137,42 @@ export function MultiTextField({
                     </span>
                 ))}
 
-                <Input
-                    id={inputId}
-                    type="text"
-                    value={inputValue}
-                    onChange={(e) => setInputValue(e.target.value)}
-                    onKeyDown={handleKeyDown}
-                    onPaste={handlePaste}
-                    placeholder={tags.length === 0 ? placeholder : "Add..."}
-                    disabled={disabled}
-                    aria-describedby={
-                        [hint ? hintId : null, error ? errorId : null]
-                            .filter(Boolean)
-                            .join(" ") || undefined
-                    }
-                    aria-invalid={Boolean(error) || undefined}
-                    className={cn(
-                        "h-auto min-w-[5.5rem] flex-1 py-0.5",
-                        tags.length === 0 && "w-full min-w-0"
-                    )}
-                />
+                {/* Input and Add button share one flexible track so the button always
+                    stays beside the input instead of wrapping onto its own line. */}
+                <div className="flex min-w-[10rem] flex-1 items-center gap-1.5">
+                    <Input
+                        id={inputId}
+                        type="text"
+                        value={inputValue}
+                        onChange={(e) => setInputValue(e.target.value)}
+                        onKeyDown={handleKeyDown}
+                        onPaste={handlePaste}
+                        onBlur={commitInput}
+                        placeholder={tags.length === 0 ? placeholder : "Add..."}
+                        disabled={disabled}
+                        aria-describedby={
+                            [hint ? hintId : null, error ? errorId : null]
+                                .filter(Boolean)
+                                .join(" ") || undefined
+                        }
+                        aria-invalid={Boolean(error) || undefined}
+                        className="h-auto min-w-0 flex-1 py-0.5"
+                    />
+                </div>
+                {/* Explicit affordance: the same commit as pressing Enter, so the
+                        "type then add" flow is discoverable without a keyboard hint. */}
+                <div className="absolute right-3 bottom-3">
+                    <Button
+                        type="button"
+                        size="xs"
+                        onClick={commitInput}
+                        disabled={disabled || !inputValue.trim()}
+                        className="shrink-0"
+                    >
+                        Add
+                        <Plus className="ml-1 size-3.5" />
+                    </Button>
+                </div>
             </div>
 
             {error ? (

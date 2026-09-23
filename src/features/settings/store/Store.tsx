@@ -33,10 +33,9 @@ const columns: Column[] = [
 
 export function Store() {
     const { data = [], isLoading, error } = useStoreQuery();
-    // Each affordance asks for the capability it needs, so any grant the backend
-    // makes (create / edit / delete independently) shows up here unchanged.
+    // Create implies edit, so adding and editing a store share one grant — only
+    // delete is asked for separately.
     const canCreateStore = useCan("settings.store.create");
-    const canEditStore = useCan("settings.store.edit");
     const canDeleteStore = useCan("settings.store.delete");
     const [search, setSearch] = useState("");
     const [editStore, setEditStore] = useState<Record<string, unknown> | null>(null);
@@ -117,9 +116,9 @@ export function Store() {
                         )}
                     </div>
                 }
-                rowActions={canEditStore || canDeleteStore ? ((row) => (
+                rowActions={canCreateStore || canDeleteStore ? ((row) => (
                     <div className="flex items-center gap-2">
-                        {canEditStore && (
+                        {canCreateStore && (
                             <Button variant="bare" size="sm" onClick={() => openEditStore(row)} aria-label="Edit store">
                                 <SquarePen className="size-3 text-content-muted" />
                             </Button>
@@ -133,17 +132,17 @@ export function Store() {
                 )) : undefined}
                 className="w-full"
             />
-            <AddStore
+            {canCreateStore && <AddStore
                 open={isOpen}
                 onOpenChange={handleModalOpenChange}
                 store={editStore}
-            />
-            <DeleteStore
+            />}
+            {canDeleteStore && <DeleteStore
                 open={isDeleteOpen}
                 onOpenChange={handleDeleteModalChange}
                 stores={deleteRequest?.stores ?? []}
                 onDeleted={deleteRequest?.onDeleted}
-            />
+            />}
         </>
 
     );

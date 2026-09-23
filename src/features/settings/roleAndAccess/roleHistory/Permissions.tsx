@@ -60,15 +60,18 @@ export default function Permissions({ control, disabled = false }: {
                 function setActions(section: string, actions: readonly PermissionAction[], granted: boolean) {
                     const sectionValues = { ...values[section] };
                     for (const action of actions) sectionValues[action] = granted;
+                    // A granted action is meaningless without view, so granting
+                    // anything implies it. Unchecking never revokes view here.
+                    if (granted) sectionValues.view = true;
                     field.onChange({ ...values, [section]: sectionValues });
                 }
 
                 const columns: Column[] = [
                     {
                         key: "label",
-                        header: "Section",
+                        header: "Name",
                         width: "180px",
-                        render: (value) => <span className="font-medium">{String(value ?? "")}</span>,
+                        render: (value) => <span className="">{String(value ?? "")}</span>,
                     },
                     ...PERMISSION_COLUMNS.map((column) => ({
                         key: column.key,
@@ -103,7 +106,7 @@ export default function Permissions({ control, disabled = false }: {
                 return (
                     <CustomTable
                         title="Permissions"
-                        description="Grant any action to any role. Create and edit are granted together."
+                        // description="Grant any action to any role. Create and edit are granted together."
                         columns={columns}
                         data={rows}
                         className={compactCells}

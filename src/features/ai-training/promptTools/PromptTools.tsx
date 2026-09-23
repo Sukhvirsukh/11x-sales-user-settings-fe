@@ -7,6 +7,7 @@ import { TextAreaField } from "@/components/design/TextAreaField";
 import { ToggleField } from "@/components/design/ToggleField";
 import { UnSavedChangesBar } from "@/components/shared/unsavedChangesBar";
 import { toast } from "@/components/ui/toast";
+import { useCan } from "@/features/auth";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
@@ -62,13 +63,19 @@ function ActionCard({ heading, content, isChecked = false, onToggle }: ActionCar
 
 export function PromptTools() {
     const { data, isLoading, isError } = usePromptToolsQuery();
+    const canSavePromptTools = useCan("aiTraining.create");
     const queryClient = useQueryClient();
     const form = useForm<PromptToolsFormValues>({
         defaultValues: DEFAULT_VALUES,
     });
     const { register, reset, setValue, watch } = form;
     const saveMutation = useMutation({
-        mutationFn: savePromptTools,
+        mutationFn: (values: PromptToolsFormValues) => {
+            if (!canSavePromptTools) {
+                return Promise.reject(new Error("You do not have permission to change prompt tools."));
+            }
+            return savePromptTools(values);
+        },
         onSuccess: (savedData) => {
             queryClient.setQueryData(promptToolsQueryKey, savedData);
             reset(toFormValues(savedData));
@@ -159,15 +166,17 @@ export function PromptTools() {
                 </div>
 
             </AppSection>
-            <UnSavedChangesBar
+            {canSavePromptTools && <UnSavedChangesBar
                 isDirty={form.formState.isDirty}
                 saving={saveMutation.isPending}
+                saveDisabled={!canSavePromptTools}
                 placement="fixed"
                 onSave={async () => {
+                    if (!canSavePromptTools) return;
                     await saveMutation.mutateAsync(form.getValues());
                 }}
                 onDiscard={() => reset(data ? toFormValues(data) : DEFAULT_VALUES)}
-            />
+            />}
         </>
     )
 }

@@ -1,6 +1,7 @@
 import { useReportQuery } from "./reportQuery";
 
 import CustomTable, { type Column } from "@/components/design/CustomTable";
+import { useCan } from "@/features/auth";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
@@ -28,6 +29,9 @@ const columns: Column[] = [
 
 export function Reports() {
     const { data = [], isLoading } = useReportQuery()
+    // Generating a report is a change, so the button follows `reports.create`
+    // alone (create implies edit). Deleting is a separate grant, not offered here.
+    const canCreateReport = useCan("reports.create")
     const search = ""
 
     const setSearch = (value: string) => {
@@ -50,7 +54,7 @@ export function Reports() {
             headerActions={
                 <div className="flex items-center gap-2.5">
                     <SearchField onSearchChange={setSearch} />
-                    <GenerateReport />
+                    {canCreateReport && <GenerateReport />}
                 </div>
             }
             rowActions={() => (

@@ -8,7 +8,7 @@
  * [
  *   { "overview": { "view": true } },
  *   { "contacts": { "view": true } },
- *   { "settings.roles": { "view": true, "edit": true } }
+ *   { "settings.roles": { "view": true, "create": true, "edit": true } }
  * ]
  * ```
  *

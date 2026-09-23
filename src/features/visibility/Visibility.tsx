@@ -20,8 +20,10 @@ import ResetVisibilityModal from "./ResetVisibilityModal";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft } from "lucide-react";
 import { useNavigate } from "react-router";
+import { useCan } from "../auth";
 
 export default function Visibility() {
+    const canSaveVisibility = useCan("chatSettings.create");
     const navigate = useNavigate();
     const query = useVisibilityQuery();
     const queryClient = useQueryClient();
@@ -39,7 +41,7 @@ export default function Visibility() {
         }
     }, [form, query.data]);
 
-    function resetToSavedValues() {
+    function onDiscardChanges() {
         form.reset(query.data);
         form.clearErrors();
         setValidationErrors([]);
@@ -48,6 +50,9 @@ export default function Visibility() {
     }
 
     async function saveChange() {
+        if (!canSaveVisibility) {
+            return
+        }
         const values = form.getValues();
         const result = requiredFieldsSchema.safeParse(values);
 
@@ -132,7 +137,7 @@ export default function Visibility() {
                         </div>
 
                         <footer className="mt-auto shrink-0 pb-1 sm:pb-2">
-                            <ResetVisibilityModal />
+                            {canSaveVisibility && <ResetVisibilityModal />}
                         </footer>
                     </aside>
 
@@ -144,15 +149,16 @@ export default function Visibility() {
                             onToggleMaximize={() => setIsMaximized((current) => !current)}
                         />
 
-                        <UnSavedChangesBar
+                        {canSaveVisibility && <UnSavedChangesBar
                             isDirty={form.formState.isDirty}
                             onSave={saveChange}
-                            onDiscard={resetToSavedValues}
+                            saveDisabled={!canSaveVisibility}
+                            onDiscard={onDiscardChanges}
                             primaryColor={form.watch("primaryColor")}
                             placement="inline"
                             edge="bottom"
                             className="absolute inset-x-0 bottom-0 z-40"
-                        />
+                        />}
                     </div>
                 </div>
 

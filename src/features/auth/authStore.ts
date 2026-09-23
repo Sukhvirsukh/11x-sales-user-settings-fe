@@ -1,18 +1,19 @@
 import { create } from "zustand";
 import type { AuthStore, AuthUser } from "./authTypes";
 import { getPermissions, type Permission } from "./permissions";
-import { getDefaultPermissions } from "./permissionsDefaultData";
+import { getDefaultPermissions, hasDefaultPermissions } from "./permissionsDefaultData";
 
 const LEGACY_AUTH_STORE_STORAGE_KEY = "vitalb.user";
 
 function resolvePermissions(user?: AuthUser | null): Permission[] {
     if (!user) return [];
 
-    // A present backend payload is authoritative, including an explicit empty
-    // payload. Role defaults are only for responses that omit permissions.
-    return user.permissions == null
-        ? [...getDefaultPermissions(user.role)]
-        : [...getPermissions(user.permissions)];
+    // TEMPORARY: a known role's set in `permissionsDefaultData.ts` overrides the
+    // API payload, so editing that file is enough to change what a role can do.
+    // An unrecognised role has no set and falls back to whatever the API sent.
+    if (hasDefaultPermissions(user.role)) return [...getDefaultPermissions(user.role)];
+
+    return [...getPermissions(user.permissions)];
 }
 
 // Remove profile data written by versions that persisted the Zustand store.

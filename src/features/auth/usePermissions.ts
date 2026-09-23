@@ -16,7 +16,7 @@ export function usePermissions(): ReadonlySet<Permission> {
 }
 
 /**
- * One capability check, e.g. `useCan("settings.store.edit")`. Reads as a
+ * One capability check, e.g. `useCan("settings.store.create")`. Reads as a
  * permission question so UI affordances stay decoupled from role names.
  */
 export function useCan(permission: Permission): boolean {
