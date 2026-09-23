@@ -56,6 +56,11 @@ against this table (but doing so is recommended, see §7).
 > the user grants one, the frontend sends `true` for **both**. Treat them as
 > independent columns in storage (the payload has separate keys), just expect
 > them to move together.
+>
+> **The frontend gates on `create` alone.** Because create implies edit, every
+> change affordance in the UI asks for `<section>.create` — a role with `create`
+> can add *and* edit. Send `edit` for completeness (and storage), but no UI
+> element keys off it.
 
 ---
 
@@ -345,17 +350,15 @@ Settings tabs are filtered the same way on `settings.profile.view`,
 | Capability | Gates |
 | --- | --- |
 | `settings.roles.view` | the role history table |
-| `settings.roles.create` | "Add role" button |
-| `settings.roles.edit` | edit action on a row |
+| `settings.roles.create` | "Add role" button and the edit action on a row |
 | `settings.roles.delete` | delete action, row selection, bulk delete |
-| `settings.store.create` | "Add store" button |
-| `settings.store.edit` | edit action on a store row |
+| `settings.store.create` | "Add store" button and the edit action on a store row |
 | `settings.store.delete` | delete action, row selection, bulk delete |
+| `contacts.create` | "Add segment" button on the Segments tab |
 
-**All other actions are stored but not yet used to hide anything** — e.g.
-`contacts.create` is persisted and returned, but the Contacts page does not gate
-its buttons on it yet. Until it does, those actions are purely a backend
-authorization matter.
+**All other actions are stored but not yet used to hide anything.** For example
+the Contacts delete affordances are not gated on `contacts.delete` yet, so those
+actions are currently a backend authorization matter only.
 
 > Hiding UI is a convenience, not security. The backend must enforce every
 > capability on every endpoint regardless of what the payload says.
@@ -466,7 +469,9 @@ included explicitly so the effective access for each role is unambiguous.
 3. **Unknown sections survive round-trips.** The edit form keeps grants it does
    not render and posts them back, so you can add a section server-side before
    the UI ships.
-4. **`create` and `edit` travel together** (§1). Do not be surprised if both flip.
+4. **`create` and `edit` travel together** (§1). Do not be surprised if both
+   flip. The UI reads `create` for every change affordance, so flipping `edit`
+   alone changes nothing a user can see.
 5. **Validate on write.** The frontend's schema only checks that values are
    booleans. The backend should whitelist known section/action keys (reject or
    drop the rest), since a hand-crafted request can otherwise store anything.

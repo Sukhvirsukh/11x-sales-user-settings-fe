@@ -41,10 +41,9 @@ function rowId(row: RoleRow) {
 }
 
 export default function RoleHistory() {
-    // Each affordance asks for the capability it needs, so the table stays unchanged
-    // when the policy moves a permission to another role.
+    // Create implies edit, so adding and editing a role share one grant — only
+    // delete is asked for separately.
     const canCreateRole = useCan("settings.roles.create")
-    const canEditRole = useCan("settings.roles.edit")
     const canDeleteRole = useCan("settings.roles.delete")
     const { data = [], isLoading, error } = useRoleHistoryQuery()
     const [editData, setEditData] = useState<RoleRow | null>(null)
@@ -128,9 +127,9 @@ export default function RoleHistory() {
                         )}
                     </div>
                 }
-                rowActions={canEditRole || canDeleteRole ? (row) => (
+                rowActions={canCreateRole || canDeleteRole ? (row) => (
                     <div className="flex items-center gap-2">
-                        {canEditRole && (
+                        {canCreateRole && (
                             <Button variant="bare" size="sm" onClick={() => openEditRole(row)} aria-label="Edit role">
                                 <SquarePen className="size-4 text-content-muted" />
                             </Button>

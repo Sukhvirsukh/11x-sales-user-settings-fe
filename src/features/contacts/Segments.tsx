@@ -35,11 +35,10 @@ const columns: Column[] = [
 ]
 
 export default function Segments() {
-    // Adding a segment is a change, so the button follows the Contacts create/edit
-    // grant — the permissions table grants the two together under "Changes".
+    // Adding a segment is a change, so the button follows `contacts.create` alone.
+    // The permissions table grants create and edit together under "Changes", and
+    // create implies edit — so `create` is the whole change capability.
     const canCreateSegments = useCan("contacts.create")
-    const canEditSegments = useCan("contacts.edit")
-    const canChangeSegments = canCreateSegments || canEditSegments
     const [searchParams, setSearchParams] = useSearchParams()
     const setSearchParamsRef = useRef(setSearchParams)
     setSearchParamsRef.current = setSearchParams
@@ -119,7 +118,7 @@ export default function Segments() {
                 headerActions={
                     <div className="flex items-center gap-2.5">
                         <SearchField onSearchChange={handleSearchChange} />
-                        {canChangeSegments && (
+                        {canCreateSegments && (
                             <Button variant="primary" onClick={() => setIsAddOpen(true)}>
                                 Add segment
                                 <Plus className="ml-0.5 size-2 md:ml-2 md:size-4" />
