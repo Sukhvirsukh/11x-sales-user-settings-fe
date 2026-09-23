@@ -15,7 +15,7 @@ import { roleFormSchema } from "./roleHistorySchema";
 
 import type { RoleFormValues, RoleRow } from "./roleHistoryType";
 import { ROLE_OPTIONS } from "./roleOptions";
-// import Permissions from "./Permissions";
+import Permissions from "./Permissions";
 import { permissionValuesFrom, toPermissionValues } from "@/features/auth/permissions";
 import { getDefaultPermissions } from "@/features/auth/permissionsDefaultData";
 
@@ -102,43 +102,48 @@ export default function AddRoleForm({ open, onOpenChange, role }: AddRoleFormPro
         >
             <form onSubmit={handleSubmit(saveRole)} noValidate>
                 <FormGroup gap="sm">
-                    <InputField
-                        label="Name"
-                        placeholder="Enter name"
-                        labelClassName="text-sm font-medium"
-                        error={errors.name?.message}
-                        {...register("name")}
-                    />
-                    <InputField
-                        label="Email"
-                        placeholder="Enter email"
-                        labelClassName="text-sm font-medium"
-                        error={errors.email?.message}
-                        {...register("email")}
-                    />
-                    <SelectField
-                        label="Role"
-                        placeholder="Select role"
-                        value={selectedRole}
-                        error={errors.role?.message}
-                        onValueChange={(nextRole) => {
-                            // Re-picking the same role must not wipe permissions already
-                            // loaded from the API (or customised by hand).
-                            if (!nextRole || nextRole === selectedRole) return;
+                    <FormGroup gap="sm" col={2}>
+                        <InputField
+                            label="Name"
+                            placeholder="Enter name"
+                            labelClassName="text-sm font-medium"
+                            error={errors.name?.message}
+                            {...register("name")}
+                        />
+                        <InputField
+                            label="Email"
+                            placeholder="Enter email"
+                            labelClassName="text-sm font-medium"
+                            error={errors.email?.message}
+                            {...register("email")}
+                        />
 
-                            setValue("role", nextRole, {
-                                shouldDirty: true,
-                                shouldValidate: true,
-                            });
-                            // Tick the boxes this role starts with; every one stays editable.
-                            setValue("permissions", permissionValuesFrom(getDefaultPermissions(nextRole)), {
-                                shouldDirty: true,
-                                shouldValidate: true,
-                            });
-                        }}
-                        options={ROLE_OPTIONS}
-                    />
-                    {/* <Permissions control={control} disabled={!selectedRole || saveRoleMutation.isPending} /> */}
+                    </FormGroup>
+                    <FormGroup gap="sm">
+                        <SelectField
+                            label="Role"
+                            placeholder="Select role"
+                            value={selectedRole}
+                            error={errors.role?.message}
+                            onValueChange={(nextRole) => {
+                                // Re-picking the same role must not wipe permissions already
+                                // loaded from the API (or customised by hand).
+                                if (!nextRole || nextRole === selectedRole) return;
+
+                                setValue("role", nextRole, {
+                                    shouldDirty: true,
+                                    shouldValidate: true,
+                                });
+                                // Tick the boxes this role starts with; every one stays editable.
+                                setValue("permissions", permissionValuesFrom(getDefaultPermissions(nextRole)), {
+                                    shouldDirty: true,
+                                    shouldValidate: true,
+                                });
+                            }}
+                            options={ROLE_OPTIONS}
+                        />
+                        <Permissions control={control} disabled={!selectedRole || saveRoleMutation.isPending} />
+                    </FormGroup>
                 </FormGroup>
             </form>
         </Modal>
