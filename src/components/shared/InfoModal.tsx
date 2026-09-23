@@ -58,7 +58,7 @@ export default function InfoModal({
                 </DialogClose>
 
                 <div className="relative z-1 text-center">
-                    <DialogTitle className="mx-auto max-w-[320px] text-lg md:text-3xl font-bold leading-7 text-foreground">
+                    <DialogTitle className="mx-auto max-w-[320px] text-3xl font-bold leading-7 text-foreground">
                         {title}
                     </DialogTitle>
                     <DialogDescription
