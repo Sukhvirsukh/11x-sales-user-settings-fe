@@ -15,8 +15,12 @@ import { addReport } from "./reportApi";
 import { queryClient } from "@/lib/queryClient";
 import { reportQueryKey } from "./reportQuery";
 import { toast } from "@/components/ui/toast";
+import { useCan } from "@/features/auth";
 
 export default function GenerateReport() {
+    // Guarding the trigger here, not just at the call site, means the "Generate
+    // Report" affordance can never leak in a view that forgets to gate it.
+    const canCreateReport = useCan("reports.create")
     const [isOpen, setIsOpen] = useState(false);
     const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm<ReportFormValues>({
         resolver: zodResolver(reportFormSchema)
@@ -48,6 +52,10 @@ export default function GenerateReport() {
     const saveReport = (reportFormValues: ReportFormValues) => {
         generateReportMutation.mutate(reportFormValues);
     }
+
+    // Checked after every hook so the hook order is identical whether or not the
+    // user may generate a report.
+    if (!canCreateReport) return null;
 
     return (
         <Modal
