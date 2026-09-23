@@ -179,6 +179,14 @@ function LoadedChatBox({ fields, onClose, className = "", defaultMessages }: Cha
         style={{ backgroundColor: `${primaryColor}22` }}
       >
         <div className="flex min-w-0 items-center gap-2">
+          {avatarUrl && (
+            <img
+              src={avatarUrl}
+              alt=""
+              aria-hidden="true"
+              className="size-6 shrink-0 object-cover"
+            />
+          )}
           <div className="min-w-0 flex items-center gap-2.5">
             <p className="truncate text-lg font-semibold tracking-[0.02em]">
               {aiAgentName}

@@ -15,7 +15,7 @@ import { Spinner } from "@/components/ui/spinner";
 import type { VisibilityFields } from "./visibilityTypes";
 import { useVisibilityQuery, visibilityQueryKey } from "./visibilityQuery";
 import { requiredFieldsSchema } from "./fields/validations";
-import { saveVisibility } from "./visibilityApi";
+import { saveVisibility, uploadChatFace } from "./visibilityApi";
 import ResetVisibilityModal from "./ResetVisibilityModal";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft } from "lucide-react";
@@ -83,9 +83,22 @@ export default function Visibility() {
         }
 
         await form.handleSubmit(async (data) => {
-            const savedData = await saveVisibility(data);
-            queryClient.setQueryData(visibilityQueryKey, savedData);
-            form.reset(savedData);
+            try {
+                let chatFace = data.chatFace;
+
+                if (chatFace instanceof File) {
+                    chatFace = await uploadChatFace(chatFace);
+                    form.setValue("chatFace", chatFace, { shouldDirty: true });
+                }
+
+                const savedData = await saveVisibility({ ...data, chatFace });
+                queryClient.setQueryData(visibilityQueryKey, savedData);
+                form.reset(savedData);
+            } catch (error) {
+                setValidationErrors([]);
+                setErrorMessage(error instanceof Error ? error.message : "Unable to save visibility settings.");
+                setErrorDialogOpen(true);
+            }
         })();
     }
 

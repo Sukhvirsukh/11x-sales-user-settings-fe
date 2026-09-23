@@ -40,9 +40,9 @@ export default function LookNFeel() {
 
       <ImageUploader
         label="Chat face"
-        note="Upload an image for the chat avatar. Accepted formats: PNG, JPG, JPEG, GIF, WEBP. Maximum file size: 50KB."
-        accept={["image/png", "image/jpeg", "image/jpg", "image/gif", "image/webp"]}
-        maxSizeKB={50}
+        note="Upload a PNG or JPEG image for the chat avatar. Maximum file size: 100KB."
+        accept={["image/png", "image/jpeg"]}
+        maxSizeKB={100}
         value={fields.chatFace}
         onValueChange={(file) => setField("chatFace", file)}
       />

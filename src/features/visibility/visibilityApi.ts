@@ -1,7 +1,11 @@
 import { apiFetch } from "@/lib/api";
 import type { VisibilityFields } from "./visibilityTypes";
 
-type ChatDesignResponse = VisibilityFields & {
+type VisibilitySaveFields = Omit<VisibilityFields, "chatFace"> & {
+    chatFace: string | null;
+};
+
+type ChatDesignResponse = VisibilitySaveFields & {
     id?: string;
     userId?: string;
 };
@@ -11,6 +15,23 @@ type ChatDesignApiResponse = {
     message: string;
     data: ChatDesignResponse;
 };
+
+const CHAT_FACE_TYPES = new Set(["image/png", "image/jpeg"]);
+const CHAT_FACE_MAX_BYTES = 100 * 1024;
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+    return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function getUploadedImageReference(response: unknown): string | null {
+    if (typeof response === "string" && response.trim()) return response;
+    if (!isRecord(response)) return null;
+
+    const directReference = response.url ?? response.imageUrl ?? response.path;
+    if (typeof directReference === "string" && directReference.trim()) return directReference;
+
+    return getUploadedImageReference(response.data);
+}
 
 function toVisibilityFields(response: ChatDesignResponse): VisibilityFields {
     return {
@@ -50,7 +71,31 @@ export async function getVisibility(): Promise<VisibilityFields> {
     return toVisibilityFields(response.data);
 }
 
-export async function saveVisibility(values: VisibilityFields): Promise<VisibilityFields> {
+export async function uploadChatFace(image: File): Promise<string> {
+    if (!CHAT_FACE_TYPES.has(image.type)) {
+        throw new Error("Chat face must be a PNG or JPEG image.");
+    }
+    if (image.size > CHAT_FACE_MAX_BYTES) {
+        throw new Error("Chat face must be 100KB or smaller.");
+    }
+
+    const formData = new FormData();
+    formData.append("image", image);
+
+    const response = await apiFetch<unknown>("/chat-design/upload-image", {
+        method: "POST",
+        body: formData,
+    });
+    const imageReference = getUploadedImageReference(response);
+
+    if (!imageReference) {
+        throw new Error("The image upload response did not include an image reference.");
+    }
+
+    return imageReference;
+}
+
+export async function saveVisibility(values: VisibilitySaveFields): Promise<VisibilityFields> {
     const response = await apiFetch<ChatDesignApiResponse>("/chat-design", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
