@@ -166,7 +166,14 @@ src/
 ├── features/
 │   ├── ai-training/                 # NOTE: kebab-case folder
 │   │   ├── corrections/
-│   │   │   ├── Corrections.tsx
+│   │   │   ├── Corrections.tsx      # Searchable mock-backed table with permission-aware edit/delete actions
+│   │   │   ├── EditCorrection.tsx
+│   │   │   ├── DeleteCorrections.tsx
+│   │   │   ├── correctionsApi.ts    # Mock get/update/bulk-delete API
+│   │   │   ├── correctionsQuery.ts
+│   │   │   ├── correctionSchema.ts
+│   │   │   ├── correctionTypes.ts
+│   │   │   ├── mockCorrections.ts
 │   │   │   └── index.ts
 │   │   ├── knowledgeBase/
 │   │   │   ├── KnowledgeBase.tsx    # Table + search (CustomTable, TableSkeleton)
