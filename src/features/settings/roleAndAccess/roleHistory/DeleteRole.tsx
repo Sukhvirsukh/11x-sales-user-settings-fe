@@ -4,6 +4,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteRole, deleteRoles } from "./roleHistoryApi";
 import { roleHistoryQueryKey } from "./roleHistoryQuery";
 import { toast } from "@/components/ui/toast";
+import { useCan } from "@/features/auth";
 import type { RoleRow } from "./roleHistoryType";
 
 interface DeleteRoleProps {
@@ -15,9 +16,13 @@ interface DeleteRoleProps {
 
 
 export default function DeleteRole({ open, onOpenChange, roles, onDeleted }: DeleteRoleProps) {
+    const canDeleteRoles = useCan("settings.roles.delete");
     const queryClient = useQueryClient();
     const deleteRoleMutation = useMutation({
         mutationFn: async () => {
+            if (!canDeleteRoles) {
+                throw new Error("You do not have permission to delete roles.");
+            }
             const ids = roles.map((role) => {
                 if (!role.id) {
                     throw new Error("A selected role does not have an ID.");
@@ -44,19 +49,21 @@ export default function DeleteRole({ open, onOpenChange, roles, onDeleted }: Del
     });
 
     function confirmDelete() {
+        if (!canDeleteRoles) return;
         deleteRoleMutation.mutate();
     }
     return (
         <Modal
-            open={open}
+            open={open && canDeleteRoles}
             onOpenChange={(nextOpen) => {
+                if (nextOpen && !canDeleteRoles) return;
                 if (!deleteRoleMutation.isPending) onOpenChange(nextOpen);
             }}
             title={roles.length === 1 ? "Delete role" : "Delete roles"}
             primaryAction={{
                 label: deleteRoleMutation.isPending ? "Deleting..." : "Delete",
                 onClick: confirmDelete,
-                disabled: deleteRoleMutation.isPending || roles.length === 0,
+                disabled: deleteRoleMutation.isPending || roles.length === 0 || !canDeleteRoles,
                 variant: "destructive",
             }}
             closeAction={{ label: "Cancel", disabled: deleteRoleMutation.isPending }}

@@ -8,6 +8,7 @@ import { InputField } from "@/components/design/InputField";
 import Modal from "@/components/design/Modal";
 import { SelectField } from "@/components/design/SelectField";
 import { toast } from "@/components/ui/toast";
+import { useCan } from "@/features/auth";
 
 import { createRole, updateRole } from "./roleHistoryApi";
 import { roleHistoryQueryKey } from "./roleHistoryQuery";
@@ -47,6 +48,7 @@ function initialValues(role?: RoleRow | null): RoleFormValues {
 
 export default function AddRoleForm({ open, onOpenChange, role }: AddRoleFormProps) {
     const isEditing = Boolean(role);
+    const canManageRoles = useCan("settings.roles.create");
     const queryClient = useQueryClient();
     const {
         register,
@@ -67,6 +69,9 @@ export default function AddRoleForm({ open, onOpenChange, role }: AddRoleFormPro
 
     const saveRoleMutation = useMutation({
         mutationFn: (values: RoleFormValues) => {
+            if (!canManageRoles) {
+                return Promise.reject(new Error("You do not have permission to add or edit roles."));
+            }
             const id = role?.id;
             return id ? updateRole(id, values) : createRole(values);
         },
@@ -84,19 +89,23 @@ export default function AddRoleForm({ open, onOpenChange, role }: AddRoleFormPro
     });
 
     function saveRole(values: RoleFormValues) {
+        if (!canManageRoles) return;
         saveRoleMutation.mutate(values);
     }
 
     return (
         <Modal
-            open={open}
-            onOpenChange={onOpenChange}
+            open={open && canManageRoles}
+            onOpenChange={(nextOpen) => {
+                if (nextOpen && !canManageRoles) return;
+                onOpenChange(nextOpen);
+            }}
             title={isEditing ? "Edit role" : "Add role"}
             primaryAction={{
                 label: isEditing ? (saveRoleMutation.isPending ? "Saving..." : "Save changes")
                     : (saveRoleMutation.isPending ? "Adding..." : "Add role"),
                 onClick: handleSubmit(saveRole),
-                disabled: saveRoleMutation.isPending,
+                disabled: saveRoleMutation.isPending || !canManageRoles,
             }}
             closeAction={{ label: "Cancel", disabled: saveRoleMutation.isPending }}
         >
@@ -108,6 +117,7 @@ export default function AddRoleForm({ open, onOpenChange, role }: AddRoleFormPro
                             placeholder="Enter name"
                             labelClassName="text-sm font-medium"
                             error={errors.name?.message}
+                            disabled={!canManageRoles}
                             {...register("name")}
                         />
                         <InputField
@@ -115,6 +125,7 @@ export default function AddRoleForm({ open, onOpenChange, role }: AddRoleFormPro
                             placeholder="Enter email"
                             labelClassName="text-sm font-medium"
                             error={errors.email?.message}
+                            disabled={!canManageRoles}
                             {...register("email")}
                         />
 
@@ -125,6 +136,7 @@ export default function AddRoleForm({ open, onOpenChange, role }: AddRoleFormPro
                             placeholder="Select role"
                             value={selectedRole}
                             error={errors.role?.message}
+                            disabled={!canManageRoles}
                             onValueChange={(nextRole) => {
                                 // Re-picking the same role must not wipe permissions already
                                 // loaded from the API (or customised by hand).
@@ -142,7 +154,10 @@ export default function AddRoleForm({ open, onOpenChange, role }: AddRoleFormPro
                             }}
                             options={ROLE_OPTIONS}
                         />
-                        <Permissions control={control} disabled={!selectedRole || saveRoleMutation.isPending} />
+                        <Permissions
+                            control={control}
+                            disabled={!canManageRoles || !selectedRole || saveRoleMutation.isPending}
+                        />
                     </FormGroup>
                 </FormGroup>
             </form>

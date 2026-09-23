@@ -73,11 +73,13 @@ export default function RoleHistory() {
     }, [data, search])
 
     function openCreateRole() {
+        if (!canCreateRole) return
         setEditData(null)
         setIsOpen(true)
     }
 
     function openEditRole(role: RoleRow) {
+        if (!canCreateRole) return
         setEditData(role)
         setIsOpen(true)
     }
@@ -93,6 +95,7 @@ export default function RoleHistory() {
     }
 
     function requestDelete(roles: RoleRow[], onDeleted?: (ids: string[]) => void) {
+        if (!canDeleteRole) return
         setDeleteRequest({ roles, onDeleted })
         setIsDeleteOpen(true)
     }
@@ -143,17 +146,21 @@ export default function RoleHistory() {
                 ) : undefined}
                 className="w-full md:[&_th:nth-child(2)]:pl-0 md:[&_td:first-child:has([role=checkbox])+td]:pl-0"
             />
-            <AddRoleForm
-                open={isOpen}
-                onOpenChange={handleModalOpenChange}
-                role={editData}
-            />
-            <DeleteRole
-                open={isDeleteOpen}
-                onOpenChange={handleDeleteModalChange}
-                roles={deleteRequest?.roles ?? []}
-                onDeleted={deleteRequest?.onDeleted}
-            />
+            {canCreateRole && (
+                <AddRoleForm
+                    open={isOpen}
+                    onOpenChange={handleModalOpenChange}
+                    role={editData}
+                />
+            )}
+            {canDeleteRole && (
+                <DeleteRole
+                    open={isDeleteOpen}
+                    onOpenChange={handleDeleteModalChange}
+                    roles={deleteRequest?.roles ?? []}
+                    onDeleted={deleteRequest?.onDeleted}
+                />
+            )}
 
         </>
     )
