@@ -4,11 +4,12 @@ import Heading from "@/components/design/Heading";
 import { getInitials } from "@/lib/utils";
 import DetailContainer, { DetailGroup, DetailItem } from "@/components/design/DetailContainer";
 import BasicDetailsForm from "./BasicDetailsForm";
-import { useAuthStore } from "@/features/auth";
+import { useAuthStore, useCan } from "@/features/auth";
 
 export function BasicDetails() {
     const avatarUrl: string | undefined = undefined;
     const user = useAuthStore(data => data.user);
+    const canEditBasicDetails = useCan("settings.profile.create");
     const name = user?.name || '';
 
     return (
@@ -28,7 +29,7 @@ export function BasicDetails() {
                             )}
                         </div>
                     }
-                    actions={<BasicDetailsForm />}
+                    actions={canEditBasicDetails ? <BasicDetailsForm /> : undefined}
                 >
                     <DetailGroup>
                         <DetailItem label="Name" value={name} />
