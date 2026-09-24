@@ -32,6 +32,41 @@ const MOBILE_LEAD_SHARE = "65%"
 /** Every other mobile track takes whatever room is left. */
 const MOBILE_FILL = "minmax(0, 1fr)"
 
+/** Highest page count that still lists every page number instead of collapsing the gaps. */
+const MAX_VISIBLE_PAGES = 5
+/** Pages kept on each side of the current page before the run collapses into dots. */
+const PAGE_SIBLINGS = 1
+
+/** A page number, or a collapsed run of pages between two numbers. */
+type PageItem = number | "ellipsis"
+
+/**
+ * Page numbers to render. Up to `MAX_VISIBLE_PAGES` pages are all listed; past that the current
+ * page keeps `PAGE_SIBLINGS` neighbours, the first and last page stay reachable, and every skipped
+ * run becomes a single `"ellipsis"` — e.g. `1 2 3 … 9` or `1 … 4 5 6 … 9`.
+ */
+function getPageItems(currentPage: number, totalPages: number): PageItem[] {
+    if (totalPages <= MAX_VISIBLE_PAGES) {
+        return Array.from({ length: totalPages }, (_, index) => index + 1)
+    }
+
+    const runLength = PAGE_SIBLINGS * 2 + 1
+    const runStart = Math.min(Math.max(currentPage - PAGE_SIBLINGS, 1), totalPages - runLength + 1)
+    const runEnd = runStart + runLength - 1
+    const items: PageItem[] = []
+
+    // One skipped page is clearer shown as a number than as dots.
+    if (runStart > 2) items.push(1, "ellipsis")
+    else for (let page = 1; page < runStart; page += 1) items.push(page)
+
+    for (let page = runStart; page <= runEnd; page += 1) items.push(page)
+
+    if (runEnd < totalPages - 1) items.push("ellipsis", totalPages)
+    else for (let page = runEnd + 1; page <= totalPages; page += 1) items.push(page)
+
+    return items
+}
+
 type CustomTableProps<T extends Record<string, unknown> = Record<string, unknown>> = {
     title?: string
     /** Optional supporting line rendered under the title. */
@@ -277,10 +312,13 @@ export default function CustomTable<T extends Record<string, unknown>>({
                 </Table>
 
                 {pagination && data.length > 0 && totalPages > 1 && (
-                    <div className="flex w-full flex-wrap items-center justify-between gap-3 border-t border-section-border px-4 py-3 text-sm text-muted-foreground md:px-5">
-                        <span>
+                    <nav
+                        aria-label="Pagination"
+                        className="flex w-full flex-wrap items-center justify-center gap-3 border-t border-section-border px-4 py-3 text-sm text-muted-foreground md:px-5"
+                    >
+                        {/* <span>
                             Showing {totalItems === 0 ? 0 : pageStart + 1}–{Math.min(pageStart + displayedData.length, totalItems)} of {totalItems}
-                        </span>
+                        </span> */}
                         <div className="flex items-center gap-1">
                             <Button
                                 variant="primary"
@@ -292,7 +330,29 @@ export default function CustomTable<T extends Record<string, unknown>>({
                             >
                                 <ChevronLeft className="size-4" />
                             </Button>
-                            <span className="px-2 text-foreground">Page {currentPage} of {totalPages}</span>
+                            {getPageItems(currentPage, totalPages).map((item, index) =>
+                                item === "ellipsis" ? (
+                                    <span
+                                        key={`ellipsis-${index}`}
+                                        aria-hidden="true"
+                                        className="px-1 text-content-muted"
+                                    >
+                                        …
+                                    </span>
+                                ) : (
+                                    <Button
+                                        key={item}
+                                        variant={item === currentPage ? "primary" : "secondary"}
+                                        size="xs"
+                                        className="min-w-7 px-1.5"
+                                        aria-label={`Page ${item}`}
+                                        aria-current={item === currentPage ? "page" : undefined}
+                                        onClick={() => changePage(item)}
+                                    >
+                                        {item}
+                                    </Button>
+                                ),
+                            )}
                             <Button
                                 variant="primary"
                                 size="xs"
@@ -304,7 +364,7 @@ export default function CustomTable<T extends Record<string, unknown>>({
                                 <ChevronRight className="size-4" />
                             </Button>
                         </div>
-                    </div>
+                    </nav>
                 )}
 
                 {/* Empty state */}
