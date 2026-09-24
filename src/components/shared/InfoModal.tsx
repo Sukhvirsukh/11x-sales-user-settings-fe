@@ -13,39 +13,53 @@ import type { ReactElement, ReactNode } from "react";
 
 export type InfoModalVariant = "default" | "warning";
 
-export interface InfoModalProps {
+interface InfoModalBaseProps {
     open?: boolean;
     defaultOpen?: boolean;
     onOpenChange?: (open: boolean) => void;
     trigger?: ReactElement;
-    onConfirm: () => void;
     title: string;
     description: ReactNode;
-    confirmLabel: string;
-    cancelLabel: string;
-    confirmDisabled?: boolean;
     cancelDisabled?: boolean;
     /** Visual treatment for the modal and its confirm action. */
     variant?: InfoModalVariant;
     /** Overrides the dialog content styles, including its default automatic width. */
     contentClassName?: string;
+    titleClassName?: string;
+    descriptionClassName?: string;
 }
 
-export default function InfoModal({
-    open,
-    defaultOpen,
-    onOpenChange,
-    trigger,
-    onConfirm,
-    title,
-    description,
-    confirmLabel,
-    cancelLabel,
-    confirmDisabled,
-    cancelDisabled,
-    variant = "default",
-    contentClassName,
-}: InfoModalProps) {
+type InfoModalActionsProps = {
+    showActions?: true;
+    onConfirm: () => void;
+    confirmLabel: string;
+    cancelLabel: string;
+    confirmDisabled?: boolean;
+} | {
+    showActions: false;
+    onConfirm?: never;
+    confirmLabel?: never;
+    cancelLabel?: never;
+    confirmDisabled?: never;
+};
+
+export type InfoModalProps = InfoModalBaseProps & InfoModalActionsProps;
+
+export default function InfoModal(props: InfoModalProps) {
+    const {
+        open,
+        defaultOpen,
+        onOpenChange,
+        trigger,
+        title,
+        description,
+        cancelDisabled,
+        variant = "default",
+        contentClassName,
+        titleClassName,
+        descriptionClassName,
+    } = props;
+
     return (
         <Dialog
             open={open}
@@ -85,40 +99,48 @@ export default function InfoModal({
                 </DialogClose>
 
                 <div className="relative z-1 text-center">
-                    <DialogTitle className="mx-auto max-w-[320px] text-lg md:text-3xl font-bold leading-7 text-foreground">
+                    <DialogTitle className={cn(
+                        "mx-auto max-w-[320px] text-lg md:text-3xl font-bold leading-7 text-foreground",
+                        titleClassName,
+                    )}>
                         {title}
                     </DialogTitle>
                     <DialogDescription
                         render={<div />}
-                        className="mt-2 text-sm font-medium leading-4 text-content-muted"
+                        className={cn(
+                            "mt-2 text-sm font-medium leading-4 text-content-muted",
+                            descriptionClassName,
+                        )}
                     >
                         {description}
                     </DialogDescription>
                 </div>
 
-                <div className="relative z-1 mt-3.5 flex flex-col gap-2.5">
-                    <Button
-                        type="button"
-                        variant={variant === "warning" ? "destructive" : "primary"}
-                        onClick={onConfirm}
-                        disabled={confirmDisabled}
-                    >
-                        {confirmLabel}
-                        <ArrowRight className="ml-1 size-3" aria-hidden="true" />
-                    </Button>
-                    <DialogClose
-                        render={
-                            <Button
-                                type="button"
-                                variant="ghost"
-                                disabled={cancelDisabled}
-                                className="h-8 w-full rounded-md p-0! text-xs"
-                            />
-                        }
-                    >
-                        {cancelLabel}
-                    </DialogClose>
-                </div>
+                {props.showActions !== false && (
+                    <div className="relative z-1 mt-3.5 flex flex-col gap-2.5">
+                        <Button
+                            type="button"
+                            variant={variant === "warning" ? "destructive" : "primary"}
+                            onClick={props.onConfirm}
+                            disabled={props.confirmDisabled}
+                        >
+                            {props.confirmLabel}
+                            <ArrowRight className="ml-1 size-3" aria-hidden="true" />
+                        </Button>
+                        <DialogClose
+                            render={
+                                <Button
+                                    type="button"
+                                    variant="ghost"
+                                    disabled={cancelDisabled}
+                                    className="h-8 w-full rounded-md p-0! text-xs"
+                                />
+                            }
+                        >
+                            {props.cancelLabel}
+                        </DialogClose>
+                    </div>
+                )}
             </DialogContent>
         </Dialog>
     );
