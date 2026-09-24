@@ -1,12 +1,4 @@
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+import InfoModal from "@/components/shared/InfoModal";
 
 interface UnsavedChangesDialogProps {
   open: boolean;
@@ -28,24 +20,15 @@ export function UnsavedChangesDialog({
   }
 
   return (
-    <Dialog
+    <InfoModal
+      variant="warning"
       open={open}
       onOpenChange={handleOpenChange}
-    >
-      <DialogContent showCloseButton={false}>
-        <DialogHeader>
-          <DialogTitle>{title}</DialogTitle>
-          <DialogDescription>{description}</DialogDescription>
-        </DialogHeader>
-        <DialogFooter>
-          <Button type="button" variant="outline" onClick={onStay}>
-            Stay
-          </Button>
-          <Button type="button" variant="destructive" onClick={onLeave}>
-            Leave
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+      title={title}
+      description={description}
+      confirmLabel="Leave"
+      cancelLabel="Stay"
+      onConfirm={onLeave}
+    />
   );
 }

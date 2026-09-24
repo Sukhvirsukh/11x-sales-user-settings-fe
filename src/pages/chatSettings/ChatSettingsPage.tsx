@@ -11,7 +11,7 @@ import Integrations from "@/features/chatSettings/Integrations";
 
 export default function ChatSettingsPage() {
     return (
-        <section className="h-full min-w-0">
+        <section className="h-full min-w-0 mb-9">
             <PageHeader
                 title="Chat settings"
                 subtitle="Customize how your AI interact with your customer"

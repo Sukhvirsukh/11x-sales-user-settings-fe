@@ -276,15 +276,16 @@ export default function CustomTable<T extends Record<string, unknown>>({
                     </TableBody>
                 </Table>
 
-                {pagination && data.length > 0 && (
+                {pagination && data.length > 0 && totalPages > 1 && (
                     <div className="flex w-full flex-wrap items-center justify-between gap-3 border-t border-section-border px-4 py-3 text-sm text-muted-foreground md:px-5">
                         <span>
                             Showing {totalItems === 0 ? 0 : pageStart + 1}–{Math.min(pageStart + displayedData.length, totalItems)} of {totalItems}
                         </span>
                         <div className="flex items-center gap-1">
                             <Button
-                                variant="bare"
+                                variant="primary"
                                 size="xs"
+                                className='p-1'
                                 aria-label="Previous page"
                                 disabled={currentPage === 1}
                                 onClick={() => changePage(currentPage - 1)}
@@ -293,8 +294,9 @@ export default function CustomTable<T extends Record<string, unknown>>({
                             </Button>
                             <span className="px-2 text-foreground">Page {currentPage} of {totalPages}</span>
                             <Button
-                                variant="bare"
+                                variant="primary"
                                 size="xs"
+                                className="p-1"
                                 aria-label="Next page"
                                 disabled={currentPage === totalPages}
                                 onClick={() => changePage(currentPage + 1)}

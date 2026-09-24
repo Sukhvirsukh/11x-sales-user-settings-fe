@@ -31,7 +31,7 @@ const buttonVariants = cva(
 
         // Underlined text action
         "underline-bare":
-          "border-transparent bg-transparent text-content-muted underline underline-offset-2 hover:bg-transparent hover:text-foreground",
+          "border-transparent bg-transparent text-content-muted p-0! underline underline-offset-2 hover:bg-transparent hover:text-foreground",
 
         // Simple Link
         link:
