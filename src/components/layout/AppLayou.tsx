@@ -7,6 +7,7 @@ import {
 import { useEffect } from "react";
 import Sidebar from "./sidebar";
 import MobileTopbar from "./MobileTopbar";
+import MobileTopbarWrapper from "./MobileTopbarWrapper";
 import { Spinner } from "@/components/ui/spinner";
 import { authRefreshRequest } from "@/features/auth/authApi";
 import { useAuthStore } from "@/features/auth/authStore";
@@ -19,7 +20,7 @@ function AppLayout() {
     const setUser = useAuthStore((state) => state.setUser);
     const clearUser = useAuthStore((state) => state.clearUser);
     const location = useLocation();
-    const hasSidebar = isSidebarHidden(location.pathname);
+    const shouldHideSidebar = isSidebarHidden(location.pathname);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -60,14 +61,16 @@ function AppLayout() {
         );
     }
 
-    if (hasSidebar) {
+    if (shouldHideSidebar) {
         return (
             <div className="flex h-screen gap-0 overflow-hidden bg-background p-5">
                 <main className="-m-5 flex min-w-0 flex-1 flex-col overflow-y-auto">
-                    <div className="p-5 pb-0 md:p-0">
-                        <MobileTopbar />
+                    <div className="p-5 pb-0 md:hidden">
+                        <MobileTopbarWrapper />
                     </div>
-                    <Outlet />
+                    <div className="mt-5 flex min-h-0 flex-1 flex-col md:mt-0">
+                        <Outlet />
+                    </div>
                 </main>
             </div>
         );
@@ -77,7 +80,7 @@ function AppLayout() {
         <div className="flex h-screen gap-0 overflow-hidden bg-background p-5 md:pr-0">
             <Sidebar />
             <MobileTopbar />
-            <main className="-mx-5 -my-5 flex min-w-0 flex-1 flex-col overflow-y-auto p-5 md:mx-0">
+            <main className="-m-5 mt-5 md:-mt-5 flex min-w-0 flex-1 flex-col overflow-y-auto p-5 md:mx-0">
                 <Outlet />
             </main>
         </div>

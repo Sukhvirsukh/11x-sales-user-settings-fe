@@ -54,26 +54,31 @@ function Carousel({ items }: { items: KnowMoreItem[] }) {
                     ))}
                 </div>
 
-                <Button
-                    type="button"
-                    variant="bare"
-                    size="icon"
-                    aria-label="Previous videos"
-                    onClick={() => scroll("previous")}
-                    className="absolute left-4 top-[34px] size-8 -translate-x-1/2 rounded-full bg-background p-0 shadow-panel hover:bg-surface-subtle"
-                >
-                    <ChevronLeft className="size-4 text-content-muted" />
-                </Button>
-                <Button
-                    type="button"
-                    variant="bare"
-                    size="icon"
-                    aria-label="Next videos"
-                    onClick={() => scroll("next")}
-                    className="absolute right-4 top-[34px] size-8 translate-x-1/2 rounded-full bg-background p-0 shadow-panel hover:bg-surface-subtle"
-                >
-                    <ChevronRight className="size-4 text-content-muted" />
-                </Button>
+                {/* Sized to a single video card (65% wide, 1.75 aspect ratio → 65% / 1.75 of
+                    the carousel width) so the nav buttons sit in the middle of the video
+                    thumbnails, not the whole carousel including the titles underneath. */}
+                <div className="pointer-events-none absolute inset-x-0 top-0 pt-[37.1429%]">
+                    <Button
+                        type="button"
+                        variant="bare"
+                        size="icon"
+                        aria-label="Previous videos"
+                        onClick={() => scroll("previous")}
+                        className="pointer-events-auto absolute left-4 top-1/2 size-8 -translate-x-1/2 -translate-y-1/2 rounded-full bg-background p-0 shadow-panel hover:bg-surface-subtle"
+                    >
+                        <ChevronLeft className="size-4 text-content-muted" />
+                    </Button>
+                    <Button
+                        type="button"
+                        variant="bare"
+                        size="icon"
+                        aria-label="Next videos"
+                        onClick={() => scroll("next")}
+                        className="pointer-events-auto absolute right-4 top-1/2 size-8 translate-x-1/2 -translate-y-1/2 rounded-full bg-background p-0 shadow-panel hover:bg-surface-subtle"
+                    >
+                        <ChevronRight className="size-4 text-content-muted" />
+                    </Button>
+                </div>
             </div>
         </>
     )

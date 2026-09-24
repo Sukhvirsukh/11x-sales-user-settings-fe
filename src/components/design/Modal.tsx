@@ -63,7 +63,10 @@ export default function Modal({
                     contentClassName,
                 )}
             >
-                <div aria-hidden="true" className="absolute max-sm:top-0 max-sm:right-[25px] max-sm:left-[25px] max-sm:h-20 z-[-1] max-sm:rounded-t-[20px] max-sm:bg-primary" />
+                <div
+                    aria-hidden="true"
+                    className="absolute z-[-1] max-sm:left-1/2 max-sm:top-0 max-sm:h-20 max-sm:w-[90%] max-sm:-translate-x-1/2 max-sm:rounded-t-[20px] max-sm:bg-primary"
+                />
                 <div className="flex min-h-0 flex-col max-sm:mt-2 max-sm:rounded-t-[10px] max-sm:bg-popover">
                     {title && (
                         <DialogHeader className={cn(

@@ -13,12 +13,14 @@ import EditCorrection from "./EditCorrection";
 import { useCorrectionsQuery } from "./correctionsQuery";
 import type { Correction } from "./correctionTypes";
 
+const EQUAL_COLUMN_WIDTH = "20%";
+
 const columns: Column[] = [
-    { key: "name", header: "Name", width: "280px" },
+    { key: "name", header: "Name", width: EQUAL_COLUMN_WIDTH },
     {
         key: "corrections",
         header: "Corrections",
-        width: "300px",
+        width: EQUAL_COLUMN_WIDTH,
         render: (value) => {
             const correction = String(value ?? "");
             return (
@@ -31,6 +33,7 @@ const columns: Column[] = [
     {
         key: "status",
         header: "Status",
+        width: EQUAL_COLUMN_WIDTH,
         align: "center",
         render: (value) => {
             const status = String(value);
@@ -41,8 +44,13 @@ const columns: Column[] = [
             );
         },
     },
-    { key: "createDate", header: "Create date" },
-    { key: "lastRefresh", header: "Last refresh", align: "right" },
+    { key: "createDate", header: "Create date", width: EQUAL_COLUMN_WIDTH },
+    {
+        key: "lastRefresh",
+        header: "Last refresh",
+        width: EQUAL_COLUMN_WIDTH,
+        align: "right",
+    },
 ];
 
 const searchKeys = columns.map((column) => column.key);
@@ -100,12 +108,13 @@ export function Corrections() {
                         Delete selected
                     </Button>
                 )) : undefined}
+                mobileColumnSplit={["50%", "50%"]}
                 emptyMessage={search ? "No matching corrections found" : "No corrections found"}
                 emptyDescription={search ? "Try a different search term." : "Corrections will appear here."}
                 emptyState={isLoading ? <TableSkeleton columns={5} showHeader={false} /> : undefined}
                 headerActions={
                     <div className="flex items-center gap-2.5">
-                        <SearchField onSearchChange={setSearch} />
+                        <SearchField onSearchChange={setSearch} viewport="xs" />
                     </div>
                 }
                 rowActions={canCreateCorrections || canDeleteCorrections ? (row) => (

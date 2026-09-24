@@ -34,7 +34,7 @@ export function AiTrainingPage() {
                     value={activeTab}
                     onValueChange={handleTabChange}
                     listClassName="pl-[4px]"
-                    className="p-0!"
+                    className="gap-5 p-0!"
                 >
                     <PreviewSection>
                         <Outlet />

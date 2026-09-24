@@ -10,7 +10,7 @@ export default function MobileTopbar() {
     const toggleChat = useTestChatStore((state) => state.toggle);
 
     return (
-        <div className="fixed top-0 p-5 bg-white z-10 w-full md:hidden">
+        <div className="fixed top-0 px-5 py-2.5 left-0 sticky-header bg-white z-10 w-full md:hidden">
             <div className="flex w-full items-center justify-between gap-3 md:hidden ">
                 <div className="flex min-w-0 items-center gap-2.5">
                     <img
@@ -39,7 +39,7 @@ export default function MobileTopbar() {
                         type="button"
                         aria-label="Open menu"
                         onClick={open}
-                        className="flex shrink-0 items-center justify-center rounded-[10px] border border-primary/20 bg-surface-raised p-2 text-muted-foreground"
+                        className="flex shrink-0 items-center cursor-pointer justify-center rounded-[10px] border border-primary/20 bg-surface-raised p-2 text-muted-foreground"
                     >
                         <Menu className="size-4" strokeWidth={2} />
                     </button>
