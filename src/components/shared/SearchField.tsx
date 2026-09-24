@@ -25,12 +25,17 @@ export default function SearchField({ onSearchChange, showMobilePanel = true }: 
                 <Popover>
                     <PopoverTrigger
                         render={
-                            <Button variant="ghost" size="sm" className="size-9.25 md:hidden" aria-label="Search knowledge base">
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                className=" md:hidden px-1.5 bg-white"
+                                aria-label="Search knowledge base"
+                            >
                                 <Search className="size-4" />
                             </Button>
                         }
                     />
-                    <PopoverContent side="top" align="end" sideOffset={8} className="w-[255px] max-w-[calc(100vw-2rem)] rounded-[10px] border border-panel-accent-border bg-popover! p-3 shadow-blue ring-0! md:hidden">
+                    <PopoverContent side="top" align="center" sideOffset={8} className="w-63.75 max-w-[calc(100vw-2rem)] rounded-[10px] border border-panel-accent-border bg-popover! p-3 shadow-blue ring-0! md:hidden">
                         <InputField
                             aria-label="Search knowledge base"
                             value={search}
