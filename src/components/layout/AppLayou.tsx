@@ -65,12 +65,12 @@ function AppLayout() {
         return (
             <div className="flex h-screen gap-0 overflow-hidden bg-background p-5">
                 <main className="-m-5 flex min-w-0 flex-1 flex-col overflow-y-auto">
-                    <div className="p-5 pb-0 md:p-0">
+                    <div className="p-5 pb-0 md:hidden">
                         <MobileTopbarWrapper />
                     </div>
-                    <main className="mt-5 md:mt-0">
+                    <div className="mt-5 flex min-h-0 flex-1 flex-col md:mt-0">
                         <Outlet />
-                    </main>
+                    </div>
                 </main>
             </div>
         );
