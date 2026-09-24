@@ -7,6 +7,7 @@ import { Check, ChevronLeft, ChevronRight, Loader } from "lucide-react";
 import { useEffect, useMemo, useRef } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Badge } from "@/components/ui/badge";
+import { useCan } from "@/features/auth";
 import styles from "./Plan.module.css";
 import { cn, dateFormater } from "@/lib/utils";
 import { planQueryKey, usePlanQuery } from "./planQuery";
@@ -16,6 +17,7 @@ import { upgradePlan } from "./planApi";
 interface PlanCardProps {
     plan: PlanData;
     isCurrent: boolean;
+    canUpgrade: boolean;
     isUpgradePending: boolean;
     isUpgrading: boolean;
     onUpgrade: (planId: string) => void;
@@ -23,7 +25,7 @@ interface PlanCardProps {
 
 const EMPTY_PLANS: PlanData[] = [];
 
-function PlanCard({ plan, isCurrent, isUpgradePending, isUpgrading, onUpgrade }: PlanCardProps) {
+function PlanCard({ plan, isCurrent, canUpgrade, isUpgradePending, isUpgrading, onUpgrade }: PlanCardProps) {
     const { name, features, isMostPopular, priceInr } = plan;
 
     return (
@@ -66,16 +68,20 @@ function PlanCard({ plan, isCurrent, isUpgradePending, isUpgrading, onUpgrade }:
                     ))}
                 </ul>
                 <div className="mt-auto pt-8">
-                    <Button
-                        variant={isMostPopular ? "primary" : "secondary"}
-                        className="min-h-9 w-full whitespace-normal"
-                        disabled={isCurrent || isUpgradePending}
-                        onClick={() => onUpgrade(plan.id)}
-                    >
-                        {isCurrent ? "Current plan" : isUpgrading ? "Upgrading..." : isMostPopular ? (
-                            <span>Upgrade today and get <strong>10% OFF</strong></span>
-                        ) : "Upgrade"}
-                    </Button>
+                    {(isCurrent || canUpgrade) && (
+                        <Button
+                            variant={isMostPopular ? "primary" : "secondary"}
+                            className="min-h-9 w-full whitespace-normal"
+                            disabled={isCurrent || isUpgradePending || !canUpgrade}
+                            onClick={() => {
+                                if (canUpgrade) onUpgrade(plan.id);
+                            }}
+                        >
+                            {isCurrent ? "Current plan" : isUpgrading ? "Upgrading..." : isMostPopular ? (
+                                <span>Upgrade today and get <strong>10% OFF</strong></span>
+                            ) : "Upgrade"}
+                        </Button>
+                    )}
                 </div>
             </div>
         </article>
@@ -85,9 +91,15 @@ function PlanCard({ plan, isCurrent, isUpgradePending, isUpgrading, onUpgrade }:
 export function Plan() {
 
     const { data, isLoading, error } = usePlanQuery();
+    const canUpgradePlan = useCan("settings.plan.create");
     const queryClient = useQueryClient();
     const upgradeMutation = useMutation({
-        mutationFn: upgradePlan,
+        mutationFn: (planId: string) => {
+            if (!canUpgradePlan) {
+                return Promise.reject(new Error("You do not have permission to upgrade the plan."));
+            }
+            return upgradePlan(planId);
+        },
         onSuccess: async () => {
             await queryClient.invalidateQueries({ queryKey: planQueryKey });
         },
@@ -163,6 +175,7 @@ export function Plan() {
                                 key={plan.id}
                                 plan={plan}
                                 isCurrent={plan.id === currentPlanId}
+                                canUpgrade={canUpgradePlan}
                                 isUpgradePending={upgradeMutation.isPending}
                                 isUpgrading={upgradeMutation.isPending && upgradeMutation.variables === plan.id}
                                 onUpgrade={upgradeMutation.mutate}

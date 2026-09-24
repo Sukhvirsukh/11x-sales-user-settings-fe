@@ -166,7 +166,14 @@ src/
 ├── features/
 │   ├── ai-training/                 # NOTE: kebab-case folder
 │   │   ├── corrections/
-│   │   │   ├── Corrections.tsx
+│   │   │   ├── Corrections.tsx      # Searchable mock-backed table with permission-aware edit/delete actions
+│   │   │   ├── EditCorrection.tsx
+│   │   │   ├── DeleteCorrections.tsx
+│   │   │   ├── correctionsApi.ts    # Mock get/update/bulk-delete API
+│   │   │   ├── correctionsQuery.ts
+│   │   │   ├── correctionSchema.ts
+│   │   │   ├── correctionTypes.ts
+│   │   │   ├── mockCorrections.ts
 │   │   │   └── index.ts
 │   │   ├── knowledgeBase/
 │   │   │   ├── KnowledgeBase.tsx    # Table + search (CustomTable, TableSkeleton)
@@ -314,10 +321,10 @@ src/
 │   │   ├── signUpTypes.ts
 │   │   └── index.ts
 │   └── visibility/
-│       ├── Visibility.tsx
+│       ├── Visibility.tsx            # Uploads a newly selected chat face before saving visibility settings
 │       ├── AllAccordions.tsx
 │       ├── VisibilityFormContext.tsx
-│       ├── visibilityApi.ts
+│       ├── visibilityApi.ts          # Chat design GET/POST/reset and multipart chat-face upload
 │       ├── visibilityQuery.ts
 │       ├── visibilityTypes.ts
 │       ├── index.ts

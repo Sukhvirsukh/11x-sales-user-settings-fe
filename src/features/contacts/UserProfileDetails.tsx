@@ -6,6 +6,7 @@ import CustomTable from "@/components/design/CustomTable"
 import { Button } from "@/components/ui/button"
 import SearchField from "@/components/shared/SearchField"
 import TableSkeleton from "@/components/shared/skeletons/TableSkeletons"
+import { useCan } from "@/features/auth"
 import DeleteContacts from "./DeleteContacts"
 import { useUserProfilesQuery } from "./contactQuery"
 import type { UserProfile } from "./contactType"
@@ -25,6 +26,8 @@ const searchKeys = columns.map((column) => column.key)
 
 export default function UserProfileDetails() {
     const { data = [], isLoading, error } = useUserProfilesQuery()
+    // Deleting is its own grant, so it is asked for separately.
+    const canDeleteContacts = useCan("contacts.delete")
     const [search, setSearch] = useState("")
     const [deleteRequest, setDeleteRequest] = useState<{
         rows: UserProfile[]
@@ -61,14 +64,14 @@ export default function UserProfileDetails() {
                 title="All user profiles"
                 columns={columns}
                 data={filteredData}
-                selectable
+                selectable={canDeleteContacts}
                 getRowId={(row) => row.id}
-                bulkActions={(rows, deselectRows) => (
+                bulkActions={canDeleteContacts ? ((rows, deselectRows) => (
                     <Button variant="destructive" size="xs" onClick={() => requestDelete(rows, deselectRows)}>
                         <Trash className="size-3.5" />
                         Delete selected
                     </Button>
-                )}
+                )) : undefined}
                 emptyMessage={search ? "No matching user profiles found" : "No user profiles found"}
                 emptyDescription={search ? "Try a different search term." : "User profiles will appear here."}
                 emptyState={isLoading ? (
@@ -79,13 +82,13 @@ export default function UserProfileDetails() {
                         <SearchField onSearchChange={setSearch} />
                     </div>
                 }
-                rowActions={(row) => (
+                rowActions={canDeleteContacts ? (row) => (
                     <div className="flex items-center gap-2">
-                        <Button variant="bare" size="sm" onClick={() => requestDelete([row])}>
+                        <Button variant="bare" size="sm" onClick={() => requestDelete([row])} aria-label="Delete user profile">
                             <Trash className="size-4 text-content-muted" />
                         </Button>
                     </div>
-                )}
+                ) : undefined}
                 className="w-full md:[&_th:nth-child(2)]:pl-0 md:[&_td:first-child:has([role=checkbox])+td]:pl-0"
             />
             <DeleteContacts

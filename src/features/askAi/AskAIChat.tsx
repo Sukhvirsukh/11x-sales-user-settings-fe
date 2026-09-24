@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Heading from "@/components/design/Heading";
 import { ChatInput, ChatMessage } from "@/components/shared/chatBox";
+import { useCan } from "../auth";
 
 type Message = {
     id: string;
@@ -10,8 +11,20 @@ type Message = {
 
 export default function AskAIChat() {
     const [messages, setMessages] = useState<Message[]>([]);
+    const canAsk = useCan("askMe.create")
 
     function handleSend(content: string) {
+        if (!canAsk) {
+            return setMessages((current) => [
+                ...current,
+                { id: crypto.randomUUID(), content, sender: "user" },
+                {
+                    id: crypto.randomUUID(),
+                    content: "Sorry! You don't have permission to use this feature. Please ask your administrator.",
+                    sender: "bot",
+                },
+            ])
+        }
         setMessages((current) => [
             ...current,
             { id: crypto.randomUUID(), content, sender: "user" },
@@ -46,6 +59,7 @@ export default function AskAIChat() {
                 onSend={handleSend}
                 placeholder="Search or type your question..."
                 variant="default"
+                disabled={!canAsk}
             />
         </div>
     );

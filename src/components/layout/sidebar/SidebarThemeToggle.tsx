@@ -1,7 +1,6 @@
 import { useLayoutEffect, useState } from "react";
-import { Moon, Sun } from "lucide-react";
+import { Moon, Sun, ToggleLeft, ToggleRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { ToggleField } from "@/components/design/ToggleField";
 
 const THEME_STORAGE_KEY = "theme";
 
@@ -15,6 +14,7 @@ function getInitialTheme() {
 
 export default function SidebarThemeToggle() {
     const [isDark, setIsDark] = useState(getInitialTheme);
+    const ToggleIcon = isDark ? ToggleRight : ToggleLeft;
 
     useLayoutEffect(() => {
         document.documentElement.classList.toggle("dark", isDark);
@@ -44,11 +44,7 @@ export default function SidebarThemeToggle() {
                 )}
                 Dark mode
             </span>
-            <ToggleField
-                pressed={isDark}
-                onPressedChange={setIsDark}
-                aria-label="Toggle dark mode"
-            />
+            <ToggleIcon className="size-4" aria-hidden="true" />
         </Button>
     );
 }

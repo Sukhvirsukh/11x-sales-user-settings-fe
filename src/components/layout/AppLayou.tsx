@@ -76,8 +76,8 @@ function AppLayout() {
     return (
         <div className="flex h-screen gap-0 overflow-hidden bg-background p-5 md:pr-0">
             <Sidebar />
-            <main className="-mx-5 -my-5 flex min-w-0 flex-1 flex-col overflow-y-auto px-5 py-5 md:mx-0">
-                <MobileTopbar />
+            <MobileTopbar />
+            <main className="-mx-5 -my-5 flex min-w-0 flex-1 flex-col overflow-y-auto p-5 md:mx-0">
                 <Outlet />
             </main>
         </div>

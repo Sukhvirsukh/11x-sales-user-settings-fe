@@ -30,6 +30,9 @@ const InputField = React.forwardRef<HTMLInputElement, InputFieldProps>(
             labelClassName,
             id,
             variant = "light",
+            type,
+            onKeyDown,
+            onPaste,
             ...props
         },
         ref
@@ -37,6 +40,23 @@ const InputField = React.forwardRef<HTMLInputElement, InputFieldProps>(
         const generatedId = React.useId()
         const inputId = id || generatedId
         const hintId = `${inputId}-hint`
+        const isNumberType = type === "number"
+
+        /* Numeric fields: block printable keys that aren't digits (letters, e, -, .).
+           Modifier combos and navigation/control keys stay untouched. */
+        const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+            onKeyDown?.(event)
+            if (!isNumberType || event.ctrlKey || event.metaKey || event.altKey) return
+            if (event.key.length === 1 && !/[0-9]/.test(event.key)) event.preventDefault()
+        }
+
+        /* Keeps pasted/dropped text from bypassing the key filter. */
+        const handlePaste = (event: React.ClipboardEvent<HTMLInputElement>) => {
+            onPaste?.(event)
+            if (isNumberType && !/^\d*$/.test(event.clipboardData.getData("text"))) {
+                event.preventDefault()
+            }
+        }
 
         return (
             <div className="flex w-full flex-col gap-2">
@@ -45,7 +65,7 @@ const InputField = React.forwardRef<HTMLInputElement, InputFieldProps>(
                 {/* Input Outer Container (Handles borders, icons, pill background) */}
                 <div
                     className={cn(
-                        "relative flex h-[35px] w-full items-center rounded-xl border border-control-border-subtle px-3.5 transition-all [--input-autofill-bg:var(--surface-raised)] focus-within:border-field-border focus-within:ring-2 focus-within:ring-focus-ring/20",
+                        "relative flex h-8.75 w-full items-center rounded-xl border border-control-border-subtle px-3.5 transition-all [--input-autofill-bg:var(--surface-raised)] focus-within:border-field-border focus-within:ring-2 focus-within:ring-focus-ring/20",
                         "bg-surface-raised focus-within:bg-surface-raised",
                         variant === "light"
                             ? "bg-field-subtle-background border-section-border [--input-autofill-bg:var(--field-subtle-background)] focus-within:bg-field-subtle-background focus-within:border-section-border"
@@ -64,9 +84,12 @@ const InputField = React.forwardRef<HTMLInputElement, InputFieldProps>(
                     <Input
                         id={inputId}
                         ref={ref}
+                        type={type}
+                        onKeyDown={handleKeyDown}
+                        onPaste={handlePaste}
                         className={cn(
                             "max-sm:text-sm max-sm:placeholder:text-sm",
-                            props.type === "number" &&
+                            isNumberType &&
                             "[appearance:textfield] [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none",
                             className,
                         )}

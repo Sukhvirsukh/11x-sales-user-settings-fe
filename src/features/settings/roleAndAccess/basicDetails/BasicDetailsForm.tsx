@@ -8,7 +8,7 @@ import { InputField } from "@/components/design/InputField";
 import { Button } from "@/components/ui/button";
 import { FormGroup } from "@/components/design/FormGroup";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useAuthStore } from "@/features/auth";
+import { useAuthStore, useCan } from "@/features/auth";
 import { basicDetailsSchema } from "./basicDetailsSchema";
 import type { BasicDetailsFormValues } from "./basicDetailsTypes";
 import { updateProfile } from "./basicDetailsApi";
@@ -17,6 +17,7 @@ export default function BasicDetailsForm() {
     const user = useAuthStore(data => data.user);
     const setUser = useAuthStore(data => data.setUser);
     const [isOpen, setIsOpen] = useState(false);
+    const canEditBasicDetails = useCan("settings.profile.create");
     const {
         register,
         handleSubmit,
@@ -32,7 +33,12 @@ export default function BasicDetailsForm() {
     });
 
     const updateProfileMutation = useMutation({
-        mutationFn: updateProfile,
+        mutationFn: (values: BasicDetailsFormValues) => {
+            if (!canEditBasicDetails) {
+                return Promise.reject(new Error("You do not have permission to update basic details."));
+            }
+            return updateProfile(values);
+        },
         onSuccess: (updatedUser) => {
             setUser({
                 id: updatedUser.id ?? user?.id,
@@ -47,10 +53,12 @@ export default function BasicDetailsForm() {
     });
 
     function saveBasicDetails(values: BasicDetailsFormValues) {
+        if (!canEditBasicDetails) return;
         updateProfileMutation.mutate(values);
     }
 
     function handleOpenChange(open: boolean) {
+        if (open && !canEditBasicDetails) return;
         setIsOpen(open);
         if (open) {
             reset({
@@ -71,6 +79,7 @@ export default function BasicDetailsForm() {
                 <Button
                     variant="ghost"
                     size="default"
+                    disabled={!canEditBasicDetails}
                     className="px-2.5 py-1.5 sm:px-[10px] sm:py-[10px] text-md"
                 >
                     <span className="hidden sm:inline">Edit details</span>
@@ -81,7 +90,7 @@ export default function BasicDetailsForm() {
             primaryAction={{
                 label: "Save",
                 onClick: handleSubmit(saveBasicDetails),
-                disabled: updateProfileMutation.isPending,
+                disabled: updateProfileMutation.isPending || !canEditBasicDetails,
             }}
             closeAction={{
                 label: "Cancel",

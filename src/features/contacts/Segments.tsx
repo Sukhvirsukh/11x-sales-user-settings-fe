@@ -4,6 +4,7 @@ import SearchField from "@/components/shared/SearchField"
 import TableSkeleton from "@/components/shared/skeletons/TableSkeletons"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { useCan } from "@/features/auth"
 import { debounce } from "@/lib/utils"
 import { Download, Plus, Trash } from "lucide-react"
 import { useRef, useState } from "react"
@@ -23,8 +24,8 @@ const columns: Column[] = [
         render: (value) => {
             const status = String(value)
             return (
-                <Badge variant={status === "Active" ? "default" : "destructive"}>
-                    {status}
+                <Badge variant={status ? "default" : "destructive"}>
+                    {status ? "Active" : "Inactive"}
                 </Badge>
             )
         },
@@ -34,6 +35,12 @@ const columns: Column[] = [
 ]
 
 export default function Segments() {
+    // Adding a segment is a change, so the button follows `contacts.create` alone.
+    // The permissions table grants create and edit together under "Changes", and
+    // create implies edit — so `create` is the whole change capability.
+    const canCreateSegments = useCan("contacts.create")
+    // Deleting is its own grant, so it is asked for separately.
+    const canDeleteSegments = useCan("contacts.delete")
     const [searchParams, setSearchParams] = useSearchParams()
     const setSearchParamsRef = useRef(setSearchParams)
     setSearchParamsRef.current = setSearchParams
@@ -96,15 +103,15 @@ export default function Segments() {
                 title="All segaments"
                 columns={columns}
                 data={segments}
-                selectable
+                selectable={canDeleteSegments}
                 getRowId={(row) => row.id}
                 pagination={{ page, pageSize, total, onPageChange: handlePageChange }}
-                bulkActions={(rows, deselectRows) => (
+                bulkActions={canDeleteSegments ? ((rows, deselectRows) => (
                     <Button variant="destructive" size="xs" onClick={() => requestDelete(rows, deselectRows)}>
                         <Trash className="size-3.5" />
                         Delete selected
                     </Button>
-                )}
+                )) : undefined}
                 emptyMessage={search ? "No matching segaments found" : "No segaments found"}
                 emptyDescription={search ? "Try a different search term." : "Segaments you create will appear here."}
                 emptyState={isLoading ? (
@@ -113,20 +120,24 @@ export default function Segments() {
                 headerActions={
                     <div className="flex items-center gap-2.5">
                         <SearchField onSearchChange={handleSearchChange} />
-                        <Button variant="primary" onClick={() => setIsAddOpen(true)}>
-                            Add segment
-                            <Plus className="ml-0.5 size-2 md:ml-2 md:size-4" />
-                        </Button>
+                        {canCreateSegments && (
+                            <Button variant="primary" onClick={() => setIsAddOpen(true)}>
+                                Add segment
+                                <Plus className="ml-0.5 size-2 md:ml-2 md:size-4" />
+                            </Button>
+                        )}
                     </div>
                 }
                 rowActions={(row) => (
                     <div className="flex items-center gap-2">
-                        <Button variant="bare" size="sm" onClick={() => { }}>
+                        <Button variant="bare" size="sm" onClick={() => { }} aria-label="Download segment">
                             <Download className="size-4 text-content-muted" />
                         </Button>
-                        <Button variant="bare" size="sm" onClick={() => requestDelete([row])}>
-                            <Trash className="size-4 text-content-muted" />
-                        </Button>
+                        {canDeleteSegments && (
+                            <Button variant="bare" size="sm" onClick={() => requestDelete([row])} aria-label="Delete segment">
+                                <Trash className="size-4 text-content-muted" />
+                            </Button>
+                        )}
                     </div>
                 )}
                 className="w-full md:[&_th:nth-child(2)]:pl-0 md:[&_td:first-child:has([role=checkbox])+td]:pl-0"

@@ -56,6 +56,12 @@ against this table (but doing so is recommended, see §7).
 > the user grants one, the frontend sends `true` for **both**. Treat them as
 > independent columns in storage (the payload has separate keys), just expect
 > them to move together.
+>
+> **The frontend gates on `create` alone.** Because create implies edit, every
+> change affordance in the UI asks for `<section>.create` — a role with `create`
+> can add *and* edit. The default sets (§6) therefore leave `edit` `false`; only
+> the role form ever writes it, and it writes both keys together when its
+> **Changes** box is toggled.
 
 ---
 
@@ -83,12 +89,13 @@ should include the user's permissions:
 }
 ```
 
-- Required: `accessToken`. Everything inside `user` is optional, but `role` and
-  `permissions` are what drive access.
-- `user.role` is a plain string and is **not** used to compute permissions once a
-  payload is present. Send it anyway for display.
-- Omitting `permissions` is tolerated — the frontend then falls back to the
-  per-role defaults in §6. Send an explicit payload to take full control.
+- Required: `accessToken`. Everything inside `user` is optional.
+- `user.role` is a plain string used for display. While the temporary role
+  defaults are in force (§6), a **known** role (`ADMIN` / `EDITOR` / `MEMBER`)
+  takes its grants from the frontend's own table and **ignores** `permissions`
+  entirely. The payload is only read for an unrecognised role.
+- `permissions` may therefore be omitted for a known role. For an unrecognised
+  role, omitting it (or sending `null`) grants nothing.
 
 ### 2.2 The role history list
 
@@ -179,7 +186,7 @@ Content-Type: application/json
   "status": true,
   "permissions": [
     { "overview": { "view": true, "create": true, "edit": true, "delete": true } },
-    { "settings.profile": { "view": true, "create": false, "edit": true, "delete": false } },
+    { "settings.profile": { "view": true, "create": true, "edit": true, "delete": false } },
     { "settings.roles": { "view": true, "create": false, "edit": false, "delete": false } }
   ]
 }
@@ -345,17 +352,17 @@ Settings tabs are filtered the same way on `settings.profile.view`,
 | Capability | Gates |
 | --- | --- |
 | `settings.roles.view` | the role history table |
-| `settings.roles.create` | "Add role" button |
-| `settings.roles.edit` | edit action on a row |
+| `settings.roles.create` | "Add role" button and the edit action on a row |
 | `settings.roles.delete` | delete action, row selection, bulk delete |
-| `settings.store.create` | "Add store" button |
-| `settings.store.edit` | edit action on a store row |
+| `settings.store.create` | "Add store" button and the edit action on a store row |
 | `settings.store.delete` | delete action, row selection, bulk delete |
+| `contacts.create` | "Add segment" button on the Segments tab |
+| `contacts.delete` | delete action, row selection, bulk delete on both Contacts tabs |
 
-**All other actions are stored but not yet used to hide anything** — e.g.
-`contacts.create` is persisted and returned, but the Contacts page does not gate
-its buttons on it yet. Until it does, those actions are purely a backend
-authorization matter.
+**All other actions are stored but not yet used to hide anything.** The other
+sections (`overview`, `conversations`, `reports`, `chatSettings`, `aiTraining`,
+`askMe`) still show their create/edit/delete affordances regardless of the
+grant, so those actions remain a backend authorization matter only.
 
 > Hiding UI is a convenience, not security. The backend must enforce every
 > capability on every endpoint regardless of what the payload says.
@@ -364,22 +371,30 @@ authorization matter.
 
 ## 6. Temporary role defaults
 
-When the API omits `permissions`, the frontend resolves the role defaults from
-`permissionsDefaultData.ts` and saves them in the auth store. This is
-transitional — once the backend sends a permissions payload, that payload is
-authoritative and the role fallback is not used. The defaults also pre-fill the
-role form.
+`permissionsDefaultData.ts` currently **overrides** the API payload for any role
+it knows: `authStore` loads that role's set from the file and ignores whatever
+`permissions` the response carried. Only an unrecognised role falls back to the
+payload, and an unknown role with no payload grants nothing. The defaults also
+pre-fill the role form.
+
+This is transitional and deliberately blunt — it makes a role's entire access
+editable in one file while the API payload is still incomplete. `ADMIN`'s set is
+a hand-written literal array so a single line can be removed to test what the
+role loses in the UI. Once every response carries a complete, authoritative
+`permissions`, the override should be removed so the payload wins again.
 
 | Role | Default |
 | --- | --- |
-| `ADMIN` | all 48 capabilities |
-| `EDITOR` | every capability outside `settings.*`, plus `settings.profile.view` and `settings.profile.edit` (30) |
-| `MEMBER` | `conversations.view`, `reports.view`, `reports.create`, `reports.edit`, `settings.profile.view`, `settings.profile.edit` (6) |
+| `ADMIN` | `view`, `create` and `delete` on every section (36) |
+| `EDITOR` | `view`, `create` and `delete` on every section outside `settings.*`, plus `settings.profile.view` and `settings.profile.create` (23) |
+| `MEMBER` | `conversations.view`, `reports.view`, `reports.create`, `settings.profile.view`, `settings.profile.create` (5) |
 | anything else | none (fails closed) |
 
 Role matching is case-insensitive and trimmed, so `"admin"` / `" Admin "` work.
-Remember create-implies-edit: `reports.create` and `reports.edit` are listed
-together for that reason.
+
+No default grants `edit`: the UI only reads `create`, and create implies edit, so
+`create` alone expresses a section's change capability. The payload still has an
+`edit` key for each action set, left `false` by the defaults.
 
 ### 6.1 Backend objects for the default roles
 
@@ -387,24 +402,28 @@ The backend can return the following objects as `user.role` and
 `user.permissions` in the authentication response. Every section and action is
 included explicitly so the effective access for each role is unambiguous.
 
+> While the §6 override is in force these payloads are **not applied** for a
+> known role — the frontend's own table wins. They are what each role should
+> return once the override is removed.
+
 #### Admin
 
 ```json
 {
   "role": "ADMIN",
   "permissions": [
-    { "overview": { "view": true, "create": true, "edit": true, "delete": true } },
-    { "contacts": { "view": true, "create": true, "edit": true, "delete": true } },
-    { "conversations": { "view": true, "create": true, "edit": true, "delete": true } },
-    { "reports": { "view": true, "create": true, "edit": true, "delete": true } },
-    { "chatSettings": { "view": true, "create": true, "edit": true, "delete": true } },
-    { "aiTraining": { "view": true, "create": true, "edit": true, "delete": true } },
-    { "askMe": { "view": true, "create": true, "edit": true, "delete": true } },
-    { "settings.profile": { "view": true, "create": true, "edit": true, "delete": true } },
-    { "settings.roles": { "view": true, "create": true, "edit": true, "delete": true } },
-    { "settings.plan": { "view": true, "create": true, "edit": true, "delete": true } },
-    { "settings.payments": { "view": true, "create": true, "edit": true, "delete": true } },
-    { "settings.store": { "view": true, "create": true, "edit": true, "delete": true } }
+    { "overview": { "view": true, "create": true, "edit": false, "delete": true } },
+    { "contacts": { "view": true, "create": true, "edit": false, "delete": true } },
+    { "conversations": { "view": true, "create": true, "edit": false, "delete": true } },
+    { "reports": { "view": true, "create": true, "edit": false, "delete": true } },
+    { "chatSettings": { "view": true, "create": true, "edit": false, "delete": true } },
+    { "aiTraining": { "view": true, "create": true, "edit": false, "delete": true } },
+    { "askMe": { "view": true, "create": true, "edit": false, "delete": true } },
+    { "settings.profile": { "view": true, "create": true, "edit": false, "delete": true } },
+    { "settings.roles": { "view": true, "create": true, "edit": false, "delete": true } },
+    { "settings.plan": { "view": true, "create": true, "edit": false, "delete": true } },
+    { "settings.payments": { "view": true, "create": true, "edit": false, "delete": true } },
+    { "settings.store": { "view": true, "create": true, "edit": false, "delete": true } }
   ]
 }
 ```
@@ -415,14 +434,14 @@ included explicitly so the effective access for each role is unambiguous.
 {
   "role": "EDITOR",
   "permissions": [
-    { "overview": { "view": true, "create": true, "edit": true, "delete": true } },
-    { "contacts": { "view": true, "create": true, "edit": true, "delete": true } },
-    { "conversations": { "view": true, "create": true, "edit": true, "delete": true } },
-    { "reports": { "view": true, "create": true, "edit": true, "delete": true } },
-    { "chatSettings": { "view": true, "create": true, "edit": true, "delete": true } },
-    { "aiTraining": { "view": true, "create": true, "edit": true, "delete": true } },
-    { "askMe": { "view": true, "create": true, "edit": true, "delete": true } },
-    { "settings.profile": { "view": true, "create": false, "edit": true, "delete": false } },
+    { "overview": { "view": true, "create": true, "edit": false, "delete": true } },
+    { "contacts": { "view": true, "create": true, "edit": false, "delete": true } },
+    { "conversations": { "view": true, "create": true, "edit": false, "delete": true } },
+    { "reports": { "view": true, "create": true, "edit": false, "delete": true } },
+    { "chatSettings": { "view": true, "create": true, "edit": false, "delete": true } },
+    { "aiTraining": { "view": true, "create": true, "edit": false, "delete": true } },
+    { "askMe": { "view": true, "create": true, "edit": false, "delete": true } },
+    { "settings.profile": { "view": true, "create": true, "edit": false, "delete": false } },
     { "settings.roles": { "view": false, "create": false, "edit": false, "delete": false } },
     { "settings.plan": { "view": false, "create": false, "edit": false, "delete": false } },
     { "settings.payments": { "view": false, "create": false, "edit": false, "delete": false } },
@@ -440,11 +459,11 @@ included explicitly so the effective access for each role is unambiguous.
     { "overview": { "view": false, "create": false, "edit": false, "delete": false } },
     { "contacts": { "view": false, "create": false, "edit": false, "delete": false } },
     { "conversations": { "view": true, "create": false, "edit": false, "delete": false } },
-    { "reports": { "view": true, "create": true, "edit": true, "delete": false } },
+    { "reports": { "view": true, "create": true, "edit": false, "delete": false } },
     { "chatSettings": { "view": false, "create": false, "edit": false, "delete": false } },
     { "aiTraining": { "view": false, "create": false, "edit": false, "delete": false } },
     { "askMe": { "view": false, "create": false, "edit": false, "delete": false } },
-    { "settings.profile": { "view": true, "create": false, "edit": true, "delete": false } },
+    { "settings.profile": { "view": true, "create": true, "edit": false, "delete": false } },
     { "settings.roles": { "view": false, "create": false, "edit": false, "delete": false } },
     { "settings.plan": { "view": false, "create": false, "edit": false, "delete": false } },
     { "settings.payments": { "view": false, "create": false, "edit": false, "delete": false } },
@@ -458,15 +477,17 @@ included explicitly so the effective access for each role is unambiguous.
 ## 7. Rules & edge cases
 
 1. **Fail closed.** A malformed payload grants nothing and the user is bounced to
-   their first reachable page. Never send `permissions: null` for a role that
-   should have access — send an empty array or omit the field (which triggers the
-   defaults in §6).
+   their first reachable page. For an **unrecognised** role, never send
+   `permissions: null` for one that should have access — send an empty array or
+   omit the field. Known roles are unaffected while the §6 override is in force.
 2. **Casing.** `role` is compared upper-cased by the frontend. `status`,
    `createdAt` and `permissions` are the only other fields it reads.
 3. **Unknown sections survive round-trips.** The edit form keeps grants it does
    not render and posts them back, so you can add a section server-side before
    the UI ships.
-4. **`create` and `edit` travel together** (§1). Do not be surprised if both flip.
+4. **`create` and `edit` travel together** (§1). Do not be surprised if both
+   flip. The UI reads `create` for every change affordance, so flipping `edit`
+   alone changes nothing a user can see.
 5. **Validate on write.** The frontend's schema only checks that values are
    booleans. The backend should whitelist known section/action keys (reject or
    drop the rest), since a hand-crafted request can otherwise store anything.
