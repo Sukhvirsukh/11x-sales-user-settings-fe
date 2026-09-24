@@ -17,7 +17,7 @@ export default function AuthForm({
     withSocials = false,
 }: AuthFormProps) {
     return (
-        <main className="flex min-h-screen items-center justify-center bg-table-header-background px-4 py-10">
+        <main className="flex min-h-dvh items-center justify-center bg-table-header-background px-4 py-10">
             <div className="isolate relative z-10 w-full max-w-[500px]">
                 <div
                     aria-hidden="true"
