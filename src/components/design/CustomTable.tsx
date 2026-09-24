@@ -12,6 +12,7 @@ import Heading from "@/components/design/Heading"
 import AppSection from "./AppSectoin"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Button } from "@/components/ui/button"
+import { cn } from "@/lib/utils"
 
 export interface Column {
     key: string
@@ -340,7 +341,10 @@ export default function CustomTable<T extends Record<string, unknown>>({
                                         key={item}
                                         variant={item === currentPage ? "primary" : "secondary"}
                                         size="xs"
-                                        className="min-w-7 px-1.5"
+                                        className={cn(
+                                            "min-w-7 px-1.5",
+                                            item !== currentPage && "border-0",
+                                        )}
                                         aria-label={`Page ${item}`}
                                         aria-current={item === currentPage ? "page" : undefined}
                                         onClick={() => changePage(item)}

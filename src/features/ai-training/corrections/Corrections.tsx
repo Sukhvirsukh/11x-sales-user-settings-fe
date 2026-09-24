@@ -105,7 +105,7 @@ export function Corrections() {
                 emptyState={isLoading ? <TableSkeleton columns={5} showHeader={false} /> : undefined}
                 headerActions={
                     <div className="flex items-center gap-2.5">
-                        <SearchField onSearchChange={setSearch} />
+                        <SearchField onSearchChange={setSearch} viewport="xs" />
                     </div>
                 }
                 rowActions={canCreateCorrections || canDeleteCorrections ? (row) => (
