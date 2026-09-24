@@ -216,12 +216,6 @@ export default function CustomTable<T extends Record<string, unknown>>({
             )}
 
             {/* Table */}
-            {selectable && (
-                <label className="flex items-center gap-2 text-sm md:hidden">
-                    <SelectAllCheckbox />
-                    Select all rows
-                </label>
-            )}
             <div className="relative flex w-full flex-col items-start overflow-hidden md:rounded-lg md:border md:border-section-border md:bg-background">
                 {selectable && bulkActions && selectedCount > 0 && (
                     <div
@@ -230,7 +224,9 @@ export default function CustomTable<T extends Record<string, unknown>>({
                         className="z-10 flex w-full flex-wrap items-center justify-between gap-3 rounded-lg border border-section-border bg-table-header-background px-4 py-2 md:absolute md:inset-x-0 md:top-0 md:h-10 md:flex-nowrap md:rounded-none md:border-0 md:px-5 md:py-0"
                     >
                         <div className="flex items-center gap-3">
-                            <SelectAllCheckbox />
+                            <span className="hidden md:inline-flex">
+                                <SelectAllCheckbox />
+                            </span>
                             <span className="text-sm font-medium" aria-live="polite">
                                 {selectedCount} selected
                             </span>
@@ -275,7 +271,7 @@ export default function CustomTable<T extends Record<string, unknown>>({
                                 className="grid grid-cols-2 overflow-hidden rounded-lg border! border-section-border bg-surface-raised px-2 py-0 hover:bg-surface-raised md:table-row md:rounded-none md:border-0! md:bg-transparent md:p-0 md:hover:bg-transparent"
                             >
                                 {selectable && (
-                                    <TableCell className="col-span-2 border-b border-section-border px-1 py-2 md:border-0 md:px-5">
+                                    <TableCell className="hidden md:table-cell md:border-0 md:px-5">
                                         <Checkbox
                                             aria-label={`Select ${row.name ?? displayedRowIds[rowIndex]}`}
                                             checked={selectedIds.has(displayedRowIds[rowIndex])}
