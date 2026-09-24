@@ -24,7 +24,11 @@ function Carousel({ items }: { items: KnowMoreItem[] }) {
         <>
             <div className="w-full flex items-center justify-between">
                 <Heading>Know more</Heading>
-                <Button size="sm" variant="underline-bare">Show all</Button>
+                <Button
+                    size="sm"
+                    variant="underline-bare"
+                    onClick={() => window.open('https://www.youtube.com/watch?v=mWRMjEIh4hE&list=PLJ_2mz_M8S6s', "_blank")}
+                >Show all</Button>
             </div>
             <div className="w-full relative">
                 <div
@@ -33,13 +37,13 @@ function Carousel({ items }: { items: KnowMoreItem[] }) {
                 >
                     {items.map((item) => (
                         <article key={item.title} className="w-[65%] shrink-0 snap-start">
-                            <div className="flex aspect-[1.75] items-center justify-center rounded-[6px] bg-content-muted">
-                                {/* Only videos get a play affordance; other types show the thumbnail alone. */}
+                            <div className="flex aspect-[1.75] items-center justify-center rounded-md bg-[#cccc]">
                                 {item.type === "video" && (
                                     <button
                                         type="button"
                                         aria-label={`Watch ${item.title}`}
                                         className="flex size-9 cursor-pointer items-center justify-center rounded-full bg-border transition-transform hover:scale-105 focus-visible:outline-2 focus-visible:outline-primary"
+                                        onClick={() => window.open('https://www.youtube.com/watch?v=mWRMjEIh4hE&list=PLJ_2mz_M8S6s', "_blank")}
                                     >
                                         <Play className="ml-0.5 size-4 fill-background text-background" />
                                     </button>

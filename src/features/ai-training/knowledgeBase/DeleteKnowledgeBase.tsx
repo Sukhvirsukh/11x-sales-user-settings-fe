@@ -1,5 +1,4 @@
-import { Banner } from "@/components/design/Banner";
-import Modal from "@/components/design/Modal";
+import InfoModal from "@/components/shared/InfoModal";
 import { toast } from "@/components/ui/toast";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteKnowledgeBase } from "./knowledgeBaseApi";
@@ -49,28 +48,26 @@ export default function DeleteKnowledgeBase({ open, onOpenChange, knowledges, on
         deleteKnowledgeMutation.mutate();
     }
     return (
-        <Modal
+        <InfoModal
+            variant="warning"
             open={open}
             onOpenChange={(nextOpen) => {
                 if (!deleteKnowledgeMutation.isPending) onOpenChange(nextOpen);
             }}
             title={knowledges.length === 1 ? "Delete knowledge" : "Delete knowledge entries"}
-            primaryAction={{
-                label: deleteKnowledgeMutation.isPending ? "Deleting..." : "Delete",
-                onClick: confirmDelete,
-                disabled: deleteKnowledgeMutation.isPending || knowledges.length === 0,
-                variant: "destructive",
-            }}
-            closeAction={{ label: "Cancel", disabled: deleteKnowledgeMutation.isPending }}
-        >
-            <Banner variant="destructive" isIcon>
+            description={
                 <p>
                     Are you sure you want to delete{" "}
                     <span className="font-bold">
                         {knowledges.length === 1 ? String(knowledges[0].name ?? "this knowledge entry") : `${knowledges.length} selected knowledge entries`}
                     </span>? This action cannot be undone.
                 </p>
-            </Banner>
-        </Modal>
+            }
+            confirmLabel={deleteKnowledgeMutation.isPending ? "Deleting..." : "Delete"}
+            cancelLabel="Cancel"
+            confirmDisabled={deleteKnowledgeMutation.isPending || knowledges.length === 0}
+            cancelDisabled={deleteKnowledgeMutation.isPending}
+            onConfirm={confirmDelete}
+        />
     )
 }

@@ -1,5 +1,4 @@
-import { Banner } from "@/components/design/Banner";
-import Modal from "@/components/design/Modal";
+import InfoModal from "@/components/shared/InfoModal";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteRole, deleteRoles } from "./roleHistoryApi";
 import { roleHistoryQueryKey } from "./roleHistoryQuery";
@@ -53,29 +52,27 @@ export default function DeleteRole({ open, onOpenChange, roles, onDeleted }: Del
         deleteRoleMutation.mutate();
     }
     return (
-        <Modal
+        <InfoModal
+            variant="warning"
             open={open && canDeleteRoles}
             onOpenChange={(nextOpen) => {
                 if (nextOpen && !canDeleteRoles) return;
                 if (!deleteRoleMutation.isPending) onOpenChange(nextOpen);
             }}
             title={roles.length === 1 ? "Delete role" : "Delete roles"}
-            primaryAction={{
-                label: deleteRoleMutation.isPending ? "Deleting..." : "Delete",
-                onClick: confirmDelete,
-                disabled: deleteRoleMutation.isPending || roles.length === 0 || !canDeleteRoles,
-                variant: "destructive",
-            }}
-            closeAction={{ label: "Cancel", disabled: deleteRoleMutation.isPending }}
-        >
-            <Banner variant="destructive" isIcon>
+            description={
                 <p>
                     Are you sure you want to delete{" "}
                     <span className="font-bold">
                         {roles.length === 1 ? String(roles[0].name ?? "this role") : `${roles.length} selected roles`}
                     </span>? This action cannot be undone.
                 </p>
-            </Banner>
-        </Modal>
+            }
+            confirmLabel={deleteRoleMutation.isPending ? "Deleting..." : "Delete"}
+            cancelLabel="Cancel"
+            confirmDisabled={deleteRoleMutation.isPending || roles.length === 0 || !canDeleteRoles}
+            cancelDisabled={deleteRoleMutation.isPending}
+            onConfirm={confirmDelete}
+        />
     )
 }

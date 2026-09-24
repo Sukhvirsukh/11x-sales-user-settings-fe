@@ -40,6 +40,7 @@ export default function ResetVisibilityModal() {
                 description="Double-check your new settings"
                 confirmLabel={resetMutation.isPending ? "Proceeding..." : "Yes Proceed"}
                 cancelLabel="Cancel"
+                contentClassName="md:w-[450px]"
                 confirmDisabled={resetMutation.isPending}
                 cancelDisabled={resetMutation.isPending}
                 onConfirm={() => resetMutation.mutate()}

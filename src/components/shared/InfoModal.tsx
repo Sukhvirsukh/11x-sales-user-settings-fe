@@ -4,14 +4,20 @@ import {
     DialogContent,
     DialogDescription,
     DialogTitle,
+    DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { ArrowRight, X } from "lucide-react";
-import type { ReactNode } from "react";
+import type { ReactElement, ReactNode } from "react";
+
+export type InfoModalVariant = "default" | "warning";
 
 export interface InfoModalProps {
-    open: boolean;
-    onOpenChange: (open: boolean) => void;
+    open?: boolean;
+    defaultOpen?: boolean;
+    onOpenChange?: (open: boolean) => void;
+    trigger?: ReactElement;
     onConfirm: () => void;
     title: string;
     description: ReactNode;
@@ -19,11 +25,17 @@ export interface InfoModalProps {
     cancelLabel: string;
     confirmDisabled?: boolean;
     cancelDisabled?: boolean;
+    /** Visual treatment for the modal and its confirm action. */
+    variant?: InfoModalVariant;
+    /** Overrides the dialog content styles, including its default automatic width. */
+    contentClassName?: string;
 }
 
 export default function InfoModal({
     open,
+    defaultOpen,
     onOpenChange,
+    trigger,
     onConfirm,
     title,
     description,
@@ -31,16 +43,31 @@ export default function InfoModal({
     cancelLabel,
     confirmDisabled,
     cancelDisabled,
+    variant = "default",
+    contentClassName,
 }: InfoModalProps) {
     return (
-        <Dialog open={open} onOpenChange={onOpenChange}>
+        <Dialog
+            open={open}
+            defaultOpen={defaultOpen}
+            onOpenChange={onOpenChange}
+        >
+            {trigger && <DialogTrigger render={trigger} />}
             <DialogContent
                 showCloseButton={false}
-                className="left-1/2 right-auto bottom-auto top-1/2 flex w-[calc(100%-2rem)] max-w-[450px]! -translate-x-1/2 -translate-y-1/2 flex-col gap-0 overflow-hidden rounded-[10px] border border-section-border bg-popover px-4 pb-4 pt-[50px] shadow-panel ring-0 max-sm:max-w-[calc(100%-2rem)] max-sm:rounded-[10px]"
+                data-variant={variant}
+                className={cn(
+                    "left-1/2 right-auto bottom-auto top-1/2 flex w-auto min-w-[320px] -translate-x-1/2 -translate-y-1/2 flex-col gap-0 overflow-hidden rounded-[10px] border border-section-border bg-popover px-4 pb-4 pt-[50px] shadow-panel ring-0 max-sm:max-w-[calc(100%-2rem)] max-sm:overflow-hidden max-sm:rounded-[10px]",
+                    variant === "warning" && "border-0",
+                    contentClassName,
+                )}
             >
                 <div
                     aria-hidden="true"
-                    className="pointer-events-none absolute -left-33.75 -top-15 size-104.5 rounded-full bg-primary/10"
+                    className={cn(
+                        "pointer-events-none absolute left-0 top-0 aspect-square w-[93%] -translate-x-[32%] -translate-y-[14%] rounded-full bg-primary/10",
+                        variant === "warning" && "bg-danger/15",
+                    )}
                 />
 
                 <DialogClose
@@ -72,6 +99,7 @@ export default function InfoModal({
                 <div className="relative z-1 mt-3.5 flex flex-col gap-2.5">
                     <Button
                         type="button"
+                        variant={variant === "warning" ? "destructive" : "primary"}
                         onClick={onConfirm}
                         disabled={confirmDisabled}
                     >
