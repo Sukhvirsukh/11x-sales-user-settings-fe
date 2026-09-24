@@ -91,6 +91,7 @@ export function Store() {
                 columns={columns}
                 data={filteredData}
                 selectable={canDeleteStore}
+                mobileColumnSplit={['40%', '60%']}
                 getRowId={(row) => String(row.id)}
                 bulkActions={canDeleteStore ? ((rows, deselectRows) => (
                     <Button variant="destructive" size="xs" onClick={() => requestDelete(rows, deselectRows)}>
