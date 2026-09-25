@@ -94,7 +94,7 @@ function LoadedChatBox({ fields, onClose, className = "", defaultMessages }: Cha
   } = fields;
 
   const avatarUrl = useChatFaceUrl(chatFace);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
 
   const defaultMessagesRef = useRef<readonly ChatMessageData[] | undefined>(
     defaultMessages !== undefined ? defaultMessages.map(cloneMessage) : undefined,
@@ -129,7 +129,13 @@ function LoadedChatBox({ fields, onClose, className = "", defaultMessages }: Cha
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    const messagesContainer = messagesContainerRef.current;
+    if (!messagesContainer) return;
+
+    messagesContainer.scrollTo({
+      top: messagesContainer.scrollHeight,
+      behavior: "smooth",
+    });
   }, [messages]);
 
   function handleSend(content: string) {
@@ -213,7 +219,10 @@ function LoadedChatBox({ fields, onClose, className = "", defaultMessages }: Cha
       </div>
 
       {/* Messages */}
-      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-[18px] py-2.5">
+      <div
+        ref={messagesContainerRef}
+        className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-[18px] py-2.5"
+      >
         <div className="space-y-2">
           {messages.length > 0 && (
             messages.map((message) => (
@@ -232,7 +241,6 @@ function LoadedChatBox({ fields, onClose, className = "", defaultMessages }: Cha
               </div>
             ))
           )}
-          <div ref={messagesEndRef} />
         </div>
       </div>
 

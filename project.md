@@ -99,6 +99,7 @@ src/
 │   │   ├── Header.tsx               # Header component
 │   │   ├── PageContainer.tsx        # Page container wrapper
 │   │   ├── MobileTopbar.tsx         # Mobile top bar
+│   │   ├── MobileTopbarWrapper.tsx  # Mobile top bar with sidebar and test-chat overlays
 │   │   └── sidebar/
 │   │       ├── index.tsx            # Sidebar (renders Desktop + Mobile)
 │   │       ├── DesktopSidebar.tsx   # Collapsible desktop sidebar

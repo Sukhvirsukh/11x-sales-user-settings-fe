@@ -1,5 +1,4 @@
-import { Banner } from "@/components/design/Banner";
-import Modal from "@/components/design/Modal";
+import InfoModal from "@/components/shared/InfoModal";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteSegaments, deleteUserProfiles } from "./contactsApi";
 import { segmentsQueryKey, userProfilesQueryKey } from "./contactQuery";
@@ -75,28 +74,26 @@ export default function DeleteContacts({ kind, open, onOpenChange, rows, onDelet
     }
 
     return (
-        <Modal
+        <InfoModal
+            variant="warning"
             open={open}
             onOpenChange={(nextOpen) => {
                 if (!deleteMutation.isPending) onOpenChange(nextOpen);
             }}
             title={rows.length === 1 ? `Delete ${singular}` : `Delete ${plural}`}
-            primaryAction={{
-                label: deleteMutation.isPending ? "Deleting..." : "Delete",
-                onClick: confirmDelete,
-                disabled: deleteMutation.isPending || rows.length === 0,
-                variant: "destructive",
-            }}
-            closeAction={{ label: "Cancel", disabled: deleteMutation.isPending }}
-        >
-            <Banner variant="destructive" isIcon>
+            description={
                 <p>
                     Are you sure you want to delete{" "}
                     <span className="font-bold">
                         {rows.length === 1 ? String(rows[0].name ?? `this ${singular}`) : `${rows.length} selected ${plural}`}
                     </span>? This action cannot be undone.
                 </p>
-            </Banner>
-        </Modal>
+            }
+            confirmLabel={deleteMutation.isPending ? "Deleting..." : "Delete"}
+            cancelLabel="Cancel"
+            confirmDisabled={deleteMutation.isPending || rows.length === 0}
+            cancelDisabled={deleteMutation.isPending}
+            onConfirm={confirmDelete}
+        />
     )
 }

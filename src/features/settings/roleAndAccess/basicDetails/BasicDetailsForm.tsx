@@ -80,10 +80,10 @@ export default function BasicDetailsForm() {
                     variant="ghost"
                     size="default"
                     disabled={!canEditBasicDetails}
-                    className="px-2.5 py-1.5 sm:px-[10px] sm:py-[10px] text-md"
+                    className="sm:px-2.5 sm:py-1.5 p-1.5 text-md"
                 >
                     <span className="hidden sm:inline">Edit details</span>
-                    <SquarePen size={14} className="ml-1" />
+                    <SquarePen size={14} className="ml-0 md:ml-1" />
                 </Button>
             }
             title="Edit details"

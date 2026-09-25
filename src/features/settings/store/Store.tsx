@@ -91,6 +91,7 @@ export function Store() {
                 columns={columns}
                 data={filteredData}
                 selectable={canDeleteStore}
+                mobileColumnSplit={['40%', '60%']}
                 getRowId={(row) => String(row.id)}
                 bulkActions={canDeleteStore ? ((rows, deselectRows) => (
                     <Button variant="destructive" size="xs" onClick={() => requestDelete(rows, deselectRows)}>
@@ -120,12 +121,12 @@ export function Store() {
                     <div className="flex items-center gap-2">
                         {canCreateStore && (
                             <Button variant="bare" size="sm" onClick={() => openEditStore(row)} aria-label="Edit store">
-                                <SquarePen className="size-3 text-content-muted" />
+                                <SquarePen className="size-4 text-content-muted" />
                             </Button>
                         )}
                         {canDeleteStore && (
                             <Button variant="bare" size="sm" onClick={() => requestDelete([row])} aria-label="Delete store">
-                                <Trash className="size-3 text-content-muted" />
+                                <Trash className="size-4 text-content-muted" />
                             </Button>
                         )}
                     </div>

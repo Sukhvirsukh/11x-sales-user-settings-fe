@@ -38,20 +38,30 @@ export default function MobileSidebar() {
         };
     }, [isOpen]);
 
-    if (!isOpen) return null;
-
     return (
-        <div className="fixed inset-0 z-50 md:hidden" role="dialog" aria-modal="true">
+        <div
+            className={`fixed inset-0 z-50 md:hidden ${isOpen ? "" : "pointer-events-none"}`}
+            role="dialog"
+            aria-modal="true"
+            aria-hidden={!isOpen}
+            inert={!isOpen}
+        >
             {/* Backdrop */}
             <button
                 type="button"
                 aria-label="Close menu"
                 onClick={close}
-                className="absolute inset-0 bg-content-strong/40 backdrop-blur-xs"
+                className={`absolute inset-0 bg-content-strong/40 backdrop-blur-xs transition-opacity duration-300 ease-out ${
+                    isOpen ? "opacity-100" : "opacity-0"
+                }`}
             />
 
-            {/* Panel */}
-            <aside className="absolute inset-y-0 left-0 flex h-full w-full max-w-[320px] flex-col bg-sidebar p-2.5 shadow-blue sm:max-w-[360px] sm:p-4">
+            {/* Panel — stays mounted so it can slide in from the left edge. */}
+            <aside
+                className={`absolute inset-y-0 left-0 flex h-full w-full max-w-[320px] flex-col bg-sidebar p-2.5 shadow-blue transition-transform duration-300 ease-out sm:max-w-[360px] sm:p-4 ${
+                    isOpen ? "translate-x-0" : "-translate-x-full"
+                }`}
+            >
                 {/* Header */}
                 <div className="flex items-center justify-between border-b border-divider pb-2.5 sm:pb-4">
                     <div className="flex min-w-0 items-center gap-2.5">
