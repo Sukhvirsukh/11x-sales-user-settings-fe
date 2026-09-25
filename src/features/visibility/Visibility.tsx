@@ -130,7 +130,7 @@ export default function Visibility() {
 
                 <div className="relative flex flex-col items-stretch gap-3.5 md:min-h-0 md:flex-1 md:flex-row">
                     <aside
-                        className={`flex min-w-0 shrink-0 flex-col gap-2 md:min-h-0 md:max-h-full md:w-auto md:self-stretch md:transition-[flex-basis,max-width] md:duration-500 md:ease-in-out motion-reduce:transition-none ${isMaximized ? "md:basis-[calc(100%-500px-0.875rem)] md:max-w-[calc(100%-500px-0.875rem)]" : "md:basis-[30%] md:max-w-75"}`}
+                        className={`flex min-w-0 shrink-0 flex-col gap-2 md:min-h-0 md:max-h-full md:w-auto md:self-stretch md:transition-[flex-basis,max-width] md:duration-500 md:ease-in-out motion-reduce:transition-none ${isMaximized ? "md:basis-[calc(100%-500px-0.875rem)] md:max-w-[calc(100%-500px-0.875rem)]" : "md:basis-[30%] md:max-w-75 2xl:max-w-none"}`}
                     >
                         <div className="flex min-w-0 flex-initial flex-col overflow-hidden rounded-[10px] border border-border bg-background shadow-blue md:min-h-0 md:max-h-full">
                             <div className="min-w-0 px-3 sm:px-4 md:min-h-0 md:overflow-y-auto">

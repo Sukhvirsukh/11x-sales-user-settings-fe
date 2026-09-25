@@ -30,7 +30,7 @@ function PerformanceMatrixTabs(metrics: PerformanceMetricsSummary) {
                 tabs={tabs}
                 value={selectedTab}
                 onValueChange={setActiveTab}
-                className="gap-4 [&_[data-slot=tabs-trigger][data-active]]:!bg-transparent [&_[data-slot=tabs-trigger][data-active]]:!shadow-none"
+                className="w-full gap-4 [&_[data-slot=tabs-trigger][data-active]]:!bg-transparent [&_[data-slot=tabs-trigger][data-active]]:!shadow-none"
                 listClassName="!h-auto grid w-full grid-cols-3 gap-2 border-b border-border"
                 triggerClassName="h-auto min-w-0 rounded-none border-0 !bg-transparent px-0 pb-2 text-sm font-normal text-content-muted shadow-none hover:!bg-transparent focus-visible:!border-transparent focus-visible:!ring-0 focus-visible:!outline-none data-active:!border-x-0 data-active:!border-t-0 data-active:!border-b-2 data-active:!border-content-muted data-active:!bg-transparent data-active:!font-bold data-active:!shadow-none after:hidden lg:text-xs xl:text-base"
                 contentClassName="mt-0"

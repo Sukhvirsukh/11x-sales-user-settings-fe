@@ -12,6 +12,8 @@ export interface SearchFieldProps {
     showMobilePanel?: boolean
     /** Breakpoint at which the popover is replaced by the inline search field. */
     viewport?: SearchFieldViewport
+    /** Removes the inline field's default maximum width. */
+    fullWidth?: boolean
 }
 
 const panelVisibilityClasses: Record<SearchFieldViewport, string> = {
@@ -30,6 +32,7 @@ export default function SearchField({
     onSearchChange,
     showMobilePanel = true,
     viewport = "md",
+    fullWidth = false,
 }: SearchFieldProps) {
 
     const [search, setSearch] = useState("");
@@ -77,10 +80,12 @@ export default function SearchField({
                     </PopoverContent>
                 </Popover>
             )}
-            <div className={showMobilePanel
-                ? inlineVisibilityClasses[viewport]
-                : "block w-full max-w-none md:max-w-[231px]"
-            }>
+            <div className={cn(
+                showMobilePanel
+                    ? inlineVisibilityClasses[viewport]
+                    : "block w-full max-w-none md:max-w-[231px]",
+                fullWidth && "max-w-none md:max-w-none",
+            )}>
                 <InputField
                     aria-label="Search knowledge base"
                     value={search}
