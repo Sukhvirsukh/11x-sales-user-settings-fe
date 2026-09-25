@@ -223,11 +223,11 @@ src/
 │   │       └── index.tsx
 │   ├── contacts/
 │   │   ├── UserProfileDetails.tsx   # User profiles table (CustomTable) + search + delete
-│   │   ├── Segaments.tsx            # Segaments table (CustomTable) + search + delete + Add segament
+│   │   ├── Segments.tsx             # Cursor-paginated segments table + search/delete/add actions
 │   │   ├── AddSegament.tsx          # Add-only modal (name + Active schedule date)
 │   │   ├── DeleteContacts.tsx       # Shared delete modal (kind: "segament" | "userProfile")
-│   │   ├── contactsApi.ts           # get/create/delete user profiles + segaments (mock delay)
-│   │   ├── contactQuery.ts          # useUserProfilesQuery / useSegamentsQuery + query keys
+│   │   ├── contactsApi.ts           # Contact APIs; segment listing uses cursor pagination
+│   │   ├── contactQuery.ts          # useUserProfilesQuery / useSegmentsQuery + query keys
 │   │   ├── contactSchema.ts         # segamentFormSchema (zod)
 │   │   ├── contactType.ts           # UserProfile, Segament, SegamentStatus, SegamentFormValues
 │   │   └── mockContacts.ts          # userProfiles / segaments fixtures
@@ -440,8 +440,8 @@ Each item carries the `permission` that mirrors its route's `handle.permission`;
 - Sidebar supports desktop (collapsible, `w-[187px]` ↔ `w-[72px]`) and mobile (full-screen overlay). Mobile sidebar state lives in `src/stores/mobileSidebarStore.ts` (Zustand).
 - Tabbed sections (Settings, AI training, Conversations, Contacts) share the same pattern: a `mainTabs` array of `{ id, label, path }`, the active tab derived from `location.pathname`, and navigation via `useNavigate` — with an index route `<Navigate>` redirect.
 - The conversations filter state is a Zustand store (`features/conversations/conversationFilterStore.ts`), separate from the mobile sidebar store. Note the duplicate empty `conversationsFilterStore.ts`.
-- Server state uses TanStack Query with feature-local query hooks and exported query keys (e.g. `visibilityQueryKey`, `roleHistoryQueryKey`, `chatSettingsIntegrationsQueryKey`, `userProfilesQueryKey`, `segamentsQueryKey`). Features without a backend yet return fixtures behind a simulated `delay()` (`reportApi.ts`, `contactsApi.ts`).
-- **Contacts feature** (`src/features/contacts/`): `/contacts` has two tabs, `UserProfileDetails` and `Segaments`, both `CustomTable` lists fed by the `mockContacts.ts` fixtures through `contactsApi.ts` (2s simulated fetch delay; the getters return `[...array]` snapshots so query invalidation actually picks up deletions). Search matches every displayed column by deriving keys from the `columns` array. Deletes go through the shared `DeleteContacts.tsx` modal, which mirrors `DeleteRole`: validate row ids, call the delete fn, fire `onDeleted` so only the deleted rows are deselected, toast, then invalidate the query key. Adds use `AddSegament.tsx` (add-only, mirrors `AddRoleForm`, no edit mode) with `segamentFormSchema` from `contactSchema.ts` and a `createSegament` mock that pushes onto the fixture array.
+- Server state uses TanStack Query with feature-local query hooks and exported query keys (e.g. `visibilityQueryKey`, `roleHistoryQueryKey`, `chatSettingsIntegrationsQueryKey`, `userProfilesQueryKey`, `segmentsQueryKey`). Features without a backend yet return fixtures behind a simulated `delay()` (for example, `reportApi.ts` and the user-profile request in `contactsApi.ts`).
+- **Contacts feature** (`src/features/contacts/`): `/contacts` has `UserProfileDetails` and `Segments` tabs backed by `CustomTable`. The segment list calls `GET /contacts/segments` with `page`, optional `search`, and the cursor supplied for a previously discovered page; the response supplies `items`, `nextCursor`, `hasMore`, `currentPage`, `totalPages`, `totalCount`, and `limit`. The page-to-cursor history is retained by `Segments.tsx`, while add/delete operations invalidate `segmentsQueryKey` through the shared contact dialogs.
 - **Conversations feature** (`src/features/conversations/`): all four tab routes (Active chats, Escalated, Assigned, Archived) render the shared `ConversationsChatPannel`, while `ConversationsPage` owns the tabs and the `ConversationsFilter` sidebar. The panel is one surface split by dividers into list | thread | customer details, driven by the fixtures in `components/shared/conversations/conversationData.ts`; filter selections live in the Zustand `conversationFilterStore`. Message rows come from the shared `ChatMessage`.
 - Settings sub-pages compose shared design components: tables use `CustomTable` (RoleHistory, PaymentHistory), detail displays use `DetailContainer`/`DetailGroup`/`DetailItem` (BasicDetails, SavedPaymentDetails), and create/edit flows use the shared `Modal` with `FormGroup` + field components (AddRoleForm, AddNewPayment, AddStore, DeleteRole, DeleteStore).
 - The `unsavedChangesBar` shared component provides a warning system for unsaved changes.

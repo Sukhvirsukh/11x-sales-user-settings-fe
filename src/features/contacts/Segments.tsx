@@ -5,9 +5,9 @@ import TableSkeleton from "@/components/shared/skeletons/TableSkeletons"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { useCan } from "@/features/auth"
-import { debounce } from "@/lib/utils"
+import { dateFormater, debounce } from "@/lib/utils"
 import { Download, Plus, Trash } from "lucide-react"
-import { useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useSearchParams } from "react-router"
 import DeleteContacts from "./DeleteContacts"
 import { useSegmentsQuery } from "./contactQuery"
@@ -30,7 +30,14 @@ const columns: Column[] = [
             )
         },
     },
-    { key: "createdAt", header: "Created date", align: "right" },
+    {
+        key: "createdAt",
+        header: "Created date",
+        align: "right",
+        render: (value) => {
+            return dateFormater(value as Date)
+        }
+    },
     { key: "activeUsers", header: "Active Users", align: "right" },
 ]
 
@@ -47,6 +54,8 @@ export default function Segments() {
     const search = searchParams.get("search") ?? ""
     const pageParam = Number(searchParams.get("page"))
     const page = Number.isInteger(pageParam) && pageParam > 0 ? pageParam : 1
+    const cursor = searchParams.get("cursor") || undefined
+    const pageCursorsRef = useRef<Map<number, string | undefined>>(new Map([[1, undefined]]))
 
     const [deleteRequest, setDeleteRequest] = useState<{
         rows: Segment[]
@@ -55,20 +64,41 @@ export default function Segments() {
     const [isDeleteOpen, setIsDeleteOpen] = useState(false)
     const [isAddOpen, setIsAddOpen] = useState(false)
 
-    const { data, isLoading, error } = useSegmentsQuery(page, search.trim())
+    const { data, isLoading, isPlaceholderData, error } = useSegmentsQuery(page, search.trim(), cursor)
     const segments = data?.items ?? []
-    const total = data?.total ?? 0
-    const pageSize = data?.pageSize ?? 10
+    const total = data?.totalCount ?? 0
+    const pageSize = data?.limit ?? 10
+
+    useEffect(() => {
+        pageCursorsRef.current.set(page, cursor)
+
+        if (!data || isPlaceholderData) return
+
+        const nextPage = data.currentPage + 1
+        const nextCursor = data.hasMore ? data.nextCursor : null
+
+        if (pageCursorsRef.current.get(nextPage) !== nextCursor) {
+            for (const storedPage of pageCursorsRef.current.keys()) {
+                if (storedPage >= nextPage) pageCursorsRef.current.delete(storedPage)
+            }
+        }
+
+        if (nextCursor) {
+            pageCursorsRef.current.set(nextPage, nextCursor)
+        }
+    }, [cursor, data, isPlaceholderData, page])
 
     if (error) throw error
 
     const handleSearchChange = useRef(
         debounce((value: string) => {
+            pageCursorsRef.current = new Map([[1, undefined]])
             setSearchParamsRef.current((currentParams) => {
                 const nextParams = new URLSearchParams(currentParams)
                 if (value) nextParams.set("search", value)
                 else nextParams.delete("search")
                 nextParams.delete("page")
+                nextParams.delete("cursor")
                 return nextParams
             }, { replace: true })
         }),
@@ -79,6 +109,18 @@ export default function Segments() {
             const nextParams = new URLSearchParams(currentParams)
             if (nextPage === 1) nextParams.delete("page")
             else nextParams.set("page", String(nextPage))
+
+            const nextCursor = pageCursorsRef.current.get(nextPage) ?? (
+                !isPlaceholderData && data?.hasMore && nextPage === data.currentPage + 1
+                    ? data.nextCursor ?? undefined
+                    : undefined
+            )
+
+            if (nextPage > 1 && !nextCursor) return currentParams
+
+            if (nextCursor) nextParams.set("cursor", nextCursor)
+            else nextParams.delete("cursor")
+
             return nextParams
         })
     }

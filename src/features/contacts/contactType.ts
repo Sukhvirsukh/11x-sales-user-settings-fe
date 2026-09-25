@@ -24,9 +24,12 @@ export type Segment = {
 
 export type SegmentsResponse = {
     items: Segment[]
-    page: number
-    pageSize: number
-    total: number
+    nextCursor: string | null
+    hasMore: boolean
+    currentPage: number
+    totalPages: number
+    totalCount: number
+    limit: number
 }
 
 export type SegmentFormValues = z.infer<typeof segmentFormSchema>
