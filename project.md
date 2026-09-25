@@ -270,8 +270,14 @@ src/
 │   │   ├── payments/
 │   │   │   ├── Payments.tsx         # Renders history + saved details
 │   │   │   ├── PaymentHistory.tsx   # Invoices table (CustomTable)
-│   │   │   ├── AddNewPayment.tsx    # "Add payment" modal (Account/Card tabs)
+│   │   │   ├── AddNewPayment.tsx    # Payment modal orchestration + POST mutation
+│   │   │   ├── AccountDetailForm.tsx # Account payment form fields
+│   │   │   ├── CardDetailForm.tsx   # Card payment form fields + summary
 │   │   │   ├── SavedPaymentDetails.tsx
+│   │   │   ├── paymentSchema.ts     # Card/account request validation
+│   │   │   ├── paymentsApi.ts       # GET history + POST payment
+│   │   │   ├── paymentsQuery.ts     # Payment-history query and key
+│   │   │   ├── paymentsType.ts      # History and discriminated request types
 │   │   │   └── index.ts
 │   │   ├── plan/
 │   │   │   ├── Plan.tsx
@@ -444,6 +450,7 @@ Each item carries the `permission` that mirrors its route's `handle.permission`;
 - **Contacts feature** (`src/features/contacts/`): `/contacts` has two tabs, `UserProfileDetails` and `Segaments`, both `CustomTable` lists fed by the `mockContacts.ts` fixtures through `contactsApi.ts` (2s simulated fetch delay; the getters return `[...array]` snapshots so query invalidation actually picks up deletions). Search matches every displayed column by deriving keys from the `columns` array. Deletes go through the shared `DeleteContacts.tsx` modal, which mirrors `DeleteRole`: validate row ids, call the delete fn, fire `onDeleted` so only the deleted rows are deselected, toast, then invalidate the query key. Adds use `AddSegament.tsx` (add-only, mirrors `AddRoleForm`, no edit mode) with `segamentFormSchema` from `contactSchema.ts` and a `createSegament` mock that pushes onto the fixture array.
 - **Conversations feature** (`src/features/conversations/`): all four tab routes (Active chats, Escalated, Assigned, Archived) render the shared `ConversationsChatPannel`, while `ConversationsPage` owns the tabs and the `ConversationsFilter` sidebar. The panel is one surface split by dividers into list | thread | customer details, driven by the fixtures in `components/shared/conversations/conversationData.ts`; filter selections live in the Zustand `conversationFilterStore`. Message rows come from the shared `ChatMessage`.
 - Settings sub-pages compose shared design components: tables use `CustomTable` (RoleHistory, PaymentHistory), detail displays use `DetailContainer`/`DetailGroup`/`DetailItem` (BasicDetails, SavedPaymentDetails), and create/edit flows use the shared `Modal` with `FormGroup` + field components (AddRoleForm, AddNewPayment, AddStore, DeleteRole, DeleteStore).
+- **Payments feature** (`features/settings/payments/`): payment history loads through `GET /admin/payment-methods`. `AddNewPayment` owns separate React Hook Form instances for the Account and Card tabs, while `AccountDetailForm` and `CardDetailForm` render their fields. The active request is validated with its Zod schema, posted to `POST /admin/payment`, and `paymentHistoryQueryKey` is invalidated after success.
 - The `unsavedChangesBar` shared component provides a warning system for unsaved changes.
 - `components/shared/chatBox/` holds the shared chat primitives: `ChatBox` (visibility preview), `ChatInput`, and `ChatMessage`, which renders the user/bot bubbles plus the bot action row (Debug / Make correction / thumbs / approve ✓). `ChatMessage` is used by both the visibility preview and the conversations panel, so tweaks to it show up in both places.
 - **Ask AI feature** (`src/features/askAi/`): AI chat assistant at `/ask-me`, composed of `AskAI.tsx` (chat + history banner) and `AskAIChat.tsx` (messages, input, file attachment). Uses `PreviewSection`, `AppSection`, and `Banner`.

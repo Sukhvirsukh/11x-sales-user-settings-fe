@@ -7,6 +7,8 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { SquarePen, Trash } from "lucide-react"
 import AddNewPayment from "./AddNewPayment"
 import SearchField from "@/components/shared/SearchField"
+import TableSkeleton from "@/components/shared/skeletons/TableSkeletons"
+import type { PaymentHistoryItem } from "./paymentsType"
 
 
 
@@ -36,30 +38,21 @@ const columns: Column[] = [
     { key: "method", header: "Method", align: "right" },
 ]
 
-const data = [
-    {
-        invoiceNumber: "S456RT789P1116",
-        status: "Active",
-        startDate: "10/02/26",
-        amount: "INR 500",
-        method: "Card"
-    },
-    {
-        invoiceNumber: "S456RT789P1216",
-        status: "Active",
-        startDate: "10/02/26",
-        amount: "INR 400",
-        method: "AMount"
-    },
-]
+type PaymentHistoryProps = {
+    data?: PaymentHistoryItem[]
+    isLoading: boolean
+}
 
-export default function PaymentHistory() {
+export default function PaymentHistory({ data = [], isLoading }: PaymentHistoryProps) {
     return (
 
         <CustomTable
             title="Payment history"
             columns={columns}
             data={data}
+            emptyState={isLoading ? (
+                <TableSkeleton columns={7} showHeader={false} />
+            ) : undefined}
             headerActions={
                 <div className="flex items-center gap-2.5">
                     <SearchField onSearchChange={() => { }} />

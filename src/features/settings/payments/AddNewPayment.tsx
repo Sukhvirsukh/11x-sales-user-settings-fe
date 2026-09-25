@@ -1,15 +1,18 @@
-import AppSection from "@/components/design/AppSectoin";
 import { CustomTabs } from "@/components/design/CustomTabs";
-import { DatePicker } from "@/components/design/DatePicker";
-import { FormGroup } from "@/components/design/FormGroup";
-import { InputField } from "@/components/design/InputField";
-import Label from "@/components/design/Label";
 import Modal from "@/components/design/Modal";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Separator } from "@/components/ui/separator";
+import { toast } from "@/components/ui/toast";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Plus } from "lucide-react";
-import { useId, useState } from "react";
+import { useState } from "react";
+import { useForm, type SubmitHandler } from "react-hook-form";
+import AccountDetailForm from "./AccountDetailForm";
+import CardDetailForm from "./CardDetailForm";
+import { addPaymentMethod } from "./paymentsApi";
+import { paymentAccountSchema, paymentCardSchema } from "./paymentSchema";
+import { paymentHistoryQueryKey } from "./paymentsQuery";
+import type { CreateAccountPaymentRequest, CreateCardPaymentRequest } from "./paymentsType";
 
 
 const tabs = [
@@ -17,125 +20,101 @@ const tabs = [
     { id: "card", label: "Card" }
 ];
 
+const PAYMENT_AMOUNT = 600;
 
-export function AccountPayment() {
-    return (
-        <FormGroup gap="sm">
-            <InputField
-                label="Store Name"
-                placeholder="Enter store name"
-                labelClassName="text-sm font-medium"
-            />
-            <InputField
-                label="Store URL"
-                placeholder="Enter store URL"
-                labelClassName="text-sm font-medium"
-            />
-        </FormGroup>
-    )
-}
+const ACCOUNT_DEFAULT_VALUES: CreateAccountPaymentRequest = {
+    method: "AMOUNT",
+    amount: PAYMENT_AMOUNT,
+    name: "",
+    accountNumber: "",
+    saveAsDefault: false,
+};
 
-export function CardPayment() {
-    const defaultPaymentId = useId();
-    const otherOfferId = useId();
-
-    return (
-        <FormGroup gap="sm">
-            <InputField
-                label="Name"
-                placeholder="Enter name"
-                labelClassName="text-sm font-medium"
-            />
-            <InputField
-                label="Card number"
-                type="number"
-                placeholder="Enter card number"
-                labelClassName="text-sm font-medium"
-            />
-
-            <FormGroup col={2} gap="sm">
-                <DatePicker
-                    label="Expire date"
-                    placeholder="Select date"
-                    labelClassName="text-sm font-medium"
-                />
-                <InputField
-                    label="CVV"
-                    placeholder="Enter CVV"
-                    labelClassName="text-sm font-medium"
-                />
-
-            </FormGroup>
-
-            <div className="flex items-center gap-2">
-                <Checkbox
-                    id={defaultPaymentId}
-                    name="defaultPaymentMethod"
-                />
-                <Label htmlFor={defaultPaymentId} className="cursor-pointer text-sm text-content-muted">
-                    Save as default payment method
-                </Label>
-            </div>
-            <AppSection className="h-auto gap-2.5 rounded-[4px] bg-table-header-background">
-                <dl className="flex w-full flex-col gap-2 text-sm">
-                    <div className="flex items-center justify-between gap-3">
-                        <dt className="text-content-muted">Total charges</dt>
-                        <dd className="">INR 650</dd>
-                    </div>
-                    <div className="flex items-center justify-between gap-3">
-                        <dt className="text-content-muted">Apply offer</dt>
-                        <dd className="">INR 65</dd>
-                    </div>
-                    <div className="flex items-center justify-between gap-3">
-                        <dt>
-                            <Label htmlFor={otherOfferId} className="text-sm font-normal text-content-muted">
-                                Other offer
-                            </Label>
-                        </dt>
-                        <dd className="w-[68px] shrink-0">
-                            <InputField
-                                id={otherOfferId}
-                                name="otherOffer"
-                                placeholder="Enter here"
-                                containerClassName="h-[22px] rounded-[6px] border-content-muted px-2"
-                                className="text-xs placeholder:text-content-muted"
-                            />
-                        </dd>
-                    </div>
-                </dl>
-                <Separator className="bg-primary/30" />
-                <dl className="flex w-full items-center justify-between gap-3 text-sm">
-                    <dt className="text-content-muted">Total payment</dt>
-                    <dd className="">INR 600</dd>
-                </dl>
-            </AppSection>
-        </FormGroup>
-    )
-}
+const CARD_DEFAULT_VALUES: CreateCardPaymentRequest = {
+    method: "CARD",
+    amount: PAYMENT_AMOUNT,
+    cardName: "",
+    cardNumber: "",
+    cardType: "",
+    expiryMonth: 0,
+    expiryYear: 0,
+    cvv: "",
+    saveAsDefault: false,
+};
 
 export default function AddNewPayment() {
-
+    const queryClient = useQueryClient();
+    const [open, setOpen] = useState(false);
     const [activeTab, setActiveTab] = useState(tabs[0].id);
+    const accountForm = useForm<CreateAccountPaymentRequest>({
+        resolver: zodResolver(paymentAccountSchema),
+        defaultValues: ACCOUNT_DEFAULT_VALUES,
+    });
+    const cardForm = useForm<CreateCardPaymentRequest>({
+        resolver: zodResolver(paymentCardSchema),
+        defaultValues: CARD_DEFAULT_VALUES,
+    });
+
+    const addPaymentMutation = useMutation({
+        mutationFn: addPaymentMethod,
+        onSuccess: async () => {
+            await queryClient.invalidateQueries({ queryKey: paymentHistoryQueryKey });
+            accountForm.reset(ACCOUNT_DEFAULT_VALUES);
+            cardForm.reset(CARD_DEFAULT_VALUES);
+            setActiveTab(tabs[0].id);
+            setOpen(false);
+            toast.add({
+                type: "success",
+                title: "Payment added",
+                description: "The payment method has been added successfully.",
+            });
+        },
+    });
+
+    const submitAccount: SubmitHandler<CreateAccountPaymentRequest> = (values) => {
+        addPaymentMutation.mutate(values);
+    };
+
+    const submitCard: SubmitHandler<CreateCardPaymentRequest> = (values) => {
+        addPaymentMutation.mutate(values);
+    };
 
     const handleTabChange = (tabId: string) => {
         setActiveTab(tabId);
     };
 
+    const handleOpenChange = (nextOpen: boolean) => {
+        if (addPaymentMutation.isPending) return;
+
+        setActiveTab(tabs[0].id);
+        accountForm.reset(ACCOUNT_DEFAULT_VALUES);
+        cardForm.reset(CARD_DEFAULT_VALUES);
+        setOpen(nextOpen);
+    };
+
+    const submitActiveForm = activeTab === "account"
+        ? accountForm.handleSubmit(submitAccount)
+        : cardForm.handleSubmit(submitCard);
+
     return (
         <Modal
+            open={open}
+            onOpenChange={handleOpenChange}
             trigger={
-                <Button variant="primary" className="">
+                <Button variant="primary">
                     New Payment
                     <Plus className="ml-0.5 size-2 md:ml-2 md:size-3.5" />
                 </Button>
             }
-            title="Edit details"
+            title="New payment"
             primaryAction={{
-                label: "Save",
-                onClick: () => console.log("Save"),
+                label: addPaymentMutation.isPending ? "Saving..." : "Save",
+                onClick: submitActiveForm,
+                disabled: addPaymentMutation.isPending,
             }}
             closeAction={{
                 label: "Cancel",
+                disabled: addPaymentMutation.isPending,
             }}
         >
             <CustomTabs
@@ -148,9 +127,18 @@ export default function AddNewPayment() {
 
                 {
                     activeTab === "account" ? (
-                        <AccountPayment />
+                        <AccountDetailForm
+                            form={accountForm}
+                            onSubmit={submitAccount}
+                            disabled={addPaymentMutation.isPending}
+                        />
                     ) : (
-                        <CardPayment />
+                        <CardDetailForm
+                            amount={PAYMENT_AMOUNT}
+                            form={cardForm}
+                            onSubmit={submitCard}
+                            disabled={addPaymentMutation.isPending}
+                        />
                     )
                 }
 
