@@ -6,9 +6,12 @@ import AskAIChat from "./AskAIChat";
 
 export function AskAI() {
     return (
-        <PreviewSection>
-            <div className="flex w-full flex-col gap-3.5 md:flex-row">
-                <AppSection className="h-[80vh] min-w-0 flex-1 justify-between md:py-7.5 md:px-5">
+        <PreviewSection
+            className="md:min-h-0 md:flex-1 pb-0"
+            contentClassName="md:min-h-0 md:flex-1"
+        >
+            <div className="flex w-full flex-col gap-3.5 md:min-h-0 md:flex-1 md:flex-row">
+                <AppSection className="h-[80vh] min-w-0 flex-1 justify-between md:h-full md:min-h-0 md:py-7.5 md:px-5">
                     <AskAIChat />
                 </AppSection>
                 <div className="flex w-full flex-col gap-3.5 md:w-auto md:flex-row md:self-start">

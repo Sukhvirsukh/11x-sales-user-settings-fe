@@ -80,7 +80,7 @@ export default function Preview({
                         src={previewBackground}
                         alt=""
                         aria-hidden
-                        className="pointer-events-none absolute inset-0 h-full w-full scale-[1.01] object-cover object-top brightness-70 blur-[1.5px]"
+                        className="pointer-events-none absolute inset-0 h-full w-full scale-[1.01] object-cover object-top brightness-70 blur-[1.5px] 2xl:blur-[3px]"
                     />
 
                     {isChatOpen && (

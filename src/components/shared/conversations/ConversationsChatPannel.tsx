@@ -156,7 +156,7 @@ export function ConversationsChatPannel({ alwaysShowChatInput = false }: Convers
     }
 
     return (
-        <div className="grid h-full min-w-0 grid-cols-1 gap-4 lg:grid-cols-[minmax(180px,1fr)_minmax(0,3fr)_minmax(176px,1fr)] lg:gap-3.5">
+        <div className="grid w-full h-full min-w-0 grid-cols-1 gap-4 lg:grid-cols-[minmax(180px,1fr)_minmax(0,3fr)_minmax(176px,1fr)] lg:gap-3.5">
             <ConversationList selectedId={selectedId} onSelect={setSelectedId} />
             <MessageHistory
                 messages={messages}
