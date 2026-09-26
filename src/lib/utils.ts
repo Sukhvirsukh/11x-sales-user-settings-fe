@@ -29,22 +29,6 @@ export function getInitials(name: string): string {
     .slice(0, 2);
 }
 
-export function debounce<TArgs extends unknown[]>(
-  callback: (...args: TArgs) => void,
-  delay = 300,
-) {
-  let timer: ReturnType<typeof setTimeout> | undefined
-
-  return (...args: TArgs) => {
-    if (timer) clearTimeout(timer)
-
-    timer = setTimeout(() => {
-      callback(...args)
-    }, delay)
-  }
-}
-
-
 export type NumberFormat = "compact" | "percent";
 
 const compactNumberFormatter = new Intl.NumberFormat("en", {
