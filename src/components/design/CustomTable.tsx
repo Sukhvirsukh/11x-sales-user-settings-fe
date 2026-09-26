@@ -103,6 +103,12 @@ type CustomTableProps<T extends Record<string, unknown> = Record<string, unknown
         total?: number
         onPageChange?: (page: number) => void
     }
+    cursorPagination?: {
+        hasPrevious: boolean
+        hasNext: boolean
+        onPrevious: () => void
+        onNext: () => void
+    }
 } & (
         | { selectable: true; getRowId: (row: T) => string | number }
         | { selectable?: false; getRowId?: (row: T) => string | number }
@@ -122,6 +128,7 @@ export default function CustomTable<T extends Record<string, unknown>>({
     emptyStateAction,
     emptyState,
     pagination,
+    cursorPagination,
     mobileColumnSplit,
     selectable = false,
     getRowId,
@@ -308,7 +315,8 @@ export default function CustomTable<T extends Record<string, unknown>>({
                     </TableBody>
                 </Table>
 
-                {pagination && data.length > 0 && totalPages > 1 && (
+                {((pagination && data.length > 0 && totalPages > 1) ||
+                    (cursorPagination && (cursorPagination.hasPrevious || cursorPagination.hasNext))) && (
                     <nav
                         aria-label="Pagination"
                         className="flex w-full flex-wrap items-center justify-center gap-3 border-t border-section-border px-4 py-3 text-sm text-muted-foreground md:px-5"
@@ -322,12 +330,12 @@ export default function CustomTable<T extends Record<string, unknown>>({
                                 size="xs"
                                 className='p-1'
                                 aria-label="Previous page"
-                                disabled={currentPage === 1}
-                                onClick={() => changePage(currentPage - 1)}
+                                disabled={cursorPagination ? !cursorPagination.hasPrevious : currentPage === 1}
+                                onClick={() => cursorPagination ? cursorPagination.onPrevious() : changePage(currentPage - 1)}
                             >
                                 <ChevronLeft className="size-4" />
                             </Button>
-                            {getPageItems(currentPage, totalPages).map((item, index) =>
+                            {!cursorPagination && getPageItems(currentPage, totalPages).map((item, index) =>
                                 item === "ellipsis" ? (
                                     <span
                                         key={`ellipsis-${index}`}
@@ -358,8 +366,8 @@ export default function CustomTable<T extends Record<string, unknown>>({
                                 size="xs"
                                 className="p-1"
                                 aria-label="Next page"
-                                disabled={currentPage === totalPages}
-                                onClick={() => changePage(currentPage + 1)}
+                                disabled={cursorPagination ? !cursorPagination.hasNext : currentPage === totalPages}
+                                onClick={() => cursorPagination ? cursorPagination.onNext() : changePage(currentPage + 1)}
                             >
                                 <ChevronRight className="size-4" />
                             </Button>
