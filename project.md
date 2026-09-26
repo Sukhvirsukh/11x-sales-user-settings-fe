@@ -291,7 +291,7 @@ src/
 │   │   │   │   └── index.ts
 │   │   │   ├── roleHistory/
 │   │   │   │   ├── Permissions.tsx  # Permission matrix (CustomTable)
-│   │   │   │   ├── RoleHistory.tsx  # Roles table (CustomTable) + search + Add role
+│   │   │   │   ├── RoleHistory.tsx  # Cursor-paginated roles table + search + Add role
 │   │   │   │   ├── AddRoleForm.tsx
 │   │   │   │   ├── DeleteRole.tsx
 │   │   │   │   ├── roleHistoryApi.ts
@@ -301,7 +301,7 @@ src/
 │   │   │   │   └── index.ts
 │   │   │   └── index.ts
 │   │   └── store/
-│   │       ├── Store.tsx
+│   │       ├── Store.tsx             # Cursor-paginated stores table + search/actions
 │   │       ├── AddStore.tsx         # "Add store" modal form
 │   │       ├── DeleteStore.tsx
 │   │       ├── storeApi.ts          # get/create/update/delete/bulk-delete stores
@@ -361,8 +361,10 @@ src/
 │           ├── KnowledgeBaseTab.tsx
 │           ├── CorrectionsTab.tsx
 │           └── PromptToolsTab.tsx
+├── hooks/
+│   └── useDebounce.ts               # Reusable debounced callback hook
 ├── lib/
-│   ├── utils.ts                     # cn(), delay(), getInitials(), debounce(), dateFormater()
+│   ├── utils.ts                     # cn(), delay(), getInitials(), dateFormater()
 │   ├── api.ts                       # Shared apiFetch wrapper (auth, errors, toast)
 │   └── queryClient.ts               # TanStack Query client
 ├── config/
@@ -441,7 +443,10 @@ Each item carries the `permission` that mirrors its route's `handle.permission`;
 - Tabbed sections (Settings, AI training, Conversations, Contacts) share the same pattern: a `mainTabs` array of `{ id, label, path }`, the active tab derived from `location.pathname`, and navigation via `useNavigate` — with an index route `<Navigate>` redirect.
 - The conversations filter state is a Zustand store (`features/conversations/conversationFilterStore.ts`), separate from the mobile sidebar store. Note the duplicate empty `conversationsFilterStore.ts`.
 - Server state uses TanStack Query with feature-local query hooks and exported query keys (e.g. `visibilityQueryKey`, `roleHistoryQueryKey`, `chatSettingsIntegrationsQueryKey`, `userProfilesQueryKey`, `segmentsQueryKey`). Features without a backend yet return fixtures behind a simulated `delay()` (for example, `reportApi.ts` and the user-profile request in `contactsApi.ts`).
-- **Contacts feature** (`src/features/contacts/`): `/contacts` has `UserProfileDetails` and `Segments` tabs backed by `CustomTable`. The segment list calls `GET /contacts/segments` with optional `search` and `cursor`; Previous/Next controls in `Segments.tsx` retain cursor history and reset it on search. The response supplies `items`, `nextCursor`, and `hasMore` alongside count metadata. Add/delete operations invalidate `segmentsQueryKey` through the shared contact dialogs.
+- **Contacts feature** (`src/features/contacts/`): `/contacts` has `UserProfileDetails` and `Segments` tabs backed by `CustomTable`. The segment list calls `GET /contacts/segments` with optional `search` and `cursor`; `Segments.tsx` retains cursor history and resets it on search, while `CustomTable` renders Previous/Next controls. The response supplies `items`, `nextCursor`, and `hasMore` alongside count metadata. Add/delete operations invalidate `segmentsQueryKey` through the shared contact dialogs.
+- **Knowledge base** (`src/features/ai-training/knowledgeBase/`): `GET /training` accepts optional `search` and `cursor` and returns `items`, `nextCursor`, `hasMore`, and count metadata. It retains cursor history, resets it on search, and uses `CustomTable`'s Previous/Next controls. Add/delete operations invalidate `knowledgeBaseQueryKey`.
+- **Role history** (`src/features/settings/roleAndAccess/roleHistory/`): `GET /admin/users` accepts optional `search` and `cursor` and returns a cursor-paginated `items` list. `RoleHistory.tsx` uses debounced server search and `CustomTable`'s Previous/Next controls. Add/edit/delete operations invalidate `roleHistoryQueryKey`.
+- **Stores** (`src/features/settings/store/`): `GET /admin/stores` accepts optional `search` and `cursor` and returns `items`, `nextCursor`, `hasMore`, and count metadata. `Store.tsx` uses debounced server search, keeps cursor history, and uses `CustomTable`'s Previous/Next controls. Add/edit/delete operations invalidate `storeQueryKey`.
 - **Conversations feature** (`src/features/conversations/`): all four tab routes (Active chats, Escalated, Assigned, Archived) render the shared `ConversationsChatPannel`, while `ConversationsPage` owns the tabs and the `ConversationsFilter` sidebar. The panel is one surface split by dividers into list | thread | customer details, driven by the fixtures in `components/shared/conversations/conversationData.ts`; filter selections live in the Zustand `conversationFilterStore`. Message rows come from the shared `ChatMessage`.
 - Settings sub-pages compose shared design components: tables use `CustomTable` (RoleHistory, PaymentHistory), detail displays use `DetailContainer`/`DetailGroup`/`DetailItem` (BasicDetails, SavedPaymentDetails), and create/edit flows use the shared `Modal` with `FormGroup` + field components (AddRoleForm, AddNewPayment, AddStore, DeleteRole, DeleteStore).
 - The `unsavedChangesBar` shared component provides a warning system for unsaved changes.
@@ -457,7 +462,7 @@ Hosted on Netlify. `netlify.toml` pins the build (`command = "pnpm build"`, `pub
 ## Key Conventions
 
 - Use `cn()` from `src/lib/utils.ts` for conditional Tailwind classes.
-- Shared utils in `src/lib/utils.ts`: `delay()`, `getInitials()`, `debounce()`, `capitalize()` (display-casing API values: `"SUPER_ADMIN"` → `"Super Admin"`), `dateFormater(date, format?)` ("numeric" → `d/m/yyyy`, "long" → `d MMM yyyy`), `formatNumber(value, format?)` ("compact" → `40K`, "percent" → `70%`; missing/non-numeric → `—`).
+- Shared utils in `src/lib/utils.ts`: `delay()`, `getInitials()`, `capitalize()` (display-casing API values: `"SUPER_ADMIN"` → `"Super Admin"`), `dateFormater(date, format?)` ("numeric" → `d/m/yyyy`, "long" → `d MMM yyyy`), `formatNumber(value, format?)` ("compact" → `40K`, "percent" → `70%`; missing/non-numeric → `—`). Reusable debounced callbacks use `src/hooks/useDebounce.ts`.
 - Never compare `role` strings in a component: gate UI with `useCan(permission)` and protect pages with `handle.permission`. Adding a page or action means adding a `PERMISSION_GROUPS` entry (which the permissions table renders automatically); granting it stays a backend payload, never a frontend edit.
 - Prefer semantic design tokens (`bg-background`, `text-primary`) over hardcoded colors.
 - Use PascalCase for components, camelCase with `use` prefix for hooks.

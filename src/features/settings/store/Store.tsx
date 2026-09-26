@@ -6,10 +6,12 @@ import AddStore from "./AddStore";
 import DeleteStore from "./DeleteStore";
 import { Badge } from "@/components/ui/badge";
 import { useStoreQuery } from "./storeQuery";
-import { useMemo, useState } from "react";
+import { useState } from "react";
+import { useSearchParams } from "react-router";
 import TableSkeleton from "@/components/shared/skeletons/TableSkeletons";
 import SearchField from "@/components/shared/SearchField";
 import { useCan } from "@/features/auth";
+import { useDebounce } from "@/hooks/useDebounce";
 
 const columns: Column[] = [
     { key: "name", header: "Store Name", width: "280px" },
@@ -32,32 +34,56 @@ const columns: Column[] = [
 ];
 
 export function Store() {
-    const { data = [], isLoading, error } = useStoreQuery();
     // Create implies edit, so adding and editing a store share one grant — only
     // delete is asked for separately.
     const canCreateStore = useCan("settings.store.create");
     const canDeleteStore = useCan("settings.store.delete");
-    const [search, setSearch] = useState("");
+    const [searchParams, setSearchParams] = useSearchParams();
+    const search = searchParams.get("search") ?? "";
+    const [pagination, setPagination] = useState<{
+        cursor?: string;
+        previous: (string | undefined)[];
+    }>({ previous: [] });
+    const { data, isLoading, isPlaceholderData, error } = useStoreQuery(search.trim(), pagination.cursor);
+    const stores = data?.items ?? [];
     const [editStore, setEditStore] = useState<Record<string, unknown> | null>(null);
     const [isOpen, setIsOpen] = useState(false);
     const [deleteRequest, setDeleteRequest] = useState<{
         stores: Record<string, unknown>[];
         onDeleted?: (ids: string[]) => void;
     } | null>(null);
-    const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+
+    const handleSearchChange = useDebounce((value: string) => {
+        setPagination({ previous: [] });
+        setSearchParams((currentParams) => {
+            const nextParams = new URLSearchParams(currentParams);
+            if (value) nextParams.set("search", value);
+            else nextParams.delete("search");
+            nextParams.delete("page");
+            nextParams.delete("cursor");
+            return nextParams;
+        }, { replace: true });
+    });
+
+    function goToPrevious() {
+        setPagination((current) => {
+            if (current.previous.length === 0) return current;
+            return {
+                cursor: current.previous.at(-1),
+                previous: current.previous.slice(0, -1),
+            };
+        });
+    }
+
+    function goToNext() {
+        if (!data?.hasMore || !data.nextCursor || isPlaceholderData) return;
+        setPagination(({ cursor, previous }) => ({
+            cursor: data.nextCursor ?? undefined,
+            previous: [...previous, cursor],
+        }));
+    }
 
     if (error) throw error;
-
-    const filteredData = useMemo(() => {
-        const query = search.trim().toLowerCase();
-        if (!query) return data;
-
-        return data.filter((row) =>
-            ["name", "url", "owner"].some((key) =>
-                String(row[key] ?? "").toLowerCase().includes(query),
-            ),
-        );
-    }, [data, search]);
 
     function openCreateStore() {
         setEditStore(null);
@@ -74,14 +100,8 @@ export function Store() {
         if (!open) setEditStore(null);
     }
 
-    function handleDeleteModalChange(open: boolean) {
-        setIsDeleteOpen(open);
-        if (!open) setDeleteRequest(null);
-    }
-
     function requestDelete(stores: Record<string, unknown>[], onDeleted?: (ids: string[]) => void) {
         setDeleteRequest({ stores, onDeleted });
-        setIsDeleteOpen(true);
     }
 
     return (
@@ -89,7 +109,13 @@ export function Store() {
             <CustomTable
                 title="Store"
                 columns={columns}
-                data={filteredData}
+                data={stores}
+                cursorPagination={{
+                    hasPrevious: pagination.previous.length > 0,
+                    hasNext: Boolean(data?.hasMore && data.nextCursor && !isPlaceholderData),
+                    onPrevious: goToPrevious,
+                    onNext: goToNext,
+                }}
                 selectable={canDeleteStore}
                 mobileColumnSplit={['40%', '60%']}
                 getRowId={(row) => String(row.id)}
@@ -108,7 +134,7 @@ export function Store() {
                 }
                 headerActions={
                     <div className="flex items-center gap-2.5">
-                        <SearchField onSearchChange={setSearch} />
+                        <SearchField onSearchChange={handleSearchChange} />
                         {canCreateStore && (
                             <Button variant="primary" onClick={openCreateStore}>
                                 Add store
@@ -139,8 +165,10 @@ export function Store() {
                 store={editStore}
             />}
             {canDeleteStore && <DeleteStore
-                open={isDeleteOpen}
-                onOpenChange={handleDeleteModalChange}
+                open={deleteRequest !== null}
+                onOpenChange={(open) => {
+                    if (!open) setDeleteRequest(null);
+                }}
                 stores={deleteRequest?.stores ?? []}
                 onDeleted={deleteRequest?.onDeleted}
             />}

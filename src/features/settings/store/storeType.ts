@@ -20,3 +20,13 @@ export interface StoreResponse {
     stores?: unknown;
     store?: unknown;
 }
+
+export interface StoreListResponse {
+    items: StoreData[];
+    nextCursor: string | null;
+    hasMore: boolean;
+    currentPage: number;
+    totalPages: number;
+    totalCount: number;
+    limit: number;
+}
