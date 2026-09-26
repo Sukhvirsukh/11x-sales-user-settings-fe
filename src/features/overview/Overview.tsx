@@ -43,7 +43,7 @@ export function Overview() {
     const { data, isLoading, isError } = useOverviewQuery();
 
     return (
-        <div className="grid w-full grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_308px]">
+        <div className="grid w-full grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_308px] 2xl:grid-cols-[minmax(0,7fr)_minmax(0,3fr)]">
             <div className="flex flex-col gap-4">
                 {isError && (
                     <p role="alert" className="text-sm text-danger">
@@ -56,7 +56,7 @@ export function Overview() {
                     ))}
                 </div>
                 <ChatToSaleChart panel={data?.chatToSaleConversion} isLoading={isLoading} />
-                <div className="grid min-w-0 grid-cols-1 items-start gap-4 sm:grid-cols-2">
+                <div className="grid min-w-0 grid-cols-1 items-start gap-4 sm:grid-cols-[minmax(0,1fr)_50%]">
                     <PerformanceMatrix panel={data?.performanceMetrics} isLoading={isLoading} />
                     <div className="flex flex-col gap-4">
                         <ActionTrend panel={data?.actionTrends} isLoading={isLoading} />

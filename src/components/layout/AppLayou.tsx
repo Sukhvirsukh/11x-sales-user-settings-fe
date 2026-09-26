@@ -63,8 +63,8 @@ function AppLayout() {
 
     if (shouldHideSidebar) {
         return (
-            <div className="flex h-screen gap-0 overflow-hidden bg-background p-5">
-                <main className="-m-5 flex min-w-0 flex-1 flex-col overflow-y-auto">
+            <div className="flex min-h-dvh gap-0 bg-background p-5 md:h-screen md:overflow-hidden">
+                <main className="-m-5 flex min-w-0 flex-1 flex-col md:overflow-y-auto">
                     <div className="p-5 pb-0 md:hidden">
                         <MobileTopbarWrapper />
                     </div>
@@ -77,10 +77,10 @@ function AppLayout() {
     }
 
     return (
-        <div className="flex h-screen gap-0 overflow-hidden bg-background p-5 md:pr-0">
+        <div className="flex min-h-dvh gap-0 bg-background p-5 md:h-screen md:overflow-hidden md:pr-0">
             <Sidebar />
             <MobileTopbar />
-            <main className="-m-5 mt-5 md:-mt-5 flex min-w-0 flex-1 flex-col overflow-y-auto p-5 md:mx-0">
+            <main className="-m-5 mt-5 flex min-w-0 flex-1 flex-col p-5 md:-mt-5 md:mx-0 md:overflow-y-auto">
                 <Outlet />
             </main>
         </div>

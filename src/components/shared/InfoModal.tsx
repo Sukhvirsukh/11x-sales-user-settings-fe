@@ -71,11 +71,15 @@ export default function InfoModal(props: InfoModalProps) {
                 showCloseButton={false}
                 data-variant={variant}
                 className={cn(
-                    "flex w-auto min-w-[320px] flex-col gap-0 overflow-hidden rounded-[10px] border border-section-border bg-popover px-4 pb-4 pt-[50px] shadow-panel ring-0 max-sm:w-full max-sm:min-w-0 max-sm:border-0 max-sm:p-0",
+                    "flex w-auto min-w-[320px] flex-col gap-0 overflow-hidden rounded-[10px] border border-section-border bg-popover px-4 pb-4 pt-[50px] shadow-panel ring-0 max-sm:w-full max-sm:min-w-0 max-sm:border-0 max-sm:bg-transparent max-sm:p-0",
                     variant === "warning" && "border-0",
                     contentClassName,
                 )}
             >
+                <div
+                    aria-hidden="true"
+                    className="absolute z-[-1] max-sm:left-1/2 max-sm:top-0 max-sm:h-20 max-sm:w-[90%] max-sm:-translate-x-1/2 max-sm:rounded-t-[20px] max-sm:bg-primary"
+                />
                 <div
                     aria-hidden="true"
                     className={cn(
@@ -98,7 +102,7 @@ export default function InfoModal(props: InfoModalProps) {
                     <X className="size-3.5" aria-hidden="true" />
                 </DialogClose>
 
-                <div className="relative flex min-h-0 flex-col max-sm:overflow-hidden max-sm:rounded-t-[10px] max-sm:px-4 max-sm:pb-4 max-sm:pt-[50px]">
+                <div className="relative flex min-h-0 flex-col max-sm:mt-2 max-sm:overflow-hidden max-sm:rounded-t-[10px] max-sm:bg-popover max-sm:px-4 max-sm:pb-4 max-sm:pt-[50px]">
                     <div className="relative z-1 text-center">
                         <DialogTitle className={cn(
                             "mx-auto max-w-[320px] text-lg md:text-3xl font-bold leading-7 text-foreground",

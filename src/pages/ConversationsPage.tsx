@@ -36,7 +36,7 @@ export default function ConversationsPage() {
                     className="p-0!"
                 >
                     <PreviewSection>
-                        <div className="grid w-full min-w-0 grid-cols-1 gap-3.5 lg:grid-cols-[minmax(0,1fr)_194px]">
+                        <div className="grid w-full min-w-0 grid-cols-1 gap-3.5 lg:grid-cols-[minmax(0,1fr)_194px] 2xl:grid-cols-[minmax(0,7fr)_minmax(0,3fr)]">
                             <AppSection className="min-h-0 p-2.5">
                                 <Outlet />
                             </AppSection>
