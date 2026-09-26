@@ -63,7 +63,7 @@ function ConversionTrend({ title, range, series }: TrendPanel) {
                             tick={{ fill: "var(--chart-axis)", fontSize: 12 }}
                             width={48}
                         />
-                        <Area type="linear" dataKey="value" stroke="none" fill="var(--surface-raised)" baseValue={scale.from} isAnimationActive={false} />
+                        <Area type="linear" dataKey="value" stroke="none" fill="var(--background)" baseValue={scale.from} isAnimationActive={false} />
                         <Line type="linear" dataKey="value" stroke="var(--primary)" strokeWidth={1.25} dot={false} activeDot={false} isAnimationActive={false} />
                         <ReferenceDot x={highest.index} y={highest.value} r={3.5} fill="var(--chart-high-marker)" stroke="var(--chart-marker-border)" />
                         <ReferenceDot x={lowest.index} y={lowest.value} r={3.5} fill="var(--chart-low-marker)" stroke="var(--chart-marker-border)" />

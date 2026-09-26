@@ -13,6 +13,7 @@ import { dateFormater, debounce } from "@/lib/utils";
 import type { KnowledgeBase } from "./knowledgeBaseTypes";
 import DeleteKnowledgeBase from "./DeleteKnowledgeBase";
 import SearchField from "@/components/shared/SearchField";
+import { useCan } from "@/features/auth";
 
 
 function toDateValue(value: unknown): string | Date | null {
@@ -64,6 +65,8 @@ const columns: Column[] = [
 
 export function KnowledgeBase() {
 
+    const canCreateKnowledge = useCan("aiTraining.create");
+    const canDeleteKnowledge = useCan("aiTraining.delete");
     const [searchParams, setSearchParams] = useSearchParams();
     const setSearchParamsRef = useRef(setSearchParams);
     setSearchParamsRef.current = setSearchParams;
@@ -140,55 +143,70 @@ export function KnowledgeBase() {
                 emptyState={isLoading ? <TableSkeleton columns={6} showHeader={false} /> : undefined}
                 emptyMessage={search.trim() ? "No matching knowledge found" : undefined}
                 emptyDescription={search.trim() ? "Try a different search term." : undefined}
-                selectable
+                selectable={canDeleteKnowledge}
                 getRowId={(row) => String(row.id)}
-                bulkActions={(rows, deselectRows) => (
+                bulkActions={canDeleteKnowledge ? ((rows, deselectRows) => (
                     <Button variant="destructive" size="xs"
                         onClick={() => onDelete(rows, deselectRows)}
                     >
                         <Trash className="size-3.5" />
                         Delete selected
                     </Button>
-                )}
+                )) : undefined}
                 headerActions={
                     <div className="flex items-center gap-2.5">
                         {/* Search Field */}
                         <SearchField
                             onSearchChange={handleSearchChange}
                         />
-                        {/* <AddRoleForm /> */}
-                        <Button
-                            variant="primary"
-                            onClick={() => setIsAddModalOpen(true)}
-                        >
-                            Add knowledge
-                            <Plus className="md:ml-2 ml-0.5 md:size-4 size-2" />
-                        </Button>
+                        {canCreateKnowledge && (
+                            <Button
+                                variant="primary"
+                                onClick={() => setIsAddModalOpen(true)}
+                            >
+                                Add knowledge
+                                <Plus className="md:ml-2 ml-0.5 md:size-4 size-2" />
+                            </Button>
+                        )}
                     </div>
                 }
-                rowActions={(row) => (
+                rowActions={canCreateKnowledge || canDeleteKnowledge ? (row) => (
                     <div className="flex items-center gap-2">
-                        <Button variant="bare" size="sm" onClick={() => onEdit(row)}>
-                            <SquarePen className="size-4 text-content-muted" />
-                        </Button>
-                        <Button variant="bare" size="sm" onClick={() => onDelete([row])}>
-                            <Trash className="size-4 text-content-muted" />
-                        </Button>
+                        {canCreateKnowledge && (
+                            <Button
+                                variant="bare"
+                                size="sm"
+                                onClick={() => onEdit(row)}
+                                aria-label="Edit knowledge"
+                            >
+                                <SquarePen className="size-4 text-content-muted" />
+                            </Button>
+                        )}
+                        {canDeleteKnowledge && (
+                            <Button
+                                variant="bare"
+                                size="sm"
+                                onClick={() => onDelete([row])}
+                                aria-label="Delete knowledge"
+                            >
+                                <Trash className="size-4 text-content-muted" />
+                            </Button>
+                        )}
                     </div>
-                )}
+                ) : undefined}
                 className="w-full md:[&_th:nth-child(2)]:pl-0 md:[&_td:first-child:has([role=checkbox])+td]:pl-0"
             />
-            <AddKnowledge
+            {canCreateKnowledge && <AddKnowledge
                 isOpen={isAddModalOpen}
                 handleModalOpenChange={handleModalOpenChange}
                 data={editData}
-            />
-            <DeleteKnowledgeBase
+            />}
+            {canDeleteKnowledge && <DeleteKnowledgeBase
                 open={isDeleteModalOpen}
                 onOpenChange={handleDeleteModalOpenChange}
                 knowledges={deleteRequest?.knowledges ?? []}
                 onDeleted={deleteRequest?.onDeleted}
-            />
+            />}
         </>
     )
 }

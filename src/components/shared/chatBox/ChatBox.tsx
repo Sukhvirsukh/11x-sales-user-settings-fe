@@ -94,7 +94,7 @@ function LoadedChatBox({ fields, onClose, className = "", defaultMessages }: Cha
   } = fields;
 
   const avatarUrl = useChatFaceUrl(chatFace);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
 
   const defaultMessagesRef = useRef<readonly ChatMessageData[] | undefined>(
     defaultMessages !== undefined ? defaultMessages.map(cloneMessage) : undefined,
@@ -129,7 +129,13 @@ function LoadedChatBox({ fields, onClose, className = "", defaultMessages }: Cha
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    const messagesContainer = messagesContainerRef.current;
+    if (!messagesContainer) return;
+
+    messagesContainer.scrollTo({
+      top: messagesContainer.scrollHeight,
+      behavior: "smooth",
+    });
   }, [messages]);
 
   function handleSend(content: string) {
@@ -179,6 +185,14 @@ function LoadedChatBox({ fields, onClose, className = "", defaultMessages }: Cha
         style={{ backgroundColor: `${primaryColor}22` }}
       >
         <div className="flex min-w-0 items-center gap-2">
+          {avatarUrl && (
+            <img
+              src={avatarUrl}
+              alt=""
+              aria-hidden="true"
+              className="size-6 shrink-0 object-cover"
+            />
+          )}
           <div className="min-w-0 flex items-center gap-2.5">
             <p className="truncate text-lg font-semibold tracking-[0.02em]">
               {aiAgentName}
@@ -205,7 +219,10 @@ function LoadedChatBox({ fields, onClose, className = "", defaultMessages }: Cha
       </div>
 
       {/* Messages */}
-      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-[18px] py-2.5">
+      <div
+        ref={messagesContainerRef}
+        className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-[18px] py-2.5"
+      >
         <div className="space-y-2">
           {messages.length > 0 && (
             messages.map((message) => (
@@ -224,7 +241,6 @@ function LoadedChatBox({ fields, onClose, className = "", defaultMessages }: Cha
               </div>
             ))
           )}
-          <div ref={messagesEndRef} />
         </div>
       </div>
 

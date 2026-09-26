@@ -12,6 +12,7 @@ import Heading from "@/components/design/Heading"
 import AppSection from "./AppSectoin"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Button } from "@/components/ui/button"
+import { cn } from "@/lib/utils"
 
 export interface Column {
     key: string
@@ -31,6 +32,41 @@ export interface Column {
 const MOBILE_LEAD_SHARE = "65%"
 /** Every other mobile track takes whatever room is left. */
 const MOBILE_FILL = "minmax(0, 1fr)"
+
+/** Highest page count that still lists every page number instead of collapsing the gaps. */
+const MAX_VISIBLE_PAGES = 5
+/** Pages kept on each side of the current page before the run collapses into dots. */
+const PAGE_SIBLINGS = 1
+
+/** A page number, or a collapsed run of pages between two numbers. */
+type PageItem = number | "ellipsis"
+
+/**
+ * Page numbers to render. Up to `MAX_VISIBLE_PAGES` pages are all listed; past that the current
+ * page keeps `PAGE_SIBLINGS` neighbours, the first and last page stay reachable, and every skipped
+ * run becomes a single `"ellipsis"` — e.g. `1 2 3 … 9` or `1 … 4 5 6 … 9`.
+ */
+function getPageItems(currentPage: number, totalPages: number): PageItem[] {
+    if (totalPages <= MAX_VISIBLE_PAGES) {
+        return Array.from({ length: totalPages }, (_, index) => index + 1)
+    }
+
+    const runLength = PAGE_SIBLINGS * 2 + 1
+    const runStart = Math.min(Math.max(currentPage - PAGE_SIBLINGS, 1), totalPages - runLength + 1)
+    const runEnd = runStart + runLength - 1
+    const items: PageItem[] = []
+
+    // One skipped page is clearer shown as a number than as dots.
+    if (runStart > 2) items.push(1, "ellipsis")
+    else for (let page = 1; page < runStart; page += 1) items.push(page)
+
+    for (let page = runStart; page <= runEnd; page += 1) items.push(page)
+
+    if (runEnd < totalPages - 1) items.push("ellipsis", totalPages)
+    else for (let page = runEnd + 1; page <= totalPages; page += 1) items.push(page)
+
+    return items
+}
 
 type CustomTableProps<T extends Record<string, unknown> = Record<string, unknown>> = {
     title?: string
@@ -181,12 +217,6 @@ export default function CustomTable<T extends Record<string, unknown>>({
             )}
 
             {/* Table */}
-            {selectable && (
-                <label className="flex items-center gap-2 text-sm md:hidden">
-                    <SelectAllCheckbox />
-                    Select all rows
-                </label>
-            )}
             <div className="relative flex w-full flex-col items-start overflow-hidden md:rounded-lg md:border md:border-section-border md:bg-background">
                 {selectable && bulkActions && selectedCount > 0 && (
                     <div
@@ -195,7 +225,9 @@ export default function CustomTable<T extends Record<string, unknown>>({
                         className="z-10 flex w-full flex-wrap items-center justify-between gap-3 rounded-lg border border-section-border bg-table-header-background px-4 py-2 md:absolute md:inset-x-0 md:top-0 md:h-10 md:flex-nowrap md:rounded-none md:border-0 md:px-5 md:py-0"
                     >
                         <div className="flex items-center gap-3">
-                            <SelectAllCheckbox />
+                            <span className="hidden md:inline-flex">
+                                <SelectAllCheckbox />
+                            </span>
                             <span className="text-sm font-medium" aria-live="polite">
                                 {selectedCount} selected
                             </span>
@@ -240,7 +272,7 @@ export default function CustomTable<T extends Record<string, unknown>>({
                                 className="grid grid-cols-2 overflow-hidden rounded-lg border! border-section-border bg-surface-raised px-2 py-0 hover:bg-surface-raised md:table-row md:rounded-none md:border-0! md:bg-transparent md:p-0 md:hover:bg-transparent"
                             >
                                 {selectable && (
-                                    <TableCell className="col-span-2 border-b border-section-border px-1 py-2 md:border-0 md:px-5">
+                                    <TableCell className="hidden md:table-cell md:border-0 md:px-5">
                                         <Checkbox
                                             aria-label={`Select ${row.name ?? displayedRowIds[rowIndex]}`}
                                             checked={selectedIds.has(displayedRowIds[rowIndex])}
@@ -276,25 +308,55 @@ export default function CustomTable<T extends Record<string, unknown>>({
                     </TableBody>
                 </Table>
 
-                {pagination && data.length > 0 && (
-                    <div className="flex w-full flex-wrap items-center justify-between gap-3 border-t border-section-border px-4 py-3 text-sm text-muted-foreground md:px-5">
-                        <span>
+                {pagination && data.length > 0 && totalPages > 1 && (
+                    <nav
+                        aria-label="Pagination"
+                        className="flex w-full flex-wrap items-center justify-center gap-3 border-t border-section-border px-4 py-3 text-sm text-muted-foreground md:px-5"
+                    >
+                        {/* <span>
                             Showing {totalItems === 0 ? 0 : pageStart + 1}–{Math.min(pageStart + displayedData.length, totalItems)} of {totalItems}
-                        </span>
+                        </span> */}
                         <div className="flex items-center gap-1">
                             <Button
-                                variant="bare"
+                                variant="primary"
                                 size="xs"
+                                className='p-1'
                                 aria-label="Previous page"
                                 disabled={currentPage === 1}
                                 onClick={() => changePage(currentPage - 1)}
                             >
                                 <ChevronLeft className="size-4" />
                             </Button>
-                            <span className="px-2 text-foreground">Page {currentPage} of {totalPages}</span>
+                            {getPageItems(currentPage, totalPages).map((item, index) =>
+                                item === "ellipsis" ? (
+                                    <span
+                                        key={`ellipsis-${index}`}
+                                        aria-hidden="true"
+                                        className="px-1 text-content-muted"
+                                    >
+                                        …
+                                    </span>
+                                ) : (
+                                    <Button
+                                        key={item}
+                                        variant={item === currentPage ? "primary" : "secondary"}
+                                        size="xs"
+                                        className={cn(
+                                            "min-w-7 px-1.5",
+                                            item !== currentPage && "border-0",
+                                        )}
+                                        aria-label={`Page ${item}`}
+                                        aria-current={item === currentPage ? "page" : undefined}
+                                        onClick={() => changePage(item)}
+                                    >
+                                        {item}
+                                    </Button>
+                                ),
+                            )}
                             <Button
-                                variant="bare"
+                                variant="primary"
                                 size="xs"
+                                className="p-1"
                                 aria-label="Next page"
                                 disabled={currentPage === totalPages}
                                 onClick={() => changePage(currentPage + 1)}
@@ -302,7 +364,7 @@ export default function CustomTable<T extends Record<string, unknown>>({
                                 <ChevronRight className="size-4" />
                             </Button>
                         </div>
-                    </div>
+                    </nav>
                 )}
 
                 {/* Empty state */}

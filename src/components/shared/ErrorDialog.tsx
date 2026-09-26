@@ -1,13 +1,4 @@
-import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogDescription,
-    DialogClose,
-} from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import { OctagonXIcon, XIcon } from "lucide-react"
+import InfoModal from "@/components/shared/InfoModal"
 
 interface ErrorDialogProps {
     open: boolean
@@ -25,34 +16,24 @@ export default function ErrorDialog({
     errors = [],
 }: ErrorDialogProps) {
     return (
-        <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent
-                showCloseButton={false}
-                className="gap-0 rounded-[10px] border border-danger-strong bg-danger-surface p-4 text-toast-foreground shadow-dialog ring-0"
-            >
-                <DialogHeader className="pr-8">
-                    <DialogTitle className="flex items-center gap-2 text-sm font-semibold text-danger">
-                        <span className="flex size-[27px] shrink-0 items-center justify-center rounded-full bg-danger/15 text-danger">
-                            <OctagonXIcon aria-hidden="true" className="size-4" />
-                        </span>
-                        {title}
-                    </DialogTitle>
-                    {description && <DialogDescription className="text-sm text-toast-muted">{description}</DialogDescription>}
+        <InfoModal
+            variant="warning"
+            showActions={false}
+            open={open}
+            onOpenChange={onOpenChange}
+            title={title}
+            description={
+                <div role="alert">
+                    {description && <p className={errors.length > 0 ? "mb-2" : undefined}>{description}</p>}
                     {errors.length > 0 && (
-                        <ul className="list-disc space-y-1 pl-5 text-sm text-toast-muted">
+                        <ul className="list-disc space-y-1 pl-5">
                             {errors.map((error, index) => <li key={`${error}-${index}`}>{error}</li>)}
                         </ul>
                     )}
-                </DialogHeader>
-                <DialogClose
-                    aria-label="Close error dialog"
-                    render={
-                        <Button variant="bare" size="default" className="absolute top-4 right-4 size-[27px] shrink-0 bg-transparent text-danger! hover:bg-transparent hover:opacity-70" />
-                    }
-                >
-                    <XIcon aria-hidden="true" className="size-3.5" />
-                </DialogClose>
-            </DialogContent>
-        </Dialog>
+                </div>
+            }
+            contentClassName="md:w-[450px]"
+            descriptionClassName="text-left leading-relaxed"
+        />
     )
 }

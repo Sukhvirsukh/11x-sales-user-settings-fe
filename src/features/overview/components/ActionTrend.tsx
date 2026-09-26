@@ -62,7 +62,7 @@ function TrendChart({ title, range, series }: TrendPanel) {
                             tick={{ fill: "var(--content-muted)", fontSize: 12 }}
                             width={48}
                         />
-                        <Area type="linear" dataKey="value" stroke="none" fill="var(--surface-raised)" baseValue={scale.from} isAnimationActive={false} />
+                        <Area type="linear" dataKey="value" stroke="none" fill="var(--background)" baseValue={scale.from} isAnimationActive={false} />
                         <Line type="linear" dataKey="value" stroke="var(--primary)" strokeWidth={1.25} strokeDasharray="2 2" dot={false} activeDot={false} isAnimationActive={false} />
                         <ReferenceDot x={highest.index} y={highest.value} r={3.5} fill="var(--success)" stroke="var(--foreground)" />
                         <ReferenceDot x={lowest.index} y={lowest.value} r={3.5} fill="var(--content-muted)" stroke="var(--foreground)" />

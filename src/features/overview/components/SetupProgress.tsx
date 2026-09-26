@@ -25,7 +25,7 @@ function SetupChecklist({ completedSteps, totalSteps, percent, steps }: SetupPro
                     {steps.map(({ title, completed }) => (
                         <div key={title} className="flex items-start gap-3">
                             {completed ? (
-                                <CheckCircle2 className="mt-0.5 size-6 shrink-0 fill-primary text-background" aria-hidden />
+                                <CheckCircle2 className="mt-0.5 size-6 shrink-0 fill-primary text-background [&_circle]:stroke-none" aria-hidden />
                             ) : (
                                 <Circle className="mt-0.5 size-5 shrink-0 text-content-muted" aria-hidden />
                             )}

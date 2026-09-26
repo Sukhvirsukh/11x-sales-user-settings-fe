@@ -5,6 +5,7 @@ import TableSkeleton from "@/components/shared/skeletons/TableSkeletons"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { useCan } from "@/features/auth"
+import { dateFormater } from "@/lib/utils"
 import { Download, Plus, Trash } from "lucide-react"
 import { useEffect, useRef, useState } from "react"
 import { useSearchParams } from "react-router"
@@ -26,7 +27,12 @@ const columns: Column[] = [
             </Badge>
         ),
     },
-    { key: "createdAt", header: "Created date", align: "right" },
+    {
+        key: "createdAt",
+        header: "Created date",
+        align: "right",
+        render: (value) => dateFormater(typeof value === "string" ? value : null),
+    },
     { key: "activeUsers", header: "Active Users", align: "right" },
 ]
 

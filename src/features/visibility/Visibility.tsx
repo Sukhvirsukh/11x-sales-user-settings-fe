@@ -15,7 +15,7 @@ import { Spinner } from "@/components/ui/spinner";
 import type { VisibilityFields } from "./visibilityTypes";
 import { useVisibilityQuery, visibilityQueryKey } from "./visibilityQuery";
 import { requiredFieldsSchema } from "./fields/validations";
-import { saveVisibility } from "./visibilityApi";
+import { saveVisibility, uploadChatFace } from "./visibilityApi";
 import ResetVisibilityModal from "./ResetVisibilityModal";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft } from "lucide-react";
@@ -83,9 +83,22 @@ export default function Visibility() {
         }
 
         await form.handleSubmit(async (data) => {
-            const savedData = await saveVisibility(data);
-            queryClient.setQueryData(visibilityQueryKey, savedData);
-            form.reset(savedData);
+            try {
+                let chatFace = data.chatFace;
+
+                if (chatFace instanceof File) {
+                    chatFace = await uploadChatFace(chatFace);
+                    form.setValue("chatFace", chatFace, { shouldDirty: true });
+                }
+
+                const savedData = await saveVisibility({ ...data, chatFace });
+                queryClient.setQueryData(visibilityQueryKey, savedData);
+                form.reset(savedData);
+            } catch (error) {
+                setValidationErrors([]);
+                setErrorMessage(error instanceof Error ? error.message : "Unable to save visibility settings.");
+                setErrorDialogOpen(true);
+            }
         })();
     }
 
@@ -117,7 +130,7 @@ export default function Visibility() {
 
                 <div className="relative flex flex-col items-stretch gap-3.5 md:min-h-0 md:flex-1 md:flex-row">
                     <aside
-                        className={`flex min-w-0 shrink-0 flex-col gap-2 md:min-h-0 md:max-h-full md:w-auto md:self-stretch md:transition-[flex-basis,max-width] md:duration-500 md:ease-in-out motion-reduce:transition-none ${isMaximized ? "md:basis-[calc(100%-500px-0.875rem)] md:max-w-[calc(100%-500px-0.875rem)]" : "md:basis-[30%] md:max-w-75"}`}
+                        className={`flex min-w-0 shrink-0 flex-col gap-2 md:min-h-0 md:max-h-full md:w-auto md:self-stretch md:transition-[flex-basis,max-width] md:duration-500 md:ease-in-out motion-reduce:transition-none ${isMaximized ? "md:basis-[calc(100%-500px-0.875rem)] md:max-w-[calc(100%-500px-0.875rem)]" : "md:basis-[30%] md:max-w-75 2xl:max-w-none"}`}
                     >
                         <div className="flex min-w-0 flex-initial flex-col overflow-hidden rounded-[10px] border border-border bg-background shadow-blue md:min-h-0 md:max-h-full">
                             <div className="min-w-0 px-3 sm:px-4 md:min-h-0 md:overflow-y-auto">
