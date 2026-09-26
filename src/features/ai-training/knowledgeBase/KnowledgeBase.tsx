@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { useSearchParams } from "react-router";
 import { Plus, SquarePen, Trash } from "lucide-react";
 
@@ -9,11 +9,12 @@ import TableSkeleton from "@/components/shared/skeletons/TableSkeletons";
 
 import AddKnowledge from "./AddKnowledge";
 import { useKnowledgeBaseQuery } from "./useKnowledgeBaseQuery";
-import { dateFormater, debounce } from "@/lib/utils";
+import { dateFormater } from "@/lib/utils";
 import type { KnowledgeBase } from "./knowledgeBaseTypes";
 import DeleteKnowledgeBase from "./DeleteKnowledgeBase";
 import SearchField from "@/components/shared/SearchField";
 import { useCan } from "@/features/auth";
+import { useDebounce } from "@/hooks/useDebounce";
 
 
 function toDateValue(value: unknown): string | Date | null {
@@ -68,48 +69,49 @@ export function KnowledgeBase() {
     const canCreateKnowledge = useCan("aiTraining.create");
     const canDeleteKnowledge = useCan("aiTraining.delete");
     const [searchParams, setSearchParams] = useSearchParams();
-    const setSearchParamsRef = useRef(setSearchParams);
-    setSearchParamsRef.current = setSearchParams;
     const search = searchParams.get("search") ?? "";
-    const pageParam = Number(searchParams.get("page"));
-    const page = Number.isInteger(pageParam) && pageParam > 0 ? pageParam : 1;
+    const [pagination, setPagination] = useState<{
+        cursor?: string;
+        previous: (string | undefined)[];
+    }>({ previous: [] });
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [editData, setEditData] = useState<KnowledgeBase | null>(null);
     const [deleteRequest, setDeleteRequest] = useState<{
         knowledges: KnowledgeBase[];
         onDeleted?: (ids: string[]) => void;
     } | null>(null);
-    const { data, isLoading, error } = useKnowledgeBaseQuery(page, search.trim());
+    const { data, isLoading, isPlaceholderData, error } = useKnowledgeBaseQuery(search.trim(), pagination.cursor);
     const items = data?.items ?? [];
-    const total = data?.total ?? 0;
-    const pageSize = data?.pageSize ?? 10;
 
-    const handleSearchChange = useRef(
-        debounce((value: string) => {
-            setSearchParamsRef.current((currentParams) => {
-                const nextParams = new URLSearchParams(currentParams);
-                if (value) nextParams.set("search", value);
-                else nextParams.delete("search");
-                nextParams.delete("page");
-                return nextParams;
-            }, { replace: true });
-        }),
-    ).current;
-
-    const handlePageChange = (nextPage: number) => {
+    const handleSearchChange = useDebounce((value: string) => {
+        setPagination({ previous: [] });
         setSearchParams((currentParams) => {
             const nextParams = new URLSearchParams(currentParams);
-
-            if (nextPage === 1) {
-                nextParams.delete("page");
-            } else {
-                nextParams.set("page", String(nextPage));
-            }
-
+            if (value) nextParams.set("search", value);
+            else nextParams.delete("search");
+            nextParams.delete("page");
+            nextParams.delete("cursor");
             return nextParams;
+        }, { replace: true });
+    });
+
+    function goToPrevious() {
+        setPagination((current) => {
+            if (current.previous.length === 0) return current;
+            return {
+                cursor: current.previous.at(-1),
+                previous: current.previous.slice(0, -1),
+            };
         });
-    };
+    }
+
+    function goToNext() {
+        if (!data?.hasMore || !data.nextCursor || isPlaceholderData) return;
+        setPagination(({ cursor, previous }) => ({
+            cursor: data.nextCursor ?? undefined,
+            previous: [...previous, cursor],
+        }));
+    }
 
     if (error) return <div>Error: {error.message}</div>
 
@@ -119,7 +121,6 @@ export function KnowledgeBase() {
     }
 
     const onDelete = (knowledges: KnowledgeBase[], onDeleted?: (ids: string[]) => void) => {
-        setIsDeleteModalOpen(true);
         setDeleteRequest({ knowledges, onDeleted });
     }
 
@@ -128,18 +129,18 @@ export function KnowledgeBase() {
         if (!open) setEditData(null)
     }
 
-    function handleDeleteModalOpenChange(open: boolean) {
-        setIsDeleteModalOpen(open)
-        if (!open) setDeleteRequest(null)
-    }
-
     return (
         <>
             <CustomTable
                 title="Knowledge base"
                 columns={columns}
-                data={items || []}
-                pagination={{ page, pageSize, total, onPageChange: handlePageChange }}
+                data={items}
+                cursorPagination={{
+                    hasPrevious: pagination.previous.length > 0,
+                    hasNext: Boolean(data?.hasMore && data.nextCursor && !isPlaceholderData),
+                    onPrevious: goToPrevious,
+                    onNext: goToNext,
+                }}
                 emptyState={isLoading ? <TableSkeleton columns={6} showHeader={false} /> : undefined}
                 emptyMessage={search.trim() ? "No matching knowledge found" : undefined}
                 emptyDescription={search.trim() ? "Try a different search term." : undefined}
@@ -155,10 +156,7 @@ export function KnowledgeBase() {
                 )) : undefined}
                 headerActions={
                     <div className="flex items-center gap-2.5">
-                        {/* Search Field */}
-                        <SearchField
-                            onSearchChange={handleSearchChange}
-                        />
+                        <SearchField onSearchChange={handleSearchChange} />
                         {canCreateKnowledge && (
                             <Button
                                 variant="primary"
@@ -202,8 +200,10 @@ export function KnowledgeBase() {
                 data={editData}
             />}
             {canDeleteKnowledge && <DeleteKnowledgeBase
-                open={isDeleteModalOpen}
-                onOpenChange={handleDeleteModalOpenChange}
+                open={deleteRequest !== null}
+                onOpenChange={(open) => {
+                    if (!open) setDeleteRequest(null)
+                }}
                 knowledges={deleteRequest?.knowledges ?? []}
                 onDeleted={deleteRequest?.onDeleted}
             />}
