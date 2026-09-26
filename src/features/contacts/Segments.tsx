@@ -5,8 +5,7 @@ import TableSkeleton from "@/components/shared/skeletons/TableSkeletons"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { useCan } from "@/features/auth"
-import { dateFormater, debounce } from "@/lib/utils"
-import { Download, Plus, Trash } from "lucide-react"
+import { ChevronLeft, ChevronRight, Download, Plus, Trash } from "lucide-react"
 import { useEffect, useRef, useState } from "react"
 import { useSearchParams } from "react-router"
 import DeleteContacts from "./DeleteContacts"
@@ -21,78 +20,46 @@ const columns: Column[] = [
         key: "status",
         header: "Status",
         align: "center",
-        render: (value) => {
-            const status = String(value)
-            return (
-                <Badge variant={status ? "default" : "destructive"}>
-                    {status ? "Active" : "Inactive"}
-                </Badge>
-            )
-        },
+        render: (value) => (
+            <Badge variant={value === "Active" ? "default" : "destructive"}>
+                {value === "Active" ? "Active" : "Inactive"}
+            </Badge>
+        ),
     },
-    {
-        key: "createdAt",
-        header: "Created date",
-        align: "right",
-        render: (value) => {
-            return dateFormater(value as Date)
-        }
-    },
+    { key: "createdAt", header: "Created date", align: "right" },
     { key: "activeUsers", header: "Active Users", align: "right" },
 ]
 
 export default function Segments() {
-    // Adding a segment is a change, so the button follows `contacts.create` alone.
-    // The permissions table grants create and edit together under "Changes", and
-    // create implies edit — so `create` is the whole change capability.
     const canCreateSegments = useCan("contacts.create")
-    // Deleting is its own grant, so it is asked for separately.
     const canDeleteSegments = useCan("contacts.delete")
     const [searchParams, setSearchParams] = useSearchParams()
+    const searchTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
     const setSearchParamsRef = useRef(setSearchParams)
-    setSearchParamsRef.current = setSearchParams
+    useEffect(() => {
+        setSearchParamsRef.current = setSearchParams
+    }, [setSearchParams])
     const search = searchParams.get("search") ?? ""
-    const pageParam = Number(searchParams.get("page"))
-    const page = Number.isInteger(pageParam) && pageParam > 0 ? pageParam : 1
-    const cursor = searchParams.get("cursor") || undefined
-    const pageCursorsRef = useRef<Map<number, string | undefined>>(new Map([[1, undefined]]))
+    const [pagination, setPagination] = useState<{
+        cursor?: string
+        previous: (string | undefined)[]
+    }>({ previous: [] })
 
     const [deleteRequest, setDeleteRequest] = useState<{
         rows: Segment[]
         onDeleted?: (ids: string[]) => void
     } | null>(null)
-    const [isDeleteOpen, setIsDeleteOpen] = useState(false)
     const [isAddOpen, setIsAddOpen] = useState(false)
 
-    const { data, isLoading, isPlaceholderData, error } = useSegmentsQuery(page, search.trim(), cursor)
+    const { data, isLoading, isPlaceholderData, error } = useSegmentsQuery(search.trim(), pagination.cursor)
     const segments = data?.items ?? []
-    const total = data?.totalCount ?? 0
-    const pageSize = data?.limit ?? 10
 
-    useEffect(() => {
-        pageCursorsRef.current.set(page, cursor)
+    useEffect(() => () => clearTimeout(searchTimer.current), [])
 
-        if (!data || isPlaceholderData) return
-
-        const nextPage = data.currentPage + 1
-        const nextCursor = data.hasMore ? data.nextCursor : null
-
-        if (pageCursorsRef.current.get(nextPage) !== nextCursor) {
-            for (const storedPage of pageCursorsRef.current.keys()) {
-                if (storedPage >= nextPage) pageCursorsRef.current.delete(storedPage)
-            }
-        }
-
-        if (nextCursor) {
-            pageCursorsRef.current.set(nextPage, nextCursor)
-        }
-    }, [cursor, data, isPlaceholderData, page])
-
-    if (error) throw error
-
-    const handleSearchChange = useRef(
-        debounce((value: string) => {
-            pageCursorsRef.current = new Map([[1, undefined]])
+    function handleSearchChange(value: string) {
+        clearTimeout(searchTimer.current)
+        searchTimer.current = setTimeout(() => {
+            setPagination({ previous: [] })
             setSearchParamsRef.current((currentParams) => {
                 const nextParams = new URLSearchParams(currentParams)
                 if (value) nextParams.set("search", value)
@@ -101,42 +68,26 @@ export default function Segments() {
                 nextParams.delete("cursor")
                 return nextParams
             }, { replace: true })
-        }),
-    ).current
+        }, 300)
+    }
 
-    function handlePageChange(nextPage: number) {
-        setSearchParams((currentParams) => {
-            const nextParams = new URLSearchParams(currentParams)
-            if (nextPage === 1) nextParams.delete("page")
-            else nextParams.set("page", String(nextPage))
-
-            const nextCursor = pageCursorsRef.current.get(nextPage) ?? (
-                !isPlaceholderData && data?.hasMore && nextPage === data.currentPage + 1
-                    ? data.nextCursor ?? undefined
-                    : undefined
-            )
-
-            if (nextPage > 1 && !nextCursor) return currentParams
-
-            if (nextCursor) nextParams.set("cursor", nextCursor)
-            else nextParams.delete("cursor")
-
-            return nextParams
+    function goToPrevious() {
+        setPagination(({ previous }) => {
+            if (previous.length === 0) return { previous }
+            return { cursor: previous.at(-1), previous: previous.slice(0, -1) }
         })
     }
 
-    function handleDeleteModalChange(open: boolean) {
-        setIsDeleteOpen(open)
-        if (!open) setDeleteRequest(null)
+    function goToNext() {
+        if (!data?.hasMore || !data.nextCursor || isPlaceholderData) return
+        setPagination(({ cursor, previous }) => ({
+            cursor: data.nextCursor ?? undefined,
+            previous: [...previous, cursor],
+        }))
     }
 
     function requestDelete(rows: Segment[], onDeleted?: (ids: string[]) => void) {
         setDeleteRequest({ rows, onDeleted })
-        setIsDeleteOpen(true)
-    }
-
-    function handleAddModalChange(open: boolean) {
-        setIsAddOpen(open)
     }
 
     return (
@@ -147,7 +98,6 @@ export default function Segments() {
                 data={segments}
                 selectable={canDeleteSegments}
                 getRowId={(row) => row.id}
-                pagination={{ page, pageSize, total, onPageChange: handlePageChange }}
                 bulkActions={canDeleteSegments ? ((rows, deselectRows) => (
                     <Button variant="destructive" size="xs" onClick={() => requestDelete(rows, deselectRows)}>
                         <Trash className="size-3.5" />
@@ -184,11 +134,23 @@ export default function Segments() {
                 )}
                 className="w-full md:[&_th:nth-child(2)]:pl-0 md:[&_td:first-child:has([role=checkbox])+td]:pl-0"
             />
-            <AddSegment open={isAddOpen} onOpenChange={handleAddModalChange} />
+            {(pagination.previous.length > 0 || data?.hasMore) && (
+                <nav aria-label="Segments pagination" className="mt-3 flex items-center justify-center gap-2">
+                    <Button variant="secondary" size="sm" onClick={goToPrevious} disabled={pagination.previous.length === 0}>
+                        <ChevronLeft className="size-4" /> Previous
+                    </Button>
+                    <Button variant="secondary" size="sm" onClick={goToNext} disabled={!data?.hasMore || !data.nextCursor || isPlaceholderData}>
+                        Next <ChevronRight className="size-4" />
+                    </Button>
+                </nav>
+            )}
+            <AddSegment open={isAddOpen} onOpenChange={setIsAddOpen} />
             <DeleteContacts
                 kind="segment"
-                open={isDeleteOpen}
-                onOpenChange={handleDeleteModalChange}
+                open={deleteRequest !== null}
+                onOpenChange={(open) => {
+                    if (!open) setDeleteRequest(null)
+                }}
                 rows={deleteRequest?.rows ?? []}
                 onDeleted={deleteRequest?.onDeleted}
             />

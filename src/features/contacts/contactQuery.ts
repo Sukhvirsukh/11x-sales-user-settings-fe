@@ -11,9 +11,9 @@ export function useUserProfilesQuery() {
     });
 }
 
-export function useSegmentsQuery(page: number, search = "", cursor?: string) {
+export function useSegmentsQuery(search = "", cursor?: string) {
     return useQuery({
-        queryKey: [...segmentsQueryKey, page, search, cursor],
+        queryKey: [...segmentsQueryKey, search, cursor],
         queryFn: () => getSegaments(search, cursor),
         placeholderData: keepPreviousData,
     });
