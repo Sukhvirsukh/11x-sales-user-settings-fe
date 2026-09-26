@@ -13,6 +13,7 @@ import { useSegmentsQuery } from "./contactQuery"
 import type { Segment } from "./contactType"
 import AddSegment from "./AddSegment"
 import { useDebounce } from "@/hooks/useDebounce"
+import { dateFormater } from "@/lib/utils"
 
 
 const columns: Column[] = [
@@ -27,7 +28,15 @@ const columns: Column[] = [
             </Badge>
         ),
     },
-    { key: "createdAt", header: "Created date", align: "right" },
+    {
+        key:
+            "createdAt",
+        header: "Created date",
+        align: "right",
+        render: (value) => {
+            return dateFormater(value as Date)
+        }
+    },
     { key: "activeUsers", header: "Active Users", align: "right" },
 ]
 
