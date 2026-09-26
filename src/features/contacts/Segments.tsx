@@ -5,13 +5,14 @@ import TableSkeleton from "@/components/shared/skeletons/TableSkeletons"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { useCan } from "@/features/auth"
-import { ChevronLeft, ChevronRight, Download, Plus, Trash } from "lucide-react"
-import { useEffect, useRef, useState } from "react"
+import { Download, Plus, Trash } from "lucide-react"
+import { useState } from "react"
 import { useSearchParams } from "react-router"
 import DeleteContacts from "./DeleteContacts"
 import { useSegmentsQuery } from "./contactQuery"
 import type { Segment } from "./contactType"
 import AddSegment from "./AddSegment"
+import { useDebounce } from "@/hooks/useDebounce"
 
 
 const columns: Column[] = [
@@ -34,11 +35,6 @@ export default function Segments() {
     const canCreateSegments = useCan("contacts.create")
     const canDeleteSegments = useCan("contacts.delete")
     const [searchParams, setSearchParams] = useSearchParams()
-    const searchTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
-    const setSearchParamsRef = useRef(setSearchParams)
-    useEffect(() => {
-        setSearchParamsRef.current = setSearchParams
-    }, [setSearchParams])
     const search = searchParams.get("search") ?? ""
     const [pagination, setPagination] = useState<{
         cursor?: string
@@ -54,22 +50,17 @@ export default function Segments() {
     const { data, isLoading, isPlaceholderData, error } = useSegmentsQuery(search.trim(), pagination.cursor)
     const segments = data?.items ?? []
 
-    useEffect(() => () => clearTimeout(searchTimer.current), [])
-
-    function handleSearchChange(value: string) {
-        clearTimeout(searchTimer.current)
-        searchTimer.current = setTimeout(() => {
-            setPagination({ previous: [] })
-            setSearchParamsRef.current((currentParams) => {
-                const nextParams = new URLSearchParams(currentParams)
-                if (value) nextParams.set("search", value)
-                else nextParams.delete("search")
-                nextParams.delete("page")
-                nextParams.delete("cursor")
-                return nextParams
-            }, { replace: true })
-        }, 300)
-    }
+    const handleSearchChange = useDebounce((value: string) => {
+        setPagination({ previous: [] })
+        setSearchParams((currentParams) => {
+            const nextParams = new URLSearchParams(currentParams)
+            if (value) nextParams.set("search", value)
+            else nextParams.delete("search")
+            nextParams.delete("page")
+            nextParams.delete("cursor")
+            return nextParams
+        }, { replace: true })
+    })
 
     function goToPrevious() {
         setPagination(({ previous }) => {
@@ -90,12 +81,20 @@ export default function Segments() {
         setDeleteRequest({ rows, onDeleted })
     }
 
+    if (error) throw error
+
     return (
         <>
             <CustomTable
                 title="All segaments"
                 columns={columns}
                 data={segments}
+                cursorPagination={{
+                    hasPrevious: pagination.previous.length > 0,
+                    hasNext: Boolean(data?.hasMore && data.nextCursor && !isPlaceholderData),
+                    onPrevious: goToPrevious,
+                    onNext: goToNext,
+                }}
                 selectable={canDeleteSegments}
                 getRowId={(row) => row.id}
                 bulkActions={canDeleteSegments ? ((rows, deselectRows) => (
@@ -134,16 +133,6 @@ export default function Segments() {
                 )}
                 className="w-full md:[&_th:nth-child(2)]:pl-0 md:[&_td:first-child:has([role=checkbox])+td]:pl-0"
             />
-            {(pagination.previous.length > 0 || data?.hasMore) && (
-                <nav aria-label="Segments pagination" className="mt-3 flex items-center justify-center gap-2">
-                    <Button variant="secondary" size="sm" onClick={goToPrevious} disabled={pagination.previous.length === 0}>
-                        <ChevronLeft className="size-4" /> Previous
-                    </Button>
-                    <Button variant="secondary" size="sm" onClick={goToNext} disabled={!data?.hasMore || !data.nextCursor || isPlaceholderData}>
-                        Next <ChevronRight className="size-4" />
-                    </Button>
-                </nav>
-            )}
             <AddSegment open={isAddOpen} onOpenChange={setIsAddOpen} />
             <DeleteContacts
                 kind="segment"
