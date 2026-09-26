@@ -5,9 +5,8 @@ import TableSkeleton from "@/components/shared/skeletons/TableSkeletons"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { useCan } from "@/features/auth"
-import { debounce } from "@/lib/utils"
 import { Download, Plus, Trash } from "lucide-react"
-import { useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useSearchParams } from "react-router"
 import DeleteContacts from "./DeleteContacts"
 import { useSegmentsQuery } from "./contactQuery"
@@ -21,29 +20,25 @@ const columns: Column[] = [
         key: "status",
         header: "Status",
         align: "center",
-        render: (value) => {
-            const status = String(value)
-            return (
-                <Badge variant={status ? "default" : "destructive"}>
-                    {status ? "Active" : "Inactive"}
-                </Badge>
-            )
-        },
+        render: (value) => (
+            <Badge variant={value === "Active" ? "default" : "destructive"}>
+                {value === "Active" ? "Active" : "Inactive"}
+            </Badge>
+        ),
     },
     { key: "createdAt", header: "Created date", align: "right" },
     { key: "activeUsers", header: "Active Users", align: "right" },
 ]
 
 export default function Segments() {
-    // Adding a segment is a change, so the button follows `contacts.create` alone.
-    // The permissions table grants create and edit together under "Changes", and
-    // create implies edit — so `create` is the whole change capability.
     const canCreateSegments = useCan("contacts.create")
-    // Deleting is its own grant, so it is asked for separately.
     const canDeleteSegments = useCan("contacts.delete")
     const [searchParams, setSearchParams] = useSearchParams()
+    const searchTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
     const setSearchParamsRef = useRef(setSearchParams)
-    setSearchParamsRef.current = setSearchParams
+    useEffect(() => {
+        setSearchParamsRef.current = setSearchParams
+    }, [setSearchParams])
     const search = searchParams.get("search") ?? ""
     const pageParam = Number(searchParams.get("page"))
     const page = Number.isInteger(pageParam) && pageParam > 0 ? pageParam : 1
@@ -52,7 +47,6 @@ export default function Segments() {
         rows: Segment[]
         onDeleted?: (ids: string[]) => void
     } | null>(null)
-    const [isDeleteOpen, setIsDeleteOpen] = useState(false)
     const [isAddOpen, setIsAddOpen] = useState(false)
 
     const { data, isLoading, error } = useSegmentsQuery(page, search.trim())
@@ -60,10 +54,11 @@ export default function Segments() {
     const total = data?.total ?? 0
     const pageSize = data?.pageSize ?? 10
 
-    if (error) throw error
+    useEffect(() => () => clearTimeout(searchTimer.current), [])
 
-    const handleSearchChange = useRef(
-        debounce((value: string) => {
+    function handleSearchChange(value: string) {
+        clearTimeout(searchTimer.current)
+        searchTimer.current = setTimeout(() => {
             setSearchParamsRef.current((currentParams) => {
                 const nextParams = new URLSearchParams(currentParams)
                 if (value) nextParams.set("search", value)
@@ -71,8 +66,10 @@ export default function Segments() {
                 nextParams.delete("page")
                 return nextParams
             }, { replace: true })
-        }),
-    ).current
+        }, 300)
+    }
+
+    if (error) throw error
 
     function handlePageChange(nextPage: number) {
         setSearchParams((currentParams) => {
@@ -83,18 +80,8 @@ export default function Segments() {
         })
     }
 
-    function handleDeleteModalChange(open: boolean) {
-        setIsDeleteOpen(open)
-        if (!open) setDeleteRequest(null)
-    }
-
     function requestDelete(rows: Segment[], onDeleted?: (ids: string[]) => void) {
         setDeleteRequest({ rows, onDeleted })
-        setIsDeleteOpen(true)
-    }
-
-    function handleAddModalChange(open: boolean) {
-        setIsAddOpen(open)
     }
 
     return (
@@ -142,11 +129,13 @@ export default function Segments() {
                 )}
                 className="w-full md:[&_th:nth-child(2)]:pl-0 md:[&_td:first-child:has([role=checkbox])+td]:pl-0"
             />
-            <AddSegment open={isAddOpen} onOpenChange={handleAddModalChange} />
+            <AddSegment open={isAddOpen} onOpenChange={setIsAddOpen} />
             <DeleteContacts
                 kind="segment"
-                open={isDeleteOpen}
-                onOpenChange={handleDeleteModalChange}
+                open={deleteRequest !== null}
+                onOpenChange={(open) => {
+                    if (!open) setDeleteRequest(null)
+                }}
                 rows={deleteRequest?.rows ?? []}
                 onDeleted={deleteRequest?.onDeleted}
             />
