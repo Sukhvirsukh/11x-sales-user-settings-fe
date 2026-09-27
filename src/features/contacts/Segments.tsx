@@ -99,6 +99,10 @@ export default function Segments() {
                 columns={columns}
                 data={segments}
                 cursorPagination={{
+                    currentPage: data?.currentPage ?? 1,
+                    totalPages: data?.totalPages ?? 1,
+                    totalCount: data?.totalCount ?? 0,
+                    pageSize: data?.limit ?? 10,
                     hasPrevious: pagination.previous.length > 0,
                     hasNext: Boolean(data?.hasMore && data.nextCursor && !isPlaceholderData),
                     onPrevious: goToPrevious,

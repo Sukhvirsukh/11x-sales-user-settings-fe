@@ -15,7 +15,12 @@ export interface KnowledgeBase extends Record<string, unknown> {
 export interface KnowledgeBaseResponse {
     items: KnowledgeBase[],
     nextCursor: string | null
+    prevCursor: string | null
     hasMore: boolean
+    hasNext: boolean
+    hasPrev: boolean
+    nextPage: number
+    prevPage: number
     currentPage: number
     totalPages: number
     totalCount: number
