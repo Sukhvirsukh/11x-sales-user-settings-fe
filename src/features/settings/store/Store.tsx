@@ -67,6 +67,16 @@ export function Store() {
 
     function goToPrevious() {
         setPagination((current) => {
+            // Prefer the cursor the API hands us for the previous page. The stack of
+            // cursors we collected while paging forward is only a fallback for older
+            // responses that still omit `prevCursor`.
+            const prevCursor = data?.prevCursor ?? undefined;
+            if (prevCursor) {
+                return {
+                    cursor: prevCursor,
+                    previous: current.previous.slice(0, -1),
+                };
+            }
             if (current.previous.length === 0) return current;
             return {
                 cursor: current.previous.at(-1),
@@ -76,7 +86,7 @@ export function Store() {
     }
 
     function goToNext() {
-        if (!data?.hasMore || !data.nextCursor || isPlaceholderData) return;
+        if (!(data?.hasNext ?? data?.hasMore) || !data?.nextCursor || isPlaceholderData) return;
         setPagination(({ cursor, previous }) => ({
             cursor: data.nextCursor ?? undefined,
             previous: [...previous, cursor],
@@ -115,8 +125,8 @@ export function Store() {
                     totalPages: data?.totalPages ?? 1,
                     totalCount: data?.totalCount ?? 0,
                     pageSize: data?.limit ?? 10,
-                    hasPrevious: pagination.previous.length > 0,
-                    hasNext: Boolean(data?.hasMore && data.nextCursor && !isPlaceholderData),
+                    hasPrevious: Boolean(data?.hasPrev ?? pagination.previous.length > 0),
+                    hasNext: Boolean((data?.hasNext ?? data?.hasMore) && data?.nextCursor && !isPlaceholderData),
                     onPrevious: goToPrevious,
                     onNext: goToNext,
                 }}

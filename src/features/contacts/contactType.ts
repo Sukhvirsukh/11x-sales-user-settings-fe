@@ -25,7 +25,12 @@ export type Segment = {
 export type SegmentsResponse = {
     items: Segment[]
     nextCursor: string | null
+    prevCursor: string | null
     hasMore: boolean
+    hasNext: boolean
+    hasPrev: boolean
+    nextPage: number
+    prevPage: number
     currentPage: number
     totalPages: number
     totalCount: number

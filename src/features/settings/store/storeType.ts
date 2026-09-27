@@ -24,7 +24,12 @@ export interface StoreResponse {
 export interface StoreListResponse {
     items: StoreData[];
     nextCursor: string | null;
+    prevCursor: string | null;
     hasMore: boolean;
+    hasNext: boolean;
+    hasPrev: boolean;
+    nextPage: number;
+    prevPage: number;
     currentPage: number;
     totalPages: number;
     totalCount: number;
