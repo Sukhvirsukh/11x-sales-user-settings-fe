@@ -104,11 +104,11 @@ GET /api/admin/users
 Authorization: Bearer <token>
 ```
 
-Return a JSON **object keyed by id** (this is what the frontend is typed against):
+Optional query parameters are `search` and `cursor`. Return a cursor-paginated JSON object:
 
 ```json
 {
-  "usr_1": {
+  "items": [{
     "id": "usr_1",
     "ownerId": "own_9",
     "name": "Ada Lovelace",
@@ -121,8 +121,13 @@ Return a JSON **object keyed by id** (this is what the frontend is typed against
       { "overview": { "view": true, "create": true, "edit": true, "delete": true } },
       { "settings.roles": { "view": true, "create": false, "edit": false, "delete": false } }
     ]
-  },
-  "usr_2": { "...": "..." }
+  }],
+  "nextCursor": null,
+  "hasMore": false,
+  "currentPage": 1,
+  "totalPages": 1,
+  "totalCount": 1,
+  "limit": 10
 }
 ```
 
@@ -137,8 +142,7 @@ Field notes:
 | `permissions` | yes | the permission matrix in the edit modal |
 | `phone`, `ownerId` | declared | not displayed, but part of the typed response — send them |
 
-A plain array also works (the client only calls `Object.values()` on the
-response), but the map above is the documented shape.
+`items` contains the user records. `nextCursor` and `hasMore` control forward navigation; the client does not send a page number.
 
 ### 2.3 The payload shape itself
 

@@ -41,11 +41,7 @@ const PAGE_SIBLINGS = 1
 /** A page number, or a collapsed run of pages between two numbers. */
 type PageItem = number | "ellipsis"
 
-/**
- * Page numbers to render. Up to `MAX_VISIBLE_PAGES` pages are all listed; past that the current
- * page keeps `PAGE_SIBLINGS` neighbours, the first and last page stay reachable, and every skipped
- * run becomes a single `"ellipsis"` — e.g. `1 2 3 … 9` or `1 … 4 5 6 … 9`.
- */
+/** Keep the first, last, and nearby pages visible; collapse larger gaps into an ellipsis. */
 function getPageItems(currentPage: number, totalPages: number): PageItem[] {
     if (totalPages <= MAX_VISIBLE_PAGES) {
         return Array.from({ length: totalPages }, (_, index) => index + 1)
@@ -75,7 +71,7 @@ type CustomTableProps<T extends Record<string, unknown> = Record<string, unknown
     columns: Column[]
     data: T[]
     headerActions?: ReactNode
-    /** Actions receive selected displayed rows and a callback to deselect processed IDs. */
+    /** Actions receive selected rows from `data` and a callback to deselect processed IDs. */
     bulkActions?: (
         rows: T[],
         deselectRows: (ids: (string | number)[]) => void,
@@ -90,7 +86,7 @@ type CustomTableProps<T extends Record<string, unknown> = Record<string, unknown
     mobileColumnSplit?: [string, string]
     /** Shown when `data` is empty. Customizes the empty-state message. */
     emptyMessage?: string
-    /** Shown when `data` is empty. Customizes the empty-state message. */
+    /** Supporting text below the empty-state message. */
     emptyDescription?: string
     /** Shown when `data` is empty. Custom action button/link below the message. */
     emptyStateAction?: ReactNode
@@ -102,6 +98,16 @@ type CustomTableProps<T extends Record<string, unknown> = Record<string, unknown
         page?: number
         total?: number
         onPageChange?: (page: number) => void
+    }
+    cursorPagination?: {
+        currentPage: number
+        totalPages: number
+        totalCount: number
+        pageSize: number
+        hasPrevious: boolean
+        hasNext: boolean
+        onPrevious: () => void
+        onNext: () => void
     }
 } & (
         | { selectable: true; getRowId: (row: T) => string | number }
@@ -122,26 +128,33 @@ export default function CustomTable<T extends Record<string, unknown>>({
     emptyStateAction,
     emptyState,
     pagination,
+    cursorPagination,
     mobileColumnSplit,
     selectable = false,
     getRowId,
 }: CustomTableProps<T>) {
     const [selectedIds, setSelectedIds] = useState<Set<string | number>>(() => new Set())
     const [localPage, setLocalPage] = useState(1)
-    const rowIds = data.map((row, index) => getRowId ? getRowId(row) : index)
-    const pageSize = Math.max(1, pagination?.pageSize ?? (data.length || 1))
+
+    const pageSize = Math.max(1, cursorPagination?.pageSize ?? pagination?.pageSize ?? (data.length || 1))
     const isServerPagination = Boolean(pagination?.onPageChange)
-    const totalItems = isServerPagination ? (pagination?.total ?? data.length) : data.length
-    const totalPages = Math.max(1, Math.ceil(totalItems / pageSize))
+    const isLocalPagination = Boolean(pagination && !isServerPagination && !cursorPagination)
+    const totalItems = cursorPagination?.totalCount
+        ?? (isServerPagination ? (pagination?.total ?? data.length) : data.length)
+    const totalPages = cursorPagination?.totalPages ?? Math.max(1, Math.ceil(totalItems / pageSize))
     const requestedPage = isServerPagination ? (pagination?.page ?? 1) : localPage
-    const currentPage = Math.min(requestedPage, totalPages)
+    const currentPage = cursorPagination?.currentPage ?? Math.min(requestedPage, totalPages)
     const pageStart = (currentPage - 1) * pageSize
-    const displayedData = pagination && !isServerPagination ? data.slice(pageStart, pageStart + pageSize) : data
-    const displayedRowIds = displayedData.map((row, index) => {
-        const dataIndex = pagination ? pageStart + index : index
-        return getRowId ? getRowId(row) : dataIndex
-    })
-    const selectedRows = data.filter((_, index) => selectedIds.has(rowIds[index]))
+    const displayedData = isLocalPagination ? data.slice(pageStart, pageStart + pageSize) : data
+    const displayedStart = displayedData.length > 0 ? pageStart + 1 : 0
+    const displayedEnd = Math.min(pageStart + displayedData.length, totalItems)
+    const hasPrevious = cursorPagination?.hasPrevious ?? currentPage > 1
+    const hasNext = cursorPagination?.hasNext ?? currentPage < totalPages
+
+    const displayedRowIds = displayedData.map((row, index) =>
+        getRowId ? getRowId(row) : (isLocalPagination ? pageStart : 0) + index,
+    )
+    const selectedRows = data.filter((row, index) => selectedIds.has(getRowId ? getRowId(row) : index))
     const selectedCount = selectedRows.length
     const selectedDisplayedCount = displayedRowIds.filter((id) => selectedIds.has(id)).length
     const allSelected = displayedRowIds.length > 0 && selectedDisplayedCount === displayedRowIds.length
@@ -159,31 +172,25 @@ export default function CustomTable<T extends Record<string, unknown>>({
         })
     }
 
-    function changePage(nextPage: number) {
-        if (isServerPagination) pagination?.onPageChange?.(nextPage)
-        else setLocalPage(nextPage)
-    }
+    const changePage = pagination?.onPageChange ?? setLocalPage
+    const previousPage = cursorPagination?.onPrevious ?? (() => changePage(currentPage - 1))
+    const nextPage = cursorPagination?.onNext ?? (() => changePage(currentPage + 1))
 
-    function SelectAllCheckbox() {
-        return (
-            <Checkbox
-                aria-label="Select all rows"
-                checked={allSelected}
-                indeterminate={partiallySelected}
-                disabled={displayedData.length === 0}
-                onCheckedChange={(checked) => selectRows(displayedRowIds, checked)}
-                className="data-indeterminate:border-primary data-indeterminate:bg-primary"
-            />
-        )
-    }
+    const selectAllCheckbox = (
+        <Checkbox
+            aria-label="Select all rows"
+            checked={allSelected}
+            indeterminate={partiallySelected}
+            disabled={displayedData.length === 0}
+            onCheckedChange={(checked) => selectRows(displayedRowIds, checked)}
+            className="data-indeterminate:border-primary data-indeterminate:bg-primary"
+        />
+    )
+
     const mobileColumns = columns.filter((col) => col.key !== "select")
     const mobileCellCount = mobileColumns.length + (rowActions ? 1 : 0)
     const lastMobileRowStart = Math.floor((mobileCellCount - 1) / 2) * 2
-    /**
-     * Below `md` every row is a two-column grid, so each track is resolved per side: the column's
-     * own `mobileWidth`, then the table's `mobileColumnSplit`, then the wider `MOBILE_LEAD_SHARE`
-     * for whichever side holds the lead column (the first one given a desktop `width`).
-     */
+    // Mobile widths: column override → table split → wider lead column.
     const leadMobileIndex = mobileColumns.findIndex((col) => col.width)
     const mobileTrack = (side: 0 | 1) =>
         mobileColumns.find((col, index) => index % 2 === side && col.mobileWidth)?.mobileWidth ??
@@ -226,7 +233,7 @@ export default function CustomTable<T extends Record<string, unknown>>({
                     >
                         <div className="flex items-center gap-3">
                             <span className="hidden md:inline-flex">
-                                <SelectAllCheckbox />
+                                {selectAllCheckbox}
                             </span>
                             <span className="text-sm font-medium" aria-live="polite">
                                 {selectedCount} selected
@@ -245,13 +252,16 @@ export default function CustomTable<T extends Record<string, unknown>>({
                         <TableRow className="bg-table-header-background hover:bg-section-background border-0 rounded-[10px]">
                             {selectable && (
                                 <TableHead className="w-14 px-5 py-2.5">
-                                    <SelectAllCheckbox />
+                                    {selectAllCheckbox}
                                 </TableHead>
                             )}
                             {columns.map((col) => (
                                 <TableHead
                                     key={col.key}
-                                    className={`text-[12px] font-normal px-5 py-2.5 ${col.align === "right" ? "text-right" : col.align === "center" ? "text-center" : "text-left"}`}
+                                    className={cn(
+                                        "text-[12px] font-normal px-5 py-2.5",
+                                        col.align === "right" ? "text-right" : col.align === "center" ? "text-center" : "text-left",
+                                    )}
                                     style={col.width ? { width: col.width } : undefined}
                                 >
                                     {col.header}
@@ -283,7 +293,12 @@ export default function CustomTable<T extends Record<string, unknown>>({
                                 {columns.map((col) => (
                                     <TableCell
                                         key={col.key}
-                                        className={`${col.key === "select" ? "hidden" : "block"} min-w-0 whitespace-normal break-words ${mobileColumns.indexOf(col) < lastMobileRowStart ? "border-b" : "border-b-0"} border-section-border px-1 py-2 text-left text-[14px] font-normal text-content-strong md:table-cell md:border-0 md:whitespace-nowrap md:px-5 ${col.align === "right" ? "md:text-right" : col.align === "center" ? "md:text-center" : "md:text-left"}`}
+                                        className={cn(
+                                            "min-w-0 whitespace-normal break-words border-section-border px-1 py-2 text-left text-[14px] font-normal text-content-strong md:table-cell md:border-0 md:whitespace-nowrap md:px-5",
+                                            col.key === "select" ? "hidden" : "block",
+                                            mobileColumns.indexOf(col) < lastMobileRowStart ? "border-b" : "border-b-0",
+                                            col.align === "right" ? "md:text-right" : col.align === "center" ? "md:text-center" : "md:text-left",
+                                        )}
                                     >
                                         {col.header && (
                                             <span className="mb-1 block font-semibold md:hidden">
@@ -308,26 +323,33 @@ export default function CustomTable<T extends Record<string, unknown>>({
                     </TableBody>
                 </Table>
 
-                {pagination && data.length > 0 && totalPages > 1 && (
+                {(pagination || cursorPagination) && data.length > 0 && (
                     <nav
                         aria-label="Pagination"
-                        className="flex w-full flex-wrap items-center justify-center gap-3 border-t border-section-border px-4 py-3 text-sm text-muted-foreground md:px-5"
+                        className="flex w-full flex-wrap text-center items-center justify-between gap-3 border-t border-section-border px-0 py-3 text-sm text-muted-foreground md:px-5"
                     >
-                        {/* <span>
-                            Showing {totalItems === 0 ? 0 : pageStart + 1}–{Math.min(pageStart + displayedData.length, totalItems)} of {totalItems}
-                        </span> */}
-                        <div className="flex items-center gap-1">
+                        <div className="grow text-left" aria-live="polite">
+                            <p className="text-foreground">
+                                Page {currentPage} of {totalPages}
+                            </p>
+                            {/* <p>
+                                {displayedData.length === 0
+                                    ? `Showing 0 of ${totalItems}`
+                                    : `Showing ${displayedStart}–${displayedEnd} of ${totalItems}`}
+                            </p> */}
+                        </div>
+                        <div className="mx-auto flex items-center gap-1">
                             <Button
                                 variant="primary"
                                 size="xs"
-                                className='p-1'
+                                className="p-1"
                                 aria-label="Previous page"
-                                disabled={currentPage === 1}
-                                onClick={() => changePage(currentPage - 1)}
+                                disabled={!hasPrevious}
+                                onClick={previousPage}
                             >
                                 <ChevronLeft className="size-4" />
                             </Button>
-                            {getPageItems(currentPage, totalPages).map((item, index) =>
+                            {!cursorPagination && getPageItems(currentPage, totalPages).map((item, index) =>
                                 item === "ellipsis" ? (
                                     <span
                                         key={`ellipsis-${index}`}
@@ -358,8 +380,8 @@ export default function CustomTable<T extends Record<string, unknown>>({
                                 size="xs"
                                 className="p-1"
                                 aria-label="Next page"
-                                disabled={currentPage === totalPages}
-                                onClick={() => changePage(currentPage + 1)}
+                                disabled={!hasNext}
+                                onClick={nextPage}
                             >
                                 <ChevronRight className="size-4" />
                             </Button>

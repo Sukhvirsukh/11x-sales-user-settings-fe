@@ -18,6 +18,21 @@ export interface RoleResponse {
     createdAt: string;
 }
 
+export interface RoleHistoryResponse {
+    items: RoleResponse[];
+    nextCursor: string | null;
+    prevCursor: string | null;
+    hasMore: boolean;
+    hasNext: boolean;
+    hasPrev: boolean;
+    nextPage: number;
+    prevPage: number;
+    currentPage: number;
+    totalPages: number;
+    totalCount: number;
+    limit: number;
+}
+
 export interface RoleRow extends Record<string, unknown> {
     permissions?: RolePermissions;
     id: string;

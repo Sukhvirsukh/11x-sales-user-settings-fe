@@ -1,13 +1,13 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { getKnowledgeBase, searchKnowledge } from "./knowledgeBaseApi";
+import { getKnowledgeBase } from "./knowledgeBaseApi";
 
 
 export const knowledgeBaseQueryKey = ["admin", "knowledgeBase"] as const;
 
-export function useKnowledgeBaseQuery(page: number, search = "") {
+export function useKnowledgeBaseQuery(search = "", cursor?: string) {
     return useQuery({
-        queryKey: [...knowledgeBaseQueryKey, page, search],
-        queryFn: () => search ? searchKnowledge(search, page) : getKnowledgeBase(page),
+        queryKey: [...knowledgeBaseQueryKey, search, cursor],
+        queryFn: () => getKnowledgeBase(search, cursor),
         placeholderData: keepPreviousData,
     });
 }

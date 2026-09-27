@@ -13,9 +13,10 @@ export async function getUserProfiles(): Promise<UserProfile[]> {
 }
 
 
-export async function getSegaments(page = 1, search = ""): Promise<SegmentsResponse> {
-    const params = new URLSearchParams({ page: String(page) });
+export async function getSegaments(search = "", cursor?: string): Promise<SegmentsResponse> {
+    const params = new URLSearchParams({});
     if (search) params.set("search", search);
+    if (cursor) params.set("cursor", cursor);
 
     return apiFetch<SegmentsResponse>(`/contacts/segments?${params.toString()}`);
 }

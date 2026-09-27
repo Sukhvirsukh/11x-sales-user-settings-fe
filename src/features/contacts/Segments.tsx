@@ -5,14 +5,15 @@ import TableSkeleton from "@/components/shared/skeletons/TableSkeletons"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { useCan } from "@/features/auth"
-import { dateFormater, debounce } from "@/lib/utils"
 import { Download, Plus, Trash } from "lucide-react"
-import { useRef, useState } from "react"
+import { useState } from "react"
 import { useSearchParams } from "react-router"
 import DeleteContacts from "./DeleteContacts"
 import { useSegmentsQuery } from "./contactQuery"
 import type { Segment } from "./contactType"
 import AddSegment from "./AddSegment"
+import { useDebounce } from "@/hooks/useDebounce"
+import { dateFormater } from "@/lib/utils"
 
 
 const columns: Column[] = [
@@ -21,17 +22,15 @@ const columns: Column[] = [
         key: "status",
         header: "Status",
         align: "center",
-        render: (value) => {
-            const status = String(value)
-            return (
-                <Badge variant={status ? "default" : "destructive"}>
-                    {status ? "Active" : "Inactive"}
-                </Badge>
-            )
-        },
+        render: (value) => (
+            <Badge variant={value === "Active" ? "default" : "destructive"}>
+                {value === "Active" ? "Active" : "Inactive"}
+            </Badge>
+        ),
     },
     {
-        key: "createdAt",
+        key:
+            "createdAt",
         header: "Created date",
         align: "right",
         render: (value) => {
@@ -42,67 +41,69 @@ const columns: Column[] = [
 ]
 
 export default function Segments() {
-    // Adding a segment is a change, so the button follows `contacts.create` alone.
-    // The permissions table grants create and edit together under "Changes", and
-    // create implies edit — so `create` is the whole change capability.
     const canCreateSegments = useCan("contacts.create")
-    // Deleting is its own grant, so it is asked for separately.
     const canDeleteSegments = useCan("contacts.delete")
     const [searchParams, setSearchParams] = useSearchParams()
-    const setSearchParamsRef = useRef(setSearchParams)
-    setSearchParamsRef.current = setSearchParams
     const search = searchParams.get("search") ?? ""
-    const pageParam = Number(searchParams.get("page"))
-    const page = Number.isInteger(pageParam) && pageParam > 0 ? pageParam : 1
+    const [pagination, setPagination] = useState<{
+        cursor?: string
+        previous: (string | undefined)[]
+    }>({ previous: [] })
 
     const [deleteRequest, setDeleteRequest] = useState<{
         rows: Segment[]
         onDeleted?: (ids: string[]) => void
     } | null>(null)
-    const [isDeleteOpen, setIsDeleteOpen] = useState(false)
     const [isAddOpen, setIsAddOpen] = useState(false)
 
-    const { data, isLoading, error } = useSegmentsQuery(page, search.trim())
+    const { data, isLoading, isPlaceholderData, error } = useSegmentsQuery(search.trim(), pagination.cursor)
     const segments = data?.items ?? []
-    const total = data?.total ?? 0
-    const pageSize = data?.pageSize ?? 10
 
-    if (error) throw error
-
-    const handleSearchChange = useRef(
-        debounce((value: string) => {
-            setSearchParamsRef.current((currentParams) => {
-                const nextParams = new URLSearchParams(currentParams)
-                if (value) nextParams.set("search", value)
-                else nextParams.delete("search")
-                nextParams.delete("page")
-                return nextParams
-            }, { replace: true })
-        }),
-    ).current
-
-    function handlePageChange(nextPage: number) {
+    const handleSearchChange = useDebounce((value: string) => {
+        setPagination({ previous: [] })
         setSearchParams((currentParams) => {
             const nextParams = new URLSearchParams(currentParams)
-            if (nextPage === 1) nextParams.delete("page")
-            else nextParams.set("page", String(nextPage))
+            if (value) nextParams.set("search", value)
+            else nextParams.delete("search")
+            nextParams.delete("page")
+            nextParams.delete("cursor")
             return nextParams
+        }, { replace: true })
+    })
+
+    function goToPrevious() {
+        setPagination((current) => {
+            // Prefer the cursor the API hands us for the previous page. The stack of
+            // cursors we collected while paging forward is only a fallback for older
+            // responses that still omit `prevCursor`.
+            const prevCursor = data?.prevCursor ?? undefined
+            if (prevCursor) {
+                return {
+                    cursor: prevCursor,
+                    previous: current.previous.slice(0, -1),
+                }
+            }
+            if (current.previous.length === 0) return current
+            return {
+                cursor: current.previous.at(-1),
+                previous: current.previous.slice(0, -1),
+            }
         })
     }
 
-    function handleDeleteModalChange(open: boolean) {
-        setIsDeleteOpen(open)
-        if (!open) setDeleteRequest(null)
+    function goToNext() {
+        if (!(data?.hasNext ?? data?.hasMore) || !data?.nextCursor || isPlaceholderData) return
+        setPagination(({ cursor, previous }) => ({
+            cursor: data.nextCursor ?? undefined,
+            previous: [...previous, cursor],
+        }))
     }
 
     function requestDelete(rows: Segment[], onDeleted?: (ids: string[]) => void) {
         setDeleteRequest({ rows, onDeleted })
-        setIsDeleteOpen(true)
     }
 
-    function handleAddModalChange(open: boolean) {
-        setIsAddOpen(open)
-    }
+    if (error) throw error
 
     return (
         <>
@@ -110,9 +111,18 @@ export default function Segments() {
                 title="All segaments"
                 columns={columns}
                 data={segments}
+                cursorPagination={{
+                    currentPage: data?.currentPage ?? 1,
+                    totalPages: data?.totalPages ?? 1,
+                    totalCount: data?.totalCount ?? 0,
+                    pageSize: data?.limit ?? 10,
+                    hasPrevious: Boolean(data?.hasPrev ?? pagination.previous.length > 0),
+                    hasNext: Boolean((data?.hasNext ?? data?.hasMore) && data?.nextCursor && !isPlaceholderData),
+                    onPrevious: goToPrevious,
+                    onNext: goToNext,
+                }}
                 selectable={canDeleteSegments}
                 getRowId={(row) => row.id}
-                pagination={{ page, pageSize, total, onPageChange: handlePageChange }}
                 bulkActions={canDeleteSegments ? ((rows, deselectRows) => (
                     <Button variant="destructive" size="xs" onClick={() => requestDelete(rows, deselectRows)}>
                         <Trash className="size-3.5" />
@@ -149,11 +159,13 @@ export default function Segments() {
                 )}
                 className="w-full md:[&_th:nth-child(2)]:pl-0 md:[&_td:first-child:has([role=checkbox])+td]:pl-0"
             />
-            <AddSegment open={isAddOpen} onOpenChange={handleAddModalChange} />
+            <AddSegment open={isAddOpen} onOpenChange={setIsAddOpen} />
             <DeleteContacts
                 kind="segment"
-                open={isDeleteOpen}
-                onOpenChange={handleDeleteModalChange}
+                open={deleteRequest !== null}
+                onOpenChange={(open) => {
+                    if (!open) setDeleteRequest(null)
+                }}
                 rows={deleteRequest?.rows ?? []}
                 onDeleted={deleteRequest?.onDeleted}
             />

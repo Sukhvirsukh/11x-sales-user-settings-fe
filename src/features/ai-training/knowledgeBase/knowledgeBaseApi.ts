@@ -3,9 +3,12 @@ import type { KnowledgeBaseResponse } from "./knowledgeBaseTypes";
 import type { KnowledgeBaseFormValues } from "./knowledgeBaseSchema";
 
 
-export async function getKnowledgeBase(page = 1) {
-    const response = await apiFetch<KnowledgeBaseResponse>(`/training?page=${page}`);
-    return response
+export async function getKnowledgeBase(search = "", cursor?: string) {
+    const params = new URLSearchParams();
+    if (search) params.set("search", search);
+    if (cursor) params.set("cursor", cursor);
+    const query = params.toString();
+    return apiFetch<KnowledgeBaseResponse>(`/training${query ? `?${query}` : ""}`);
 }
 
 export async function updateKnowledgeBase({ id, name, format, url, file, text }: KnowledgeBaseFormValues & { id?: string }) {
@@ -42,11 +45,5 @@ export async function deleteKnowledgeBase(ids: string[]) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ids }),
     });
-    return response
-}
-
-
-export async function searchKnowledge(search: string, page = 1) {
-    const response = await apiFetch<KnowledgeBaseResponse>(`/training?search=${search}&page=${page}`);
     return response
 }
