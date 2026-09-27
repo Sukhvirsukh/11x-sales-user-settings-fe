@@ -146,8 +146,6 @@ export default function CustomTable<T extends Record<string, unknown>>({
     const currentPage = cursorPagination?.currentPage ?? Math.min(requestedPage, totalPages)
     const pageStart = (currentPage - 1) * pageSize
     const displayedData = isLocalPagination ? data.slice(pageStart, pageStart + pageSize) : data
-    const displayedStart = displayedData.length > 0 ? pageStart + 1 : 0
-    const displayedEnd = Math.min(pageStart + displayedData.length, totalItems)
     const hasPrevious = cursorPagination?.hasPrevious ?? currentPage > 1
     const hasNext = cursorPagination?.hasNext ?? currentPage < totalPages
 
@@ -323,7 +321,7 @@ export default function CustomTable<T extends Record<string, unknown>>({
                     </TableBody>
                 </Table>
 
-                {(pagination || cursorPagination) && data.length > 0 && (
+                {(pagination || cursorPagination) && data.length > 0 && totalPages > 1 && (
                     <nav
                         aria-label="Pagination"
                         className="flex w-full flex-wrap text-center items-center justify-between gap-3 border-t border-section-border px-0 py-3 text-sm text-muted-foreground md:px-5"
