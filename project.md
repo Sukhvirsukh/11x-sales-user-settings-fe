@@ -496,7 +496,7 @@ CVA-based heading with sizes:
 - `lg`: 16px, semi-bold (default)
 - `md`: 14px, medium
 
-Supports `as` prop (h1-h6, p, span). Memoized.
+Supports `as` (h1-h6, p, span) and optional `responsiveSize` overrides at Tailwind breakpoints; `size` sets the base size. Memoized.
 
 ### PreviewSection (`src/components/design/PreviewSection.tsx`)
 White card wrapper with shadow-blue and border-blue-100/70. Outer container for AskAI and Reports pages.

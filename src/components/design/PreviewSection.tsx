@@ -9,7 +9,7 @@ export interface PreviewSectionProps {
 
 export default function PreviewSection({ children, className, contentClassName }: PreviewSectionProps) {
     return (
-        <div className={cn("flex flex-col items-start gap-3.5 pb-5 pt-2", className)}>
+        <div className={cn("flex flex-col items-start gap-3.5 pb-5 ", className)}>
             <div className={cn(
                 "flex w-full flex-col items-start gap-3.5 overflow-hidden rounded-[10px] border border-section-border bg-preview-section-background p-4 shadow-blue",
                 contentClassName,

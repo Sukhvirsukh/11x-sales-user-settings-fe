@@ -44,9 +44,9 @@ function AgentList({ agents }: SystemStatusSummary) {
     return (
         <AppCard shadow={false} padding="sm">
             <div className="w-full">
-                <div className="border-b border-border flex items-center justify-between w-full py-1.5">
-                    <p className="block text-sm font-semibold">Agent Name</p>
-                    <p className="block text-sm font-semibold">Actions</p>
+                <div className="border-b border-border flex items-center justify-between w-full pt-0.75 pb-2.5">
+                    <p className="block text-sm font-medium">Agent Name</p>
+                    <p className="block text-sm font-medium">Actions</p>
                 </div>
                 <div className="py-2">
                     {agents.map((agent) => (

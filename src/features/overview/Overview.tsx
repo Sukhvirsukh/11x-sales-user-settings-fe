@@ -24,17 +24,17 @@ function headlineMetrics(data: OverviewResponse | undefined, isLoading: boolean)
         {
             title: "Total replies",
             numbers: metric(stats?.totalReplies.value),
-            icon: <MessageSquareReply size={20} />,
+            icon: <MessageSquareReply size={14} />,
         },
         {
             title: "Dispute chat",
             numbers: metric(stats?.disputeChat.value),
-            icon: <MailWarning size={20} />,
+            icon: <MailWarning size={14} />,
         },
         {
             title: "Resolution rate",
             numbers: metric(stats?.resolutionRate.value, "percent"),
-            icon: <FaceSlightlySmiling size={20} />,
+            icon: <FaceSlightlySmiling size={14} />,
         },
     ];
 }
@@ -43,23 +43,34 @@ export function Overview() {
     const { data, isLoading, isError } = useOverviewQuery();
 
     return (
-        <div className="grid w-full grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_308px] 2xl:grid-cols-[minmax(0,7fr)_minmax(0,3fr)]">
+        <div className="grid w-full grid-cols-1 gap-3.5 md:gap-4 lg:grid-cols-[minmax(0,1fr)_308px] 2xl:grid-cols-[minmax(0,7fr)_minmax(0,3fr)]">
             <div className="flex flex-col gap-4">
                 {isError && (
                     <p role="alert" className="text-sm text-danger">
                         Couldn’t load overview metrics.
                     </p>
                 )}
-                <div className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-3">
+                <div
+                    role="region"
+                    aria-label="Overview metrics"
+                    tabIndex={0}
+                    className="flex min-w-0 gap-2 overflow-x-auto focus-visible:outline-2 focus-visible:outline-primary md:gap-4"
+                >
                     {headlineMetrics(data, isLoading).map((metric) => (
-                        <OverviewCard key={metric.title} {...metric} />
+                        <div key={metric.title} className="min-w-[130px] flex-[1_0_max-content] whitespace-nowrap">
+                            <OverviewCard {...metric} />
+                        </div>
                     ))}
                 </div>
                 <ChatToSaleChart panel={data?.chatToSaleConversion} isLoading={isLoading} />
-                <div className="grid min-w-0 grid-cols-1 items-start gap-4 sm:grid-cols-[minmax(0,1fr)_50%]">
-                    <PerformanceMatrix panel={data?.performanceMetrics} isLoading={isLoading} />
-                    <div className="flex flex-col gap-4">
+                <div className="grid min-w-0 grid-cols-1 items-start gap-4 sm:grid-cols-2">
+                    <div className="sm:col-start-2 sm:row-start-1">
                         <ActionTrend panel={data?.actionTrends} isLoading={isLoading} />
+                    </div>
+                    <div className="sm:col-start-1 sm:row-span-2 sm:row-start-1">
+                        <PerformanceMatrix panel={data?.performanceMetrics} isLoading={isLoading} />
+                    </div>
+                    <div className="sm:col-start-2 sm:row-start-2">
                         <AverageOrderValue panel={data?.averageOrderValue} isLoading={isLoading} />
                     </div>
                 </div>
