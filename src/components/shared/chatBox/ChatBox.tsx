@@ -1,3 +1,6 @@
+import { agentApiConfigured } from "@/lib/agentApi";
+import { sendTestMessage, toRecommendation } from "./agentTestChat";
+import type { ProductRecommendationItem } from "./ProductRecommendation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ChatMessage, type ChatMessageData } from "./ChatMessage";
 import { ChatInput } from "./ChatInput";
@@ -138,7 +141,19 @@ function LoadedChatBox({ fields, onClose, className = "", defaultMessages }: Cha
     });
   }, [messages]);
 
-  function handleSend(content: string) {
+  const testConversationRef = useRef<string | null>(null);
+
+  function addBotMessage(
+    message: { content: string } | { type: "product-recommendation"; content?: string; products: ProductRecommendationItem[] },
+  ) {
+    setMessages((prev) => [
+      ...prev,
+      { id: crypto.randomUUID(), sender: "bot", timestamp: new Date(), avatar: avatarUrl ?? undefined, ...message } as ChatMessageData,
+    ]);
+  }
+
+  // The preview talks to the store's real AI agent when it's connected.
+  async function handleSend(content: string) {
     const userMessage: ChatMessageData = {
       id: crypto.randomUUID(),
       content,
@@ -147,18 +162,24 @@ function LoadedChatBox({ fields, onClose, className = "", defaultMessages }: Cha
     };
     setMessages((prev) => [...prev, userMessage]);
 
-    window.setTimeout(() => {
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: crypto.randomUUID(),
-          content: "Thanks for your message! How else can I help?",
-          sender: "bot",
-          timestamp: new Date(),
-          avatar: avatarUrl ?? undefined,
-        },
-      ]);
-    }, 500);
+    if (!agentApiConfigured) {
+      window.setTimeout(() => addBotMessage({ content: "Thanks for your message! How else can I help?" }), 500);
+      return;
+    }
+    try {
+      const result = await sendTestMessage(content, testConversationRef.current);
+      testConversationRef.current = result.conversationId;
+      const products = result.reply?.cards?.products ?? [];
+      // The chat bubble shows plain text, so drop the agent's **bold** markers.
+      const text = result.reply?.content.replace(/\*\*(.+?)\*\*/g, "$1");
+      addBotMessage(
+        products.length
+          ? { type: "product-recommendation", content: text, products: products.map(toRecommendation) }
+          : { content: text ?? "The agent didn't reply." },
+      );
+    } catch (error) {
+      addBotMessage({ content: error instanceof Error ? error.message : "The agent couldn't reply right now." });
+    }
   }
 
   function handleCorrect(messageId: string, correctedContent: string) {
