@@ -48,7 +48,7 @@ const buttonVariants = cva(
       },
       size: {
         icon: "size-9 p-0 md:p-0",
-        xsm: "rounded-[10px] px-2 py-1.5 text-sm",
+        xsm: "rounded-[10px] px-[8px] py-[6px] text-sm leading-[14px]",
         xs: "h-7 rounded-md px-2 text-[11px]",
         sm: "rounded-[10px] px-2.5 py-1.5 text-sm md:p-2",
         default: "rounded-[10px] px-2 py-1.5 text-sm md:px-4 md:py-[9px] md:text-base",

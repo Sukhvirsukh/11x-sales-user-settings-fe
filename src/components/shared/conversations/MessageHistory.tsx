@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { noop } from "@/lib/utils"
 import { type ConversationMessage } from "./conversationData"
 import { ConversationsMessage } from "./ConversationsMessages"
+import { useViewpoint } from "@/hooks/useViewpoint"
 
 export function MessageHistory({ messages, onCorrect, onSend, alwaysShowChatInput, onBack, draft, onDraftChange, isTakeoverActive, onTakeover, headingRef }: {
     messages: ConversationMessage[]
@@ -21,10 +22,11 @@ export function MessageHistory({ messages, onCorrect, onSend, alwaysShowChatInpu
     headingRef: Ref<HTMLParagraphElement>
 }) {
     const showChatInput = alwaysShowChatInput || isTakeoverActive
+    const isBelowLg = !useViewpoint("lg")
 
     return (
         <AppCard padding="sm" className="flex h-full min-h-0 flex-col border-0 p-0 lg:border lg:p-2.5" shadow={false}>
-            <div className="flex items-center justify-between gap-3 border-b border-section-border pb-3">
+            <div className="flex items-center justify-between gap-3 border-b border-section-border lg:pb-2.5 pb-1.25">
                 <div className="flex min-w-0 items-center gap-2">
                     <Button
                         variant="bare"
@@ -46,7 +48,9 @@ export function MessageHistory({ messages, onCorrect, onSend, alwaysShowChatInpu
             </div>
             {/* Feedback, debug and approve endpoints aren't available yet — the controls stay
                 visible so the panel matches the design. */}
-            <AppSection className="h-auto min-h-0 flex-1 mt-3.5 lg:mt-0 items-stretch overflow-y-auto py-4 lg:rounded-none lg:border-0 lg:bg-transparent lg:p-0 lg:py-4">
+            <AppSection
+                className="lg:mt-0 mt-3.5 lg:rounded-none lg:border-0 lg:bg-transparent lg:p-0 lg:pt-4 items-stretch"
+                /*className="h-auto min-h-0 flex-1 mt-3.5 lg:mt-0 items-stretch overflow-y-auto py-4 lg:rounded-none lg:border-0 lg:bg-transparent lg:p-0 lg:py-4"*/>
                 {messages.map((message) => (
                     <ConversationsMessage
                         key={message.id}
@@ -60,13 +64,16 @@ export function MessageHistory({ messages, onCorrect, onSend, alwaysShowChatInpu
                 ))}
 
                 {showChatInput && (
-                    <ChatInput
-                        value={draft}
-                        onValueChange={onDraftChange}
-                        onSend={onSend}
-                        placeholder="Ask Vitalb"
-                        primaryColor="var(--widget-foreground)"
-                    />
+                    <div className="mt-auto">
+                        <ChatInput
+                            value={draft}
+                            onValueChange={onDraftChange}
+                            onSend={onSend}
+                            placeholder="Ask Vitalb"
+                            primaryColor="var(--widget-foreground)"
+                            variant={isBelowLg ? 'default' : "light"}
+                        />
+                    </div>
                 )}
             </AppSection>
         </AppCard>

@@ -7,6 +7,7 @@ import { conversationMessages, conversations } from "./conversationData"
 import { ConversationList } from "./ConversationList"
 import { CustomerDetails } from "./CustomerDetails"
 import { MessageHistory } from "./MessageHistory"
+import ShareUrlField from "./ShareUrlField"
 
 interface ConversationsChatPannelProps {
     alwaysShowChatInput?: boolean
@@ -114,13 +115,14 @@ export function ConversationsChatPannel({ alwaysShowChatInput = false }: Convers
                      * section's own background, since it is the section's surface from here on.
                      * Customer details remain separate from the message surface below the thread.
                      */
-                    <div className="col-start-1 row-start-1 z-10 flex w-full min-w-0 animate-in flex-col gap-4 bg-preview-section-background duration-300 ease-out slide-in-from-left motion-reduce:animate-none">
+                    <div className="col-start-1 row-start-1 z-10 flex w-full min-w-0 animate-in flex-col gap-3.5 bg-preview-section-background duration-300 ease-out slide-in-from-left motion-reduce:animate-none">
                         {thread}
                         <AppSection>
                             <div className="w-full">
                                 {customerDetails}
                             </div>
                         </AppSection>
+                        <ShareUrlField url={selectedConversation.shareUrl} />
                     </div>
                 )}
             </>
