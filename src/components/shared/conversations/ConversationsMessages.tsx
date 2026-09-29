@@ -1,5 +1,6 @@
 import { CheckIcon, ThumbsDownIcon, ThumbsUpIcon } from "lucide-react";
 import { useState } from "react";
+import DebugModal from "./DebugModal";
 
 export interface ConversationsMessageProps {
     id: string;
@@ -34,7 +35,7 @@ export function ConversationsMessage({
     const bubbleClassName = isUser
         ? "rounded-br-none"
         : "rounded-bl-none";
-    const avatarClassName = "size-[34px] shrink-0 rounded-full border object-cover";
+    const avatarClassName = "lg:size-[34px] size-[15px] shrink-0 rounded-full border object-cover";
 
     const [isEditing, setIsEditing] = useState(false);
     const [correctionDraft, setCorrectionDraft] = useState(content);
@@ -63,30 +64,23 @@ export function ConversationsMessage({
                 ) : (
                     <span
                         aria-hidden
-                        className="flex h-[30px] w-[30px] shrink-0 items-center justify-center rounded-full border border-primary bg-primary p-0.5 text-[16px] font-extrabold leading-none text-primary-contrast"
+                        className="flex lg:h-[30px] lg:w-[30px] h-4 w-4 shrink-0 items-center justify-center rounded-full border border-primary bg-primary p-0.5 lg:text-[16px] text-sm font-extrabold leading-none text-primary-contrast"
                     >
                         V
                     </span>
                 ))}
 
-            <div className={isUser ? "max-w-[227px]" : "w-fit max-w-full min-w-0"}>
+            <div className="w-fit max-w-[80%] min-w-0">
                 <div className={`max-w-full rounded-[10px] bg-table-header-background p-2.5 ${bubbleClassName}`}>
-                    <p className="text-sm leading-none whitespace-pre-wrap text-content-strong">{content}</p>
+                    <p className="break-words text-sm leading-none whitespace-pre-wrap text-content-strong">{content}</p>
                 </div>
 
                 {/* Feedback row for bot messages */}
                 {!isUser && (
-                    <div className="mt-2 flex items-center justify-between gap-4">
+                    <div className="mt-2 flex flex-wrap items-center justify-between gap-4">
                         <div className="flex items-center gap-3">
                             {onDebug && (
-                                <button
-                                    type="button"
-                                    onClick={() => onDebug(id)}
-                                    className={actionClassName}
-                                    aria-label="Debug response"
-                                >
-                                    Debug
-                                </button>
+                                <DebugModal />
                             )}
                             {onCorrect && (
                                 <button

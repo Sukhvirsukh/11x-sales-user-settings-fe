@@ -63,6 +63,7 @@ export interface SetupStep {
     /** Step text, e.g. "Customise the chat to fit your brand". */
     title: string;
     completed: boolean;
+    text?: string;
 }
 
 /** Setup progress panel on the Overview dashboard. */

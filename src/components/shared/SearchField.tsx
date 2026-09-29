@@ -5,7 +5,7 @@ import { InputField } from "../design/InputField";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 
-export type SearchFieldViewport = "xs" | "sm" | "md";
+export type SearchFieldViewport = "xs" | "sm" | "md" | "lg";
 
 export interface SearchFieldProps {
     onSearchChange: (value: string) => void
@@ -14,18 +14,22 @@ export interface SearchFieldProps {
     viewport?: SearchFieldViewport
     /** Removes the inline field's default maximum width. */
     fullWidth?: boolean
+    /** Accessible label for the search control. */
+    label?: string
 }
 
 const panelVisibilityClasses: Record<SearchFieldViewport, string> = {
     xs: "xs:hidden",
     sm: "sm:hidden",
     md: "md:hidden",
+    lg: "lg:hidden",
 };
 
 const inlineVisibilityClasses: Record<SearchFieldViewport, string> = {
     xs: "hidden w-full max-w-[231px] xs:block",
     sm: "hidden w-full max-w-[231px] sm:block",
     md: "hidden w-full max-w-[231px] md:block",
+    lg: "hidden w-full max-w-[231px] lg:block",
 };
 
 export default function SearchField({
@@ -33,6 +37,7 @@ export default function SearchField({
     showMobilePanel = true,
     viewport = "md",
     fullWidth = false,
+    label = "Search knowledge base",
 }: SearchFieldProps) {
 
     const [search, setSearch] = useState("");
@@ -53,7 +58,7 @@ export default function SearchField({
                                 variant="ghost"
                                 size="sm"
                                 className={cn("bg-white px-1.5", panelVisibilityClasses[viewport])}
-                                aria-label="Search knowledge base"
+                                aria-label={label}
                             >
                                 <Search className="size-4" />
                             </Button>
@@ -69,7 +74,7 @@ export default function SearchField({
                         )}
                     >
                         <InputField
-                            aria-label="Search knowledge base"
+                            aria-label={label}
                             value={search}
                             onChange={(event) => handleSearchChange(event.target.value)}
                             placeholder="Search"
@@ -87,7 +92,7 @@ export default function SearchField({
                 fullWidth && "max-w-none md:max-w-none",
             )}>
                 <InputField
-                    aria-label="Search knowledge base"
+                    aria-label={label}
                     value={search}
                     onChange={(event) => handleSearchChange(event.target.value)}
                     placeholder="Search"

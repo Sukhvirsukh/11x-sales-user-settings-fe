@@ -1,7 +1,6 @@
-import AppSection from "@/components/design/AppSectoin";
 import { CustomTabs } from "@/components/design/CustomTabs";
 import PreviewSection from "@/components/design/PreviewSection";
-import { ConversationsFilter } from "@/components/shared/conversations";
+import { ConversationsFilter, ConversationsToolbar } from "@/components/shared/conversations";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { Outlet, useLocation, useNavigate } from "react-router";
 
@@ -36,11 +35,20 @@ export default function ConversationsPage() {
                     className="p-0!"
                 >
                     <PreviewSection>
-                        <div className="grid w-full min-w-0 grid-cols-1 gap-3.5 lg:grid-cols-[minmax(0,1fr)_194px] 2xl:grid-cols-[minmax(0,7fr)_minmax(0,3fr)]">
-                            <AppSection className="min-h-0 p-2.5">
+                        {/*
+                         * Below `lg` the panel takes an open thread out of its card and lays the
+                         * list and the thread in the same grid cell as the toolbar row, so the
+                         * cell grows to the thread and the thread paints over that row. The grid
+                         * drops out of the layout (`contents`) there, which is what lets those
+                         * blocks reach the row; from `lg` up it is a two-column grid again, the
+                         * panel's card beside the filter.
+                         */}
+                        <div className="flex w-full min-w-0 flex-col items-start gap-3.5 max-lg:grid max-lg:grid-cols-1">
+                            <ConversationsToolbar />
+                            <div className="grid w-full min-w-0 grid-cols-1 gap-3.5 max-lg:contents min-[1200px]:grid-cols-[minmax(0,1fr)_194px] 2xl:grid-cols-[minmax(0,7fr)_minmax(0,3fr)]">
                                 <Outlet />
-                            </AppSection>
-                            <ConversationsFilter />
+                                <ConversationsFilter className="hidden min-[1200px]:flex" />
+                            </div>
                         </div>
                     </PreviewSection>
                 </CustomTabs>

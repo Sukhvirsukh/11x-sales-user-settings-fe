@@ -38,11 +38,11 @@ function FilterGroup({ title, options }: { title: string; options: FilterOption[
     )
 }
 
-export function ConversationsFilter() {
+export function ConversationsFilter({ className }: { className?: string }) {
     const setSearchQuery = useConversationFilterStore((state) => state.setSearchQuery)
 
     return (
-        <AppSection>
+        <AppSection className={className}>
             <SearchField onSearchChange={setSearchQuery} showMobilePanel={false} fullWidth />
             <div className="flex w-full flex-col gap-4">
                 {filterGroups.map((group) => <FilterGroup key={group.title} {...group} />)}

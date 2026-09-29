@@ -70,7 +70,7 @@ export type FilterGroup = {
 }
 
 export const filterGroups: FilterGroup[] = [
-    { title: "Channels", options: [{ label: "Website" }, { label: "WhatsApp" }, { label: "Facebook" }] },
+    { title: "Channels", options: [{ label: "Website" }, /*{ label: "WhatsApp" }, { label: "Facebook" }*/] },
     { title: "Ratings", options: [{ label: "5 Stars", stars: 5 }, { label: "4 Stars & less", stars: 4 }] },
     { title: "Flags", options: [{ label: "Less than 10 times" }, { label: "More than 10 times" }] },
     { title: "Assignee", options: [{ label: "Admin" }, { label: "Racheal" }, { label: "Kiran" }] },

@@ -9,6 +9,8 @@ export interface ChatInputProps {
   disabled?: boolean;
   primaryColor?: string;
   variant?: "default" | "light";
+  value?: string;
+  onValueChange?: (value: string) => void;
 }
 
 export function ChatInput({
@@ -18,8 +20,15 @@ export function ChatInput({
   disabled = false,
   primaryColor = "var(--widget-primary)",
   variant = "light",
+  value: controlledValue,
+  onValueChange,
 }: ChatInputProps) {
-  const [value, setValue] = useState("");
+  const [localValue, setLocalValue] = useState("");
+  const value = controlledValue ?? localValue;
+  function setValue(nextValue: string) {
+    if (controlledValue === undefined) setLocalValue(nextValue);
+    onValueChange?.(nextValue);
+  }
   const imageInputRef = useRef<HTMLInputElement>(null);
 
   function handleSend() {
