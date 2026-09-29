@@ -1,10 +1,10 @@
 import { Fragment } from "react"
+import { ChevronRight } from "lucide-react"
 import Heading from "@/components/design/Heading"
 import { SelectField } from "@/components/design/SelectField"
 import CopyField from "@/components/shared/CopyField"
 import { noop } from "@/lib/utils"
 import AddNote from "./AddNote"
-import { CollapsibleSection } from "./CollapsibleSection"
 import { type Conversation } from "./conversationData"
 
 export function CustomerDetails({ conversation }: { conversation: Conversation }) {
@@ -30,8 +30,12 @@ export function CustomerDetails({ conversation }: { conversation: Conversation }
                 />
             </div>
 
-            <CollapsibleSection title="Customer details" contentClassName="mt-3">
-                <dl className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-2 text-sm">
+            <div className="border-t border-section-border pt-4">
+                <div className="flex w-full items-center justify-between gap-2 text-left">
+                    <Heading size="md" className="font-semibold">Customer details</Heading>
+                    <ChevronRight aria-hidden className="hidden size-4 shrink-0 text-content-muted lg:block" />
+                </div>
+                <dl className="mt-3 grid grid-cols-[auto_1fr] gap-x-3 gap-y-2 text-sm">
                     {details.map((detail) => (
                         <Fragment key={detail.label}>
                             <dt className="text-content-muted">{detail.label}</dt>
@@ -39,11 +43,15 @@ export function CustomerDetails({ conversation }: { conversation: Conversation }
                         </Fragment>
                     ))}
                 </dl>
-            </CollapsibleSection>
+            </div>
 
-            <CollapsibleSection title="Share URL" contentClassName="mt-2.5">
+            <div className="border-t border-section-border pt-4">
+                <div className="mb-2.5 flex w-full items-center justify-between gap-2 text-left">
+                    <Heading size="md" className="font-semibold">Share URL</Heading>
+                    <ChevronRight aria-hidden className="hidden size-4 shrink-0 text-content-muted lg:block" />
+                </div>
                 <CopyField value={conversation.shareUrl} />
-            </CollapsibleSection>
+            </div>
         </div>
     )
 }

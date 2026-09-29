@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react"
+import AppSection from "@/components/design/AppSectoin"
 import { cn } from "@/lib/utils"
 import { useViewpoint } from "@/hooks/useViewpoint"
 import { useConversationChatStore } from "@/features/conversations/conversationChatStore"
@@ -29,9 +30,6 @@ export function ConversationsChatPannel({ alwaysShowChatInput = false }: Convers
     }, [closeThread])
 
     const selectedConversation = conversations.find((conversation) => conversation.id === selectedId) ?? conversations[0]
-    const showThread = !isBelowLg || isThreadOpen
-    // While the thread covers the list on mobile, the list keeps its box but stops painting.
-    const isListCovered = isBelowLg && isThreadOpen
 
     function handleSelect(id: number) {
         setSelectedId(id)
@@ -49,42 +47,64 @@ export function ConversationsChatPannel({ alwaysShowChatInput = false }: Convers
         ])
     }
 
-    return (
-        <div className="grid w-full h-full min-w-0 grid-cols-1 gap-4 lg:grid-cols-[minmax(180px,1fr)_minmax(0,3fr)_minmax(176px,1fr)] lg:gap-3.5">
-            {/*
-             * `invisible` rather than `hidden` on purpose: the list keeps occupying its
-             * space (nothing reflows, and the section keeps its height) but stops painting,
-             * so nothing shows through the thread's transparent areas — and no opaque
-             * surface is needed on the thread, which would tint `CustomerDetails`.
-             */}
-            <div
-                className={cn("min-w-0", isListCovered && "max-lg:col-start-1 max-lg:row-start-1 max-lg:invisible")}
-                inert={isListCovered}
-                aria-hidden={isListCovered}
-            >
-                <ConversationList selectedId={selectedId} onSelect={handleSelect} />
-            </div>
-            {showThread && (
-                /*
-                 * Below `lg` the thread slides in from the left and overlaps the whole panel:
-                 * it shares the list's grid cell, so the row grows to fit it, and it paints
-                 * over the list (which is kept invisible while covered) as well as over the
-                 * toolbar row the panel already covers. From `lg` up the wrapper leaves the
-                 * layout entirely (`contents`), so the thread and the customer details
-                 * become direct grid items again. It deliberately paints no surface of its
-                 * own, so `CustomerDetails` keeps the panel's background.
-                 */
-                <div className="flex min-w-0 flex-col gap-4 max-lg:z-10 max-lg:col-start-1 max-lg:row-start-1 max-lg:animate-in max-lg:slide-in-from-left max-lg:duration-300 max-lg:ease-out motion-reduce:animate-none lg:contents">
-                    <MessageHistory
-                        messages={messages}
-                        onCorrect={handleCorrect}
-                        onSend={handleSend}
-                        alwaysShowChatInput={alwaysShowChatInput}
-                        onBack={closeThread}
-                    />
-                    <CustomerDetails conversation={selectedConversation} />
+    const list = <ConversationList selectedId={selectedId} onSelect={handleSelect} />
+    const thread = (
+        <MessageHistory
+            messages={messages}
+            onCorrect={handleCorrect}
+            onSend={handleSend}
+            alwaysShowChatInput={alwaysShowChatInput}
+            onBack={closeThread}
+        />
+    )
+    const customerDetails = <CustomerDetails conversation={selectedConversation} />
+
+    /*
+     * The panel owns the section surface, because it is the only thing whose shape changes: from
+     * `lg` up the three panels share one `AppSection`, while below `lg` the list and the thread
+     * become separate blocks that `ConversationsPage` drops straight into its own grid, so the
+     * thread can leave the card and fill the section.
+     */
+    if (isBelowLg) {
+        return (
+            <>
+                {/*
+                 * `invisible` rather than `hidden` on purpose: the list keeps occupying its
+                 * space (nothing reflows, and the section keeps its height) but stops painting,
+                 * so nothing shows through the thread while it covers the list.
+                 */}
+                <div
+                    className={cn("w-full min-w-0", isThreadOpen && "col-start-1 row-start-1 invisible")}
+                    inert={isThreadOpen}
+                    aria-hidden={isThreadOpen}
+                >
+                    <AppSection className="items-stretch">{list}</AppSection>
                 </div>
-            )}
-        </div>
+                {isThreadOpen && (
+                    /*
+                     * The thread takes the whole section over: it shares the toolbar's grid cell
+                     * so it paints across that row rather than replacing it, and carries the
+                     * section's own background, since it is the section's surface from here on.
+                     * Customer details get an `AppSection` of their own — the card the thread no
+                     * longer provides — so both blocks sit on the section background and neither
+                     * is tinted differently from the list.
+                     */
+                    <div className="col-start-1 row-start-1 z-10 flex w-full min-w-0 animate-in flex-col gap-4 bg-preview-section-background duration-300 ease-out slide-in-from-left motion-reduce:animate-none">
+                        {thread}
+                        <AppSection className="items-stretch">{customerDetails}</AppSection>
+                    </div>
+                )}
+            </>
+        )
+    }
+
+    return (
+        <AppSection className="min-h-0 min-w-0">
+            <div className="grid h-full w-full min-w-0 grid-cols-[minmax(180px,1fr)_minmax(0,3fr)_minmax(176px,1fr)] gap-3.5">
+                {list}
+                {thread}
+                {customerDetails}
+            </div>
+        </AppSection>
     )
 }
