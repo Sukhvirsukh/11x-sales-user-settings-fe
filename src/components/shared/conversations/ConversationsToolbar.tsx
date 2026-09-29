@@ -1,12 +1,9 @@
 import Heading from "@/components/design/Heading"
-import Modal from "@/components/design/Modal"
 import SearchField from "@/components/shared/SearchField"
-import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { useConversationChatStore } from "@/features/conversations/conversationChatStore"
 import { useConversationFilterStore } from "@/features/conversations/conversationFilterStore"
-import { ListFilter } from "lucide-react"
-import { ConversationsFilter } from "./ConversationsFilter"
+import { ConversationsFilterModal } from "./ConversationsFilterModal"
 
 /**
  * Mobile toolbar above the conversations grid: the list title on the left, chat
@@ -36,17 +33,7 @@ export function ConversationsToolbar() {
                     onSearchChange={setSearchQuery}
                     viewport="lg"
                 />
-                <Modal
-                    title="Filters"
-                    trigger={
-                        /* Mirrors the SearchField trigger so the two icons line up. */
-                        <Button variant="ghost" size="sm" className="bg-white px-1.5" aria-label="Filters">
-                            <ListFilter className="size-4" />
-                        </Button>
-                    }
-                >
-                    <ConversationsFilter className="border-0 bg-transparent p-0" />
-                </Modal>
+                <ConversationsFilterModal />
             </div>
         </div>
     )

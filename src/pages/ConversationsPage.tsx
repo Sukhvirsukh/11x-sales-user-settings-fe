@@ -45,9 +45,9 @@ export default function ConversationsPage() {
                          */}
                         <div className="flex w-full min-w-0 flex-col items-start gap-3.5 max-lg:grid max-lg:grid-cols-1">
                             <ConversationsToolbar />
-                            <div className="grid w-full min-w-0 grid-cols-1 gap-3.5 max-lg:contents lg:grid-cols-[minmax(0,1fr)_194px] 2xl:grid-cols-[minmax(0,7fr)_minmax(0,3fr)]">
+                            <div className="grid w-full min-w-0 grid-cols-1 gap-3.5 max-lg:contents min-[1200px]:grid-cols-[minmax(0,1fr)_194px] 2xl:grid-cols-[minmax(0,7fr)_minmax(0,3fr)]">
                                 <Outlet />
-                                <ConversationsFilter className="max-lg:hidden" />
+                                <ConversationsFilter className="hidden min-[1200px]:flex" />
                             </div>
                         </div>
                     </PreviewSection>

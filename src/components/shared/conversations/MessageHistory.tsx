@@ -1,12 +1,14 @@
-import type { Ref } from "react"
-import { ChevronLeft } from "lucide-react"
+import { useState, type Ref } from "react"
+import { ChevronLeft, Ellipsis } from "lucide-react"
 import AppCard from "@/components/design/AppCard"
 import AppSection from "@/components/design/AppSectoin"
 import { ChatInput } from "@/components/shared/chatBox"
 import { Button } from "@/components/ui/button"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { noop } from "@/lib/utils"
 import { type ConversationMessage } from "./conversationData"
 import { ConversationsMessage } from "./ConversationsMessages"
+import { ConversationsFilterModal } from "./ConversationsFilterModal"
 import { useViewpoint } from "@/hooks/useViewpoint"
 
 export function MessageHistory({ messages, onCorrect, onSend, alwaysShowChatInput, onBack, draft, onDraftChange, isTakeoverActive, onTakeover, headingRef }: {
@@ -23,6 +25,7 @@ export function MessageHistory({ messages, onCorrect, onSend, alwaysShowChatInpu
 }) {
     const showChatInput = alwaysShowChatInput || isTakeoverActive
     const isBelowLg = !useViewpoint("lg")
+    const [optionsOpen, setOptionsOpen] = useState(false)
 
     return (
         <AppCard padding="sm" className="flex h-full min-h-0 flex-col border-0 p-0 lg:border lg:p-2.5" shadow={false}>
@@ -38,12 +41,27 @@ export function MessageHistory({ messages, onCorrect, onSend, alwaysShowChatInpu
                     </Button>
                     <p ref={headingRef} tabIndex={-1} className="truncate text-lg font-medium text-foreground">Conversational history</p>
                 </div>
-                <div className="flex items-center gap-2">
-                    <Button variant="bare" size="sm">Mark unread</Button>
-                    <Button variant="bare" size="sm">Archive</Button>
-                    <Button variant="secondary" size="xsm" onClick={onTakeover}>
-                        Takeover
-                    </Button>
+                <div className="flex shrink-0 items-center gap-2">
+                    <div className="flex items-center gap-2 min-[1200px]:hidden">
+                        <Popover open={optionsOpen} onOpenChange={setOptionsOpen}>
+                            <PopoverTrigger render={
+                                <Button variant="ghost" size="sm" className="bg-white px-1.5" aria-label="Conversation options">
+                                    <Ellipsis className="size-4" />
+                                </Button>
+                            } />
+                            <PopoverContent align="end" className="w-44 gap-0 p-1">
+                                <Button variant="bare" size="sm" className="w-full justify-start px-3 py-2" onClick={() => setOptionsOpen(false)}>Mark unread</Button>
+                                <Button variant="bare" size="sm" className="w-full justify-start px-3 py-2" onClick={() => setOptionsOpen(false)}>Archive</Button>
+                                <Button variant="bare" size="sm" className="w-full justify-start px-3 py-2" onClick={() => { onTakeover(); setOptionsOpen(false) }}>Takeover</Button>
+                            </PopoverContent>
+                        </Popover>
+                        <ConversationsFilterModal />
+                    </div>
+                    <div className="hidden items-center gap-2 min-[1200px]:flex">
+                        <Button variant="bare" size="sm">Mark unread</Button>
+                        <Button variant="bare" size="sm">Archive</Button>
+                        <Button variant="secondary" size="xsm" onClick={onTakeover}>Takeover</Button>
+                    </div>
                 </div>
             </div>
             {/* Feedback, debug and approve endpoints aren't available yet — the controls stay
