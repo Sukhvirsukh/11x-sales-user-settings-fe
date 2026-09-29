@@ -86,7 +86,7 @@ export function PageHeader({
                 </div>
             </header>
 
-            <div className="flex min-h-0 w-full min-w-0 flex-1 flex-col gap-4 min-[1400px]:flex-row">
+            <div className="flex min-h-0 w-full min-w-0 flex-1 flex-col gap-4 2xl:flex-row">
                 <div className="flex min-h-0 min-w-0 flex-1 flex-col">
                     {children}
                 </div>
@@ -99,18 +99,18 @@ export function PageHeader({
                             onClick={closeChat}
                         />
 
-                        {/* Reserve space only on very large screens. */}
+                        {/* Reserve space only on very large screens (2xl, 1536px+). */}
                         <div
                             ref={chatColumnRef}
                             aria-hidden="true"
-                            className="hidden min-[1400px]:block min-[1400px]:w-[min(410px,38%)] min-[1400px]:shrink-0"
+                            className="hidden 2xl:block 2xl:w-[min(410px,38%)] 2xl:shrink-0"
                         />
                         <div
                             style={{
                                 "--chat-left": `${chatPosition.left}px`,
                                 "--chat-width": `${chatPosition.width}px`,
                             } as CSSProperties}
-                            className="fixed inset-x-3 bottom-3 top-3 z-50 rounded-[10px] border border-border bg-card shadow-lg max-sm:inset-x-0 max-sm:bottom-0 max-sm:top-auto max-sm:h-[80dvh] max-sm:max-h-[calc(100dvh-1rem)] max-sm:animate-in max-sm:slide-in-from-bottom max-sm:rounded-b-none max-sm:border-0 max-sm:bg-transparent max-sm:duration-300 motion-reduce:animate-none lg:inset-x-auto lg:top-auto lg:right-5 lg:bottom-7 lg:h-[min(600px,calc(100dvh-90px))] lg:w-[410px] min-[1400px]:left-(--chat-left) min-[1400px]:right-auto min-[1400px]:z-30 min-[1400px]:w-(--chat-width)"
+                            className="fixed inset-x-3 bottom-3 top-3 z-50 rounded-[10px] border border-border bg-card shadow-lg max-sm:inset-x-0 max-sm:bottom-0 max-sm:top-auto max-sm:h-[80dvh] max-sm:max-h-[calc(100dvh-1rem)] max-sm:animate-in max-sm:slide-in-from-bottom max-sm:rounded-b-none max-sm:border-0 max-sm:bg-transparent max-sm:duration-300 motion-reduce:animate-none lg:inset-x-auto lg:top-auto lg:right-5 lg:bottom-7 lg:h-[min(600px,calc(100dvh-90px))] lg:w-[410px] 2xl:left-(--chat-left) 2xl:right-auto 2xl:z-30 2xl:w-(--chat-width)"
                         >
                             <div
                                 aria-hidden="true"
