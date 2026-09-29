@@ -1,6 +1,7 @@
 import type { Ref } from "react"
 import { ChevronLeft } from "lucide-react"
 import AppCard from "@/components/design/AppCard"
+import AppSection from "@/components/design/AppSectoin"
 import { ChatInput } from "@/components/shared/chatBox"
 import { Button } from "@/components/ui/button"
 import { noop } from "@/lib/utils"
@@ -22,7 +23,7 @@ export function MessageHistory({ messages, onCorrect, onSend, alwaysShowChatInpu
     const showChatInput = alwaysShowChatInput || isTakeoverActive
 
     return (
-        <AppCard padding="sm" className="flex h-full min-h-0 flex-col" shadow={false}>
+        <AppCard padding="sm" className="flex h-full min-h-0 flex-col border-0 p-0 lg:border lg:p-2.5" shadow={false}>
             <div className="flex items-center justify-between gap-3 border-b border-section-border pb-3">
                 <div className="flex min-w-0 items-center gap-2">
                     <Button
@@ -45,7 +46,7 @@ export function MessageHistory({ messages, onCorrect, onSend, alwaysShowChatInpu
             </div>
             {/* Feedback, debug and approve endpoints aren't available yet — the controls stay
                 visible so the panel matches the design. */}
-            <div className="flex flex-1 flex-col gap-4 overflow-y-auto py-4">
+            <AppSection className="h-auto min-h-0 flex-1 mt-3.5 lg:mt-0 items-stretch overflow-y-auto py-4 lg:rounded-none lg:border-0 lg:bg-transparent lg:p-0 lg:py-4">
                 {messages.map((message) => (
                     <ConversationsMessage
                         key={message.id}
@@ -57,16 +58,17 @@ export function MessageHistory({ messages, onCorrect, onSend, alwaysShowChatInpu
                         onApprove={message.sender === "bot" ? noop : undefined}
                     />
                 ))}
-            </div>
-            {showChatInput && (
-                <ChatInput
-                    value={draft}
-                    onValueChange={onDraftChange}
-                    onSend={onSend}
-                    placeholder="Ask Vitalb"
-                    primaryColor="var(--widget-foreground)"
-                />
-            )}
+
+                {showChatInput && (
+                    <ChatInput
+                        value={draft}
+                        onValueChange={onDraftChange}
+                        onSend={onSend}
+                        placeholder="Ask Vitalb"
+                        primaryColor="var(--widget-foreground)"
+                    />
+                )}
+            </AppSection>
         </AppCard>
     )
 }

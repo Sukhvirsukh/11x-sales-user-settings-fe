@@ -34,7 +34,7 @@ export function ConversationsMessage({
     const bubbleClassName = isUser
         ? "rounded-br-none"
         : "rounded-bl-none";
-    const avatarClassName = "size-[34px] shrink-0 rounded-full border object-cover";
+    const avatarClassName = "lg:size-[34px] size-[15px] shrink-0 rounded-full border object-cover";
 
     const [isEditing, setIsEditing] = useState(false);
     const [correctionDraft, setCorrectionDraft] = useState(content);
@@ -63,7 +63,7 @@ export function ConversationsMessage({
                 ) : (
                     <span
                         aria-hidden
-                        className="flex h-[30px] w-[30px] shrink-0 items-center justify-center rounded-full border border-primary bg-primary p-0.5 text-[16px] font-extrabold leading-none text-primary-contrast"
+                        className="flex lg:h-[30px] lg:w-[30px] h-4 w-4 shrink-0 items-center justify-center rounded-full border border-primary bg-primary p-0.5 lg:text-[16px] text-sm font-extrabold leading-none text-primary-contrast"
                     >
                         V
                     </span>
