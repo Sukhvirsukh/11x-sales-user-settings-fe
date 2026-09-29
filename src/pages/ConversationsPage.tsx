@@ -1,7 +1,7 @@
 import AppSection from "@/components/design/AppSectoin";
 import { CustomTabs } from "@/components/design/CustomTabs";
 import PreviewSection from "@/components/design/PreviewSection";
-import { ConversationsFilter } from "@/components/shared/conversations";
+import { ConversationsFilter, ConversationsToolbar } from "@/components/shared/conversations";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { Outlet, useLocation, useNavigate } from "react-router";
 
@@ -36,11 +36,12 @@ export default function ConversationsPage() {
                     className="p-0!"
                 >
                     <PreviewSection>
+                        <ConversationsToolbar />
                         <div className="grid w-full min-w-0 grid-cols-1 gap-3.5 lg:grid-cols-[minmax(0,1fr)_194px] 2xl:grid-cols-[minmax(0,7fr)_minmax(0,3fr)]">
                             <AppSection className="min-h-0 p-2.5">
                                 <Outlet />
                             </AppSection>
-                            <ConversationsFilter />
+                            <ConversationsFilter className="max-lg:hidden" />
                         </div>
                     </PreviewSection>
                 </CustomTabs>
