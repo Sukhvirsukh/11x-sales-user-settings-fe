@@ -1,5 +1,6 @@
 import { CheckIcon, ThumbsDownIcon, ThumbsUpIcon } from "lucide-react";
 import { useState } from "react";
+import DebugModal from "./DebugModal";
 
 export interface ConversationsMessageProps {
     id: string;
@@ -79,14 +80,7 @@ export function ConversationsMessage({
                     <div className="mt-2 flex flex-wrap items-center justify-between gap-4">
                         <div className="flex items-center gap-3">
                             {onDebug && (
-                                <button
-                                    type="button"
-                                    onClick={() => onDebug(id)}
-                                    className={actionClassName}
-                                    aria-label="Debug response"
-                                >
-                                    Debug
-                                </button>
+                                <DebugModal />
                             )}
                             {onCorrect && (
                                 <button
