@@ -16,7 +16,11 @@ import { formatNumber } from "@/lib/utils";
 import type { TrendPanel } from "../overviewType";
 import { RANGES, calloutPosition, extremes, rangeOptionValue, scaleFor, toChartData } from "./trendChart";
 
-/** Renders the trend, marking the peak and trough of the series. */
+
+export const selectClass = 'px-2 gap-0 py-1.5 md:px-2.5 h-7! w-[96px] md:w-[100px]!'
+
+
+
 function ConversionTrend({ title, range, series }: TrendPanel) {
     const chartData = toChartData(series);
     const scale = scaleFor(series.map(({ value }) => value));
@@ -29,11 +33,16 @@ function ConversionTrend({ title, range, series }: TrendPanel) {
 
     return (
         <div className="w-full">
-            <div className="mb-4 flex items-center justify-between gap-4">
-                <Heading size="lg">{title}</Heading>
+            <div className="mb-4 flex items-center justify-between md:gap-4">
+                <Heading
+                    size="lg"
+                    responsive
+                >
+                    {title}
+                </Heading>
                 <div className="">
                     <SelectField
-                        className="h-7 "
+                        className={selectClass}
                         defaultValue={rangeOptionValue(range)}
                         options={RANGES}
                     />

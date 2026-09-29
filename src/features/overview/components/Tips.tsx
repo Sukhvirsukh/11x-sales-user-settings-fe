@@ -59,7 +59,7 @@ export default function Tips({ tips, isLoading = false }: TipsProps) {
     return (
         <AppSection className="gap-2.5">
             <div className="w-full flex items-center justify-between">
-                <Heading>Tips</Heading>
+                <Heading responsive>Tips</Heading>
                 {hasMoreTips && (
                     <Button
                         type="button"

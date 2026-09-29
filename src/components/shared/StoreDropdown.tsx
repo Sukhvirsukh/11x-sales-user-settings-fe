@@ -30,7 +30,7 @@ export function StoreDropdown({
         <Select defaultValue={defaultValue} onValueChange={onValueChange}>
             <SelectTrigger
                 className={cn(
-                    "p-2.5 text-base gap-1 bg-transparent border-content-muted text-content-muted rounded-[10px] w-21! h-9.75!",
+                    "p-2.5 text-base gap-1 bg-transparent border-content-muted text-content-muted rounded-[10px] w-21! h-9.25!",
                     className
                 )}
             >

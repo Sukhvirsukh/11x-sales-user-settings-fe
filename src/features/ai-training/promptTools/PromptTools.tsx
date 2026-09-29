@@ -14,6 +14,7 @@ import { useForm } from "react-hook-form";
 import { promptToolsQueryKey, usePromptToolsQuery } from "./promptQuery";
 import { savePromptTools } from "./promptToolsApi";
 import type { PromptToolsFormValues, PromptToolsResponse } from "./promptType";
+import CreateCoupon from "./CreateCoupon";
 
 const DEFAULT_VALUES: PromptToolsFormValues = {
     humanHelpSupport: "",
@@ -39,19 +40,21 @@ interface ActionCardProps {
     heading: string,
     content: string,
     isChecked?: boolean,
+    name?: string
     onToggle?: (pressed: boolean) => void
 }
 
-function ActionCard({ heading, content, isChecked = false, onToggle }: ActionCardProps) {
+export function ActionCard({ heading, name, content, isChecked = false, onToggle }: ActionCardProps) {
 
     return (
-        <div className="flex w-full border border-section-border items-start gap-3 rounded-[10px] p-2.5 text-sm text-content-strong">
+        <div className="flex w-full border border-section-border items-start gap:0 md:gap-3 rounded-[10px] p-2.5 text-sm text-content-strong">
             <div className="d-block w-full">
                 <Heading size="md">{heading}</Heading>
                 <p className="text-content-muted mt-2 text-sm">{content}</p>
             </div>
             {onToggle && <ToggleField
                 pressed={isChecked}
+                name={name}
                 onPressedChange={onToggle}
                 showText={true}
                 toggleVariant="button"
@@ -68,7 +71,7 @@ export function PromptTools() {
     const form = useForm<PromptToolsFormValues>({
         defaultValues: DEFAULT_VALUES,
     });
-    const { register, reset, setValue, watch } = form;
+    const { register, reset, setValue, watch, formState: { isDirty } } = form;
     const saveMutation = useMutation({
         mutationFn: (values: PromptToolsFormValues) => {
             if (!canSavePromptTools) {
@@ -88,8 +91,8 @@ export function PromptTools() {
     });
 
     useEffect(() => {
-        if (data) reset(toFormValues(data));
-    }, [data, reset]);
+        if (data && !isDirty) reset(toFormValues(data));
+    }, [data, isDirty, reset]);
 
     if (isLoading) return <div role="status">Loading prompt tools...</div>;
     if (isError) return <div role="alert">Unable to load prompt tools.</div>;
@@ -141,6 +144,7 @@ export function PromptTools() {
                 <div className="grid w-full grid-cols-1 gap-3 md:grid-cols-2">
                     <ActionCard
                         heading="Knowledge search"
+                        name="knowledgeSearchEnabled"
                         content="Give Vitalb the ability to perform the functionality"
                         isChecked={watch("knowledgeSearchEnabled")}
                         onToggle={(enabled) => setValue("knowledgeSearchEnabled", enabled, { shouldDirty: true })}
@@ -163,6 +167,7 @@ export function PromptTools() {
                         isChecked={watch("skipConversationEnabled")}
                         onToggle={(enabled) => setValue("skipConversationEnabled", enabled, { shouldDirty: true })}
                     />
+                    <CreateCoupon />
                 </div>
 
             </AppSection>

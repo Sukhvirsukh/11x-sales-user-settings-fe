@@ -496,7 +496,7 @@ CVA-based heading with sizes:
 - `lg`: 16px, semi-bold (default)
 - `md`: 14px, medium
 
-Supports `as` prop (h1-h6, p, span). Memoized.
+Supports `as` (h1-h6, p, span) for the rendered element, plus `responsive` to show 14px semi-bold below `md` while `size` governs wider screens. Native attributes of the rendered element (`id`, `aria-*`, `ref`, …) are forwarded, and `className` is merged last so callers can override styles.
 
 ### PreviewSection (`src/components/design/PreviewSection.tsx`)
 White card wrapper with shadow-blue and border-blue-100/70. Outer container for AskAI and Reports pages.

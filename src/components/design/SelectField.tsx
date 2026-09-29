@@ -97,7 +97,7 @@ const SelectField = React.forwardRef<
                         ref={ref}
                         id={selectId}
                         className={cn(
-                            "h-[34px] w-full rounded-xl border border-control-border-subtle px-3.5 transition-all focus-visible:border-field-border focus-visible:ring-2 focus-visible:ring-focus-ring/20 data-placeholder:text-placeholder",
+                            "w-full rounded-xl border border-control-border-subtle px-3.5 transition-all focus-visible:border-field-border focus-visible:ring-2 focus-visible:ring-focus-ring/20 data-placeholder:text-placeholder",
                             variant === "light"
                                 ? "bg-field-subtle-background border-section-border focus-visible:bg-field-subtle-background focus-visible:border-section-border"
                                 : "bg-surface-raised focus-visible:bg-surface-raised",
