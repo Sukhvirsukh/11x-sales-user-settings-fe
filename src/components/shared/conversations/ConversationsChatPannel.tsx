@@ -101,20 +101,26 @@ export function ConversationsChatPannel({ alwaysShowChatInput = false }: Convers
                     inert={isThreadOpen}
                     aria-hidden={isThreadOpen}
                 >
-                    <AppSection className="items-stretch">{list}</AppSection>
+                    <AppSection>
+                        <div className="w-full">
+                            {list}
+                        </div>
+                    </AppSection>
                 </div>
                 {isThreadOpen && (
                     /*
                      * The thread takes the whole section over: it shares the toolbar's grid cell
                      * so it paints across that row rather than replacing it, and carries the
                      * section's own background, since it is the section's surface from here on.
-                     * Customer details get an `AppSection` of their own — the card the thread no
-                     * longer provides — so both blocks sit on the section background and neither
-                     * is tinted differently from the list.
+                     * Customer details remain separate from the message surface below the thread.
                      */
                     <div className="col-start-1 row-start-1 z-10 flex w-full min-w-0 animate-in flex-col gap-4 bg-preview-section-background duration-300 ease-out slide-in-from-left motion-reduce:animate-none">
                         {thread}
-                        <AppSection className="items-stretch">{customerDetails}</AppSection>
+                        <AppSection>
+                            <div className="w-full">
+                                {customerDetails}
+                            </div>
+                        </AppSection>
                     </div>
                 )}
             </>
