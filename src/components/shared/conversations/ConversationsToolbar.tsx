@@ -15,14 +15,20 @@ import { ConversationsFilter } from "./ConversationsFilter"
  */
 export function ConversationsToolbar() {
     const setSearchQuery = useConversationFilterStore((state) => state.setSearchQuery)
-    // An open thread takes over the panel, so this row gets out of its way.
     const isThreadOpen = useConversationChatStore((state) => state.isThreadOpen)
 
     return (
-        <div className={cn(
-            "flex w-full items-center justify-between gap-2 lg:hidden",
-            isThreadOpen && "max-lg:hidden",
-        )}>
+        <div
+            /* An open thread overlaps this row rather than replacing it, so it stays
+               rendered and is only taken out of the a11y tree while covered. */
+            inert={isThreadOpen}
+            aria-hidden={isThreadOpen}
+            className={cn(
+                "flex w-full items-center justify-between gap-2 lg:hidden",
+                // Shares the panel's grid cell so the thread can paint over the row.
+                isThreadOpen && "max-lg:col-start-1 max-lg:row-start-1",
+            )}
+        >
             <Heading size="md" className="font-semibold">All Chats</Heading>
             <div className="flex shrink-0 items-center gap-1">
                 <SearchField

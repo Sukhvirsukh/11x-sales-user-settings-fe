@@ -1,138 +1,11 @@
-import { Fragment, useState } from "react"
-import { ChevronRight } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { SelectField } from "@/components/design/SelectField"
-import { ChatInput } from "@/components/shared/chatBox"
-import CopyField from "@/components/shared/CopyField"
-import { conversationMessages, conversations, type Conversation, type ConversationMessage } from "./conversationData"
-import AppCard from "@/components/design/AppCard"
-import Heading from "@/components/design/Heading"
-import { ConversationsMessage } from "./ConversationsMessages"
-
-// Feedback, debug and approve endpoints aren't available yet — the controls stay
-// visible so the panel matches the design.
-const noop = () => { }
-
-function ConversationList({ selectedId, onSelect }: { selectedId: number; onSelect: (id: number) => void }) {
-    return (
-        <div className="flex min-w-0 flex-col gap-5.5">
-            {conversations.map((conversation) => (
-                <button
-                    key={conversation.id}
-                    type="button"
-                    onClick={() => onSelect(conversation.id)}
-                    className={`w-full border-l-2 p-1.5 text-left cursor-pointer transition-colors ${conversation.id === selectedId
-                        ? "border-primary bg-interactive-active-background"
-                        : "border-transparent hover:bg-surface-subtle"
-                        }`}
-                >
-                    <div className="flex items-center justify-between gap-1.5">
-                        <span className="flex min-w-0 items-center gap-1 mb-1.5">
-                            <span aria-hidden className="size-2 shrink-0 rounded-full bg-content-strong" />
-                            <span className="truncate text-sm font-bold text-foreground">{conversation.name}</span>
-                        </span>
-                        <span className="shrink-0 text-xs font-semibold">{conversation.time}</span>
-                    </div>
-                    <p className="truncate text-sm text-muted-foreground">{conversation.preview}</p>
-                </button>
-            ))}
-        </div>
-    )
-}
-
-function MessageHistory({ messages, onCorrect, onSend, alwaysShowChatInput }: {
-    messages: ConversationMessage[]
-    onCorrect: (id: string, content: string) => void
-    onSend: (content: string) => void
-    alwaysShowChatInput: boolean
-}) {
-    const [isTakeoverActive, setIsTakeoverActive] = useState(false)
-    const showChatInput = alwaysShowChatInput || isTakeoverActive
-
-    return (
-        <AppCard padding="sm" className="flex h-full min-h-0 flex-col" shadow={false}>
-            <div className="flex items-center justify-between gap-3 border-b border-section-border pb-3">
-                <p className="text-lg font-medium text-foreground">Conversational history</p>
-                <div className="flex items-center gap-2">
-                    <Button variant="bare" size="sm">Mark unread</Button>
-                    <Button variant="bare" size="sm">Archive</Button>
-                    <Button variant="secondary" size="xsm" onClick={() => setIsTakeoverActive(true)}>
-                        Takeover
-                    </Button>
-                </div>
-            </div>
-            <div className="flex flex-1 flex-col gap-4 overflow-y-auto py-4">
-                {messages.map((message) => (
-                    <ConversationsMessage
-                        key={message.id}
-                        {...message}
-                        onCorrect={message.sender === "bot" ? onCorrect : undefined}
-                        onDebug={message.sender === "bot" ? noop : undefined}
-                        onLike={message.sender === "bot" ? noop : undefined}
-                        onDislike={message.sender === "bot" ? noop : undefined}
-                        onApprove={message.sender === "bot" ? noop : undefined}
-                    />
-                ))}
-            </div>
-            {showChatInput && (
-                <ChatInput
-                    onSend={onSend}
-                    placeholder="Ask Vitalb"
-                    primaryColor="var(--widget-foreground)"
-                />
-            )}
-        </AppCard>
-    )
-}
-
-function CustomerDetails({ conversation }: { conversation: Conversation }) {
-    const details = [
-        { label: "Name", value: conversation.name },
-        { label: "Email", value: conversation.email },
-        { label: "Phone", value: conversation.phone },
-        { label: "Location", value: conversation.location },
-    ]
-
-    return (
-        <div className="flex min-w-0 flex-col gap-4">
-            <div>
-                <div className="mb-2.5 flex items-center justify-between gap-2">
-                    <Heading size="md" className="font-semibold">Assignee</Heading>
-                    <Button variant="bare" size="sm">Add note</Button>
-                </div>
-                <SelectField
-                    value="vitalb-ai"
-                    onValueChange={noop}
-                    placeholder="Assign"
-                    options={[{ value: "vitalb-ai", label: "Vitalb ai" }]}
-                />
-            </div>
-
-            <div className="border-t border-section-border pt-4">
-                <div className="mb-3 flex items-center justify-between gap-2">
-                    <Heading size="md" className="font-semibold">Customer details</Heading>
-                    <ChevronRight className="size-4 text-content-muted" />
-                </div>
-                <dl className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-2 text-sm">
-                    {details.map((detail) => (
-                        <Fragment key={detail.label}>
-                            <dt className="text-content-muted">{detail.label}</dt>
-                            <dd className="truncate text-foreground">{detail.value}</dd>
-                        </Fragment>
-                    ))}
-                </dl>
-            </div>
-
-            <div className="border-t border-section-border pt-4">
-                <div className="mb-2.5 flex items-center justify-between gap-2">
-                    <Heading size="md" className="font-semibold">Share URL</Heading>
-                    <ChevronRight className="size-4 text-content-muted" />
-                </div>
-                <CopyField value={conversation.shareUrl} />
-            </div>
-        </div>
-    )
-}
+import { useEffect, useState } from "react"
+import { cn } from "@/lib/utils"
+import { useViewpoint } from "@/hooks/useViewpoint"
+import { useConversationChatStore } from "@/features/conversations/conversationChatStore"
+import { conversationMessages, conversations } from "./conversationData"
+import { ConversationList } from "./ConversationList"
+import { CustomerDetails } from "./CustomerDetails"
+import { MessageHistory } from "./MessageHistory"
 
 interface ConversationsChatPannelProps {
     alwaysShowChatInput?: boolean
@@ -141,8 +14,29 @@ interface ConversationsChatPannelProps {
 export function ConversationsChatPannel({ alwaysShowChatInput = false }: ConversationsChatPannelProps) {
     const [selectedId, setSelectedId] = useState(conversations[0].id)
     const [messages, setMessages] = useState(conversationMessages)
+    // `lg` is where the list, thread and customer details sit side by side; below it only one
+    // panel fits at a time, so the thread overlaps the list instead of sitting beside it.
+    const isBelowLg = !useViewpoint("lg")
+
+    // The takeover is shared with the toolbar, which steps aside while it is open.
+    const isThreadOpen = useConversationChatStore((state) => state.isThreadOpen)
+    const openThread = useConversationChatStore((state) => state.openThread)
+    const closeThread = useConversationChatStore((state) => state.closeThread)
+
+    useEffect(() => {
+        // Switching conversations tabs remounts the panel, which should return to the list.
+        return () => closeThread()
+    }, [closeThread])
 
     const selectedConversation = conversations.find((conversation) => conversation.id === selectedId) ?? conversations[0]
+    const showThread = !isBelowLg || isThreadOpen
+    // While the thread covers the list on mobile, the list is only hidden from AT.
+    const isListCovered = isBelowLg && isThreadOpen
+
+    function handleSelect(id: number) {
+        setSelectedId(id)
+        openThread()
+    }
 
     function handleCorrect(id: string, content: string) {
         setMessages((current) => current.map((message) => message.id === id ? { ...message, content } : message))
@@ -157,14 +51,32 @@ export function ConversationsChatPannel({ alwaysShowChatInput = false }: Convers
 
     return (
         <div className="grid w-full h-full min-w-0 grid-cols-1 gap-4 lg:grid-cols-[minmax(180px,1fr)_minmax(0,3fr)_minmax(176px,1fr)] lg:gap-3.5">
-            <ConversationList selectedId={selectedId} onSelect={setSelectedId} />
-            <MessageHistory
-                messages={messages}
-                onCorrect={handleCorrect}
-                onSend={handleSend}
-                alwaysShowChatInput={alwaysShowChatInput}
-            />
-            <CustomerDetails conversation={selectedConversation} />
+            <div
+                className={cn("min-w-0", isListCovered && "max-lg:col-start-1 max-lg:row-start-1")}
+                inert={isListCovered}
+                aria-hidden={isListCovered}
+            >
+                <ConversationList selectedId={selectedId} onSelect={handleSelect} />
+            </div>
+            {showThread && (
+                /*
+                 * Below `lg` the thread slides in from the left and overlaps the whole panel:
+                 * it shares the list's grid cell, so the row grows to fit it, and its opaque
+                 * surface covers the list underneath and the toolbar row above. From `lg` up
+                 * the wrapper leaves the layout entirely (`contents`), so the thread and the
+                 * customer details become direct grid items again.
+                 */
+                <div className="flex min-w-0 flex-col gap-4 max-lg:z-10 max-lg:col-start-1 max-lg:row-start-1 max-lg:bg-preview-section-background max-lg:animate-in max-lg:slide-in-from-left max-lg:duration-300 max-lg:ease-out motion-reduce:animate-none lg:contents">
+                    <MessageHistory
+                        messages={messages}
+                        onCorrect={handleCorrect}
+                        onSend={handleSend}
+                        alwaysShowChatInput={alwaysShowChatInput}
+                        onBack={closeThread}
+                    />
+                    <CustomerDetails conversation={selectedConversation} />
+                </div>
+            )}
         </div>
     )
 }

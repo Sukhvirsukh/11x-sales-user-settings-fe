@@ -127,8 +127,15 @@ src/
 │   │   │   └── index.ts
 │   │   ├── conversations/           # Conversations page UI
 │   │   │   ├── conversationData.ts  # Conversation + message + filter-group fixtures
-│   │   │   ├── ConversationsChatPannel.tsx # Chat panel: list | thread | customer details
+│   │   │   ├── ConversationsChatPannel.tsx # Composes the three panels below
+│   │   │   ├── ConversationList.tsx        # Chat list column (search-filtered)
+│   │   │   ├── MessageHistory.tsx          # Thread column (header actions + chat input)
+│   │   │   ├── CustomerDetails.tsx         # Assignee, details and share URL column
+│   │   │   ├── CollapsibleSection.tsx      # Disclosure used by the details column
+│   │   │   ├── ConversationsMessages.tsx   # Single message row (ConversationsMessage)
 │   │   │   ├── ConversationsFilter.tsx     # Filter sidebar
+│   │   │   ├── ConversationsToolbar.tsx    # Mobile "All Chats" row: search + filter modal
+│   │   │   ├── AddNote.tsx                 # "Add note" popup (textarea + Save/Cancel)
 │   │   │   └── index.ts
 │   │   ├── skeletons/
 │   │   │   └── TableSkeletons.tsx   # TableSkeleton (columns/rows/showHeader)
@@ -236,6 +243,7 @@ src/
 │   │   ├── archived/                # Archived
 │   │   ├── assignedToMe/            # AssignedToMe
 │   │   ├── escalated/               # Escalated
+│   │   ├── conversationChatStore.ts    # Zustand: mobile thread takeover open (isThreadOpen)
 │   │   ├── conversationFilterStore.ts  # Zustand filter state (searchQuery, selectedFilters)
 │   │   └── conversationsFilterStore.ts # (empty placeholder — superseded by above)
 │   ├── forgotPassword/
@@ -341,7 +349,7 @@ src/
 ├── pages/                           # Page-level components (compose features)
 │   ├── OverviewPage.tsx
 │   ├── ContactPage.tsx              # Tabs + Outlet (user profile details / segaments)
-│   ├── ConversationsPage.tsx        # Tabs + Outlet + ConversationsFilter
+│   ├── ConversationsPage.tsx        # Tabs + Outlet + toolbar (mobile) / filter sidebar (lg+)
 │   ├── ReportsPage.tsx
 │   ├── SignInPage.tsx
 │   ├── SignUpPage.tsx
@@ -362,7 +370,8 @@ src/
 │           ├── CorrectionsTab.tsx
 │           └── PromptToolsTab.tsx
 ├── hooks/
-│   └── useDebounce.ts               # Reusable debounced callback hook
+│   ├── useDebounce.ts               # Reusable debounced callback hook
+│   └── useViewpoint.ts              # Tailwind breakpoint match (useSyncExternalStore)
 ├── lib/
 │   ├── utils.ts                     # cn(), delay(), getInitials(), dateFormater()
 │   ├── api.ts                       # Shared apiFetch wrapper (auth, errors, toast)
@@ -441,13 +450,13 @@ Each item carries the `permission` that mirrors its route's `handle.permission`;
 - **Components** are split into `ui/` (shadcn primitives), `layout/` (app shell), `shared/` (reusable app components), `design/` (design system components).
 - Sidebar supports desktop (collapsible, `w-[187px]` ↔ `w-[72px]`) and mobile (full-screen overlay). Mobile sidebar state lives in `src/stores/mobileSidebarStore.ts` (Zustand).
 - Tabbed sections (Settings, AI training, Conversations, Contacts) share the same pattern: a `mainTabs` array of `{ id, label, path }`, the active tab derived from `location.pathname`, and navigation via `useNavigate` — with an index route `<Navigate>` redirect.
-- The conversations filter state is a Zustand store (`features/conversations/conversationFilterStore.ts`), separate from the mobile sidebar store. Note the duplicate empty `conversationsFilterStore.ts`.
+- The conversations filter state is a Zustand store (`features/conversations/conversationFilterStore.ts`), separate from the mobile sidebar store. Its sibling `conversationChatStore.ts` holds the mobile thread-takeover flag shared by `ConversationsChatPannel` and `ConversationsToolbar`. Note the duplicate empty `conversationsFilterStore.ts`.
 - Server state uses TanStack Query with feature-local query hooks and exported query keys (e.g. `visibilityQueryKey`, `roleHistoryQueryKey`, `chatSettingsIntegrationsQueryKey`, `userProfilesQueryKey`, `segmentsQueryKey`). Features without a backend yet return fixtures behind a simulated `delay()` (for example, `reportApi.ts` and the user-profile request in `contactsApi.ts`).
 - **Contacts feature** (`src/features/contacts/`): `/contacts` has `UserProfileDetails` and `Segments` tabs backed by `CustomTable`. The segment list calls `GET /contacts/segments` with optional `search` and `cursor`; `Segments.tsx` retains cursor history and resets it on search, while `CustomTable` renders Previous/Next controls. The response supplies `items`, `nextCursor`, and `hasMore` alongside count metadata. Add/delete operations invalidate `segmentsQueryKey` through the shared contact dialogs.
 - **Knowledge base** (`src/features/ai-training/knowledgeBase/`): `GET /training` accepts optional `search` and `cursor` and returns `items`, `nextCursor`, `hasMore`, and count metadata. It retains cursor history, resets it on search, and uses `CustomTable`'s Previous/Next controls. Add/delete operations invalidate `knowledgeBaseQueryKey`.
 - **Role history** (`src/features/settings/roleAndAccess/roleHistory/`): `GET /admin/users` accepts optional `search` and `cursor` and returns a cursor-paginated `items` list. `RoleHistory.tsx` uses debounced server search and `CustomTable`'s Previous/Next controls. Add/edit/delete operations invalidate `roleHistoryQueryKey`.
 - **Stores** (`src/features/settings/store/`): `GET /admin/stores` accepts optional `search` and `cursor` and returns `items`, `nextCursor`, `hasMore`, and count metadata. `Store.tsx` uses debounced server search, keeps cursor history, and uses `CustomTable`'s Previous/Next controls. Add/edit/delete operations invalidate `storeQueryKey`.
-- **Conversations feature** (`src/features/conversations/`): all four tab routes (Active chats, Escalated, Assigned, Archived) render the shared `ConversationsChatPannel`, while `ConversationsPage` owns the tabs and the `ConversationsFilter` sidebar. The panel is one surface split by dividers into list | thread | customer details, driven by the fixtures in `components/shared/conversations/conversationData.ts`; filter selections live in the Zustand `conversationFilterStore`. Message rows come from the shared `ChatMessage`.
+- **Conversations feature** (`src/features/conversations/`): all four tab routes (Active chats, Escalated, Assigned, Archived) render the shared `ConversationsChatPannel`, while `ConversationsPage` owns the tabs and the `ConversationsFilter`, which sits beside the panel from `lg` up. Below `lg` the filter moves into a modal so the panel takes the full width, and the same row lives in `ConversationsToolbar` — the mobile-only "All Chats" title on the left with a chat-search icon and the filter modal trigger on the right. That search writes to the store's `searchQuery`, which filters the chat list by name or preview. Below `lg` the panel shows one shot at a time: the list alone, and tapping a chat replaces it with that chat's thread + customer details, sliding in from the left; the thread header carries a back button (see `useViewpoint("lg")`) to return to the list. That takeover overlaps the whole section rather than replacing it: below `lg` the toolbar row and the panel share one grid cell (so the cell grows to the thread) and the panel turns opaque while open, painting over the toolbar. `ConversationsToolbar` reads `conversationChatStore`'s `isThreadOpen` to take that shared cell and to go `inert` while it is covered — it stays rendered. From `lg` up the wrapper holding those two panels drops out of the layout with `lg:contents`, so all three stay side by side. The panel is one surface split by dividers into list | thread | customer details, driven by the fixtures in `components/shared/conversations/conversationData.ts`; filter selections live in the Zustand `conversationFilterStore`. Message rows come from the shared `ChatMessage`.
 - Settings sub-pages compose shared design components: tables use `CustomTable` (RoleHistory, PaymentHistory), detail displays use `DetailContainer`/`DetailGroup`/`DetailItem` (BasicDetails, SavedPaymentDetails), and create/edit flows use the shared `Modal` with `FormGroup` + field components (AddRoleForm, AddNewPayment, AddStore, DeleteRole, DeleteStore).
 - The `unsavedChangesBar` shared component provides a warning system for unsaved changes.
 - `components/shared/chatBox/` holds the shared chat primitives: `ChatBox` (visibility preview), `ChatInput`, and `ChatMessage`, which renders the user/bot bubbles plus the bot action row (Debug / Make correction / thumbs / approve ✓). `ChatMessage` is used by both the visibility preview and the conversations panel, so tweaks to it show up in both places.
@@ -462,7 +471,7 @@ Hosted on Netlify. `netlify.toml` pins the build (`command = "pnpm build"`, `pub
 ## Key Conventions
 
 - Use `cn()` from `src/lib/utils.ts` for conditional Tailwind classes.
-- Shared utils in `src/lib/utils.ts`: `delay()`, `getInitials()`, `capitalize()` (display-casing API values: `"SUPER_ADMIN"` → `"Super Admin"`), `dateFormater(date, format?)` ("numeric" → `d/m/yyyy`, "long" → `d MMM yyyy`), `formatNumber(value, format?)` ("compact" → `40K`, "percent" → `70%`; missing/non-numeric → `—`). Reusable debounced callbacks use `src/hooks/useDebounce.ts`.
+- Shared utils in `src/lib/utils.ts`: `delay()`, `getInitials()`, `capitalize()` (display-casing API values: `"SUPER_ADMIN"` → `"Super Admin"`), `dateFormater(date, format?)` ("numeric" → `d/m/yyyy`, "long" → `d MMM yyyy`), `formatNumber(value, format?)` ("compact" → `40K`, "percent" → `70%`; missing/non-numeric → `—`). Reusable debounced callbacks use `src/hooks/useDebounce.ts`. Viewport breakpoints use `src/hooks/useViewpoint.ts`: `useViewpoint("lg")` is `true` from `lg` up (negate it for the "below" direction), matching Tailwind's `lg:`/`max-lg:` boundary through the same `rem` values, and reads `matchMedia` via `useSyncExternalStore` rather than mirroring it into state in an effect.
 - Never compare `role` strings in a component: gate UI with `useCan(permission)` and protect pages with `handle.permission`. Adding a page or action means adding a `PERMISSION_GROUPS` entry (which the permissions table renders automatically); granting it stays a backend payload, never a frontend edit.
 - Prefer semantic design tokens (`bg-background`, `text-primary`) over hardcoded colors.
 - Use PascalCase for components, camelCase with `use` prefix for hooks.
@@ -511,4 +520,4 @@ Generic table (`T extends Record<string, unknown>`) wrapping `AppSection` + the 
 Loading placeholder for tables built from `Skeleton`. Props: `columns`, `rows`, `showHeader`.
 
 ### SearchField (`src/components/shared/SearchField.tsx`)
-Responsive search input — full `InputField` on desktop, popover-wrapped input on mobile. Prop: `onSearchChange(value)`.
+Responsive search input — full `InputField` on desktop, popover-wrapped input on mobile. Props: `onSearchChange(value)`, `showMobilePanel` (default `true`), `viewport` (`"xs" | "sm" | "md" | "lg"`, default `"md"` — the breakpoint at which the popover is replaced by the inline field), `fullWidth`, and `label` (accessible label, default `"Search knowledge base"`).

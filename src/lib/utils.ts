@@ -8,6 +8,9 @@ export function cn(...inputs: ClassValue[]) {
 export const delay = (ms: number): Promise<void> =>
   new Promise((resolve) => setTimeout(resolve, ms));
 
+/** Shared placeholder for handlers whose endpoint isn't available yet. */
+export const noop = (): void => { };
+
 /**
  * Display-friendly casing for raw API values.
  * "ADMIN" -> "Admin", "SUPER_ADMIN" -> "Super Admin", "" -> "".
