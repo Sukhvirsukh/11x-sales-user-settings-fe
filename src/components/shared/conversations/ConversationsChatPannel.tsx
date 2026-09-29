@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import AppSection from "@/components/design/AppSectoin"
 import { cn } from "@/lib/utils"
 import { useViewpoint } from "@/hooks/useViewpoint"
@@ -15,6 +15,12 @@ interface ConversationsChatPannelProps {
 export function ConversationsChatPannel({ alwaysShowChatInput = false }: ConversationsChatPannelProps) {
     const [selectedId, setSelectedId] = useState(conversations[0].id)
     const [messages, setMessages] = useState(conversationMessages)
+    // Keep unsent work above the responsive branches, separately for each chat.
+    const [drafts, setDrafts] = useState<Record<number, string>>({})
+    const [takeovers, setTakeovers] = useState<Record<number, boolean>>({})
+    const selectedButtonRef = useRef<HTMLButtonElement>(null)
+    const threadHeadingRef = useRef<HTMLParagraphElement>(null)
+    const pendingFocus = useRef<"thread" | "list" | null>(null)
     // `lg` is where the list, thread and customer details sit side by side; below it only one
     // panel fits at a time, so the thread overlaps the list instead of sitting beside it.
     const isBelowLg = !useViewpoint("lg")
@@ -29,11 +35,23 @@ export function ConversationsChatPannel({ alwaysShowChatInput = false }: Convers
         return () => closeThread()
     }, [closeThread])
 
+    useEffect(() => {
+        if (pendingFocus.current === "thread") threadHeadingRef.current?.focus()
+        if (pendingFocus.current === "list") selectedButtonRef.current?.focus()
+        pendingFocus.current = null
+    }, [isThreadOpen, isBelowLg, selectedId])
+
     const selectedConversation = conversations.find((conversation) => conversation.id === selectedId) ?? conversations[0]
 
     function handleSelect(id: number) {
+        if (isBelowLg) pendingFocus.current = "thread"
         setSelectedId(id)
         openThread()
+    }
+
+    function handleBack() {
+        pendingFocus.current = "list"
+        closeThread()
     }
 
     function handleCorrect(id: string, content: string) {
@@ -47,14 +65,19 @@ export function ConversationsChatPannel({ alwaysShowChatInput = false }: Convers
         ])
     }
 
-    const list = <ConversationList selectedId={selectedId} onSelect={handleSelect} />
+    const list = <ConversationList selectedId={selectedId} onSelect={handleSelect} selectedButtonRef={selectedButtonRef} />
     const thread = (
         <MessageHistory
             messages={messages}
             onCorrect={handleCorrect}
             onSend={handleSend}
             alwaysShowChatInput={alwaysShowChatInput}
-            onBack={closeThread}
+            onBack={handleBack}
+            draft={drafts[selectedId] ?? ""}
+            onDraftChange={(value) => setDrafts((current) => ({ ...current, [selectedId]: value }))}
+            isTakeoverActive={takeovers[selectedId] ?? false}
+            onTakeover={() => setTakeovers((current) => ({ ...current, [selectedId]: true }))}
+            headingRef={threadHeadingRef}
         />
     )
     const customerDetails = <CustomerDetails conversation={selectedConversation} />

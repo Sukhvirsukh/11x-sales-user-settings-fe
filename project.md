@@ -127,7 +127,7 @@ src/
 │   │   │   └── index.ts
 │   │   ├── conversations/           # Conversations page UI
 │   │   │   ├── conversationData.ts  # Conversation + message + filter-group fixtures
-│   │   │   ├── ConversationsChatPannel.tsx # Composes the three panels below, and their AppSection
+│   │   │   ├── ConversationsChatPannel.tsx # Composes the three panels and AppSection; owns per-chat drafts/takeover state and mobile navigation focus
 │   │   │   ├── ConversationList.tsx        # Chat list column (search-filtered)
 │   │   │   ├── MessageHistory.tsx          # Thread column (header actions + chat input)
 │   │   │   ├── CustomerDetails.tsx         # Assignee, details and share URL column

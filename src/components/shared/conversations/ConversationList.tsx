@@ -1,7 +1,8 @@
+import type { Ref } from "react"
 import { useConversationFilterStore } from "@/features/conversations/conversationFilterStore"
 import { conversations } from "./conversationData"
 
-export function ConversationList({ selectedId, onSelect }: { selectedId: number; onSelect: (id: number) => void }) {
+export function ConversationList({ selectedId, onSelect, selectedButtonRef }: { selectedId: number; onSelect: (id: number) => void; selectedButtonRef?: Ref<HTMLButtonElement> }) {
     const searchQuery = useConversationFilterStore((state) => state.searchQuery)
     const query = searchQuery.trim().toLowerCase()
     const visibleConversations = query
@@ -17,6 +18,7 @@ export function ConversationList({ selectedId, onSelect }: { selectedId: number;
             {visibleConversations.map((conversation) => (
                 <button
                     key={conversation.id}
+                    ref={conversation.id === selectedId ? selectedButtonRef : undefined}
                     type="button"
                     onClick={() => onSelect(conversation.id)}
                     className={`w-full border-l-2 p-1.5 text-left cursor-pointer transition-colors ${conversation.id === selectedId
