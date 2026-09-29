@@ -22,8 +22,7 @@ export function MessageHistory({ messages, onCorrect, onSend, alwaysShowChatInpu
             <div className="flex items-center justify-between gap-3 border-b border-section-border pb-3">
                 <div className="flex min-w-0 items-center gap-2">
                     <Button
-                        variant="outline"
-                        size="icon"
+                        variant="bare"
                         className="rounded-full lg:hidden"
                         onClick={onBack}
                         aria-label="Back to chats"
