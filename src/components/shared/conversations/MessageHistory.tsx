@@ -42,7 +42,7 @@ export function MessageHistory({ messages, onCorrect, onSend, alwaysShowChatInpu
                     <p ref={headingRef} tabIndex={-1} className="truncate text-lg font-medium text-foreground">Conversational history</p>
                 </div>
                 <div className="flex shrink-0 items-center gap-2">
-                    <div className="flex items-center gap-2 min-[1200px]:hidden">
+                    <div className="hidden items-center gap-2 lg:max-[1200px]:flex">
                         <Popover open={optionsOpen} onOpenChange={setOptionsOpen}>
                             <PopoverTrigger render={
                                 <Button variant="ghost" size="sm" className="bg-white px-1.5" aria-label="Conversation options">
@@ -50,14 +50,14 @@ export function MessageHistory({ messages, onCorrect, onSend, alwaysShowChatInpu
                                 </Button>
                             } />
                             <PopoverContent align="end" className="w-44 gap-0 p-1">
-                                <Button variant="bare" size="sm" className="w-full justify-start px-3 py-2" onClick={() => setOptionsOpen(false)}>Mark unread</Button>
-                                <Button variant="bare" size="sm" className="w-full justify-start px-3 py-2" onClick={() => setOptionsOpen(false)}>Archive</Button>
-                                <Button variant="bare" size="sm" className="w-full justify-start px-3 py-2" onClick={() => { onTakeover(); setOptionsOpen(false) }}>Takeover</Button>
+                                <Button variant="bare" size="sm" className="w-full justify-start md:px-3 md:py-2" onClick={() => setOptionsOpen(false)}>Mark unread</Button>
+                                <Button variant="bare" size="sm" className="w-full justify-start md:px-3 md:py-2" onClick={() => setOptionsOpen(false)}>Archive</Button>
+                                <Button variant="bare" size="sm" className="w-full justify-start md:px-3 md:py-2" onClick={() => { onTakeover(); setOptionsOpen(false) }}>Takeover</Button>
                             </PopoverContent>
                         </Popover>
                         <ConversationsFilterModal />
                     </div>
-                    <div className="hidden items-center gap-2 min-[1200px]:flex">
+                    <div className="flex items-center gap-2 lg:max-[1200px]:hidden">
                         <Button variant="bare" size="sm">Mark unread</Button>
                         <Button variant="bare" size="sm">Archive</Button>
                         <Button variant="secondary" size="xsm" onClick={onTakeover}>Takeover</Button>
