@@ -13,8 +13,8 @@ function OrderValueSummary({ value, changePercent, period, progressPercent, brea
 
     return (
         <>
-            <Heading >Average order value</Heading>
-            <div className="w-[185px]">
+            <Heading responsive>Average order value</Heading>
+            <div className="w-46.25">
                 <Slider
                     aria-label="Average order value progress"
                     // Read-only progress bar, so the value is controlled and never dragged.

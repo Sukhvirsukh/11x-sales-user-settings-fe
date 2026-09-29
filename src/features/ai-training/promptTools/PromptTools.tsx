@@ -47,7 +47,7 @@ interface ActionCardProps {
 export function ActionCard({ heading, name, content, isChecked = false, onToggle }: ActionCardProps) {
 
     return (
-        <div className="flex w-full border border-section-border items-start gap-3 rounded-[10px] p-2.5 text-sm text-content-strong">
+        <div className="flex w-full border border-section-border items-start gap:0 md:gap-3 rounded-[10px] p-2.5 text-sm text-content-strong">
             <div className="d-block w-full">
                 <Heading size="md">{heading}</Heading>
                 <p className="text-content-muted mt-2 text-sm">{content}</p>

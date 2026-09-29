@@ -30,7 +30,7 @@ function TrendChart({ title, range, series }: TrendPanel) {
     return (
         <>
             <div className="w-full flex items-center justify-between">
-                <Heading>{title}</Heading>
+                <Heading responsive>{title}</Heading>
                 <div className="w-[100px]">
                     <SelectField
                         className="rounded-[10px] h-7! px-2.5 py-1.5 text-sm"
@@ -103,7 +103,7 @@ export default function ActionTrend({ panel, isLoading = false }: ActionTrendPro
     if (!panel || panel.series.length === 0) {
         return (
             <AppSection>
-                <p className="flex h-[180px] w-full items-center justify-center text-sm text-content-muted">
+                <p className="flex h-45 w-full items-center justify-center text-sm text-content-muted">
                     No action trend data for this range.
                 </p>
             </AppSection>

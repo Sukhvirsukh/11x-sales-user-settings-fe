@@ -35,8 +35,8 @@ function ConversionTrend({ title, range, series }: TrendPanel) {
         <div className="w-full">
             <div className="mb-4 flex items-center justify-between md:gap-4">
                 <Heading
-                    size="md"
-                    responsiveSize={{ lg: "lg" }}
+                    size="lg"
+                    responsive
                 >
                     {title}
                 </Heading>

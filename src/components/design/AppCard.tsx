@@ -25,7 +25,7 @@ export default function AppCard({ children, className, header, headingSize = "md
         >
             {(header || actions) && (
                 <div className="mb-2.5 flex items-center     justify-between gap-4">
-                    {header && <Heading size={headingSize}>{header}</Heading>}
+                    {header && <Heading size={headingSize} responsive>{header}</Heading>}
                     {actions && <div className="flex shrink-0 items-center gap-2">{actions}</div>}
                 </div>
             )}

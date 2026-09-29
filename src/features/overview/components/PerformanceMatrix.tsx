@@ -25,7 +25,7 @@ function PerformanceMatrixTabs(metrics: PerformanceMetricsSummary) {
 
     return (
         <>
-            <Heading size="md" responsiveSize={{ lg: "xlg" }}>Performance Matrix</Heading>
+            <Heading size="lg" responsive>Performance Matrix</Heading>
             <CustomTabs
                 tabs={tabs}
                 value={selectedTab}
@@ -49,7 +49,7 @@ function PerformanceMatrixTabs(metrics: PerformanceMetricsSummary) {
                                     <span className="min-w-0 flex-1 text-base text-foreground">
                                         {metric.name}
                                     </span>
-                                    <Heading size="md" responsiveSize={{ lg: "lg" }} className="font-semibold shrink-0 whitespace-nowrap">
+                                    <Heading size="lg" responsive className="font-semibold shrink-0 whitespace-nowrap">
                                         {formatNumber(metric.rate, "percent")}
                                     </Heading>
                                 </div>

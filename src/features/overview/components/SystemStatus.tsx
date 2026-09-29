@@ -86,7 +86,7 @@ export default function SystemStatus({ panel, isLoading = false }: SystemStatusP
 
     return (
         <AppSection className="h-auto">
-            <Heading>System Status</Heading>
+            <Heading responsive>System Status</Heading>
             <AgentList {...panel} />
         </AppSection>
     );

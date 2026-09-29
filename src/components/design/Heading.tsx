@@ -1,4 +1,4 @@
-import { memo, type ReactNode } from "react";
+import type { ComponentPropsWithRef, ElementType, ReactNode } from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
@@ -24,64 +24,52 @@ const headingVariants = cva("text-foreground", {
     },
 });
 
-type HeadingSize = NonNullable<VariantProps<typeof headingVariants>["size"]>;
-type Breakpoint = "sm" | "md" | "lg" | "xl" | "2xl";
-const breakpoints: Breakpoint[] = ["sm", "md", "lg", "xl", "2xl"];
+/** Mobile size used when `responsive` is set: 14px, semi-bold below `md`. */
+const responsiveClasses = "max-md:text-base max-md:font-semibold";
 
-// Keep complete class names visible to Tailwind's scanner.
-const responsiveSizeClasses: Record<Breakpoint, Record<HeadingSize, string>> = {
-    sm: {
-        xs: "sm:text-xs sm:font-medium", sm: "sm:text-sm sm:font-medium",
-        md: "sm:text-base sm:font-medium", lg: "sm:text-lg sm:font-semibold",
-        xlg: "sm:text-2xl sm:font-semibold", "2xl": "sm:text-3xl sm:font-semibold",
-    },
-    md: {
-        xs: "md:text-xs md:font-medium", sm: "md:text-sm md:font-medium",
-        md: "md:text-base md:font-medium", lg: "md:text-lg md:font-semibold",
-        xlg: "md:text-2xl md:font-semibold", "2xl": "md:text-3xl md:font-semibold",
-    },
-    lg: {
-        xs: "lg:text-xs lg:font-medium", sm: "lg:text-sm lg:font-medium",
-        md: "lg:text-base lg:font-medium", lg: "lg:text-lg lg:font-semibold",
-        xlg: "lg:text-2xl lg:font-semibold", "2xl": "lg:text-3xl lg:font-semibold",
-    },
-    xl: {
-        xs: "xl:text-xs xl:font-medium", sm: "xl:text-sm xl:font-medium",
-        md: "xl:text-base xl:font-medium", lg: "xl:text-lg xl:font-semibold",
-        xlg: "xl:text-2xl xl:font-semibold", "2xl": "xl:text-3xl xl:font-semibold",
-    },
-    "2xl": {
-        xs: "2xl:text-xs 2xl:font-medium", sm: "2xl:text-sm 2xl:font-medium",
-        md: "2xl:text-base 2xl:font-medium", lg: "2xl:text-lg 2xl:font-semibold",
-        xlg: "2xl:text-2xl 2xl:font-semibold", "2xl": "2xl:text-3xl 2xl:font-semibold",
-    },
-};
+/** Elements the heading can render as. */
+export type HeadingTag = "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "p" | "span";
 
-export interface HeadingProps extends VariantProps<typeof headingVariants> {
-    as?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "p" | "span";
+interface HeadingBaseProps extends VariantProps<typeof headingVariants> {
     children: ReactNode;
     className?: string;
-    /** Size overrides at Tailwind's min-width breakpoints. `size` applies below the first override. */
-    responsiveSize?: Partial<Record<Breakpoint, HeadingSize>>;
+    /** Renders 14px semi-bold below `md`, keeping `size` for wider screens. */
+    responsive?: boolean;
 }
 
-function Heading({
-    as: Comp = "h3",
+/**
+ * Props for `Heading`. The rendered element is selected with `as`, and every
+ * native attribute of that element (`id`, `aria-*`, `title`, handlers, `ref`, …)
+ * is forwarded, so the component stays usable for a11y wiring such as
+ * `aria-labelledby` or `aria-level`.
+ *
+ * React 19 supports `ref` as a plain prop on function components, so no
+ * `forwardRef` wrapper is needed and `ref` is typed from the rendered element.
+ */
+export type HeadingProps<T extends HeadingTag = "h3"> = HeadingBaseProps &
+    Omit<ComponentPropsWithRef<T>, keyof HeadingBaseProps> & {
+        /** Element to render. Defaults to `h3`. */
+        as?: T;
+    };
+
+function Heading<T extends HeadingTag = "h3">({
+    as,
     size = "lg",
+    responsive = false,
     className,
     children,
-    responsiveSize,
-}: HeadingProps) {
-    const responsiveClasses = breakpoints.map((breakpoint) => {
-        const override = responsiveSize?.[breakpoint];
-        return override ? responsiveSizeClasses[breakpoint][override] : undefined;
-    });
+    ...props
+}: HeadingProps<T>) {
+    const Comp = (as ?? "h3") as ElementType;
 
     return (
-        <Comp className={cn(headingVariants({ size }), responsiveClasses, className)}>
+        <Comp
+            className={cn(headingVariants({ size }), responsive && responsiveClasses, className)}
+            {...props}
+        >
             {children}
         </Comp>
     );
 }
 
-export default memo(Heading);
+export default Heading;

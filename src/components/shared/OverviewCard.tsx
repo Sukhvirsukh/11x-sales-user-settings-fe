@@ -19,9 +19,8 @@ export default function OverviewCard({ title, numbers, icon }: OverviewCardProps
                         {title}
                     </p>
                     <Heading
-                        size="md"
-                        responsiveSize={{ lg: "xlg" }}
-                        className="font-semibold"
+                        size="lg"
+                        responsive
                     >
                         {numbers}
                     </Heading>

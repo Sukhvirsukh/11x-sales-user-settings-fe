@@ -9,7 +9,7 @@ import type { SetupProgressSummary } from "../overviewType";
 function SetupChecklist({ completedSteps, totalSteps, percent, steps }: SetupProgressSummary) {
     return (
         <>
-            <Heading>Setup progress</Heading>
+            <Heading responsive>Setup progress</Heading>
             <div className="flex flex-col gap-4">
                 <div className="flex items-center justify-between gap-3 rounded-[10px] bg-surface-raised p-2.5">
                     <span className="text-base text-foreground">{completedSteps} of {totalSteps} steps completed</span>

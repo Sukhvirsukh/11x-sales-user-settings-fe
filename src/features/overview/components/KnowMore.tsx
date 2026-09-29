@@ -23,7 +23,7 @@ function Carousel({ items }: { items: KnowMoreItem[] }) {
     return (
         <>
             <div className="w-full flex items-center justify-between">
-                <Heading>Know more</Heading>
+                <Heading responsive>Know more</Heading>
                 <Button
                     size="sm"
                     variant="underline-bare"
@@ -36,7 +36,7 @@ function Carousel({ items }: { items: KnowMoreItem[] }) {
                     className="flex snap-x snap-mandatory gap-2 overflow-x-auto scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
                 >
                     {items.map((item) => (
-                        <article key={item.title} className="w-[65%] shrink-0 snap-start">
+                        <article key={item.title} className="w-44.5 shrink-0 snap-start">
                             <div className="flex aspect-[1.75] items-center justify-center rounded-md bg-[#cccc]">
                                 {item.type === "video" && (
                                     <button
