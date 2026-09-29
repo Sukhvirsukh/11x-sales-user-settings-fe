@@ -1,15 +1,14 @@
 import { format as formatDate } from "date-fns"
-import { delay } from "@/lib/utils"
 import type { Segment, SegmentFormValues, SegmentsResponse, UserProfile } from "./contactType"
-import { userProfiles } from "./mockContacts"
 import { apiFetch } from "@/lib/api"
+import { agentApiConfigured, agentFetch } from "@/lib/agentApi"
 
 
+/** Shoppers who left their email or phone number in the chat. */
 export async function getUserProfiles(): Promise<UserProfile[]> {
-    // const response = await apiFetch<ContactsResponse>("/contacts");
-    const response = await delay(2000).then(() => [...userProfiles])
-
-    return response
+    if (!agentApiConfigured) return []
+    const profiles = await agentFetch<UserProfile[]>("/contacts")
+    return profiles.map((profile) => ({ ...profile, startDate: formatDate(new Date(profile.startDate), "yyyy-MM-dd") }))
 }
 
 
@@ -34,14 +33,7 @@ export async function createSegament(values: SegmentFormValues): Promise<Segment
 
 
 export async function deleteUserProfiles(ids: string[]): Promise<string[]> {
-    // await apiFetch("/contacts/bulk", { method: "DELETE", body: JSON.stringify({ ids }) });
-    await delay(500)
-
-    ids.forEach((id) => {
-        const index = userProfiles.findIndex((profile) => profile.id === id)
-        if (index !== -1) userProfiles.splice(index, 1)
-    })
-
+    await agentFetch("/contacts", { method: "DELETE", body: { ids } })
     return ids
 }
 

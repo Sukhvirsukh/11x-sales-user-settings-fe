@@ -13,7 +13,7 @@ interface AgentFetchOptions extends Omit<RequestInit, "body"> {
   notifyOnError?: boolean;
 }
 
-export async function agentFetch<T>(path: string, options: AgentFetchOptions = {}): Promise<T> {
+async function agentRequest(path: string, options: AgentFetchOptions = {}): Promise<Response> {
   const { body, notifyOnError = true, ...init } = options;
   if (!agentApiConfigured) throw new Error("The AI agent service isn't configured (VITE_AGENT_API_BASE_URL).");
 
@@ -35,5 +35,22 @@ export async function agentFetch<T>(path: string, options: AgentFetchOptions = {
     throw new Error(message);
   }
 
+  return response;
+}
+
+export async function agentFetch<T>(path: string, options: AgentFetchOptions = {}): Promise<T> {
+  const response = await agentRequest(path, options);
   return (await response.json()) as T;
+}
+
+/** Downloads a file from the agent service, named as the server suggests. */
+export async function agentDownload(path: string): Promise<void> {
+  const response = await agentRequest(path);
+  const filename = /filename="?([^";]+)"?/.exec(response.headers.get("Content-Disposition") ?? "")?.[1] ?? "download";
+  const url = URL.createObjectURL(await response.blob());
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = filename;
+  link.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
 }

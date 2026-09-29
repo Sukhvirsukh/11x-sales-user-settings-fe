@@ -5,6 +5,7 @@ const Y_TICKS = 4;
 
 /** Ranges both trend panels can be filtered by. */
 export const RANGES = [
+    { label: "Last 7 months", value: "last-7-months" },
     { label: "This month", value: "this-month" },
     { label: "Last month", value: "last-month" },
     { label: "Last 90 days", value: "last-90-days" },
