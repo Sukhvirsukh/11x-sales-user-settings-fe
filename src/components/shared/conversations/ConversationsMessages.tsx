@@ -69,14 +69,14 @@ export function ConversationsMessage({
                     </span>
                 ))}
 
-            <div className={isUser ? "max-w-[227px]" : "w-fit max-w-full min-w-0"}>
+            <div className="w-fit max-w-[80%] min-w-0">
                 <div className={`max-w-full rounded-[10px] bg-table-header-background p-2.5 ${bubbleClassName}`}>
-                    <p className="text-sm leading-none whitespace-pre-wrap text-content-strong">{content}</p>
+                    <p className="break-words text-sm leading-none whitespace-pre-wrap text-content-strong">{content}</p>
                 </div>
 
                 {/* Feedback row for bot messages */}
                 {!isUser && (
-                    <div className="mt-2 flex items-center justify-between gap-4">
+                    <div className="mt-2 flex flex-wrap items-center justify-between gap-4">
                         <div className="flex items-center gap-3">
                             {onDebug && (
                                 <button
