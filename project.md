@@ -52,7 +52,7 @@ Defined in `src/config/routes.tsx` (`createBrowserRouter`, all pages lazy-loaded
 | `/ask-me` | AskMePage | Ask me page (AI chat assistant) |
 | `/settings` | SettingsPage | Settings hub (nested tabs; index redirects to `role-n-access`) |
 | `/settings/role-n-access` | RoleAndAccess | Role & access management |
-| `/settings/plan` | Plan | Plan management |
+| `/settings/plan` | PlanPage | Composes plan cards and cycle details |
 | `/settings/payments` | Payments | Payments management |
 | `/settings/store` | Store | Store management |
 | `*` | NotFoundPage | Catch-all 404, rendered inside `AppLayout` |
@@ -283,6 +283,7 @@ src/
 │   │   │   └── index.ts
 │   │   ├── plan/
 │   │   │   ├── Plan.tsx
+│   │   │   ├── PlanCycleDetails.tsx # Current subscription details
 │   │   │   ├── Plan.module.css
 │   │   │   ├── planApi.ts           # getPlans, upgradePlan
 │   │   │   ├── planQuery.ts
@@ -350,6 +351,7 @@ src/
 │   ├── OverviewPage.tsx
 │   ├── ContactPage.tsx              # Tabs + Outlet (user profile details / segaments)
 │   ├── ConversationsPage.tsx        # Tabs + Outlet + toolbar (mobile) / filter sidebar (lg+)
+│   ├── PlanPage.tsx                 # Plan cards + current subscription details
 │   ├── ReportsPage.tsx
 │   ├── SignInPage.tsx
 │   ├── SignUpPage.tsx
@@ -458,6 +460,7 @@ Each item carries the `permission` that mirrors its route's `handle.permission`;
 - **Stores** (`src/features/settings/store/`): `GET /admin/stores` accepts optional `search` and `cursor` and returns `items`, `nextCursor`, `hasMore`, and count metadata. `Store.tsx` uses debounced server search, keeps cursor history, and uses `CustomTable`'s Previous/Next controls. Add/edit/delete operations invalidate `storeQueryKey`.
 - **Conversations feature** (`src/features/conversations/`): all four tabs render `ConversationsChatPannel`. At 1200px and wider, `ConversationsPage` places `ConversationsFilter` beside the panel. The thread header shows its actions inline below `lg` and from 1200px up. Below 1200px, the sidebar is hidden. From `lg` to 1199px, the header replaces the inline actions with an options popover (Mark unread, Archive, Takeover) beside `ConversationsFilterModal`. Below `lg`, `ConversationsToolbar` provides chat search and the filter modal above the list. Opening a chat replaces the list with the thread and customer details; the back button returns to the list. The shared `conversationChatStore` coordinates that takeover with the toolbar. The panel uses fixture conversations and messages, while filter state lives in `conversationFilterStore`.
 - Settings sub-pages compose shared design components: tables use `CustomTable` (RoleHistory, PaymentHistory), detail displays use `DetailContainer`/`DetailGroup`/`DetailItem` (BasicDetails, SavedPaymentDetails), and create/edit flows use the shared `Modal` with `FormGroup` + field components (AddRoleForm, AddNewPayment, AddStore, DeleteRole, DeleteStore).
+- Plan cards scroll horizontally with previous/next controls below `lg`, or at larger widths when there are more than three plans. The controls move one card at a time and respect reduced motion.
 - The `unsavedChangesBar` shared component provides a warning system for unsaved changes.
 - `components/shared/chatBox/` holds the shared chat primitives: `ChatBox` (visibility preview), `ChatInput`, and `ChatMessage`, which renders the user/bot bubbles plus the bot action row (Debug / Make correction / thumbs / approve ✓). `ChatMessage` is used by both the visibility preview and the conversations panel, so tweaks to it show up in both places.
 - **Ask AI feature** (`src/features/askAi/`): AI chat assistant at `/ask-me`, composed of `AskAI.tsx` (chat + history banner) and `AskAIChat.tsx` (messages, input, file attachment). Uses `PreviewSection`, `AppSection`, and `Banner`.

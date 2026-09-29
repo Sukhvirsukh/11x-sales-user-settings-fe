@@ -27,9 +27,7 @@ const AiTrainingPage = lazy(() =>
 const RoleAndAccess = lazy(() =>
   import("@/features/settings/roleAndAccess").then(({ RoleAndAccess }) => ({ default: RoleAndAccess })),
 );
-const Plan = lazy(() =>
-  import("@/features/settings/plan").then(({ Plan }) => ({ default: Plan })),
-);
+const PlanPage = lazy(() => import("@/pages/PlanPage"));
 const Payments = lazy(() =>
   import("@/features/settings/payments").then(({ Payments }) => ({ default: Payments })),
 );
@@ -126,7 +124,7 @@ export const router = createBrowserRouter([
                     element: <Navigate to="role-n-access" replace />,
                   },
                   { path: "role-n-access", element: <RoleAndAccess />, handle: { permission: "settings.profile.view" } satisfies RouteHandle },
-                  { path: "plan", element: <Plan />, handle: { permission: "settings.plan.view" } satisfies RouteHandle },
+                  { path: "plan", element: <PlanPage />, handle: { permission: "settings.plan.view" } satisfies RouteHandle },
                   { path: "payments", element: <Payments />, handle: { permission: "settings.payments.view" } satisfies RouteHandle },
                   { path: "store", element: <Store />, handle: { permission: "settings.store.view" } satisfies RouteHandle },
                 ],
