@@ -1,15 +1,10 @@
-import AppCard from "@/components/design/AppCard";
 import AppSection from "@/components/design/AppSectoin";
-import DetailContainer, { DetailGroup, DetailItem } from "@/components/design/DetailContainer";
 import Heading from "@/components/design/Heading";
 import { Button } from "@/components/ui/button";
 import { Check, ChevronLeft, ChevronRight, Loader } from "lucide-react";
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Badge } from "@/components/ui/badge";
 import { useCan } from "@/features/auth";
-import styles from "./Plan.module.css";
-import { cn, dateFormater } from "@/lib/utils";
 import { planQueryKey, usePlanQuery } from "./planQuery";
 import type { Plan as PlanData } from "./planTypes";
 import { upgradePlan } from "./planApi";
@@ -20,68 +15,75 @@ interface PlanCardProps {
     canUpgrade: boolean;
     isUpgradePending: boolean;
     isUpgrading: boolean;
-    onUpgrade: (planId: string) => void;
+    onUpgrade: () => void;
+    hasMoreThanThreePlans: boolean;
+    isActive: boolean;
 }
 
 const EMPTY_PLANS: PlanData[] = [];
 
-function PlanCard({ plan, isCurrent, canUpgrade, isUpgradePending, isUpgrading, onUpgrade }: PlanCardProps) {
+function getActiveCardIndex(carousel: HTMLDivElement) {
+    const cards = Array.from(carousel.children) as HTMLElement[];
+    const center = carousel.getBoundingClientRect().left + carousel.clientWidth / 2;
+
+    return cards.reduce((closest, card, index) => {
+        const distance = Math.abs(card.getBoundingClientRect().left + card.clientWidth / 2 - center);
+        const closestCard = cards[closest];
+        const closestDistance = Math.abs(closestCard.getBoundingClientRect().left + closestCard.clientWidth / 2 - center);
+        return distance < closestDistance ? index : closest;
+    }, 0);
+}
+
+function PlanCard({ plan, isCurrent, canUpgrade, isUpgradePending, isUpgrading, onUpgrade, hasMoreThanThreePlans, isActive }: PlanCardProps) {
     const { name, features, isMostPopular, priceInr } = plan;
 
     return (
-        <article
-            className={cn(
-                styles.card,
-                "flex min-w-0 flex-col",
-                isMostPopular
-                    ? "relative z-10 rounded-[10px] bg-surface-raised shadow-plan-selected"
-                    : "py-0.5"
-            )}
-        >
-            <div
-                className={cn(
-                    "flex min-h-15 items-center justify-between px-5 py-2.5",
-                    isMostPopular
-                        ? "border-b rounded-t-[9px] border-transparent bg-table-header-background px-5"
-                        : "mx-5 border-b border-border px-0"
-                )}
-            >
-                <div className="min-w-0">
-                    <h3 className={cn("text-sm font-normal", isMostPopular ? "text-content-strong" : "text-content-muted")}>
-                        {name}
-                    </h3>
-                    <p className="mt-1 text-lg font-medium text-content-strong">Starting at INR {priceInr}</p>
-                </div>
-                {isMostPopular && (
-                    <Badge indicator={false} className="rounded-full bg-plan-promotion-background text-plan-promotion-foreground">
-                        Most popular
-                    </Badge>
-                )}
+        <article className={`flex min-w-62.5 shrink-0 basis-[85%] snap-center flex-col rounded-[10px] border border-primary/20 transition-[transform,box-shadow] duration-200 motion-reduce:transition-none lg:min-w-0 ${hasMoreThanThreePlans ? "lg:basis-[calc((100%_-_0.5rem)/3)]" : "lg:flex-1"} ${isActive ? `relative z-10 shadow-plan-selected ${hasMoreThanThreePlans ? "" : "lg:translate-y-0 lg:shadow-none"}` : ""} ${isMostPopular ? 'pt-0' : 'pt-2.5'}`}>
+            {
+                isMostPopular && (
+                    <p className="bg-gold py-1.25 px-2.5 text-xs font-bold text-center rounded-t-[10px]">
+                        Most Popular | 10k subscribers
+                    </p>
+                )
+            }
+            <div className="p-2.5 pt-1.5 border-b border-primary/20">
+                <Heading size="sm" className="font-bold mb-1">
+                    {
+                        name
+                    }
+                </Heading>
+                <p className="text-sm">
+                    Starting at INR {priceInr}
+                </p>
             </div>
-            <div className="flex flex-1 flex-col px-5 pb-5 pt-4">
-                <ul className="flex flex-col gap-4">
-                    {features.map((feature) => (
-                        <li key={feature} className="flex items-start gap-2 text-base text-plan-feature">
-                            <Check aria-hidden="true" className="size-4 shrink-0 text-content-muted" />
-                            <span>{feature}</span>
-                        </li>
-                    ))}
+            <div className={`flex flex-1 flex-col ${isMostPopular ? 'bg-white' : 'bg-transparent'} pb-2.5 rounded-b-[10px]`}>
+                <ul className={`p-2.5`}>
+                    {
+                        features.map((feature) => (
+                            <li key={feature} className="flex gap-2 py-1.25">
+                                <Check className="size-4 shrink-0 text-content-muted" />
+                                <p className="text-sm text-content-muted">
+                                    {
+                                        feature
+                                    }
+                                </p>
+                            </li>
+                        ))
+                    }
                 </ul>
-                <div className="mt-auto pt-8">
-                    {(isCurrent || canUpgrade) && (
-                        <Button
-                            variant={isMostPopular ? "primary" : "secondary"}
-                            className="min-h-9 w-full whitespace-normal"
-                            disabled={isCurrent || isUpgradePending || !canUpgrade}
-                            onClick={() => {
-                                if (canUpgrade) onUpgrade(plan.id);
-                            }}
-                        >
-                            {isCurrent ? "Current plan" : isUpgrading ? "Upgrading..." : isMostPopular ? (
-                                <span>Upgrade today and get <strong>10% OFF</strong></span>
-                            ) : "Upgrade"}
-                        </Button>
-                    )}
+                <div className="mt-auto p-2.5">
+                    <Button
+                        variant={isMostPopular ? "primary" : "ghost"}
+                        size="sm"
+                        className="w-full"
+
+                        onClick={onUpgrade}
+                        disabled={!canUpgrade || isUpgradePending || isUpgrading || isCurrent}
+                    >
+                        {isCurrent ? "Current plan" : isUpgrading ? "Upgrading..." : isMostPopular ? (
+                            <span>Upgrade today and get <strong>10% OFF</strong></span>
+                        ) : "Upgrade"}
+                    </Button>
                 </div>
             </div>
         </article>
@@ -90,6 +92,8 @@ function PlanCard({ plan, isCurrent, canUpgrade, isUpgradePending, isUpgrading, 
 
 export function Plan() {
 
+    const carouselRef = useRef<HTMLDivElement>(null);
+    const [activeIndex, setActiveIndex] = useState(0);
     const { data, isLoading, error } = usePlanQuery();
     const canUpgradePlan = useCan("settings.plan.create");
     const queryClient = useQueryClient();
@@ -105,47 +109,36 @@ export function Plan() {
         },
     });
     const plans = data?.plans ?? EMPTY_PLANS;
-    const currentSubscription = data?.currentSubscription;
     const currentPlanId = data?.currentSubscription?.planId;
-
-    const carouselRef = useRef<HTMLDivElement>(null);
+    const hasMoreThanThreePlans = plans.length > 3;
 
     useEffect(() => {
         const carousel = carouselRef.current;
-        const popularIndex = plans.findIndex((plan) => plan.isMostPopular);
-        if (!carousel || popularIndex < 0 || window.matchMedia("(min-width: 1024px)").matches) return;
-        const card = carousel.children[popularIndex] as HTMLElement | undefined;
-        if (card) carousel.scrollLeft = card.offsetLeft - (carousel.clientWidth - card.clientWidth) / 2;
-    }, [plans]);
+        if (!carousel || !plans.length) return;
 
-    const showPlan = (direction: -1 | 1) => {
+        const syncActivePlan = () => setActiveIndex(getActiveCardIndex(carousel));
+        const observer = new ResizeObserver(syncActivePlan);
+        observer.observe(carousel);
+        syncActivePlan();
+        return () => observer.disconnect();
+    }, [plans.length]);
+
+    function updateActivePlan() {
         const carousel = carouselRef.current;
-        if (!carousel) return;
-        const cards = Array.from(carousel.children) as HTMLElement[];
-        if (!cards.length) return;
-        const center = carousel.scrollLeft + carousel.clientWidth / 2;
-        const currentIndex = cards.reduce((closest, card, index) =>
-            Math.abs(card.offsetLeft + card.clientWidth / 2 - center) <
-                Math.abs(cards[closest].offsetLeft + cards[closest].clientWidth / 2 - center) ? index : closest, 0);
-        const next = cards[(currentIndex + direction + cards.length) % cards.length];
-        carousel.scrollTo({
-            left: next.offsetLeft - (carousel.clientWidth - next.clientWidth) / 2,
-            behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth",
+        if (carousel && plans.length) setActiveIndex(getActiveCardIndex(carousel));
+    }
+
+    function scrollCards(direction: -1 | 1) {
+        const carousel = carouselRef.current;
+        const firstCard = carousel?.firstElementChild;
+        if (!carousel || !(firstCard instanceof HTMLElement)) return;
+
+        const gap = Number.parseFloat(window.getComputedStyle(carousel).columnGap) || 0;
+        carousel.scrollBy({
+            left: direction * (firstCard.getBoundingClientRect().width + gap),
+            behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
         });
-    };
-
-    const calculateEndDate = useMemo(() => {
-        if (!currentSubscription) return null;
-
-        if (currentSubscription.currentPeriodEnd) {
-            return new Date(currentSubscription.currentPeriodEnd);
-        }
-
-        const startDate = new Date(currentSubscription.currentPeriodStart);
-        const endDate = new Date(currentSubscription.currentPeriodStart);
-        endDate.setMonth(startDate.getMonth() + 1);
-        return endDate;
-    }, [currentSubscription?.currentPeriodEnd, currentSubscription?.currentPeriodStart]);
+    }
 
     if (isLoading) return <Loader />
 
@@ -154,61 +147,45 @@ export function Plan() {
     }
 
     return (
-        <>
-            <AppSection className="w-full min-w-0 gap-0! overflow-hidden">
-                <div className="flex w-full items-center justify-between">
-                    <Heading size="lg">Plan</Heading>
-                    <div className="flex items-center gap-2 lg:hidden">
-                        <Button variant="secondary" size="sm" className="size-6 rounded-md bg-surface-raised p-0!" aria-label="Show previous plan" onClick={() => showPlan(-1)}>
-                            <ChevronLeft aria-hidden="true" className="size-3.5" />
-                        </Button>
-                        <Button variant="secondary" size="sm" className="size-6 rounded-md bg-surface-raised p-0!" aria-label="Show next plan" onClick={() => showPlan(1)}>
-                            <ChevronRight aria-hidden="true" className="size-3.5" />
-                        </Button>
-                    </div>
+        <AppSection className="overflow-hidden">
+            <Heading size="lg">Plans</Heading>
+            <div className="relative w-full min-w-0">
+                <div ref={carouselRef} onScroll={updateActivePlan} className="flex w-full min-w-0 snap-x snap-mandatory gap-1 overflow-x-auto scroll-px-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" role="region" aria-label="Available plans" tabIndex={0}>
+                    {plans.map((plan, index) => (
+                        <PlanCard
+                            key={plan.id}
+                            plan={plan}
+                            isCurrent={plan.id === currentPlanId}
+                            canUpgrade={canUpgradePlan}
+                            isUpgradePending={upgradeMutation.isPending}
+                            isUpgrading={upgradeMutation.isPending && upgradeMutation.variables === plan.id}
+                            onUpgrade={() => upgradeMutation.mutate(plan.id)}
+                            hasMoreThanThreePlans={hasMoreThanThreePlans}
+                            isActive={index === activeIndex}
+                        />
+                    ))}
                 </div>
-
-                <div ref={carouselRef} className={styles.carousel} role="region" aria-label="Available plans" tabIndex={0}>
-                    {
-                        plans.map((plan) => (
-                            <PlanCard
-                                key={plan.id}
-                                plan={plan}
-                                isCurrent={plan.id === currentPlanId}
-                                canUpgrade={canUpgradePlan}
-                                isUpgradePending={upgradeMutation.isPending}
-                                isUpgrading={upgradeMutation.isPending && upgradeMutation.variables === plan.id}
-                                onUpgrade={upgradeMutation.mutate}
-                            />
-                        ))
-                    }
-                </div>
-            </AppSection>
-
-            {currentSubscription && <AppSection
-                className="w-full"
-            >
-                <Heading size="lg">Other details</Heading>
-                <AppCard>
-                    <DetailContainer fullWidth={true} equalWidth={true}>
-                        <DetailGroup>
-                            <DetailItem label="Start date" value={dateFormater(currentSubscription?.currentPeriodStart, 'long')} />
-                        </DetailGroup>
-                        <DetailGroup>
-                            <DetailItem label="End date" value={dateFormater(calculateEndDate, 'long')} />
-                        </DetailGroup>
-                        <DetailGroup>
-                            <DetailItem label="Plan" value={currentSubscription?.plan?.name || 'Basic'} />
-                        </DetailGroup>
-                        <DetailGroup>
-                            <DetailItem label="Point used" value="127/990" />
-                        </DetailGroup>
-                        <DetailGroup>
-                            <DetailItem label="Next cycle" value={dateFormater(calculateEndDate, 'long')} />
-                        </DetailGroup>
-                    </DetailContainer>
-                </AppCard>
-            </AppSection>}
-        </>
-    )
+                <Button
+                    variant="secondary"
+                    size="icon"
+                    className={`absolute top-1/2 left-2 z-10 size-8 -translate-y-1/2 border border-black/10 rounded-full bg-white p-0 ${hasMoreThanThreePlans ? "" : "lg:hidden"}`}
+                    aria-label="Previous plan"
+                    disabled={plans.length < 2}
+                    onClick={() => scrollCards(-1)}
+                >
+                    <ChevronLeft aria-hidden="true" className="size-3" />
+                </Button>
+                <Button
+                    variant="secondary"
+                    size="icon"
+                    className={`absolute top-1/2 right-2 z-10 size-8 border border-black/10  -translate-y-1/2 rounded-full bg-white p-0 ${hasMoreThanThreePlans ? "" : "lg:hidden"}`}
+                    aria-label="Next plan"
+                    disabled={plans.length < 2}
+                    onClick={() => scrollCards(1)}
+                >
+                    <ChevronRight aria-hidden="true" className="size-3" />
+                </Button>
+            </div>
+        </AppSection>
+    );
 }
