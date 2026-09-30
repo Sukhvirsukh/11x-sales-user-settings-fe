@@ -1,6 +1,7 @@
 import AppSection from "@/components/design/AppSectoin";
 import Heading from "@/components/design/Heading";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { Check, ChevronLeft, ChevronRight, Loader } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -18,6 +19,7 @@ interface PlanCardProps {
     onUpgrade: () => void;
     hasMoreThanThreePlans: boolean;
     isActive: boolean;
+    isScrollable: boolean;
 }
 
 const EMPTY_PLANS: PlanData[] = [];
@@ -34,11 +36,26 @@ function getActiveCardIndex(carousel: HTMLDivElement) {
     }, 0);
 }
 
-function PlanCard({ plan, isCurrent, canUpgrade, isUpgradePending, isUpgrading, onUpgrade, hasMoreThanThreePlans, isActive }: PlanCardProps) {
+function PlanCard({ plan, isCurrent, canUpgrade, isUpgradePending, isUpgrading, onUpgrade, hasMoreThanThreePlans, isActive, isScrollable }: PlanCardProps) {
     const { name, features, isMostPopular, priceInr } = plan;
+    const isSelected = isActive && isScrollable;
 
     return (
-        <article className={`flex min-w-62.5 shrink-0 basis-[85%] snap-center flex-col rounded-[10px] border border-primary/20 transition-[transform,box-shadow] duration-200 motion-reduce:transition-none lg:min-w-0 ${hasMoreThanThreePlans ? "lg:basis-[calc((100%_-_0.5rem)/3)]" : "lg:flex-1"} ${isActive ? `relative z-10 shadow-plan-selected ${hasMoreThanThreePlans ? "" : "lg:translate-y-0 lg:shadow-none"}` : ""} ${isMostPopular ? 'pt-0' : 'pt-2.5'}`}>
+        <article
+            className={cn(
+                /* Below `sm` one card fills the view, and from `sm` up every card is at least
+                   `min-w-62.5` wide and grows into the leftover space, so the row shows as many
+                   whole cards as fit and falls back to the carousel when it runs out of room. */
+                "flex min-w-62.5 shrink-0 basis-[85%] snap-center flex-col rounded-[10px] border border-primary/20 transition-[transform,box-shadow,border-color] duration-200 motion-reduce:transition-none sm:basis-62.5 sm:grow lg:min-w-0",
+                hasMoreThanThreePlans ? "lg:basis-[calc((100%_-_0.5rem)/3)]" : "lg:flex-1",
+                /* The selected affordance belongs to a card that actually scrolls, and below `sm`
+                   the other cards drop their outline so its shadow carries that state alone. */
+                isSelected
+                    ? "relative z-10 shadow-plan-selected"
+                    : isScrollable && "max-sm:border-transparent",
+                isMostPopular ? "pt-0" : "pt-2.5",
+            )}
+        >
             {
                 isMostPopular && (
                     <p className="bg-gold py-1.25 px-2.5 text-xs font-bold text-center rounded-t-[10px]">
@@ -94,6 +111,7 @@ export function Plan() {
 
     const carouselRef = useRef<HTMLDivElement>(null);
     const [activeIndex, setActiveIndex] = useState(0);
+    const [isScrollable, setIsScrollable] = useState(false);
     const { data, isLoading, error } = usePlanQuery();
     const canUpgradePlan = useCan("settings.plan.create");
     const queryClient = useQueryClient();
@@ -116,7 +134,11 @@ export function Plan() {
         const carousel = carouselRef.current;
         if (!carousel || !plans.length) return;
 
-        const syncActivePlan = () => setActiveIndex(getActiveCardIndex(carousel));
+        const syncActivePlan = () => {
+            setActiveIndex(getActiveCardIndex(carousel));
+            // A single rounding pixel is not enough to scroll a card into view.
+            setIsScrollable(carousel.scrollWidth - carousel.clientWidth > 1);
+        };
         const observer = new ResizeObserver(syncActivePlan);
         observer.observe(carousel);
         syncActivePlan();
@@ -162,29 +184,35 @@ export function Plan() {
                             onUpgrade={() => upgradeMutation.mutate(plan.id)}
                             hasMoreThanThreePlans={hasMoreThanThreePlans}
                             isActive={index === activeIndex}
+                            isScrollable={isScrollable}
                         />
                     ))}
                 </div>
-                <Button
-                    variant="secondary"
-                    size="icon"
-                    className={`absolute top-1/2 left-2 z-10 size-8 -translate-y-1/2 border border-black/10 rounded-full bg-white p-0 ${hasMoreThanThreePlans ? "" : "lg:hidden"}`}
-                    aria-label="Previous plan"
-                    disabled={plans.length < 2}
-                    onClick={() => scrollCards(-1)}
-                >
-                    <ChevronLeft aria-hidden="true" className="size-3" />
-                </Button>
-                <Button
-                    variant="secondary"
-                    size="icon"
-                    className={`absolute top-1/2 right-2 z-10 size-8 border border-black/10  -translate-y-1/2 rounded-full bg-white p-0 ${hasMoreThanThreePlans ? "" : "lg:hidden"}`}
-                    aria-label="Next plan"
-                    disabled={plans.length < 2}
-                    onClick={() => scrollCards(1)}
-                >
-                    <ChevronRight aria-hidden="true" className="size-3" />
-                </Button>
+                {
+                    /* The controls only exist to page a row that has more cards than it can show. */
+                    isScrollable && (
+                        <>
+                            <Button
+                                variant="secondary"
+                                size="icon"
+                                className="absolute top-1/2 left-2 z-10 size-8 -translate-y-1/2 border border-black/10 rounded-full bg-white p-0"
+                                aria-label="Previous plan"
+                                onClick={() => scrollCards(-1)}
+                            >
+                                <ChevronLeft aria-hidden="true" className="size-3" />
+                            </Button>
+                            <Button
+                                variant="secondary"
+                                size="icon"
+                                className="absolute top-1/2 right-2 z-10 size-8 border border-black/10  -translate-y-1/2 rounded-full bg-white p-0"
+                                aria-label="Next plan"
+                                onClick={() => scrollCards(1)}
+                            >
+                                <ChevronRight aria-hidden="true" className="size-3" />
+                            </Button>
+                        </>
+                    )
+                }
             </div>
         </AppSection>
     );
