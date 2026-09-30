@@ -1,87 +1,72 @@
 import { useState } from "react";
-// import { useFormContext } from "react-hook-form";
 
-import Modal from "@/components/design/Modal";
-import { ActionCard } from "./PromptTools";
-import { FormGroup } from "@/components/design/FormGroup";
-import { InputField } from "@/components/design/InputField";
-import { TextAreaField } from "@/components/design/TextAreaField";
-import List from "@/components/shared/List";
+import ActionModal from "./ActionModal";
 
+type CreateCouponValues = {
+    couponCode: string;
+    minimumDiscount: string;
+    additionalInformation: string;
+};
+
+const DEFAULT_VALUES: CreateCouponValues = {
+    couponCode: "",
+    minimumDiscount: "",
+    additionalInformation: "",
+};
+
+/**
+ * Create discount tool — owns its draft, its switch and its create request.
+ *
+ * The coupon is not part of the prompt-tools document, so this component keeps
+ * both the created values and the switch on its own.
+ */
 export default function CreateCoupon() {
-    const [isDiscountModalOpen, setIsDiscountModalOpen] = useState(false);
-    // const { watch } = useFormContext();
+    const [savedValues, setSavedValues] = useState<CreateCouponValues>(DEFAULT_VALUES);
+    const [enabled, setEnabled] = useState(false);
 
-    const createDiscount = () => {
-        setIsDiscountModalOpen(true)
-
-    }
-
-    const closeModal = () => {
-        setIsDiscountModalOpen(false)
-    }
-
-    const createCoupon = () => {
-        closeModal()
+    function createCoupon(values: CreateCouponValues, isEnabled: boolean) {
+        // The create-coupon request goes here once the API exposes it; keeping
+        // the values makes the dialog reopen on what was last created.
+        setSavedValues(values);
+        setEnabled(isEnabled);
+        return true;
     }
 
     return (
-        <Modal
-            open={isDiscountModalOpen}
-            onOpenChange={setIsDiscountModalOpen}
+        <ActionModal<CreateCouponValues>
             title="Create coupon"
-            primaryAction={{
-                label: "Create",
-                onClick: createCoupon
+            heading="Create discount"
+            content="Allow Vitalb to create discount inside the site"
+            saveLabel="Create"
+            fields={[
+                {
+                    name: "couponCode",
+                    label: "Coupon code",
+                    placeholder: "Enter coupon code",
+                    kind: "input",
+                },
+                {
+                    name: "minimumDiscount",
+                    label: "Minimum allowed discount",
+                    placeholder: "Enter percentage (max file 100%)",
+                    kind: "input",
+                },
+                {
+                    name: "additionalInformation",
+                    label: "Additional information",
+                    placeholder: "Enter additional information",
+                },
+            ]}
+            corePrompts={{
+                title: "Core prompt",
+                items: [
+                    "Use this skill to create a unique, one time percentage discount for the customer.",
+                    "You can create a discount to encourage the user to purchase more",
+                ],
             }}
-            secondaryAction={{
-                label: "Cancel",
-                onClick: closeModal
-            }}
-            trigger={
-                <ActionCard
-                    heading="Create discount"
-                    content="Allow Vitalb to create discount inside the site"
-                    // isChecked={watch("discountEnabled")}
-                    onToggle={createDiscount}
-                />
-            }
-        >
-            <FormGroup>
-                <InputField
-                    label="Coupon code"
-                    placeholder="Enter coupon code"
-                    labelClassName="text-sm font-medium"
-                // error={errors.name?.message}
-                // {...register("name")}
-                />
-                <InputField
-                    label="Minimum allowed discount"
-                    placeholder="Enter percentage (max file 100%)"
-                    labelClassName="text-sm font-medium"
-                // error={errors.name?.message}
-                // {...register("name")}
-                />
-                <TextAreaField
-                    label="Additional information"
-                    placeholder="Enter additional information"
-                    labelClassName="text-sm font-medium"
-                />
-
-                <div>
-                    <List
-                        title="Core prompt"
-                        titleClassName="text-sm font-medium"
-                        listClassName="text-sm text-content-muted space-y-0 disc list-disc pl-2"
-                        listItemClassName="my-0"
-                        list={[
-                            "Use this skill to create a unique, one time percentage discount for the customer.",
-                            "You can create a discount to encourage the user to purchase more"
-                        ]}
-                    />
-
-                </div>
-            </FormGroup>
-        </Modal>
-    )
+            defaultValues={savedValues}
+            isChecked={enabled}
+            onSave={createCoupon}
+        />
+    );
 }

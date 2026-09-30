@@ -26,3 +26,15 @@ export async function savePromptTools(values: PromptToolsFormValues) {
     });
     return formatResponse(response);
 }
+
+/** Fills the form's required strings from an API response. */
+export function toFormValues(data: PromptToolsResponse): PromptToolsFormValues {
+    return {
+        humanHelpSupport: data.humanHelpSupport ?? "",
+        additionalInstructions: data.additionalInstructions ?? "",
+        knowledgeSearchEnabled: data.knowledgeSearchEnabled,
+        escalateConversationsEnabled: data.escalateConversationsEnabled,
+        orderLookupEnabled: data.orderLookupEnabled,
+        skipConversationEnabled: data.skipConversationEnabled,
+    };
+}
