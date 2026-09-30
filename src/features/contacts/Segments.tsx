@@ -45,59 +45,23 @@ export default function Segments() {
     const canDeleteSegments = useCan("contacts.delete")
     const [searchParams, setSearchParams] = useSearchParams()
     const search = searchParams.get("search") ?? ""
-    const [pagination, setPagination] = useState<{
-        cursor?: string
-        previous: (string | undefined)[]
-    }>({ previous: [] })
-
     const [deleteRequest, setDeleteRequest] = useState<{
         rows: Segment[]
         onDeleted?: (ids: string[]) => void
     } | null>(null)
     const [isAddOpen, setIsAddOpen] = useState(false)
 
-    const { data, isLoading, isPlaceholderData, error } = useSegmentsQuery(search.trim(), pagination.cursor)
-    const segments = data?.items ?? []
+    const { data, isLoading, isFetchingNextPage, hasNextPage, fetchNextPage, error } = useSegmentsQuery(search.trim())
+    const segments = data?.pages.flatMap((page) => page.items) ?? []
 
     const handleSearchChange = useDebounce((value: string) => {
-        setPagination({ previous: [] })
         setSearchParams((currentParams) => {
             const nextParams = new URLSearchParams(currentParams)
             if (value) nextParams.set("search", value)
             else nextParams.delete("search")
-            nextParams.delete("page")
-            nextParams.delete("cursor")
             return nextParams
         }, { replace: true })
     })
-
-    function goToPrevious() {
-        setPagination((current) => {
-            // Prefer the cursor the API hands us for the previous page. The stack of
-            // cursors we collected while paging forward is only a fallback for older
-            // responses that still omit `prevCursor`.
-            const prevCursor = data?.prevCursor ?? undefined
-            if (prevCursor) {
-                return {
-                    cursor: prevCursor,
-                    previous: current.previous.slice(0, -1),
-                }
-            }
-            if (current.previous.length === 0) return current
-            return {
-                cursor: current.previous.at(-1),
-                previous: current.previous.slice(0, -1),
-            }
-        })
-    }
-
-    function goToNext() {
-        if (!(data?.hasNext ?? data?.hasMore) || !data?.nextCursor || isPlaceholderData) return
-        setPagination(({ cursor, previous }) => ({
-            cursor: data.nextCursor ?? undefined,
-            previous: [...previous, cursor],
-        }))
-    }
 
     function requestDelete(rows: Segment[], onDeleted?: (ids: string[]) => void) {
         setDeleteRequest({ rows, onDeleted })
@@ -111,15 +75,10 @@ export default function Segments() {
                 title="All segaments"
                 columns={columns}
                 data={segments}
-                cursorPagination={{
-                    currentPage: data?.currentPage ?? 1,
-                    totalPages: data?.totalPages ?? 1,
-                    totalCount: data?.totalCount ?? 0,
-                    pageSize: data?.limit ?? 10,
-                    hasPrevious: Boolean(data?.hasPrev ?? pagination.previous.length > 0),
-                    hasNext: Boolean((data?.hasNext ?? data?.hasMore) && data?.nextCursor && !isPlaceholderData),
-                    onPrevious: goToPrevious,
-                    onNext: goToNext,
+                infiniteScroll={{
+                    onLoadMore: () => { void fetchNextPage() },
+                    hasMore: Boolean(hasNextPage),
+                    isFetching: isFetchingNextPage,
                 }}
                 selectable={canDeleteSegments}
                 getRowId={(row) => row.id}
