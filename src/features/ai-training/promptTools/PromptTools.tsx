@@ -61,9 +61,11 @@ export function PromptTools() {
                                     <div className="flex flex-col gap-2 w-full max-h-75 overflow-auto">
                                         <Heading size="md">Additional instructions</Heading>
                                         <AppSection>
-                                            {
-                                                data?.additionalInstructions
-                                            }
+                                            <p className="text-sm text-content-muted min-h-27.75 max-h-75 overflow-auto">
+                                                {
+                                                    data?.additionalInstructions
+                                                }
+                                            </p>
                                         </AppSection>
                                     </div>
                                 </div>
