@@ -179,7 +179,7 @@ export default function ActionModal<TValues extends FieldValues = FieldValues>({
                 <FormGroup gap="sm">
                     {hasToggle ? (
                         <Field orientation="horizontal">
-                            <FieldTitle>Enable tool</FieldTitle>
+                            <FieldTitle>{enabled ? "Disable" : "Enable"} tool</FieldTitle>
                             <ToggleField
                                 pressed={enabled}
                                 onPressedChange={setEnabled}
