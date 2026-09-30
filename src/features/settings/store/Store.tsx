@@ -40,12 +40,8 @@ export function Store() {
     const canDeleteStore = useCan("settings.store.delete");
     const [searchParams, setSearchParams] = useSearchParams();
     const search = searchParams.get("search") ?? "";
-    const [pagination, setPagination] = useState<{
-        cursor?: string;
-        previous: (string | undefined)[];
-    }>({ previous: [] });
-    const { data, isLoading, isPlaceholderData, error } = useStoreQuery(search.trim(), pagination.cursor);
-    const stores = data?.items ?? [];
+    const { data, isLoading, isFetchingNextPage, hasNextPage, fetchNextPage, error } = useStoreQuery(search.trim());
+    const stores = data?.pages.flatMap((page) => page.items) ?? [];
     const [editStore, setEditStore] = useState<Record<string, unknown> | null>(null);
     const [isOpen, setIsOpen] = useState(false);
     const [deleteRequest, setDeleteRequest] = useState<{
@@ -54,44 +50,13 @@ export function Store() {
     } | null>(null);
 
     const handleSearchChange = useDebounce((value: string) => {
-        setPagination({ previous: [] });
         setSearchParams((currentParams) => {
             const nextParams = new URLSearchParams(currentParams);
             if (value) nextParams.set("search", value);
             else nextParams.delete("search");
-            nextParams.delete("page");
-            nextParams.delete("cursor");
             return nextParams;
         }, { replace: true });
     });
-
-    function goToPrevious() {
-        setPagination((current) => {
-            // Prefer the cursor the API hands us for the previous page. The stack of
-            // cursors we collected while paging forward is only a fallback for older
-            // responses that still omit `prevCursor`.
-            const prevCursor = data?.prevCursor ?? undefined;
-            if (prevCursor) {
-                return {
-                    cursor: prevCursor,
-                    previous: current.previous.slice(0, -1),
-                };
-            }
-            if (current.previous.length === 0) return current;
-            return {
-                cursor: current.previous.at(-1),
-                previous: current.previous.slice(0, -1),
-            };
-        });
-    }
-
-    function goToNext() {
-        if (!(data?.hasNext ?? data?.hasMore) || !data?.nextCursor || isPlaceholderData) return;
-        setPagination(({ cursor, previous }) => ({
-            cursor: data.nextCursor ?? undefined,
-            previous: [...previous, cursor],
-        }));
-    }
 
     if (error) throw error;
 
@@ -120,15 +85,10 @@ export function Store() {
                 title="Store"
                 columns={columns}
                 data={stores}
-                cursorPagination={{
-                    currentPage: data?.currentPage ?? 1,
-                    totalPages: data?.totalPages ?? 1,
-                    totalCount: data?.totalCount ?? 0,
-                    pageSize: data?.limit ?? 10,
-                    hasPrevious: Boolean(data?.hasPrev ?? pagination.previous.length > 0),
-                    hasNext: Boolean((data?.hasNext ?? data?.hasMore) && data?.nextCursor && !isPlaceholderData),
-                    onPrevious: goToPrevious,
-                    onNext: goToNext,
+                infiniteScroll={{
+                    onLoadMore: () => { void fetchNextPage() },
+                    hasMore: Boolean(hasNextPage),
+                    isFetching: isFetchingNextPage,
                 }}
                 selectable={canDeleteStore}
                 mobileColumnSplit={['40%', '60%']}

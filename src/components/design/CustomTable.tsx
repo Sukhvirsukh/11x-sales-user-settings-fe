@@ -1,5 +1,6 @@
 import { useState, type ReactNode } from "react"
-import { ChevronLeft, ChevronRight, Inbox } from "lucide-react"
+import { Inbox, LoaderCircle } from "lucide-react"
+import { useInfiniteScroll, type InfiniteScrollOptions } from "@/hooks/useInfiniteScroll"
 import {
     Table,
     TableBody,
@@ -33,36 +34,8 @@ const MOBILE_LEAD_SHARE = "65%"
 /** Every other mobile track takes whatever room is left. */
 const MOBILE_FILL = "minmax(0, 1fr)"
 
-/** Highest page count that still lists every page number instead of collapsing the gaps. */
-const MAX_VISIBLE_PAGES = 5
-/** Pages kept on each side of the current page before the run collapses into dots. */
-const PAGE_SIBLINGS = 1
-
-/** A page number, or a collapsed run of pages between two numbers. */
-type PageItem = number | "ellipsis"
-
-/** Keep the first, last, and nearby pages visible; collapse larger gaps into an ellipsis. */
-function getPageItems(currentPage: number, totalPages: number): PageItem[] {
-    if (totalPages <= MAX_VISIBLE_PAGES) {
-        return Array.from({ length: totalPages }, (_, index) => index + 1)
-    }
-
-    const runLength = PAGE_SIBLINGS * 2 + 1
-    const runStart = Math.min(Math.max(currentPage - PAGE_SIBLINGS, 1), totalPages - runLength + 1)
-    const runEnd = runStart + runLength - 1
-    const items: PageItem[] = []
-
-    // One skipped page is clearer shown as a number than as dots.
-    if (runStart > 2) items.push(1, "ellipsis")
-    else for (let page = 1; page < runStart; page += 1) items.push(page)
-
-    for (let page = runStart; page <= runEnd; page += 1) items.push(page)
-
-    if (runEnd < totalPages - 1) items.push("ellipsis", totalPages)
-    else for (let page = runEnd + 1; page <= totalPages; page += 1) items.push(page)
-
-    return items
-}
+/** Stands in for a table without infinite scroll, keeping the hook's arguments stable. */
+const NO_INFINITE_SCROLL: InfiniteScrollOptions = { onLoadMore: () => {}, hasMore: false, isFetching: false }
 
 type CustomTableProps<T extends Record<string, unknown> = Record<string, unknown>> = {
     title?: string
@@ -92,23 +65,8 @@ type CustomTableProps<T extends Record<string, unknown> = Record<string, unknown
     emptyStateAction?: ReactNode
     /** Shown when `data` is empty. Replaces the default empty state entirely. */
     emptyState?: ReactNode
-    /** Enables pagination. Provide `page`, `total`, and `onPageChange` for server-side pagination. */
-    pagination?: {
-        pageSize?: number
-        page?: number
-        total?: number
-        onPageChange?: (page: number) => void
-    }
-    cursorPagination?: {
-        currentPage: number
-        totalPages: number
-        totalCount: number
-        pageSize: number
-        hasPrevious: boolean
-        hasNext: boolean
-        onPrevious: () => void
-        onNext: () => void
-    }
+    /** Appends a sentinel that pulls the next page once the reader scrolls it into view. */
+    infiniteScroll?: InfiniteScrollOptions
 } & (
         | { selectable: true; getRowId: (row: T) => string | number }
         | { selectable?: false; getRowId?: (row: T) => string | number }
@@ -127,31 +85,16 @@ export default function CustomTable<T extends Record<string, unknown>>({
     emptyDescription = "New entries will appear here once added.",
     emptyStateAction,
     emptyState,
-    pagination,
-    cursorPagination,
+    infiniteScroll,
     mobileColumnSplit,
     selectable = false,
     getRowId,
 }: CustomTableProps<T>) {
     const [selectedIds, setSelectedIds] = useState<Set<string | number>>(() => new Set())
-    const [localPage, setLocalPage] = useState(1)
+    const scroll = infiniteScroll ?? NO_INFINITE_SCROLL
+    const sentinelRef = useInfiniteScroll<HTMLDivElement>(scroll)
 
-    const pageSize = Math.max(1, cursorPagination?.pageSize ?? pagination?.pageSize ?? (data.length || 1))
-    const isServerPagination = Boolean(pagination?.onPageChange)
-    const isLocalPagination = Boolean(pagination && !isServerPagination && !cursorPagination)
-    const totalItems = cursorPagination?.totalCount
-        ?? (isServerPagination ? (pagination?.total ?? data.length) : data.length)
-    const totalPages = cursorPagination?.totalPages ?? Math.max(1, Math.ceil(totalItems / pageSize))
-    const requestedPage = isServerPagination ? (pagination?.page ?? 1) : localPage
-    const currentPage = cursorPagination?.currentPage ?? Math.min(requestedPage, totalPages)
-    const pageStart = (currentPage - 1) * pageSize
-    const displayedData = isLocalPagination ? data.slice(pageStart, pageStart + pageSize) : data
-    const hasPrevious = cursorPagination?.hasPrevious ?? currentPage > 1
-    const hasNext = cursorPagination?.hasNext ?? currentPage < totalPages
-
-    const displayedRowIds = displayedData.map((row, index) =>
-        getRowId ? getRowId(row) : (isLocalPagination ? pageStart : 0) + index,
-    )
+    const displayedRowIds = data.map((row, index) => (getRowId ? getRowId(row) : index))
     const selectedRows = data.filter((row, index) => selectedIds.has(getRowId ? getRowId(row) : index))
     const selectedCount = selectedRows.length
     const selectedDisplayedCount = displayedRowIds.filter((id) => selectedIds.has(id)).length
@@ -170,16 +113,12 @@ export default function CustomTable<T extends Record<string, unknown>>({
         })
     }
 
-    const changePage = pagination?.onPageChange ?? setLocalPage
-    const previousPage = cursorPagination?.onPrevious ?? (() => changePage(currentPage - 1))
-    const nextPage = cursorPagination?.onNext ?? (() => changePage(currentPage + 1))
-
     const selectAllCheckbox = (
         <Checkbox
             aria-label="Select all rows"
             checked={allSelected}
             indeterminate={partiallySelected}
-            disabled={displayedData.length === 0}
+            disabled={data.length === 0}
             onCheckedChange={(checked) => selectRows(displayedRowIds, checked)}
             className="data-indeterminate:border-primary data-indeterminate:bg-primary"
         />
@@ -273,7 +212,7 @@ export default function CustomTable<T extends Record<string, unknown>>({
                         </TableRow>
                     </TableHeader>
                     <TableBody className="grid gap-3 md:table-row-group">
-                        {displayedData.map((row, rowIndex) => (
+                        {data.map((row, rowIndex) => (
                             <TableRow
                                 key={displayedRowIds[rowIndex]}
                                 style={mobileRowStyle}
@@ -321,70 +260,17 @@ export default function CustomTable<T extends Record<string, unknown>>({
                     </TableBody>
                 </Table>
 
-                {(pagination || cursorPagination) && data.length > 0 && totalPages > 1 && (
-                    <nav
-                        aria-label="Pagination"
-                        className="flex w-full flex-wrap text-center items-center justify-between gap-3 border-t border-section-border px-0 py-3 text-sm text-muted-foreground md:px-5"
-                    >
-                        <div className="grow text-left" aria-live="polite">
-                            <p className="text-foreground">
-                                Page {currentPage} of {totalPages}
-                            </p>
-                            {/* <p>
-                                {displayedData.length === 0
-                                    ? `Showing 0 of ${totalItems}`
-                                    : `Showing ${displayedStart}–${displayedEnd} of ${totalItems}`}
-                            </p> */}
-                        </div>
-                        <div className="mx-auto flex items-center gap-1">
-                            <Button
-                                variant="primary"
-                                size="xs"
-                                className="p-1"
-                                aria-label="Previous page"
-                                disabled={!hasPrevious}
-                                onClick={previousPage}
-                            >
-                                <ChevronLeft className="size-4" />
-                            </Button>
-                            {!cursorPagination && getPageItems(currentPage, totalPages).map((item, index) =>
-                                item === "ellipsis" ? (
-                                    <span
-                                        key={`ellipsis-${index}`}
-                                        aria-hidden="true"
-                                        className="px-1 text-content-muted"
-                                    >
-                                        …
-                                    </span>
-                                ) : (
-                                    <Button
-                                        key={item}
-                                        variant={item === currentPage ? "primary" : "secondary"}
-                                        size="xs"
-                                        className={cn(
-                                            "min-w-7 px-1.5",
-                                            item !== currentPage && "border-0",
-                                        )}
-                                        aria-label={`Page ${item}`}
-                                        aria-current={item === currentPage ? "page" : undefined}
-                                        onClick={() => changePage(item)}
-                                    >
-                                        {item}
-                                    </Button>
-                                ),
-                            )}
-                            <Button
-                                variant="primary"
-                                size="xs"
-                                className="p-1"
-                                aria-label="Next page"
-                                disabled={!hasNext}
-                                onClick={nextPage}
-                            >
-                                <ChevronRight className="size-4" />
-                            </Button>
-                        </div>
-                    </nav>
+                {/* The sentinel asks for the next page once the reader scrolls it into view, and the
+                    slot it sits in stays empty until that page is on its way. */}
+                {infiniteScroll && data.length > 0 && (
+                    <div ref={sentinelRef} className="flex w-full items-center justify-center">
+                        {scroll.isFetching && (
+                            <span role="status" className="flex items-center gap-2 py-3 text-sm text-content-muted">
+                                <LoaderCircle aria-hidden="true" className="size-4 animate-spin" />
+                                Loading more…
+                            </span>
+                        )}
+                    </div>
                 )}
 
                 {/* Empty state */}
