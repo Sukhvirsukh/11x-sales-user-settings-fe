@@ -7,13 +7,21 @@ export interface PromptToolsResponse {
     skipConversationEnabled: boolean;
 }
 
+interface PromptToolApiItem {
+    label: string;
+    description: string;
+    enabled: boolean;
+}
+
 export interface PromptToolsApiResponse {
     humanHelpSupport?: string;
     additionalInstructions?: string;
-    knowledgeSearch?: { enabled?: boolean };
-    escalateConversations?: { enabled?: boolean };
-    orderLookup?: { enabled?: boolean };
-    skipConversation?: { enabled?: boolean };
+    tools: {
+        knowledgeSearch: PromptToolApiItem;
+        escalateConversations: PromptToolApiItem;
+        orderLookup: PromptToolApiItem;
+        skipConversation: PromptToolApiItem;
+    };
 }
 
 export interface PromptToolsFormValues {
