@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { useQueryClient } from "@tanstack/react-query";
 import { UnSavedChangesBar } from "@/components/shared/unsavedChangesBar";
-import ErrorDialog from "@/components/shared/ErrorDialog";
+import ErrorModal from "@/components/shared/ErrorModal";
 import {
     Accordion,
     AccordionContent,
@@ -32,7 +32,7 @@ export default function Visibility() {
     const [isFormReady, setIsFormReady] = useState(false);
     const [errorDialogOpen, setErrorDialogOpen] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string | undefined>();
-    const [validationErrors, setValidationErrors] = useState<string[]>([]);
+    const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
 
     useEffect(() => {
         if (query.data) {
@@ -44,7 +44,7 @@ export default function Visibility() {
     function onDiscardChanges() {
         form.reset(query.data);
         form.clearErrors();
-        setValidationErrors([]);
+        setValidationErrors({});
         setErrorMessage(undefined);
         setErrorDialogOpen(false);
     }
@@ -67,16 +67,17 @@ export default function Visibility() {
                 }
             });
 
-            const messages = result.error.issues.map((issue) => {
+            const errors: Record<string, string> = {};
+            result.error.issues.forEach((issue) => {
                 const field = issue.path[0]
                     ?.toString()
                     .replace(/([A-Z])/g, " $1")
                     .replace(/^./, (character) => character.toUpperCase())
                     .trim() || "Field";
-                return `${field}: ${issue.message}`;
+                errors[field] ??= issue.message;
             });
 
-            setValidationErrors(messages);
+            setValidationErrors(errors);
             setErrorMessage(undefined);
             setErrorDialogOpen(true);
             return;
@@ -95,7 +96,7 @@ export default function Visibility() {
                 queryClient.setQueryData(visibilityQueryKey, savedData);
                 form.reset(savedData);
             } catch (error) {
-                setValidationErrors([]);
+                setValidationErrors({});
                 setErrorMessage(error instanceof Error ? error.message : "Unable to save visibility settings.");
                 setErrorDialogOpen(true);
             }
@@ -175,12 +176,12 @@ export default function Visibility() {
                     </div>
                 </div>
 
-                <ErrorDialog
+                <ErrorModal
                     open={errorDialogOpen}
                     onOpenChange={setErrorDialogOpen}
-                    title="Validation Error"
-                    description={errorMessage}
+                    message={errorMessage}
                     errors={validationErrors}
+                // onConfirm={saveChange}
                 />
 
             </div>
