@@ -138,7 +138,8 @@ src/
 │   │   │   ├── AddNote.tsx                 # "Add note" popup (textarea + Save/Cancel)
 │   │   │   └── index.ts
 │   │   ├── skeletons/
-│   │   │   └── TableSkeletons.tsx   # TableSkeleton (columns/rows/showHeader)
+│   │   │   ├── TableSkeletons.tsx   # TableSkeleton (columns/rows/showHeader)
+│   │   │   └── PlanSkeletons.tsx    # PlanSkeleton (plan section loading state)
 │   │   └── unsavedChangesBar/       # Unsaved changes warning system
 │   │       ├── UnSavedChangesBar.tsx
 │   │       ├── useUnsavedChangesWarning.ts
@@ -521,6 +522,9 @@ Generic table (`T extends Record<string, unknown>`) wrapping `AppSection` + the 
 
 ### TableSkeleton (`src/components/shared/skeletons/TableSkeletons.tsx`)
 Loading placeholder for tables built from `Skeleton`. Props: `columns`, `rows`, `showHeader`.
+
+### PlanSkeleton (`src/components/shared/skeletons/PlanSkeletons.tsx`)
+Loading placeholder for the plan section, rendered by `Plan` in place of its card carousel. Renders the `AppSection` + "Plans" heading plus three `PlanCard`-shaped placeholders (name, price, four feature rows and an upgrade button) that reuse the real card's responsive sizing classes, so the cards land in the same place once the query resolves.
 
 ### SearchField (`src/components/shared/SearchField.tsx`)
 Responsive search input — full `InputField` on desktop, popover-wrapped input on mobile. Props: `onSearchChange(value)`, `showMobilePanel` (default `true`), `viewport` (`"xs" | "sm" | "md" | "lg"`, default `"md"` — the breakpoint at which the popover is replaced by the inline field), `fullWidth`, and `label` (accessible label, default `"Search knowledge base"`).

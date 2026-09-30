@@ -1,8 +1,9 @@
 import AppSection from "@/components/design/AppSectoin";
 import Heading from "@/components/design/Heading";
+import PlanSkeleton from "@/components/shared/skeletons/PlanSkeletons";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Check, ChevronLeft, ChevronRight, Loader } from "lucide-react";
+import { Check, ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useCan } from "@/features/auth";
@@ -162,7 +163,7 @@ export function Plan() {
         });
     }
 
-    if (isLoading) return <Loader />
+    if (isLoading) return <PlanSkeleton />;
 
     if (error) {
         return <p className="text-sm text-danger">Unable to load plans. Please try again.</p>;
