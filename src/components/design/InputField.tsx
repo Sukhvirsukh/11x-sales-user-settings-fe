@@ -82,13 +82,14 @@ const InputField = React.forwardRef<HTMLInputElement, InputFieldProps>(
 
                     {/* Base Primitive Input */}
                     <Input
+                        data-compact-text-field
                         id={inputId}
                         ref={ref}
                         type={type}
                         onKeyDown={handleKeyDown}
                         onPaste={handlePaste}
                         className={cn(
-                            "max-sm:text-sm max-sm:placeholder:text-sm",
+                            "text-sm sm:text-base placeholder:text-sm sm:placeholder:text-base",
                             isNumberType &&
                             "[appearance:textfield] [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none",
                             className,

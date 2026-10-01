@@ -448,3 +448,16 @@ input[data-slot="input"]:-webkit-autofill:focus {
     font-size: var(--text-sm);
   }
 }
+
+/* Shared text fields use their compact mobile size; the broader rule above covers other controls. */
+input[data-compact-text-field],
+textarea[data-compact-text-field] {
+  font-size: var(--text-sm);
+}
+
+@media (min-width: 640px) {
+  input[data-compact-text-field],
+  textarea[data-compact-text-field] {
+    font-size: var(--text-base);
+  }
+}

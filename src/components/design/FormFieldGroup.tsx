@@ -30,7 +30,7 @@ export default function FormFieldGroup({ label, toggles, inputDisabled, inputPla
                     label
                 }
             </Label>
-            <div className="flex gap-1.5">
+            <div className="flex md:gap-1.5 gap-0.5 flex-wrap">
                 {
                     toggles.map((toggle) => (
                         <Toggle

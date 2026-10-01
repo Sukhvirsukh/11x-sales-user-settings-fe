@@ -11,16 +11,14 @@ import { useNavigate } from "react-router";
 
 export default function TestAgent() {
     const { completedSteps } = useOnBoardingStore()
-    const user = useAuthStore((state) => state.user);
-    const { setUser } = useAuthStore();
+    const completeOnboarding = useAuthStore((state) => state.completeOnboarding);
     const navigate = useNavigate();
 
     const { mutate, isPending } = useMutation({
         mutationFn: completeBoarding,
         onSuccess: () => {
-            if (user) setUser({ ...user, isOnBoarding: false })
-            window.localStorage.setItem("vitalb.isOnBoarding", "false")
-            navigate("/");
+            completeOnboarding();
+            navigate("/", { replace: true });
         }
     })
 

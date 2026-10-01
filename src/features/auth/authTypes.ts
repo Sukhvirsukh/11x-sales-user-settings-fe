@@ -47,6 +47,7 @@ export interface AuthStore {
   permissions: Permission[];
   isOnBoarding: boolean;
   setUser: (user: AuthUser | undefined) => void;
+  completeOnboarding: () => void;
   clearUser: () => void;
 }
 

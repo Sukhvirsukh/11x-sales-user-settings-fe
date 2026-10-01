@@ -18,16 +18,16 @@ export default function OnBoarding() {
                     />
                     <p className="font-medium">Vitlab</p>
                 </div>
-                <Heading size="3xl" responsive>
+                <Heading size="4xl" className="max-sm:text-3xl">
                     Hey! Lets start now
                 </Heading>
-                <p>
+                <p className="text-center">
                     Sign in to manage your AI agents, databases, and workspace.
                 </p>
             </div>
             <div className="mt-6 w-full max-w-190">
                 <AppCard
-                    className="md:py-7.5 md:px-5 relative"
+                    className="p-4 md:py-7.5 md:px-5 relative"
                 >
                     <OnBoardingProgress />
                     <div className="flex flex-col gap-2.5">

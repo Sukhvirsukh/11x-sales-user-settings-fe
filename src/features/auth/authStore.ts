@@ -12,7 +12,7 @@ try {
     // In-memory auth still works when storage is unavailable.
 }
 
-const isOnBoarding = window.localStorage.getItem("vitalb.isOnBoarding") === "false";
+const ONBOARDING_STORAGE_KEY = "vitalb.isOnBoarding";
 
 export const useAuthStore = create<AuthStore>((set) => ({
     user: null,
@@ -20,7 +20,7 @@ export const useAuthStore = create<AuthStore>((set) => ({
     email: null,
     role: null,
     phone: null,
-    isOnBoarding: false,
+    isOnBoarding: true,
     permissions: [],
     setUser: (user) =>
         set({
@@ -29,8 +29,13 @@ export const useAuthStore = create<AuthStore>((set) => ({
             email: user?.email ?? null,
             role: user?.role ?? null,
             phone: user?.phone ?? null,
-            isOnBoarding: user?.isOnBoarding ?? !isOnBoarding,
+            // Temporary source of truth until backend onboarding is connected.
+            isOnBoarding: !!user && localStorage.getItem(ONBOARDING_STORAGE_KEY) !== "false",
             permissions: [...getPermissions(user?.permissions)],
         }),
+    completeOnboarding: () => {
+        localStorage.setItem(ONBOARDING_STORAGE_KEY, "false");
+        set({ isOnBoarding: false });
+    },
     clearUser: () => set({ user: null, name: null, email: null, role: null, phone: null, isOnBoarding: false, permissions: [] }),
 }));

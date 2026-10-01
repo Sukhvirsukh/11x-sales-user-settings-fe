@@ -59,6 +59,8 @@ Defined in `src/config/routes.tsx` (`createBrowserRouter`, all pages lazy-loaded
 
 `AppLayout` wraps all protected routes; the `/sign-in`, `/sign-up`, and `/forgot-password` routes sit outside it. The router root has `errorElement: <ErrorPage />`.
 
+Onboarding temporarily uses browser-local storage only: `authStore.setUser` reads `vitalb.isOnBoarding` on login and profile refresh. Only the string `"false"` means onboarding is complete; missing or other values require `/onboarding`. `completeOnboarding` saves completion and updates the store together. `AppLayout` redirects incomplete users to onboarding and completed users away from that route. The API onboarding flag is ignored until backend integration replaces this temporary browser-wide setting (shared by accounts in the same browser).
+
 Inside `AppLayout` every protected page renders through `RouteGuard`, which is the single enforcement point for access:
 
 - A route declares the capability it needs in `handle: { permission: "…" } ` (typed with `satisfies RouteHandle`), e.g. `{ path: "plan", element: <Plan />, handle: { permission: "settings.plan.view" } }`.

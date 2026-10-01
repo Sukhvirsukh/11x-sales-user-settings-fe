@@ -38,10 +38,7 @@ function AppLayout() {
 
         authRefreshRequest()
             .then((refreshedUser) => {
-                if (isActive)
-                    setUser({
-                        ...refreshedUser,
-                    });
+                if (isActive) setUser(refreshedUser);
             }).catch(() => {
                 if (!isActive) return;
                 clearAuthToken();
@@ -72,17 +69,13 @@ function AppLayout() {
         );
     }
 
-    if (isOnBoarding && location.pathname !== "/onboarding") {
-        return (
-            <Navigate
-                to="/onboarding"
-                replace
-                state={{ from: location }}
-            />
-        );
+    if (isOnBoarding) {
+        return location.pathname === "/onboarding"
+            ? <Outlet />
+            : <Navigate to="/onboarding" replace />;
     }
 
-    if (location.pathname === "/onboarding") return <Outlet />;
+    if (location.pathname === "/onboarding") return <Navigate to="/" replace />;
 
     if (shouldHideSidebar) {
         return (
