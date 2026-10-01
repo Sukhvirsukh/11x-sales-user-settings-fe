@@ -169,7 +169,9 @@ export function getHomeRoute(permissions: ReadonlySet<Permission>): string {
     return HOME_ROUTES.find(({ permission }) => permissions.has(permission))?.path ?? "/";
 }
 
-/** Narrows arbitrary route `handle` data to a capability name. */
+/** Checks route permissions against the sections and actions this app supports. */
 export function isPermission(value: unknown): value is Permission {
-    return typeof value === "string" && value.includes(".");
+    return typeof value === "string" && PERMISSION_GROUPS.some(({ section }) =>
+        PERMISSION_ACTIONS.some((action) => value === `${section}.${action}`),
+    );
 }

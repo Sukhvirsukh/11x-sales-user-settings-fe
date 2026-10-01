@@ -59,10 +59,12 @@ Defined in `src/config/routes.tsx` (`createBrowserRouter`, all pages lazy-loaded
 
 `AppLayout` wraps all protected routes; the `/sign-in`, `/sign-up`, and `/forgot-password` routes sit outside it. The router root has `errorElement: <ErrorPage />`.
 
+Onboarding temporarily uses browser-local storage only: `authStore.setUser` reads `vitalb.isOnBoarding` on login and profile refresh. Only the string `"false"` means onboarding is complete; missing or other values require `/onboarding`. `completeOnboarding` saves completion and updates the store together. `AppLayout` redirects incomplete users to onboarding and completed users away from that route. The API onboarding flag is ignored until backend integration replaces this temporary browser-wide setting (shared by accounts in the same browser).
+
 Inside `AppLayout` every protected page renders through `RouteGuard`, which is the single enforcement point for access:
 
 - A route declares the capability it needs in `handle: { permission: "…" } ` (typed with `satisfies RouteHandle`), e.g. `{ path: "plan", element: <Plan />, handle: { permission: "settings.plan.view" } }`.
-- `RouteGuard` reads `useMatches()`, takes the **deepest** match that declares a permission (so a parent's declaration covers its children), and checks it against the signed-in role. Routes without a `handle` (the `*` catch-all) stay open to every signed-in user.
+- `RouteGuard` reads `useMatches()`, takes the **deepest** match that declares a permission (so a parent's declaration covers its children), and checks it against the signed-in role. Declared permissions must match the supported section/action catalog; invalid declarations render `ForbiddenPage` (403). Routes without a permission declaration (the `*` catch-all) stay open to every signed-in user.
 - A blocked visit redirects to the role's own home route. If that home is itself blocked (unknown role, misconfigured policy) `ForbiddenPage` (403) renders instead, so a blocked route can never bounce or loop.
 
 Route entries therefore name **capabilities, never roles** — the grants themselves come from the backend, and `src/features/auth/permissions.ts` only declares the catalog of sections/actions the UI can render and check.

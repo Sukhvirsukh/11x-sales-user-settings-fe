@@ -4,19 +4,23 @@ import {
     useLocation,
     useNavigate,
 } from "react-router";
-import { useEffect } from "react";
-import Sidebar from "./sidebar";
-import MobileTopbar from "./MobileTopbar";
-import MobileTopbarWrapper from "./MobileTopbarWrapper";
+import { lazy, useEffect } from "react";
 import { Spinner } from "@/components/ui/spinner";
 import { authRefreshRequest } from "@/features/auth/authApi";
 import { useAuthStore } from "@/features/auth/authStore";
 import { clearAuthToken, getAuthToken } from "@/features/auth/authStorage";
 import { isSidebarHidden } from "./sidebar/isSidebarHidden";
 
+const loadSidebar = () => import("./sidebar");
+const loadMobileTopbar = () => import("./MobileTopbar");
+const Sidebar = lazy(loadSidebar);
+const MobileTopbar = lazy(loadMobileTopbar);
+const MobileTopbarWrapper = lazy(() => import("./MobileTopbarWrapper"));
+
 function AppLayout() {
     const authToken = getAuthToken();
     const user = useAuthStore((state) => state.user);
+    const isOnBoarding = useAuthStore((state) => state.isOnBoarding);
     const setUser = useAuthStore((state) => state.setUser);
     const clearUser = useAuthStore((state) => state.clearUser);
     const location = useLocation();
@@ -27,6 +31,10 @@ function AppLayout() {
         if (!authToken || user) return;
 
         let isActive = true;
+
+        if (location.pathname !== "/onboarding" && !shouldHideSidebar) {
+            void Promise.allSettled([loadSidebar(), loadMobileTopbar()]);
+        }
 
         authRefreshRequest()
             .then((refreshedUser) => {
@@ -41,7 +49,7 @@ function AppLayout() {
         return () => {
             isActive = false;
         };
-    }, [authToken, clearUser, setUser, user]);
+    }, [authToken, clearUser, location.pathname, navigate, setUser, shouldHideSidebar, user]);
 
     if (!authToken) {
         return (
@@ -60,6 +68,14 @@ function AppLayout() {
             </div>
         );
     }
+
+    if (isOnBoarding) {
+        return location.pathname === "/onboarding"
+            ? <Outlet />
+            : <Navigate to="/onboarding" replace />;
+    }
+
+    if (location.pathname === "/onboarding") return <Navigate to="/" replace />;
 
     if (shouldHideSidebar) {
         return (

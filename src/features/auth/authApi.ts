@@ -26,14 +26,15 @@ function getUser(
   const name =
     user.name?.trim() || fallbackName || "Account";
 
-  return {
-    id: user.id,
-    name,
-    email: user.email,
-    role: user.role,
-    permissions: user.permissions,
-    phone: user.phone,
-  };
+    return {
+      id: user.id,
+      name,
+      email: user.email,
+      role: user.role,
+      permissions: user.permissions,
+      phone: user.phone,
+      isOnBoarding: user.isOnBoarding,
+    };
 }
 
 let pendingAuthRefresh: Promise<AuthUser> | null = null;

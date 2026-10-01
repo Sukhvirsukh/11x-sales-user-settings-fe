@@ -141,6 +141,7 @@ export function MultiTextField({
                     stays beside the input instead of wrapping onto its own line. */}
                 <div className="flex min-w-[10rem] flex-1 items-center gap-1.5">
                     <Input
+                        data-compact-text-field
                         id={inputId}
                         type="text"
                         value={inputValue}
@@ -156,7 +157,7 @@ export function MultiTextField({
                                 .join(" ") || undefined
                         }
                         aria-invalid={Boolean(error) || undefined}
-                        className="h-auto min-w-0 flex-1 py-0.5"
+                        className="h-auto min-w-0 flex-1 py-0.5 text-sm sm:text-base"
                     />
                 </div>
                 {/* Explicit affordance: the same commit as pressing Enter, so the

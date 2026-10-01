@@ -63,14 +63,14 @@ export function Overview() {
                     ))}
                 </div>
                 <ChatToSaleChart panel={data?.chatToSaleConversion} isLoading={isLoading} />
-                <div className="grid min-w-0 grid-cols-1 items-start gap-4 sm:grid-cols-2">
-                    <div className="sm:col-start-2 sm:row-start-1">
+                <div className="grid min-w-0 grid-cols-1 items-start gap-4 lg:grid-cols-2">
+                    <div className="lg:col-start-2 lg:row-start-1">
                         <ActionTrend panel={data?.actionTrends} isLoading={isLoading} />
                     </div>
-                    <div className="sm:col-start-1 sm:row-span-2 sm:row-start-1">
+                    <div className="lg:col-start-1 lg:row-span-2 lg:row-start-1">
                         <PerformanceMatrix panel={data?.performanceMetrics} isLoading={isLoading} />
                     </div>
-                    <div className="sm:col-start-2 sm:row-start-2">
+                    <div className="lg:col-start-2 lg:row-start-2">
                         <AverageOrderValue panel={data?.averageOrderValue} isLoading={isLoading} />
                     </div>
                 </div>

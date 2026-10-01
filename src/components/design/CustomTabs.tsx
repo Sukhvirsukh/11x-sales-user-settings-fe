@@ -103,7 +103,7 @@ export function CustomTabs({
                         )}
                     >
                         {tab.icon && <span className="mr-1.5">{tab.icon}</span>}
-                        {tab.label}
+                        <span className="min-w-0 truncate">{tab.label}</span>
                     </TabsTrigger>
                 ))}
             </TabsList>

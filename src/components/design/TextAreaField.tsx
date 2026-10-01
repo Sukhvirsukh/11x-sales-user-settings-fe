@@ -40,12 +40,13 @@ const TextAreaField = React.forwardRef<HTMLTextAreaElement, TextAreaFieldProps>(
                 {label ? <Label className={labelClassName} htmlFor={textareaId}>{label}</Label> : null}
 
                 <Textarea
+                    data-compact-text-field
                     id={textareaId}
                     ref={ref}
                     className={cn(
                         "min-h-[80px] w-full rounded-xl border border-control-border-subtle px-3.5 py-2 transition-all focus-visible:border-field-border focus-visible:ring-2 focus-visible:ring-focus-ring/20",
                         "bg-surface-raised focus-visible:bg-surface-raised",
-                        "text-sm text-field-text placeholder:text-placeholder",
+                        "text-sm sm:text-base text-field-text placeholder:text-placeholder",
                         variant === "light"
                             ? "bg-field-subtle-background border-section-border focus-visible:bg-field-subtle-background focus-visible:border-section-border"
                             : "",
