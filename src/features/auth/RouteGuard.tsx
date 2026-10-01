@@ -9,13 +9,16 @@ export type RouteHandle = { permission?: Permission };
 /**
  * Deepest match that declares a permission wins, so a parent route's declaration
  * covers its children and a child can still tighten the requirement.
+ * An invalid declaration returns null so it cannot leave the route unprotected.
  */
-function requiredPermission(matches: UIMatch[]): Permission | undefined {
-    for (let index = matches.length - 1; index >= 0; index -= 1) {
-        const handle = matches[index]?.handle as RouteHandle | undefined;
-        if (isPermission(handle?.permission)) return handle.permission;
-    }
-    return undefined;
+function requiredPermission(matches: UIMatch[]): Permission | null | undefined {
+    return matches
+        .map(({ handle }) =>
+            handle && typeof handle === "object" && "permission" in handle
+                ? isPermission(handle.permission) ? handle.permission : null
+                : undefined,
+        )
+        .findLast((permission) => permission !== undefined);
 }
 
 /**
@@ -32,7 +35,9 @@ export default function RouteGuard() {
     const { pathname } = useLocation();
     const required = requiredPermission(matches);
 
-    if (!required || permissions.has(required)) return <Outlet />;
+
+    if (required === null) return <ForbiddenPage />;
+    if (required === undefined || permissions.has(required)) return <Outlet />;
 
     const home = getHomeRoute(permissions);
     return pathname === home ? <ForbiddenPage /> : <Navigate to={home} replace />;
