@@ -2,7 +2,7 @@ import { ListFilter, Search, X } from "lucide-react";
 import { Button } from "../ui/button";
 import { InputField } from "../design/InputField";
 import FilterModal, { type FilterModalProps } from "./FilterModal";
-import { useRef, useState, type ReactNode } from "react";
+import { useRef, useState, type ReactNode, type MouseEventHandler } from "react";
 import { cn } from "@/lib/utils";
 
 export type SearchFieldViewport = "xs" | "sm" | "md" | "lg";
@@ -10,6 +10,8 @@ type FilterModalOptions = Omit<FilterModalProps, "trigger" | "children" | "open"
 
 export interface SearchFieldProps {
     onSearchChange: (value: string) => void
+    onFilterClick?: MouseEventHandler<HTMLButtonElement>
+    filterCount?: number
     showMobilePanel?: boolean
     /** Breakpoint at which the mobile button is replaced by the inline search field. */
     viewport?: SearchFieldViewport
@@ -73,6 +75,8 @@ export default function SearchField({
     filterContent,
     filterModalProps,
     showFilterModal = true,
+    onFilterClick,
+    filterCount = 0,
 }: SearchFieldProps) {
 
     const [search, setSearch] = useState("");
@@ -89,6 +93,21 @@ export default function SearchField({
         onSearchChange(value);
     };
 
+
+    const filterControl = onFilterClick ? (
+        <button
+            type="button"
+            onClick={onFilterClick}
+            aria-label={`Open filters (${filterCount} applied)`}
+            aria-haspopup="dialog"
+            className="flex min-h-6 min-w-6 shrink-0 cursor-pointer items-center justify-center gap-1 rounded-sm text-content-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-primary"
+        >
+            <ListFilter className="size-4" aria-hidden="true" />
+            {filterCount > 0 && <span className="text-xs font-medium text-primary" aria-hidden="true">{filterCount}</span>}
+        </button>
+    ) : showFilterModal ? (
+        <FilterTrigger modalProps={filterModalProps}>{filterContent}</FilterTrigger>
+    ) : <ListFilter className="size-4" aria-hidden="true" />;
 
     return (
         <>
@@ -123,7 +142,7 @@ export default function SearchField({
                                 startIcon={<Search className="size-4" />}
                                 endIcon={
                                     <span className="flex items-center gap-2">
-                                        {showFilterModal ? <FilterTrigger modalProps={filterModalProps}>{filterContent}</FilterTrigger> : <ListFilter className="size-4" aria-hidden="true" />}
+                                        {filterControl}
                                         <button
                                             type="button"
                                             aria-label="Close search"
@@ -156,7 +175,7 @@ export default function SearchField({
                     startIcon={<Search className="size-4" />}
                     containerClassName="h-[37px] md:w-full"
                     endIcon={
-                        showFilterModal ? <FilterTrigger modalProps={filterModalProps}>{filterContent}</FilterTrigger> : <ListFilter className="size-4" aria-hidden="true" />
+                        filterControl
                     }
                     variant="default"
                 />

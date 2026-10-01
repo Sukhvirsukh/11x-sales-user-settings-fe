@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useSearchParams } from "react-router";
 import { Plus, SquarePen, Trash } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
@@ -12,9 +11,8 @@ import { useKnowledgeBaseQuery } from "./useKnowledgeBaseQuery";
 import { dateFormater } from "@/lib/utils";
 import type { KnowledgeBase } from "./knowledgeBaseTypes";
 import DeleteKnowledgeBase from "./DeleteKnowledgeBase";
-import SearchField from "@/components/shared/SearchField";
+import KnowledgeBaseFilter from "./KnowledgeBaseFilter";
 import { useCan } from "@/features/auth";
-import { useDebounce } from "@/hooks/useDebounce";
 
 
 function toDateValue(value: unknown): string | Date | null {
@@ -68,27 +66,14 @@ export function KnowledgeBase() {
 
     const canCreateKnowledge = useCan("aiTraining.create");
     const canDeleteKnowledge = useCan("aiTraining.delete");
-    const [searchParams, setSearchParams] = useSearchParams();
-    const search = searchParams.get("search") ?? "";
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [editData, setEditData] = useState<KnowledgeBase | null>(null);
     const [deleteRequest, setDeleteRequest] = useState<{
         knowledges: KnowledgeBase[];
         onDeleted?: (ids: string[]) => void;
     } | null>(null);
-    const { data, isLoading, isFetchingNextPage, hasNextPage, fetchNextPage, error } = useKnowledgeBaseQuery(search.trim());
+    const { data, isLoading, isFetchingNextPage, hasNextPage, fetchNextPage, error, hasFilters } = useKnowledgeBaseQuery();
     const items = data?.pages.flatMap((page) => page.items) ?? [];
-
-    const handleSearchChange = useDebounce((value: string) => {
-        setSearchParams((currentParams) => {
-            const nextParams = new URLSearchParams(currentParams);
-            if (value) nextParams.set("search", value);
-            else nextParams.delete("search");
-            return nextParams;
-        }, { replace: true });
-    });
-
-    if (error) return <div>Error: {error.message}</div>
 
     const onEdit = (knowledge: KnowledgeBase) => {
         setIsAddModalOpen(true);
@@ -116,8 +101,8 @@ export function KnowledgeBase() {
                     isFetching: isFetchingNextPage,
                 }}
                 emptyState={isLoading ? <TableSkeleton columns={6} showHeader={false} /> : undefined}
-                emptyMessage={search.trim() ? "No matching knowledge found" : undefined}
-                emptyDescription={search.trim() ? "Try a different search term." : undefined}
+                emptyMessage={hasFilters ? "No matching knowledge found" : undefined}
+                emptyDescription={hasFilters ? "Try a different search term or filter." : undefined}
                 selectable={canDeleteKnowledge}
                 getRowId={(row) => String(row.id)}
                 bulkActions={canDeleteKnowledge ? ((rows, deselectRows) => (
@@ -130,7 +115,7 @@ export function KnowledgeBase() {
                 )) : undefined}
                 headerActions={
                     <div className="flex items-center gap-2.5">
-                        <SearchField onSearchChange={handleSearchChange} />
+                        <KnowledgeBaseFilter />
                         {canCreateKnowledge && (
                             <Button
                                 variant="primary"

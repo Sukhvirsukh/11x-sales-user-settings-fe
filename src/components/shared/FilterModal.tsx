@@ -1,10 +1,11 @@
 import Modal from "../design/Modal";
 import { Button } from "../ui/button";
 import { ListFilter } from "lucide-react";
-import { useState, type ReactElement, type ReactNode } from "react";
+import { useState, type ComponentProps, type ReactElement, type ReactNode } from "react";
 
 export interface FilterModalProps {
-    trigger: ReactElement;
+    trigger?: ReactElement;
+    finalFocus?: ComponentProps<typeof Modal>["finalFocus"];
     children?: ReactNode;
     selectedCount?: number;
     onClearAll?: () => void;
@@ -28,6 +29,7 @@ function EmptyFilterState() {
 
 export default function FilterModal({
     trigger,
+    finalFocus,
     children,
     selectedCount = 0,
     onClearAll,
@@ -53,6 +55,7 @@ export default function FilterModal({
             open={isOpen}
             onOpenChange={handleOpenChange}
             trigger={trigger}
+            finalFocus={finalFocus}
             title={`Filters (${String(selectedCount)})`}
             headerAction={
                 <Button
