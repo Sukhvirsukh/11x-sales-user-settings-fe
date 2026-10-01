@@ -7,7 +7,7 @@ import Label from "./Label"
 import HelperText from "./HelperText"
 
 export interface InputFieldProps extends InputProps {
-    label?: string
+    label?: React.ReactNode
     hint?: string
     error?: string
     startIcon?: React.ReactNode
