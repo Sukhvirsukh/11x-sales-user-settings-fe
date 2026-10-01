@@ -1,7 +1,7 @@
 import { lazy } from "react";
 import { createBrowserRouter, Navigate, Outlet } from "react-router";
 import ErrorPage from "@/pages/ErrorPage";
-import AppLayout from "../components/layout/AppLayou";
+import AppLayout from "../components/layout/AppLayout";
 import { getAuthToken } from "@/features/auth/authStorage";
 import RouteGuard, { type RouteHandle } from "@/features/auth/RouteGuard";
 
@@ -43,6 +43,7 @@ const Archived = lazy(() => import("@/features/conversations/archived"));
 
 const UserProfileDetails = lazy(() => import("@/features/contacts/UserProfileDetails"));
 const Segments = lazy(() => import("@/features/contacts/Segments"));
+const OnBoardingPage = lazy(() => import("@/pages/OnBoardingPage"));
 
 function GuestOnlyRoute() {
   return getAuthToken() ? <Navigate to="/" replace /> : <Outlet />;
@@ -74,6 +75,7 @@ export const router = createBrowserRouter([
              */
             element: <RouteGuard />,
             children: [
+              { path: '/onboarding', element: <OnBoardingPage /> },
               { path: "/", element: <OverviewPage />, handle: { permission: "overview.view" } satisfies RouteHandle },
               {
                 path: "/contacts",
