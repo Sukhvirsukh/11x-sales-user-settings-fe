@@ -54,10 +54,11 @@ function Carousel({ items }: { items: KnowMoreItem[] }) {
                     ))}
                 </div>
 
-                {/* Sized to a single video card (65% wide, 1.75 aspect ratio → 65% / 1.75 of
-                    the carousel width) so the nav buttons sit in the middle of the video
-                    thumbnails, not the whole carousel including the titles underneath. */}
-                <div className="pointer-events-none absolute inset-x-0 top-0 pt-[37.1429%]">
+                {/* The spacer mirrors one card's thumbnail height (card width at the same
+                    1.75 aspect ratio), so the nav buttons centre on the video thumbnails
+                    rather than the whole carousel including the titles underneath. */}
+                <div className="pointer-events-none absolute inset-x-0 top-0">
+                    <div className="aspect-[1.75] w-44.5" aria-hidden />
                     <Button
                         type="button"
                         variant="bare"
