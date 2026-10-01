@@ -1,20 +1,8 @@
 import { create } from "zustand";
-import type { AuthStore, AuthUser } from "./authTypes";
-import { getPermissions, type Permission } from "./permissions";
-import { getDefaultPermissions, hasDefaultPermissions } from "./permissionsDefaultData";
+import type { AuthStore } from "./authTypes";
+import { getPermissions } from "./permissions";
 
 const LEGACY_AUTH_STORE_STORAGE_KEY = "vitalb.user";
-
-function resolvePermissions(user?: AuthUser | null): Permission[] {
-    if (!user) return [];
-
-    // TEMPORARY: a known role's set in `permissionsDefaultData.ts` overrides the
-    // API payload, so editing that file is enough to change what a role can do.
-    // An unrecognised role has no set and falls back to whatever the API sent.
-    if (hasDefaultPermissions(user.role)) return [...getDefaultPermissions(user.role)];
-
-    return [...getPermissions(user.permissions)];
-}
 
 // Remove profile data written by versions that persisted the Zustand store.
 // The JWT remains independently managed by authStorage.ts.
@@ -24,12 +12,15 @@ try {
     // In-memory auth still works when storage is unavailable.
 }
 
+const isOnBoarding = window.localStorage.getItem("vitalb.isOnBoarding") === "false";
+
 export const useAuthStore = create<AuthStore>((set) => ({
     user: null,
     name: null,
     email: null,
     role: null,
     phone: null,
+    isOnBoarding: false,
     permissions: [],
     setUser: (user) =>
         set({
@@ -38,7 +29,8 @@ export const useAuthStore = create<AuthStore>((set) => ({
             email: user?.email ?? null,
             role: user?.role ?? null,
             phone: user?.phone ?? null,
-            permissions: resolvePermissions(user),
+            isOnBoarding: user?.isOnBoarding ?? !isOnBoarding,
+            permissions: [...getPermissions(user?.permissions)],
         }),
-    clearUser: () => set({ user: null, name: null, email: null, role: null, phone: null, permissions: [] }),
+    clearUser: () => set({ user: null, name: null, email: null, role: null, phone: null, isOnBoarding: false, permissions: [] }),
 }));

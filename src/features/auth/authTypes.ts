@@ -15,6 +15,7 @@ export type AuthApiUser = {
   email?: string;
   role?: string;
   phone?: string;
+  isOnBoarding?: boolean;
 };
 
 export type AuthRequestValues = {
@@ -29,6 +30,7 @@ export interface AuthUser {
   email?: string;
   role?: string;
   phone?: string;
+  isOnBoarding?: boolean;
 }
 
 export interface AuthResponse {
@@ -43,6 +45,7 @@ export interface AuthStore {
   role: string | null;
   phone: string | null;
   permissions: Permission[];
+  isOnBoarding: boolean;
   setUser: (user: AuthUser | undefined) => void;
   clearUser: () => void;
 }
