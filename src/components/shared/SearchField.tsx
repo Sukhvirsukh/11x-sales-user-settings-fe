@@ -108,7 +108,8 @@ export default function SearchField({
             <div className={cn(
                 showMobilePanel
                     ? inlineVisibilityClasses[viewport]
-                    : "block w-full max-w-none md:max-w-[231px]",
+                    : "block w-full max-w-none md:max-w-57.75 ",
+                !fullWidth && "md:max-[810px]:max-w-[180px]",
                 fullWidth && "max-w-none md:max-w-none",
             )}>
                 <InputField
