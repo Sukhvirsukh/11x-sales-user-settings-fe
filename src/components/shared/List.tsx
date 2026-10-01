@@ -2,7 +2,7 @@ import Label from "../design/Label";
 
 
 type ListProps = {
-    title: string
+    title?: string
     titleClassName?: string
     list: string[],
     listClassName?: string
@@ -12,9 +12,9 @@ type ListProps = {
 export default function List({ title, titleClassName, list, listClassName, listItemClassName }: ListProps) {
     return (
         <div>
-            <Label className={titleClassName}>
+            {title && <Label className={titleClassName}>
                 {title}
-            </Label>
+            </Label>}
             <ul
                 className={`my-1 space-y-1 text-base ${listClassName}`}
             >
