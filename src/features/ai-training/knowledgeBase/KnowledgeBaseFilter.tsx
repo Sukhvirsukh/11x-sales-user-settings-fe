@@ -1,8 +1,7 @@
 import { format, parseISO } from "date-fns"
 import type { DateRange } from "react-day-picker"
-import { DateRangePicker } from "@/components/design/DateRangePicker"
-import Label from "@/components/design/Label"
 import { useRef, useState } from "react"
+import DateRangeFilterRow from "@/components/shared/DateRangeFilterRow"
 import FilterModal from "@/components/shared/FilterModal"
 import SearchField from "@/components/shared/SearchField"
 import MultiSelectFilter from "@/components/shared/MultiSelectFilter"
@@ -18,34 +17,6 @@ const statuses: { value: KnowledgeBaseStatus; label: string }[] = [
 ]
 
 const formats = knowledgeBaseFormatFilters.map((value) => ({ value, label: value }))
-
-/** One date-range filter: heading and selected values above a fixed-width picker. */
-function DateRangeFilterRow({
-    label,
-    value,
-    onChange,
-}: {
-    label: string
-    value: DateRange | undefined
-    onChange: (value: DateRange | undefined) => void
-}) {
-    return (
-        <div>
-            <div className="flex justify-between items-center">
-                <Label className="text-sm font-medium">{label}</Label>
-                {(value?.from || value?.to) && (
-                    <p className="text-xs text-content-muted">selected {value?.from ? `from ${format(value.from, "yyyy-MM-dd")}` : ""} {value?.to ? `to ${format(value.to, "yyyy-MM-dd")}` : ""}</p>
-                )}
-            </div>
-            <div className="w-52">
-                <DateRangePicker
-                    value={value}
-                    onChange={onChange}
-                />
-            </div>
-        </div>
-    )
-}
 
 /** Turns a draft range into the `yyyy-MM-dd` URL/API pair the parser reads back. */
 function toDateParams(value: DateRange | undefined, base: "createdAt" | "lastUpdated") {

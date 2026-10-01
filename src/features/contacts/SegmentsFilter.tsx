@@ -1,7 +1,7 @@
 import { format, parseISO } from "date-fns"
 import type { DateRange } from "react-day-picker"
-import { DateRangePicker } from "@/components/design/DateRangePicker"
 import { useRef, useState } from "react"
+import DateRangeFilterRow from "@/components/shared/DateRangeFilterRow"
 import FilterModal from "@/components/shared/FilterModal"
 import SearchField from "@/components/shared/SearchField"
 import SingleSelectFilter from "@/components/shared/SingleSelectFilter"
@@ -9,7 +9,6 @@ import { useDebounce } from "@/hooks/useDebounce"
 import type { SegmentStatus, SegmentStatusFilter } from "./contactType"
 import { useUrlFilters } from "@/hooks/useUrlFilters"
 import { parseSegmentFilters } from "./segmentFilters"
-import Label from "@/components/design/Label"
 
 const statuses: { value: SegmentStatusFilter; label: SegmentStatus }[] = [
     { value: "active", label: "Active" },
@@ -64,19 +63,11 @@ export default function SegmentsFilter() {
             >
                 <div className="space-y-4">
                     <SingleSelectFilter label="Status" options={statuses} value={draftStatus} onChange={setDraftStatus} />
-                    <div>
-                        <div className="flex justify-between items-center">
-                            <Label className="text-sm font-medium">Created date</Label>
-                            <p className="text-xs text-content-muted">selected {draftRange?.from ? `from ${format(draftRange.from, "yyyy-MM-dd")}` : ""} {draftRange?.to ? `to ${format(draftRange.to, "yyyy-MM-dd")}` : ""}</p>
-                        </div>
-                        <div className="w-52">
-                            <DateRangePicker
-                                value={draftRange}
-                                onChange={setDraftRange}
-                                labelClassName="text-sm"
-                            />
-                        </div>
-                    </div>
+                    <DateRangeFilterRow
+                        label="Created date"
+                        value={draftRange}
+                        onChange={setDraftRange}
+                    />
                     <p className="text-sm text-content-muted">Select a range, or a start date to include everything from that day onward.</p>
                 </div>
             </FilterModal>
