@@ -10,8 +10,9 @@ import { useState } from "react"
 import { useSearchParams } from "react-router"
 import DeleteContacts from "./DeleteContacts"
 import { useSegmentsQuery } from "./contactQuery"
-import type { Segment } from "./contactType"
+import type { Segment, SegmentStatusFilter } from "./contactType"
 import AddSegment from "./AddSegment"
+import SegmentsFilter from "./SegmentsFilter"
 import { useDebounce } from "@/hooks/useDebounce"
 import { dateFormater } from "@/lib/utils"
 
@@ -45,13 +46,16 @@ export default function Segments() {
     const canDeleteSegments = useCan("contacts.delete")
     const [searchParams, setSearchParams] = useSearchParams()
     const search = searchParams.get("search") ?? ""
+    const statusParam = searchParams.get("status")?.toLowerCase()
+    const appliedStatus: SegmentStatusFilter | null = statusParam === "active" || statusParam === "inactive" ? statusParam : null
+    const [draftStatus, setDraftStatus] = useState<SegmentStatusFilter | null>(appliedStatus)
     const [deleteRequest, setDeleteRequest] = useState<{
         rows: Segment[]
         onDeleted?: (ids: string[]) => void
     } | null>(null)
     const [isAddOpen, setIsAddOpen] = useState(false)
 
-    const { data, isLoading, isFetchingNextPage, hasNextPage, fetchNextPage, error } = useSegmentsQuery(search.trim())
+    const { data, isLoading, isFetchingNextPage, hasNextPage, fetchNextPage, error } = useSegmentsQuery(search.trim(), appliedStatus)
     const segments = data?.pages.flatMap((page) => page.items) ?? []
 
     const handleSearchChange = useDebounce((value: string) => {
@@ -62,6 +66,15 @@ export default function Segments() {
             return nextParams
         }, { replace: true })
     })
+
+    const applyStatusFilter = () => {
+        setSearchParams((currentParams) => {
+            const nextParams = new URLSearchParams(currentParams)
+            if (draftStatus) nextParams.set("status", draftStatus)
+            else nextParams.delete("status")
+            return nextParams
+        }, { replace: true })
+    }
 
     function requestDelete(rows: Segment[], onDeleted?: (ids: string[]) => void) {
         setDeleteRequest({ rows, onDeleted })
@@ -88,14 +101,25 @@ export default function Segments() {
                         Delete selected
                     </Button>
                 )) : undefined}
-                emptyMessage={search ? "No matching segaments found" : "No segaments found"}
-                emptyDescription={search ? "Try a different search term." : "Segaments you create will appear here."}
+                emptyMessage={search || appliedStatus ? "No matching segments found" : "No segments found"}
+                emptyDescription={search || appliedStatus ? "Try a different search term or filter." : "Segments you create will appear here."}
                 emptyState={isLoading ? (
                     <TableSkeleton columns={4} showHeader={false} />
                 ) : undefined}
                 headerActions={
                     <div className="flex items-center gap-2.5">
-                        <SearchField onSearchChange={handleSearchChange} />
+                        <SearchField
+                            onSearchChange={handleSearchChange}
+                            filterContent={<SegmentsFilter value={draftStatus} onChange={setDraftStatus} />}
+                            filterModalProps={{
+                                selectedCount: draftStatus ? 1 : 0,
+                                onClearAll: () => setDraftStatus(null),
+                                onSubmit: applyStatusFilter,
+                                onOpenChange: (open) => {
+                                    if (open) setDraftStatus(appliedStatus)
+                                },
+                            }}
+                        />
                         {canCreateSegments && (
                             <Button variant="primary" onClick={() => setIsAddOpen(true)}>
                                 Add segment

@@ -43,7 +43,7 @@ export function ConversationsFilter({ className }: { className?: string }) {
 
     return (
         <AppSection className={className}>
-            <SearchField onSearchChange={setSearchQuery} showMobilePanel={false} fullWidth />
+            <SearchField onSearchChange={setSearchQuery} showMobilePanel={false} fullWidth showFilterModal={false} />
             <div className="flex w-full flex-col gap-4">
                 {filterGroups.map((group) => <FilterGroup key={group.title} {...group} />)}
             </div>

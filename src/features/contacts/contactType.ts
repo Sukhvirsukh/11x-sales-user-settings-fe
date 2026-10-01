@@ -11,6 +11,7 @@ export type UserProfile = {
 }
 
 export type SegmentStatus = "Active" | "Inactive"
+export type SegmentStatusFilter = Lowercase<SegmentStatus>
 
 export type Segment = {
     id: string

@@ -28,7 +28,8 @@ interface ModalProps {
     open?: boolean;
     onOpenChange?: (open: boolean) => void;
     trigger?: ReactElement;
-    title?: string;
+    title?: ReactNode;
+    headerAction?: ReactNode;
     children: ReactNode;
     primaryAction?: ModalAction;
     secondaryAction?: ModalAction;
@@ -44,6 +45,7 @@ export default function Modal({
     onOpenChange,
     trigger,
     title,
+    headerAction,
     children,
     primaryAction,
     secondaryAction,
@@ -76,9 +78,11 @@ export default function Modal({
                             <DialogTitle className={cn("text-lg font-semibold font-inter", titleClassName)}>
                                 {title}
                             </DialogTitle>
-                            <DialogClose className="p-1 cursor-pointer">
-                                <X size={16} className="text-modal-close" />
-                            </DialogClose>
+                            {headerAction ?? (
+                                <DialogClose className="p-1 cursor-pointer">
+                                    <X size={16} className="text-modal-close" />
+                                </DialogClose>
+                            )}
                         </DialogHeader>
                     )}
 

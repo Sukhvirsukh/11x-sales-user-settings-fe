@@ -32,6 +32,7 @@ export function ConversationsToolbar() {
                     label="Search chats"
                     onSearchChange={setSearchQuery}
                     viewport="lg"
+                    showFilterModal={false}
                 />
                 <ConversationsFilterModal />
             </div>
