@@ -5,6 +5,8 @@ import { cn } from "@/lib/utils";
 const headingVariants = cva("text-foreground", {
     variants: {
         size: {
+            /** 32px, semi-bold */
+            "3xl": "text-4xl font-semibold",
             /** 24px, semi-bold */
             "2xl": "text-3xl font-semibold",
             /** 20px, semi-bold */
