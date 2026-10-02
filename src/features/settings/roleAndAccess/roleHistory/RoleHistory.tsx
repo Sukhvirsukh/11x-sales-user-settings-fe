@@ -1,6 +1,5 @@
 import { useState } from "react"
 import { Plus, SquarePen, Trash } from "lucide-react"
-import { useSearchParams } from "react-router"
 
 import CustomTable, { type Column } from "@/components/design/CustomTable"
 import { Badge } from "@/components/ui/badge"
@@ -9,9 +8,8 @@ import AddRoleForm from "./AddRoleForm"
 import { useRoleHistoryQuery } from "./roleHistoryQuery"
 import DeleteRole from "./DeleteRole"
 import TableSkeleton from "@/components/shared/skeletons/TableSkeletons"
-import SearchField from "@/components/shared/SearchField"
+import RoleHistoryFilter from "./RoleHistoryFilter"
 import { useCan } from "@/features/auth"
-import { useDebounce } from "@/hooks/useDebounce"
 import type { RoleRow } from "./roleHistoryType"
 
 const columns: Column[] = [
@@ -47,9 +45,7 @@ export default function RoleHistory() {
     // delete is asked for separately.
     const canCreateRole = useCan("settings.roles.create")
     const canDeleteRole = useCan("settings.roles.delete")
-    const [searchParams, setSearchParams] = useSearchParams()
-    const search = searchParams.get("search") ?? ""
-    const { data, isLoading, isFetchingNextPage, hasNextPage, fetchNextPage, error } = useRoleHistoryQuery(search.trim())
+    const { data, isLoading, isFetchingNextPage, hasNextPage, fetchNextPage, hasFilters } = useRoleHistoryQuery()
     const roles = data?.pages.flatMap((page) => page.items) ?? []
     const [editData, setEditData] = useState<RoleRow | null>(null)
     const [isOpen, setIsOpen] = useState(false)
@@ -61,17 +57,6 @@ export default function RoleHistory() {
     const selection = canDeleteRole
         ? { selectable: true as const, getRowId: rowId }
         : {}
-
-    const handleSearchChange = useDebounce((value: string) => {
-        setSearchParams((currentParams) => {
-            const nextParams = new URLSearchParams(currentParams)
-            if (value) nextParams.set("search", value)
-            else nextParams.delete("search")
-            return nextParams
-        }, { replace: true })
-    })
-
-    if (error) throw error
 
     function openCreateRole() {
         if (!canCreateRole) return
@@ -98,7 +83,7 @@ export default function RoleHistory() {
     return (
         <>
             <CustomTable
-                title="Role history"
+                title={`Role history (${data?.pages[0]?.totalCount ?? 0})`}
                 columns={columns}
                 data={roles}
                 infiniteScroll={{
@@ -114,14 +99,14 @@ export default function RoleHistory() {
                         Delete selected
                     </Button>
                 ) : undefined}
-                emptyMessage={search ? "No matching roles found" : "No role history found"}
-                emptyDescription={search ? "Try a different search term." : "Roles assigned to your team will appear here."}
+                emptyMessage={hasFilters ? "No matching roles found" : "No role history found"}
+                emptyDescription={hasFilters ? "Try a different search term or filter." : "Roles assigned to your team will appear here."}
                 emptyState={isLoading ? (
                     <TableSkeleton columns={3} showHeader={false} />
                 ) : undefined}
                 headerActions={
                     <div className="flex items-center gap-2.5">
-                        <SearchField onSearchChange={handleSearchChange} />
+                        <RoleHistoryFilter />
                         {canCreateRole && (
                             <Button variant="primary" onClick={openCreateRole}>
                                 Add role

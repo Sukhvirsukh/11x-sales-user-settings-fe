@@ -92,7 +92,7 @@ export function KnowledgeBase() {
     return (
         <>
             <CustomTable
-                title="Knowledge base"
+                title={`Knowledge base (${data?.pages[0]?.totalCount ?? 0})`}
                 columns={columns}
                 data={items}
                 infiniteScroll={{

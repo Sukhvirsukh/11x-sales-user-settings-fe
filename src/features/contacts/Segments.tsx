@@ -59,7 +59,7 @@ export default function Segments() {
     return (
         <>
             <CustomTable
-                title="All segaments"
+                title={`All segaments (${data?.pages[0]?.totalCount ?? 0})`}
                 columns={columns}
                 data={segments}
                 infiniteScroll={{

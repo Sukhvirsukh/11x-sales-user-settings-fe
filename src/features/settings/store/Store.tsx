@@ -7,11 +7,9 @@ import DeleteStore from "./DeleteStore";
 import { Badge } from "@/components/ui/badge";
 import { useStoreQuery } from "./storeQuery";
 import { useState } from "react";
-import { useSearchParams } from "react-router";
 import TableSkeleton from "@/components/shared/skeletons/TableSkeletons";
-import SearchField from "@/components/shared/SearchField";
+import StoreFilter from "./StoreFilter";
 import { useCan } from "@/features/auth";
-import { useDebounce } from "@/hooks/useDebounce";
 
 const columns: Column[] = [
     { key: "name", header: "Store Name", width: "280px" },
@@ -38,9 +36,7 @@ export function Store() {
     // delete is asked for separately.
     const canCreateStore = useCan("settings.store.create");
     const canDeleteStore = useCan("settings.store.delete");
-    const [searchParams, setSearchParams] = useSearchParams();
-    const search = searchParams.get("search") ?? "";
-    const { data, isLoading, isFetchingNextPage, hasNextPage, fetchNextPage, error } = useStoreQuery(search.trim());
+    const { data, isLoading, isFetchingNextPage, hasNextPage, fetchNextPage, error, hasFilters } = useStoreQuery();
     const stores = data?.pages.flatMap((page) => page.items) ?? [];
     const [editStore, setEditStore] = useState<Record<string, unknown> | null>(null);
     const [isOpen, setIsOpen] = useState(false);
@@ -48,15 +44,6 @@ export function Store() {
         stores: Record<string, unknown>[];
         onDeleted?: (ids: string[]) => void;
     } | null>(null);
-
-    const handleSearchChange = useDebounce((value: string) => {
-        setSearchParams((currentParams) => {
-            const nextParams = new URLSearchParams(currentParams);
-            if (value) nextParams.set("search", value);
-            else nextParams.delete("search");
-            return nextParams;
-        }, { replace: true });
-    });
 
     if (error) throw error;
 
@@ -82,7 +69,7 @@ export function Store() {
     return (
         <>
             <CustomTable
-                title="Store"
+                title={`Store (${data?.pages[0]?.totalCount ?? 0})`}
                 columns={columns}
                 data={stores}
                 infiniteScroll={{
@@ -99,8 +86,8 @@ export function Store() {
                         Delete selected
                     </Button>
                 )) : undefined}
-                emptyMessage={search ? "No matching stores found" : "No stores found"}
-                emptyDescription={search ? "Try a different search term." : "Stores connected to your account will appear here."}
+                emptyMessage={hasFilters ? "No matching stores found" : "No stores found"}
+                emptyDescription={hasFilters ? "Try a different search term or filter." : "Stores connected to your account will appear here."}
                 emptyState={
                     isLoading ? (
                         <TableSkeleton columns={6} rows={4} showHeader={false} />
@@ -108,7 +95,7 @@ export function Store() {
                 }
                 headerActions={
                     <div className="flex items-center gap-2.5">
-                        <SearchField onSearchChange={handleSearchChange} />
+                        <StoreFilter />
                         {canCreateStore && (
                             <Button variant="primary" onClick={openCreateStore}>
                                 Add store

@@ -2,6 +2,7 @@ import { apiFetch } from "@/lib/api";
 import { capitalize } from "@/lib/utils";
 import { toPermissionPayload, toPermissionValues } from "@/features/auth/permissions";
 import { format as formatDate } from "date-fns";
+import type { RoleHistoryFilters } from "./roleHistoryFilters";
 import type { RoleFormValues, RoleHistoryResponse, RolePayload, RoleResponse, RoleRow } from "./roleHistoryType";
 
 function toRoleRow(role: RoleResponse): RoleRow {
@@ -19,10 +20,14 @@ function toRoleRow(role: RoleResponse): RoleRow {
     };
 }
 
-export async function getRoles(search = "", cursor?: string) {
+export async function getRoles({ search, role, status, createdAtFrom, createdAtTo }: RoleHistoryFilters, cursor?: string) {
     const params = new URLSearchParams();
     if (search) params.set("search", search);
     if (cursor) params.set("cursor", cursor);
+    if (role.length) params.set("role", role.join(","));
+    if (status) params.set("status", status);
+    if (createdAtFrom) params.set("createdAtFrom", createdAtFrom);
+    if (createdAtTo) params.set("createdAtTo", createdAtTo);
     const query = params.toString();
     const response = await apiFetch<RoleHistoryResponse>(`/admin/users${query ? `?${query}` : ""}`);
     return { ...response, items: response.items.map(toRoleRow) };
