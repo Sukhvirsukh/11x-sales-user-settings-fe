@@ -47,7 +47,7 @@ export default function Segments() {
     } | null>(null)
     const [isAddOpen, setIsAddOpen] = useState(false)
 
-    const { data, isLoading, isFetchingNextPage, hasNextPage, fetchNextPage, error, hasFilters } = useSegmentsQuery()
+    const { data, isLoading, isFetchingNextPage, hasNextPage, fetchNextPage, hasFilters } = useSegmentsQuery()
     const segments = data?.pages.flatMap((page) => page.items) ?? []
 
     function requestDelete(rows: Segment[], onDeleted?: (ids: string[]) => void) {

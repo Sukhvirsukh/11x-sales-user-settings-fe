@@ -72,7 +72,7 @@ export function KnowledgeBase() {
         knowledges: KnowledgeBase[];
         onDeleted?: (ids: string[]) => void;
     } | null>(null);
-    const { data, isLoading, isFetchingNextPage, hasNextPage, fetchNextPage, error, hasFilters } = useKnowledgeBaseQuery();
+    const { data, isLoading, isFetchingNextPage, hasNextPage, fetchNextPage, hasFilters } = useKnowledgeBaseQuery();
     const items = data?.pages.flatMap((page) => page.items) ?? [];
 
     const onEdit = (knowledge: KnowledgeBase) => {
