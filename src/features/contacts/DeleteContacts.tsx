@@ -1,4 +1,4 @@
-import InfoModal from "@/components/shared/InfoModal";
+import ConfirmationModal from "@/components/shared/ConfirmationModal";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteSegaments, deleteUserProfiles } from "./contactsApi";
 import { segmentsQueryKey, userProfilesQueryKey } from "./contactQuery";
@@ -73,26 +73,27 @@ export default function DeleteContacts({ kind, open, onOpenChange, rows, onDelet
         deleteMutation.mutate();
     }
 
+    const title = rows.length === 1 ? `Delete ${singular}` : `Delete ${plural}`;
+    const description = <>
+        Are you sure you want to delete{" "}
+        <span className="font-bold">
+            {rows.length === 1 ? String(rows[0].name ?? `this ${singular}`) : `${rows.length} selected ${plural}`}
+        </span>? This action cannot be undone.
+    </>;
+    const onModalOpenChange = (nextOpen: boolean) => {
+        if (!deleteMutation.isPending) onOpenChange(nextOpen);
+    };
+
     return (
-        <InfoModal
-            variant="warning"
+        <ConfirmationModal
+            variant="destructive"
             open={open}
-            onOpenChange={(nextOpen) => {
-                if (!deleteMutation.isPending) onOpenChange(nextOpen);
-            }}
-            title={rows.length === 1 ? `Delete ${singular}` : `Delete ${plural}`}
-            description={
-                <p>
-                    Are you sure you want to delete{" "}
-                    <span className="font-bold">
-                        {rows.length === 1 ? String(rows[0].name ?? `this ${singular}`) : `${rows.length} selected ${plural}`}
-                    </span>? This action cannot be undone.
-                </p>
-            }
+            onOpenChange={onModalOpenChange}
+            title={title}
+            description={description}
             confirmLabel={deleteMutation.isPending ? "Deleting..." : "Delete"}
-            cancelLabel="Cancel"
-            confirmDisabled={deleteMutation.isPending || rows.length === 0}
-            cancelDisabled={deleteMutation.isPending}
+            confirmDisabled={rows.length === 0}
+            isPending={deleteMutation.isPending}
             onConfirm={confirmDelete}
         />
     )
