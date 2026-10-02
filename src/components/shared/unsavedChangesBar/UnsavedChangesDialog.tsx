@@ -1,4 +1,4 @@
-import InfoModal from "@/components/shared/InfoModal";
+import ErrorModal from "../ErrorModal";
 
 interface UnsavedChangesDialogProps {
   open: boolean;
@@ -20,15 +20,15 @@ export function UnsavedChangesDialog({
   }
 
   return (
-    <InfoModal
-      variant="warning"
+    <ErrorModal
       open={open}
       onOpenChange={handleOpenChange}
+      message={description}
       title={title}
-      description={description}
+      onConfirm={onLeave}
+      onCancel={onStay}
       confirmLabel="Leave"
       cancelLabel="Stay"
-      onConfirm={onLeave}
     />
   );
 }

@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import InfoModal from "@/components/shared/InfoModal";
+import ConfirmationModal from "@/components/shared/ConfirmationModal";
 import { toast } from "@/components/ui/toast";
 
 import { deleteCorrections } from "./correctionsApi";
@@ -50,25 +50,24 @@ export default function DeleteCorrections({
     });
 
     return (
-        <InfoModal
-            variant="warning"
+        <ConfirmationModal
+            variant="destructive"
             open={open}
             onOpenChange={(nextOpen) => {
                 if (!deleteMutation.isPending) onOpenChange(nextOpen);
             }}
             title={rows.length === 1 ? "Delete correction" : "Delete corrections"}
             description={
-                <p>
+                <>
                     Are you sure you want to delete{" "}
                     <span className="font-bold">
                         {rows.length === 1 ? rows[0].name : `${rows.length} selected corrections`}
                     </span>? This action cannot be undone.
-                </p>
+                </>
             }
             confirmLabel={deleteMutation.isPending ? "Deleting..." : "Delete"}
-            cancelLabel="Cancel"
-            confirmDisabled={deleteMutation.isPending || rows.length === 0}
-            cancelDisabled={deleteMutation.isPending}
+            confirmDisabled={rows.length === 0}
+            isPending={deleteMutation.isPending}
             onConfirm={() => deleteMutation.mutate()}
         />
     );

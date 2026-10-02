@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useFormContext } from "react-hook-form";
-import InfoModal from "@/components/shared/InfoModal";
+import ConfirmationModal from "@/components/shared/ConfirmationModal";
 import { Button } from "@/components/ui/button";
 import { resetToDefault } from "./visibilityApi";
 import { visibilityQueryKey } from "./visibilityQuery";
@@ -31,18 +31,13 @@ export default function ResetVisibilityModal() {
                 Reset to default
             </Button>
 
-            <InfoModal
+            <ConfirmationModal
                 open={open}
-                onOpenChange={(nextOpen) => {
-                    if (!resetMutation.isPending) setOpen(nextOpen);
-                }}
-                title="Ready to make these changes?"
-                description="Double-check your new settings"
-                confirmLabel={resetMutation.isPending ? "Proceeding..." : "Yes Proceed"}
-                cancelLabel="Cancel"
-                contentClassName="md:w-[450px]"
-                confirmDisabled={resetMutation.isPending}
-                cancelDisabled={resetMutation.isPending}
+                onOpenChange={setOpen}
+                title="Default settings"
+                description="Reset visibility settings to their defaults?"
+                confirmLabel={resetMutation.isPending ? "Resetting..." : "Yes sure"}
+                isPending={resetMutation.isPending}
                 onConfirm={() => resetMutation.mutate()}
             />
         </>

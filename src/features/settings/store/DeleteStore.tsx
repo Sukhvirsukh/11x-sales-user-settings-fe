@@ -1,4 +1,4 @@
-import InfoModal from "@/components/shared/InfoModal";
+import ConfirmationModal from "@/components/shared/ConfirmationModal";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteStore, deleteStores } from "./storeApi";
 import { storeQueryKey } from "./storeQuery";
@@ -45,25 +45,24 @@ export default function DeleteStore({ open, onOpenChange, stores, onDeleted }: D
     }
 
     return (
-        <InfoModal
-            variant="warning"
+        <ConfirmationModal
+            variant="destructive"
             open={open}
             onOpenChange={(nextOpen) => {
                 if (!deleteStoreMutation.isPending) onOpenChange(nextOpen);
             }}
             title={stores.length === 1 ? "Delete store" : "Delete stores"}
             description={
-                <p>
+                <>
                     Are you sure you want to delete{" "}
                     <span className="font-bold">
                         {stores.length === 1 ? String(stores[0].storeName ?? "this store") : `${stores.length} selected stores`}
                     </span>? This action cannot be undone.
-                </p>
+                </>
             }
             confirmLabel={deleteStoreMutation.isPending ? "Deleting..." : "Delete"}
-            cancelLabel="Cancel"
-            confirmDisabled={deleteStoreMutation.isPending || stores.length === 0}
-            cancelDisabled={deleteStoreMutation.isPending}
+            confirmDisabled={stores.length === 0}
+            isPending={deleteStoreMutation.isPending}
             onConfirm={confirmDelete}
         />
     );

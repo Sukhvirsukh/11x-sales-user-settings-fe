@@ -1,4 +1,4 @@
-import InfoModal from "@/components/shared/InfoModal";
+import ConfirmationModal from "@/components/shared/ConfirmationModal";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteRole, deleteRoles } from "./roleHistoryApi";
 import { roleHistoryQueryKey } from "./roleHistoryQuery";
@@ -52,8 +52,8 @@ export default function DeleteRole({ open, onOpenChange, roles, onDeleted }: Del
         deleteRoleMutation.mutate();
     }
     return (
-        <InfoModal
-            variant="warning"
+        <ConfirmationModal
+            variant="destructive"
             open={open && canDeleteRoles}
             onOpenChange={(nextOpen) => {
                 if (nextOpen && !canDeleteRoles) return;
@@ -61,17 +61,16 @@ export default function DeleteRole({ open, onOpenChange, roles, onDeleted }: Del
             }}
             title={roles.length === 1 ? "Delete role" : "Delete roles"}
             description={
-                <p>
+                <>
                     Are you sure you want to delete{" "}
                     <span className="font-bold">
                         {roles.length === 1 ? String(roles[0].name ?? "this role") : `${roles.length} selected roles`}
                     </span>? This action cannot be undone.
-                </p>
+                </>
             }
             confirmLabel={deleteRoleMutation.isPending ? "Deleting..." : "Delete"}
-            cancelLabel="Cancel"
-            confirmDisabled={deleteRoleMutation.isPending || roles.length === 0 || !canDeleteRoles}
-            cancelDisabled={deleteRoleMutation.isPending}
+            confirmDisabled={roles.length === 0 || !canDeleteRoles}
+            isPending={deleteRoleMutation.isPending}
             onConfirm={confirmDelete}
         />
     )

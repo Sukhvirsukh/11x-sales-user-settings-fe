@@ -7,7 +7,7 @@ import { ChevronRight, Info, LogOut, Settings } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import SidebarThemeToggle from "./SidebarThemeToggle";
-import InfoModal from "@/components/shared/InfoModal";
+import ConfirmationModal from "@/components/shared/ConfirmationModal";
 
 interface SidebarUserCardProps {
     name: string;
@@ -19,6 +19,7 @@ interface SidebarUserCardProps {
 export default function SidebarUserCard({ isCollapsed, name, email, avatarUrl }: SidebarUserCardProps) {
     const initials = getInitials(name);
     const [open, setOpen] = useState(false);
+    const [logoutOpen, setLogoutOpen] = useState(false);
     const navigate = useNavigate();
     const clearUser = useAuthStore((state) => state.clearUser);
 
@@ -29,6 +30,7 @@ export default function SidebarUserCard({ isCollapsed, name, email, avatarUrl }:
     };
 
     return (
+        <>
         <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger
                 render={
@@ -112,28 +114,30 @@ export default function SidebarUserCard({ isCollapsed, name, email, avatarUrl }:
                         Settings
                     </Button>
                     <SidebarThemeToggle />
-                    <InfoModal
-                        trigger={
-                            <Button
-                                type="button"
-                                variant="bare"
-                                size="sm"
-                                className="w-full justify-start gap-2.5 px-3 py-1.5! text-danger hover:bg-danger-surface"
-                            >
-                                <LogOut className="size-4 shrink-0" />
-                                Log out
-                            </Button>
-                        }
-                        cancelLabel="Cancel"
-                        confirmLabel="Logout"
-                        onOpenChange={setOpen}
-                        onConfirm={handleLogout}
-                        title={`Hello ${name}!`}
-
-                        description="Are you sure you want to log out?"
-                    />
+                    <Button
+                        type="button"
+                        variant="bare"
+                        size="sm"
+                        className="w-full justify-start gap-2.5 px-3 py-1.5! text-danger hover:bg-danger-surface"
+                        onClick={() => {
+                            setOpen(false);
+                            setLogoutOpen(true);
+                        }}
+                    >
+                        <LogOut className="size-4 shrink-0" />
+                        Log out
+                    </Button>
                 </div>
             </PopoverContent>
         </Popover>
+        <ConfirmationModal
+            open={logoutOpen}
+            onOpenChange={setLogoutOpen}
+            title="Log out?"
+            description="Are you sure you want to log out?"
+            confirmLabel="Log out"
+            onConfirm={handleLogout}
+        />
+        </>
     );
 }

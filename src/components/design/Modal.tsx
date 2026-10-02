@@ -84,6 +84,7 @@ export default function Modal({
                             {headerAction ?? (
                                 <DialogClose className="p-1 cursor-pointer">
                                     <X size={16} className="text-modal-close" />
+                                    <span className="sr-only">Close</span>
                                 </DialogClose>
                             )}
                         </DialogHeader>
