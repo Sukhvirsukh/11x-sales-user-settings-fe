@@ -5,7 +5,7 @@ import {
     useNavigate,
 } from "react-router";
 import { lazy, useEffect } from "react";
-import { Spinner } from "@/components/ui/spinner";
+import LoadingScreen from "@/components/design/LoadingScreen";
 import { authRefreshRequest } from "@/features/auth/authApi";
 import { useAuthStore } from "@/features/auth/authStore";
 import { clearAuthToken, getAuthToken } from "@/features/auth/authStorage";
@@ -64,7 +64,7 @@ function AppLayout() {
     if (!user) {
         return (
             <div className="flex min-h-screen items-center justify-center bg-background">
-                <Spinner className="size-6 text-primary" />
+                <LoadingScreen />
             </div>
         );
     }
