@@ -13,6 +13,8 @@ import type { SignInFormValues } from "./signInTypes";
 import { signInRequest } from "./signInApi";
 import { storeAuthToken } from "@/features/auth/authStorage";
 import { useAuthStore } from "@/features/auth/authStore";
+import { getHomeRoute } from "@/features/auth/permissions";
+import { loadOnBoardingPage } from "@/config/routeLoaders";
 
 export default function SignInForm() {
     const [showPassword, setShowPassword] = useState(false);
@@ -28,7 +30,8 @@ export default function SignInForm() {
                 title: "Signed in successfully",
                 description: "Welcome back to Vitalb.",
             });
-            navigate("/");
+            const { isOnBoarding, permissions } = useAuthStore.getState();
+            navigate(isOnBoarding ? "/onboarding" : getHomeRoute(new Set(permissions)), { replace: true });
         },
 
     });
@@ -43,6 +46,8 @@ export default function SignInForm() {
     });
 
     function signIn(values: SignInFormValues) {
+        // Preloading must not block login; route loading surfaces import failures.
+        void Promise.allSettled([loadOnBoardingPage()]);
         signInMutation.mutate(values);
     }
 

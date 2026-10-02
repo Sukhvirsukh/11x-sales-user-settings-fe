@@ -4,6 +4,7 @@ import ErrorPage from "@/pages/ErrorPage";
 import AppLayout from "../components/layout/AppLayout";
 import { getAuthToken } from "@/features/auth/authStorage";
 import RouteGuard, { type RouteHandle } from "@/features/auth/RouteGuard";
+import { loadOnBoardingPage } from "./routeLoaders";
 
 const SignInPage = lazy(() => import("@/pages/SignInPage"));
 const SignUpPage = lazy(() => import("@/pages/SignUpPage"));
@@ -43,7 +44,7 @@ const Archived = lazy(() => import("@/features/conversations/archived"));
 
 const UserProfileDetails = lazy(() => import("@/features/contacts/UserProfileDetails"));
 const Segments = lazy(() => import("@/features/contacts/Segments"));
-const OnBoardingPage = lazy(() => import("@/pages/OnBoardingPage"));
+const OnBoardingPage = lazy(loadOnBoardingPage);
 
 function GuestOnlyRoute() {
   return getAuthToken() ? <Navigate to="/" replace /> : <Outlet />;

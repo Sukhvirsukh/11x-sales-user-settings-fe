@@ -61,6 +61,8 @@ Defined in `src/config/routes.tsx` (`createBrowserRouter`, all pages lazy-loaded
 
 Onboarding temporarily uses browser-local storage only: `authStore.setUser` reads `vitalb.isOnBoarding` on login and profile refresh. Only the string `"false"` means onboarding is complete; missing or other values require `/onboarding`. `completeOnboarding` saves completion and updates the store together. `AppLayout` redirects incomplete users to onboarding and completed users away from that route. The API onboarding flag is ignored until backend integration replaces this temporary browser-wide setting (shared by accounts in the same browser).
 
+Sign-in and sign-up preload the onboarding page on valid form submission using `src/config/routeLoaders.ts`. After storing the authenticated user, they navigate directly to onboarding or the first permitted home route with history replacement. The root Suspense fallback displays a spinner and loading message while lazy modules load; `AppLayout` retains its guards for direct visits and session restoration.
+
 Inside `AppLayout` every protected page renders through `RouteGuard`, which is the single enforcement point for access:
 
 - A route declares the capability it needs in `handle: { permission: "…" } ` (typed with `satisfies RouteHandle`), e.g. `{ path: "plan", element: <Plan />, handle: { permission: "settings.plan.view" } }`.
