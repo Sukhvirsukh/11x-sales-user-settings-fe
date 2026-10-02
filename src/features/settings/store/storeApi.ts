@@ -1,6 +1,7 @@
 import { apiFetch } from "@/lib/api";
 import { dateFormater } from "@/lib/utils";
 import type { StoreData, StoreListResponse, StoreResponse } from "./storeType";
+import type { StoreFilters } from "./storeFilters";
 
 function formatStore(store: StoreData): StoreData {
     const date = store.startDate ? new Date(store.startDate) : null;
@@ -12,10 +13,13 @@ function formatStore(store: StoreData): StoreData {
     };
 }
 
-export async function getStores(search = "", cursor?: string) {
+export async function getStores({ search, status, createdAtFrom, createdAtTo }: StoreFilters, cursor?: string) {
     const params = new URLSearchParams();
     if (search) params.set("search", search);
     if (cursor) params.set("cursor", cursor);
+    if (status) params.set("status", status);
+    if (createdAtFrom) params.set("createdAtFrom", createdAtFrom);
+    if (createdAtTo) params.set("createdAtTo", createdAtTo);
     const query = params.toString();
     const response = await apiFetch<StoreListResponse>(`/admin/stores${query ? `?${query}` : ""}`);
     return { ...response, items: response.items.map(formatStore) };

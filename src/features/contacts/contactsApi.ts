@@ -2,6 +2,7 @@ import { format as formatDate } from "date-fns"
 import { delay } from "@/lib/utils"
 import type { Segment, SegmentFormValues, SegmentsResponse, UserProfile } from "./contactType"
 import { userProfiles } from "./mockContacts"
+import type { SegmentFilters } from "./segmentFilters"
 import { apiFetch } from "@/lib/api"
 
 
@@ -13,10 +14,13 @@ export async function getUserProfiles(): Promise<UserProfile[]> {
 }
 
 
-export async function getSegaments(search = "", cursor?: string): Promise<SegmentsResponse> {
+export async function getSegaments({ search, status, createdAtFrom, createdAtTo }: SegmentFilters, cursor?: string): Promise<SegmentsResponse> {
     const params = new URLSearchParams({});
     if (search) params.set("search", search);
     if (cursor) params.set("cursor", cursor);
+    if (status) params.set("status", status);
+    if (createdAtFrom) params.set("createdAtFrom", createdAtFrom);
+    if (createdAtTo) params.set("createdAtTo", createdAtTo);
 
     return apiFetch<SegmentsResponse>(`/contacts/segments?${params.toString()}`);
 }

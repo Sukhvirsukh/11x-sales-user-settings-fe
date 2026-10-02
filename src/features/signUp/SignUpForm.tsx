@@ -13,6 +13,8 @@ import type { SignUpFormValues } from "./signUpTypes";
 import { signUpRequest } from "./signUpApi";
 import { storeAuthToken } from "@/features/auth/authStorage";
 import { useAuthStore } from "@/features/auth/authStore";
+import { getHomeRoute } from "@/features/auth/permissions";
+import { loadOnBoardingPage } from "@/config/routeLoaders";
 
 export default function SignUpForm() {
     const [showPassword, setShowPassword] = useState(false);
@@ -28,7 +30,8 @@ export default function SignUpForm() {
                 title: "Account created",
                 description: "Your Vitalb account is ready to use.",
             });
-            navigate("/");
+            const { isOnBoarding, permissions } = useAuthStore.getState();
+            navigate(isOnBoarding ? "/onboarding" : getHomeRoute(new Set(permissions)), { replace: true });
         },
 
     });
@@ -43,6 +46,8 @@ export default function SignUpForm() {
     });
 
     function signUp(values: SignUpFormValues) {
+        // Preloading must not block sign-up; route loading surfaces import failures.
+        void Promise.allSettled([loadOnBoardingPage()]);
         signUpMutation.mutate(values);
     }
 

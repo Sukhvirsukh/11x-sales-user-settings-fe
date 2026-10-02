@@ -21,7 +21,7 @@ export function ConversationsToolbar() {
             inert={isThreadOpen}
             aria-hidden={isThreadOpen}
             className={cn(
-                "flex w-full items-center justify-between gap-2 lg:hidden",
+                "relative flex w-full items-center justify-between gap-2 lg:hidden",
                 // Shares the panel's grid cell so the thread can paint over the row.
                 isThreadOpen && "max-lg:col-start-1 max-lg:row-start-1",
             )}
@@ -32,6 +32,7 @@ export function ConversationsToolbar() {
                     label="Search chats"
                     onSearchChange={setSearchQuery}
                     viewport="lg"
+                    showFilterModal={false}
                 />
                 <ConversationsFilterModal />
             </div>

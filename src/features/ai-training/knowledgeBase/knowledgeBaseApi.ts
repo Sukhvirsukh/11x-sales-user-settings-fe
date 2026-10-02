@@ -1,12 +1,19 @@
 import { apiFetch } from "@/lib/api";
 import type { KnowledgeBaseResponse } from "./knowledgeBaseTypes";
 import type { KnowledgeBaseFormValues } from "./knowledgeBaseSchema";
+import type { KnowledgeBaseFilters } from "./knowledgeBaseFilters";
 
 
-export async function getKnowledgeBase(search = "", cursor?: string) {
+export async function getKnowledgeBase({ search, status, format, createdAtFrom, createdAtTo, lastUpdatedFrom, lastUpdatedTo }: KnowledgeBaseFilters, cursor?: string) {
     const params = new URLSearchParams();
     if (search) params.set("search", search);
     if (cursor) params.set("cursor", cursor);
+    if (status) params.set("status", status);
+    if (format.length) params.set("format", format.join(","));
+    if (createdAtFrom) params.set("createdAtFrom", createdAtFrom);
+    if (createdAtTo) params.set("createdAtTo", createdAtTo);
+    if (lastUpdatedFrom) params.set("lastUpdatedFrom", lastUpdatedFrom);
+    if (lastUpdatedTo) params.set("lastUpdatedTo", lastUpdatedTo);
     const query = params.toString();
     return apiFetch<KnowledgeBaseResponse>(`/training${query ? `?${query}` : ""}`);
 }

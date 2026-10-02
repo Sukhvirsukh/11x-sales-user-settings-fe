@@ -35,7 +35,7 @@ const MOBILE_LEAD_SHARE = "65%"
 const MOBILE_FILL = "minmax(0, 1fr)"
 
 /** Stands in for a table without infinite scroll, keeping the hook's arguments stable. */
-const NO_INFINITE_SCROLL: InfiniteScrollOptions = { onLoadMore: () => {}, hasMore: false, isFetching: false }
+const NO_INFINITE_SCROLL: InfiniteScrollOptions = { onLoadMore: () => { }, hasMore: false, isFetching: false }
 
 type CustomTableProps<T extends Record<string, unknown> = Record<string, unknown>> = {
     title?: string
@@ -143,7 +143,7 @@ export default function CustomTable<T extends Record<string, unknown>>({
         <AppSection className={className}>
             {/* Header bar */}
             {(title || description || headerActions) && (
-                <div className="flex flex-wrap justify-between items-center gap-2 w-full">
+                <div className="relative flex flex-wrap justify-between items-center gap-2 w-full">
                     {(title || description) && (
                         <div className="min-w-0">
                             {title && (
@@ -224,6 +224,7 @@ export default function CustomTable<T extends Record<string, unknown>>({
                                             aria-label={`Select ${row.name ?? displayedRowIds[rowIndex]}`}
                                             checked={selectedIds.has(displayedRowIds[rowIndex])}
                                             onCheckedChange={(checked) => selectRows([displayedRowIds[rowIndex]], checked)}
+                                            className="mr-2"
                                         />
                                     </TableCell>
                                 )}

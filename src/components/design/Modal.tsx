@@ -9,7 +9,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { X } from "lucide-react";
-import { type ReactElement, type ReactNode } from "react";
+import { type ComponentProps, type ReactElement, type ReactNode } from "react";
 
 interface ModalAction {
     label: string;
@@ -25,10 +25,12 @@ interface ModalCloseAction {
 }
 
 interface ModalProps {
+    finalFocus?: ComponentProps<typeof DialogContent>["finalFocus"];
     open?: boolean;
     onOpenChange?: (open: boolean) => void;
     trigger?: ReactElement;
-    title?: string;
+    title?: ReactNode;
+    headerAction?: ReactNode;
     children: ReactNode;
     primaryAction?: ModalAction;
     secondaryAction?: ModalAction;
@@ -40,10 +42,12 @@ interface ModalProps {
 }
 
 export default function Modal({
+    finalFocus,
     open,
     onOpenChange,
     trigger,
     title,
+    headerAction,
     children,
     primaryAction,
     secondaryAction,
@@ -57,6 +61,7 @@ export default function Modal({
         <Dialog open={open} onOpenChange={onOpenChange}>
             {trigger && <DialogTrigger render={trigger} />}
             <DialogContent
+                finalFocus={finalFocus}
                 showCloseButton={false}
                 className={cn(
                     "flex max-h-[80vh] max-w-md flex-col overflow-hidden gap-0 rounded-[10px] border-0 bg-popover p-0 ring-0 shadow-panel max-sm:max-h-[80vh] max-sm:overflow-hidden max-sm:bg-transparent",
@@ -76,9 +81,11 @@ export default function Modal({
                             <DialogTitle className={cn("text-lg font-semibold font-inter", titleClassName)}>
                                 {title}
                             </DialogTitle>
-                            <DialogClose className="p-1 cursor-pointer">
-                                <X size={16} className="text-modal-close" />
-                            </DialogClose>
+                            {headerAction ?? (
+                                <DialogClose className="p-1 cursor-pointer">
+                                    <X size={16} className="text-modal-close" />
+                                </DialogClose>
+                            )}
                         </DialogHeader>
                     )}
 
