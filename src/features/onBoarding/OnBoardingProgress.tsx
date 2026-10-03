@@ -3,8 +3,8 @@ import { useOnBoardingStore } from "./onBoardingStore";
 import { ONBOARDING_STEPS } from "./onBoardingType";
 
 export default function OnBoardingProgress() {
-    const currentStep = useOnBoardingStore((state) => state.completedSteps.at(-1));
-    const stepNumber = currentStep ? ONBOARDING_STEPS.indexOf(currentStep) + 1 : 0;
+    const completedSteps = useOnBoardingStore((state) => state.completedSteps);
+    const stepNumber = completedSteps.length;
 
     return (
         <div
