@@ -1,5 +1,5 @@
 import ExpandableCheckboxField from "@/components/design/ExpandableCheckboxField";
-import { useOnBoardingStore } from "./onBoardingStore";
+import { registerStepValidator, useOnBoardingStore } from "./onBoardingStore";
 import List from "@/components/shared/List";
 import { FormGroup } from "@/components/design/FormGroup";
 import CopyField from "@/components/shared/CopyField";
@@ -8,15 +8,20 @@ import { useAuthStore } from "../auth";
 import { useMutation } from "@tanstack/react-query";
 import { completeBoarding } from "./onBoardingApi";
 import { useNavigate } from "react-router";
+import { useEffect } from "react";
 
 export default function TestAgent() {
-    const { completedSteps } = useOnBoardingStore()
+    const { completedSteps, currentStep, goToStep, completeStep } = useOnBoardingStore()
     const completeOnboarding = useAuthStore((state) => state.completeOnboarding);
     const navigate = useNavigate();
+
+    // The test step has no form fields; it is always allowed to be left.
+    useEffect(() => registerStepValidator("test-agent", () => Promise.resolve(true)), []);
 
     const { mutate, isPending } = useMutation({
         mutationFn: completeBoarding,
         onSuccess: () => {
+            completeStep("test-agent")
             completeOnboarding();
             navigate("/", { replace: true });
         }
@@ -28,7 +33,8 @@ export default function TestAgent() {
             label="See and test your agent now!"
             description="Check how your agent is working in real time"
             checked={completedSteps.includes("test-agent")}
-            isOpen={completedSteps.at(-1) === "test-agent"}
+            isOpen={currentStep === "test-agent"}
+            onCheckedChange={() => { void goToStep("test-agent") }}
         >
             <FormGroup gap="sm">
                 <List

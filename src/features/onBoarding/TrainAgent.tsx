@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import ExpandableCheckboxField from "@/components/design/ExpandableCheckboxField";
@@ -7,7 +7,7 @@ import { InputField } from "@/components/design/InputField";
 import { SelectField } from "@/components/design/SelectField";
 import FormFieldGroup from "@/components/design/FormFieldGroup";
 import { Button } from "@/components/ui/button";
-import { useOnBoardingStore } from "./onBoardingStore";
+import { registerStepValidator, useOnBoardingStore } from "./onBoardingStore";
 import { trainAgentSchema, type TrainAgentFormData } from "./onBoardingSchema";
 import { TextAreaField } from "@/components/design/TextAreaField";
 import { trainAgent } from "./onBoardingApi";
@@ -33,12 +33,12 @@ const unexpectedMomentOptions = [
 ];
 
 export default function TrainAgent() {
-    const { completedSteps, changeStep } = useOnBoardingStore();
+    const { completedSteps, currentStep, goToStep, setCurrentStep, completeStep } = useOnBoardingStore();
     const initialTone = "friendly";
     const initialUnexpectedMoment = "Handoff to human support";
     const [toneChoice, setToneChoice] = useState('friendly');
     const [unexpectedMomentChoice, setUnexpectedMomentChoice] = useState('handoff-to-human-support');
-    const { control, handleSubmit, register, formState: { errors } } = useForm<TrainAgentFormData>({
+    const { control, handleSubmit, register, trigger, formState: { errors } } = useForm<TrainAgentFormData>({
         resolver: zodResolver(trainAgentSchema),
         defaultValues: {
             agentName: "",
@@ -48,10 +48,13 @@ export default function TrainAgent() {
         },
     });
 
+    useEffect(() => registerStepValidator("train-agent", () => trigger()), [trigger]);
+
     const { mutate, isPending } = useMutation({
         mutationFn: (data: TrainAgentFormData) => trainAgent(data),
         onSuccess: () => {
-            changeStep("test-agent")
+            completeStep("train-agent")
+            setCurrentStep("test-agent")
         },
         onError: () => {
             toast.add({
@@ -68,7 +71,8 @@ export default function TrainAgent() {
             label="Train your agent how to behave"
             description="Tell how your agent should behave."
             checked={completedSteps.includes("train-agent")}
-            isOpen={completedSteps.at(-1) === "train-agent"}
+            isOpen={currentStep === "train-agent"}
+            onCheckedChange={() => { void goToStep("train-agent") }}
         >
             <form onSubmit={handleSubmit((values) => mutate(values))} noValidate>
                 <FormGroup gap="sm">
