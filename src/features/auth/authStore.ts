@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import type { AuthStore } from "./authTypes";
 import { getPermissions } from "./permissions";
+import { useAgentStore } from "@/stores/agentStore";
 
 const LEGACY_AUTH_STORE_STORAGE_KEY = "vitalb.user";
 
@@ -37,5 +38,8 @@ export const useAuthStore = create<AuthStore>((set) => ({
         localStorage.setItem(ONBOARDING_STORAGE_KEY, "false");
         set({ isOnBoarding: false });
     },
-    clearUser: () => set({ user: null, name: null, email: null, role: null, phone: null, isOnBoarding: false, permissions: [] }),
+    clearUser: () => {
+        useAgentStore.getState().reset();
+        set({ user: null, name: null, email: null, role: null, phone: null, isOnBoarding: false, permissions: [] });
+    },
 }));

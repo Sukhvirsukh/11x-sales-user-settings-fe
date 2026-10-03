@@ -1,5 +1,6 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import { cn } from "@/lib/utils";
+import { useAgentStore } from "@/stores/agentStore";
 import {
     Select,
     SelectContent,
@@ -8,6 +9,9 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { useAgentsQuery } from "./agentsQuery";
+import { parseAgentFilters } from "./agentsFilters";
+
+const dropdownFilters = parseAgentFilters(new URLSearchParams());
 
 export interface AgentsDropdownProps {
     agents?: { label: string; value: string }[];
@@ -22,7 +26,9 @@ export function AgentsDropdown({
     onValueChange,
     className,
 }: AgentsDropdownProps) {
-    const { data } = useAgentsQuery();
+    const { data } = useAgentsQuery(dropdownFilters);
+    const selectedAgentId = useAgentStore((state) => state.selectedAgentId);
+    const setSelectedAgentId = useAgentStore((state) => state.setSelectedAgentId);
 
     const options = useMemo(() => {
         if (agents) return agents;
@@ -30,28 +36,30 @@ export function AgentsDropdown({
         return (
             data?.pages
                 .flatMap((page) => page.items)
-                .map((agent) => ({
+                .flatMap((agent) => agent.id ? [{
                     label: agent.name,
-                    value: String(agent.id ?? agent.name),
-                })) ?? []
+                    value: agent.id,
+                }] : []) ?? []
         );
     }, [agents, data]);
 
-    // The list arrives asynchronously, so the select is controlled and falls back
-    // to the first agent while nothing (or something stale) is selected.
-    const [selected, setSelected] = useState<string | undefined>(defaultValue);
-    const value =
-        selected && options.some((option) => option.value === selected)
-            ? selected
-            : options[0]?.value;
+    // Initialize once the asynchronous options arrive. A partial page of agents
+    // must not overwrite an existing selection shared by other dropdowns.
+    useEffect(() => {
+        if (useAgentStore.getState().selectedAgentId || options.length === 0) return;
+
+        const initialAgent = options.find((option) => option.value === defaultValue)
+            ?? options[0];
+        setSelectedAgentId(initialAgent.value);
+    }, [defaultValue, options, selectedAgentId, setSelectedAgentId]);
 
     function handleValueChange(next: string | null) {
-        setSelected(next ?? undefined);
+        setSelectedAgentId(next);
         onValueChange?.(next);
     }
 
     return (
-        <Select value={value} onValueChange={handleValueChange}>
+        <Select items={options} value={selectedAgentId} onValueChange={handleValueChange}>
             <SelectTrigger
                 className={cn(
                     "p-2.5 text-base gap-1 bg-transparent border-content-muted text-content-muted rounded-[10px] w-21! h-9.25!",
@@ -66,7 +74,7 @@ export function AgentsDropdown({
                 alignItemWithTrigger={false}
                 align="start"
                 side="bottom"
-                className="w-(--anchor-width) min-w-0 bg-background border-content-muted rounded-[10px]"
+                className="w-max min-w-(--anchor-width) max-w-[min(90vw,28rem)] bg-background border-content-muted rounded-[10px]"
             >
                 {options.map((agent) => (
                     <SelectItem key={agent.value} value={agent.value}>

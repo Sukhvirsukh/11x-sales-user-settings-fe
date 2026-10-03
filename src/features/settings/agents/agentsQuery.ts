@@ -1,12 +1,13 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useUrlFilters } from "@/hooks/useUrlFilters";
 import { getAgents } from "./agentsApi";
-import { parseAgentFilters } from "./agentsFilters";
+import { parseAgentFilters, type AgentFilters } from "./agentsFilters";
 
 export const agentsQueryKey = ["admin", "agent"] as const;
 
-export function useAgentsQuery() {
-  const { filters } = useUrlFilters(parseAgentFilters);
+export function useAgentsQuery(filterOverrides?: AgentFilters) {
+  const { filters: urlFilters } = useUrlFilters(parseAgentFilters);
+  const filters = filterOverrides ?? urlFilters;
   const { search, status, createdAtFrom, createdAtTo } = filters;
   const query = useInfiniteQuery({
     queryKey: [...agentsQueryKey, search.trim(), status, createdAtFrom, createdAtTo],
