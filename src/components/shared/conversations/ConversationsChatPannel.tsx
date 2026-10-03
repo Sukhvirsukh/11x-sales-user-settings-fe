@@ -59,7 +59,7 @@ function ConversationList({ conversations, selectedId, onSelect }: {
                         </span>
                         <span className="shrink-0 text-xs font-semibold">{formatTime(conversation.last_message_at)}</span>
                     </div>
-                    <p className="truncate text-sm text-muted-foreground">{conversation.preview ?? ""}</p>
+                    <p className="truncate text-sm text-muted-foreground">{(conversation.preview ?? "").replace(/\*\*(.+?)\*\*/g, "$1")}</p>
                     <p className="mt-1 flex flex-wrap gap-1.5 text-xs text-content-muted">
                         <span className="capitalize">{conversation.channel}</span>
                         {conversation.status === "escalated" && <span className="text-destructive">Escalated</span>}
