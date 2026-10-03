@@ -1,8 +1,8 @@
 import AppCard from "@/components/design/AppCard";
 import AppSection from "@/components/design/AppSectoin";
-import { Banner } from "@/components/design/Banner";
 import { FormGroup } from "@/components/design/FormGroup";
 import Heading from "@/components/design/Heading";
+import { Separator } from "@/components/ui/separator";
 import { useEffect } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { usePromptToolsQuery } from "./promptQuery";
@@ -56,9 +56,9 @@ export function PromptTools() {
                             </p>
                         </AppSection>
                         <div className="flex flex-col gap-2">
-                            <div className="flex flex-wrap items-stretch gap-4">
-                                <div className="flex min-w-0 flex-[1_1_300px]">
-                                    <div className="flex flex-col gap-2 w-full max-h-75 overflow-auto">
+                            <div className="flex flex-col items-stretch gap-4 lg:flex-row">
+                                <div className="flex min-w-0 lg:flex-1">
+                                    <div className="flex flex-col gap-2 w-full">
                                         <Heading size="md">Additional instructions</Heading>
                                         <AppSection>
                                             <p className="text-sm text-content-muted min-h-27.75 max-h-75 overflow-auto">
@@ -69,19 +69,17 @@ export function PromptTools() {
                                         </AppSection>
                                     </div>
                                 </div>
-                                <div className="flex w-full min-w-0 sm:w-[20%] sm:min-w-[250px] sm:shrink-0">
-                                    <Banner
-                                        variant="info"
-                                        className="p-2"
-                                    >
-                                        <p className="text-sm font-medium mb-1">Learn how to use prompt tools</p>
+                                <Separator orientation="vertical" className="block max-lg:hidden" />
+                                <div className="flex w-full min-w-0 lg:w-1/5 lg:min-w-[220px] lg:shrink-0">
+                                    <div className="py-2.5">
+                                        <p className="text-sm font-medium mb-2">Learn how to use prompt tools</p>
                                         <ul className="list-disc space-y-1 text-sm text-content-muted pl-2.5">
                                             <li className="text-sm text-content-muted"   >Your name is Karl ai</li>
                                             <li className="text-sm text-content-muted"   >Your goal is to aware the user to know about the product variants</li>
                                             <li className="text-sm text-content-muted"   >Stay on brand related copy</li>
                                             <li className="text-sm text-content-muted"   >Defend the brand loyalty</li>
                                         </ul>
-                                    </Banner>
+                                    </div>
                                 </div>
                             </div>
                         </div>

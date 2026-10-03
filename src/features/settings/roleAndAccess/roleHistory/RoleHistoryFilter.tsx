@@ -80,6 +80,7 @@ export default function RoleHistoryFilter() {
                     setDraftRole([])
                     setDraftStatus(null)
                     setDraftRange(undefined)
+                    setFilters({ role: [], status: null, ...toDateParams(undefined) })
                 }}
                 onSubmit={() => setFilters({
                     role: draftRole,
