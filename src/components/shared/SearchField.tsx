@@ -1,12 +1,12 @@
 import { ListFilter, Search, X } from "lucide-react";
 import { Button } from "../ui/button";
 import { InputField } from "../design/InputField";
-import FilterModal, { type FilterModalProps } from "./FilterModal";
+import FilterPopover, { type FilterPopoverProps } from "./FilterPopover";
 import { useRef, useState, type ReactNode, type MouseEventHandler } from "react";
 import { cn } from "@/lib/utils";
 
 export type SearchFieldViewport = "xs" | "sm" | "md" | "lg";
-type FilterModalOptions = Omit<FilterModalProps, "trigger" | "children" | "open">;
+type FilterPopoverOptions = Omit<FilterPopoverProps, "trigger" | "children" | "open">;
 
 export interface SearchFieldProps {
     onSearchChange: (value: string) => void
@@ -19,24 +19,24 @@ export interface SearchFieldProps {
     fullWidth?: boolean
     /** Accessible label for the search control. */
     label?: string
-    /** Table-specific controls shown inside the filter modal. */
+    /** Table-specific controls shown inside the filter popover. */
     filterContent?: ReactNode
-    /** Count, Clear all, Submit, and open/close callbacks for the filter modal. */
-    filterModalProps?: FilterModalOptions
-    /** Disable this modal when filters are handled elsewhere. */
-    showFilterModal?: boolean
+    /** Count, Clear all, Submit, and open/close callbacks for the filter popover. */
+    filterPopoverProps?: FilterPopoverOptions
+    /** Disable this control when filters are handled elsewhere. */
+    showFilter?: boolean
 }
 
 function FilterTrigger({
     children,
-    modalProps,
+    popoverProps,
 }: {
     children?: ReactNode;
-    modalProps?: FilterModalOptions;
+    popoverProps?: FilterPopoverOptions;
 }) {
     return (
-        <FilterModal
-            {...modalProps}
+        <FilterPopover
+            {...popoverProps}
             trigger={
                 <button
                     type="button"
@@ -48,7 +48,7 @@ function FilterTrigger({
             }
         >
             {children}
-        </FilterModal>
+        </FilterPopover>
     );
 }
 
@@ -73,8 +73,8 @@ export default function SearchField({
     fullWidth = false,
     label = "Search knowledge base",
     filterContent,
-    filterModalProps,
-    showFilterModal = true,
+    filterPopoverProps,
+    showFilter = true,
     onFilterClick,
     filterCount = 0,
 }: SearchFieldProps) {
@@ -105,8 +105,8 @@ export default function SearchField({
             <ListFilter className="size-4" aria-hidden="true" />
             {filterCount > 0 && <span className="text-xs font-medium text-primary" aria-hidden="true">{filterCount}</span>}
         </button>
-    ) : showFilterModal ? (
-        <FilterTrigger modalProps={filterModalProps}>{filterContent}</FilterTrigger>
+    ) : showFilter ? (
+        <FilterTrigger popoverProps={filterPopoverProps}>{filterContent}</FilterTrigger>
     ) : <ListFilter className="size-4" aria-hidden="true" />;
 
     return (
