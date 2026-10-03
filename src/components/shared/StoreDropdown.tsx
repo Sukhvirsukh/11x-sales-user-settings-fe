@@ -36,7 +36,14 @@ export function StoreDropdown({
             >
                 <SelectValue />
             </SelectTrigger>
-            <SelectContent className="bg-background border-content-muted rounded-[10px]">
+            {/* alignItemWithTrigger={false} drops the popup below the trigger like
+                a native select instead of overlaying it on the selected item. */}
+            <SelectContent
+                alignItemWithTrigger={false}
+                align="start"
+                side="bottom"
+                className="w-(--anchor-width) min-w-0 bg-background border-content-muted rounded-[10px]"
+            >
                 {stores.map((store) => (
                     <SelectItem key={store.value} value={store.value}>
                         {store.label}

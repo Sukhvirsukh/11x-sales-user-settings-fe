@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -6,15 +7,15 @@ import { FormGroup } from "@/components/design/FormGroup";
 import { InputField } from "@/components/design/InputField";
 import { Button } from "@/components/ui/button";
 
-import { useOnBoardingStore } from "./onBoardingStore";
+import { registerStepValidator, useOnBoardingStore } from "./onBoardingStore";
 import { addAgentSchema, type AddAgentFormData } from "./onBoardingSchema";
 import { useMutation } from "@tanstack/react-query";
 import { addAgent } from "./onBoardingApi";
 import { toast } from "@/components/ui/toast";
 
 export default function AddAgent() {
-    const { completedSteps, changeStep } = useOnBoardingStore()
-    const { register, handleSubmit, formState: { errors } } = useForm<AddAgentFormData>({
+    const { completedSteps, currentStep, goToStep, setCurrentStep, completeStep } = useOnBoardingStore()
+    const { register, handleSubmit, trigger, formState: { errors } } = useForm<AddAgentFormData>({
         resolver: zodResolver(addAgentSchema),
         defaultValues: {
             agentUrl: "",
@@ -23,10 +24,13 @@ export default function AddAgent() {
         },
     });
 
+    useEffect(() => registerStepValidator("add-agent", () => trigger()), [trigger]);
+
     const addAgentMutation = useMutation({
         mutationFn: addAgent,
         onSuccess: () => {
-            changeStep("train-agent")
+            completeStep("add-agent")
+            setCurrentStep("train-agent")
         },
         onError: () => {
             toast.add({
@@ -37,13 +41,19 @@ export default function AddAgent() {
         },
     })
 
+
+    const onCheckedChange = () => {
+        void goToStep("add-agent")
+    }
+
     return (
         <ExpandableCheckboxField
             id="added-agent"
             label="Add your first AI agent"
             description="Tell us your agent URL, where the knowledge lives so that we can train your agent’s foundations."
             checked={completedSteps.includes("add-agent")}
-            isOpen={completedSteps.length === (completedSteps.indexOf("add-agent") + 1)}
+            isOpen={currentStep === "add-agent"}
+            onCheckedChange={onCheckedChange}
         >
             <form onSubmit={handleSubmit((values) => addAgentMutation.mutate(values))} noValidate>
                 <FormGroup gap="sm">
