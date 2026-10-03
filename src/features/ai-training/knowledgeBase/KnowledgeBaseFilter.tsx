@@ -3,7 +3,7 @@ import type { DateRange } from "react-day-picker"
 import { useRef, useState } from "react"
 
 import DateRangeFilterRow from "@/components/shared/DateRangeFilterRow"
-import FilterModal from "@/components/shared/FilterModal"
+import FilterPopover from "@/components/shared/FilterPopover"
 import SearchField from "@/components/shared/SearchField"
 import MultiSelectFilter from "@/components/shared/MultiSelectFilter"
 import SingleSelectFilter from "@/components/shared/SingleSelectFilter"
@@ -77,8 +77,9 @@ export default function KnowledgeBaseFilter() {
                     setIsOpen(true)
                 }}
             />
-            <FilterModal
+            <FilterPopover
                 open={isOpen}
+                anchor={triggerRef}
                 onOpenChange={(open) => {
                     setIsOpen(open)
                     if (!open) resetDrafts()
@@ -118,7 +119,7 @@ export default function KnowledgeBaseFilter() {
                         onChange={setDraftLastUpdatedRange}
                     />
                 </div>
-            </FilterModal>
+            </FilterPopover>
         </>
     )
 }

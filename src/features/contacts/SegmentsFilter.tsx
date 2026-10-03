@@ -2,7 +2,7 @@ import { format, parseISO } from "date-fns"
 import type { DateRange } from "react-day-picker"
 import { useRef, useState } from "react"
 import DateRangeFilterRow from "@/components/shared/DateRangeFilterRow"
-import FilterModal from "@/components/shared/FilterModal"
+import FilterPopover from "@/components/shared/FilterPopover"
 import SearchField from "@/components/shared/SearchField"
 import SingleSelectFilter from "@/components/shared/SingleSelectFilter"
 import { useDebounce } from "@/hooks/useDebounce"
@@ -40,8 +40,9 @@ export default function SegmentsFilter() {
                     setIsOpen(true)
                 }}
             />
-            <FilterModal
+            <FilterPopover
                 open={isOpen}
+                anchor={triggerRef}
                 onOpenChange={(open) => {
                     setIsOpen(open)
                     if (!open) {
@@ -69,9 +70,8 @@ export default function SegmentsFilter() {
                         value={draftRange}
                         onChange={setDraftRange}
                     />
-                    <p className="text-sm text-content-muted">Select a range, or a start date to include everything from that day onward.</p>
                 </div>
-            </FilterModal>
+            </FilterPopover>
         </>
     )
 }

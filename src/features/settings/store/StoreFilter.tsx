@@ -2,7 +2,7 @@ import { format, parseISO } from "date-fns"
 import type { DateRange } from "react-day-picker"
 import { useRef, useState } from "react"
 import DateRangeFilterRow from "@/components/shared/DateRangeFilterRow"
-import FilterModal from "@/components/shared/FilterModal"
+import FilterPopover from "@/components/shared/FilterPopover"
 import SearchField from "@/components/shared/SearchField"
 import SingleSelectFilter from "@/components/shared/SingleSelectFilter"
 import { useDebounce } from "@/hooks/useDebounce"
@@ -58,8 +58,9 @@ export default function StoreFilter() {
                     setIsOpen(true)
                 }}
             />
-            <FilterModal
+            <FilterPopover
                 open={isOpen}
+                anchor={triggerRef}
                 onOpenChange={(open) => {
                     setIsOpen(open)
                     if (!open) resetDrafts()
@@ -84,7 +85,7 @@ export default function StoreFilter() {
                         onChange={setDraftRange}
                     />
                 </div>
-            </FilterModal>
+            </FilterPopover>
         </>
     )
 }
