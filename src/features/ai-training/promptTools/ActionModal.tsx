@@ -99,6 +99,7 @@ export function ActionCard({
                     onPressedChange={onToggle}
                     showText
                     toggleVariant="button"
+                    className=""
                     aria-label={heading}
                 />
             )}

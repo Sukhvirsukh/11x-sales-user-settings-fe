@@ -54,6 +54,7 @@ export default function SegmentsFilter() {
                 onClearAll={() => {
                     setDraftStatus(null)
                     setDraftRange(undefined)
+                    setFilters({ status: null, createdAtFrom: null, createdAtTo: null })
                 }}
                 onSubmit={() => setFilters({
                     status: draftStatus,

@@ -50,6 +50,15 @@ export default function FilterModal({
         handleOpenChange(false);
     };
 
+    // "Clear all" resets the drafts in the parent and applies them there, so the
+    // modal only closes. It must not call `handleSubmit` as well: `onSubmit`
+    // reads the parent's draft state from the current render, which is still the
+    // pre-clear value, and would write the old filters straight back.
+    const clearAll = () => {
+        onClearAll?.();
+        handleOpenChange(false);
+    };
+
     return (
         <Modal
             open={isOpen}
@@ -63,7 +72,7 @@ export default function FilterModal({
                     variant="underline-bare"
                     size="sm"
                     disabled={!onClearAll || selectedCount === 0}
-                    onClick={onClearAll}
+                    onClick={clearAll}
                 >
                     Clear all
                 </Button>

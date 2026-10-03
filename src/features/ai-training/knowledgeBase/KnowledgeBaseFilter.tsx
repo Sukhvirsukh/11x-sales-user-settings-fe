@@ -90,6 +90,12 @@ export default function KnowledgeBaseFilter() {
                     setDraftFormat([])
                     setDraftCreatedRange(undefined)
                     setDraftLastUpdatedRange(undefined)
+                    setFilters({
+                        status: null,
+                        format: [],
+                        ...toDateParams(undefined, "createdAt"),
+                        ...toDateParams(undefined, "lastUpdated"),
+                    })
                 }}
                 onSubmit={() => setFilters({
                     status: draftStatus,

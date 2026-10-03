@@ -61,7 +61,7 @@ export function ToggleField({
                     "focus-visible:bg-transparent",
                 ],
                 toggleVariant === "button" && [
-                    "h-auto rounded-[10px] border border-content-muted px-3.5 py-0.5 text-sm text-content-muted",
+                    "h-5.75 rounded-[10px] border border-content-muted px-2 py-1.5 text-sm text-content-muted",
                     // Allow the caller to override the pressed-state colors
                     pressed && [
                         "bg-success-surface text-success border-success py-0.5",

@@ -69,6 +69,7 @@ export default function StoreFilter() {
                 onClearAll={() => {
                     setDraftStatus(null)
                     setDraftRange(undefined)
+                    setFilters({ status: null, ...toDateParams(undefined) })
                 }}
                 onSubmit={() => setFilters({
                     status: draftStatus,
