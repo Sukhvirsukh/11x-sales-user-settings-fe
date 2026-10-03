@@ -32,8 +32,8 @@ const PlanPage = lazy(() => import("@/pages/PlanPage"));
 const Payments = lazy(() =>
   import("@/features/settings/payments").then(({ Payments }) => ({ default: Payments })),
 );
-const Store = lazy(() =>
-  import("@/features/settings/store").then(({ Store }) => ({ default: Store })),
+const Agents = lazy(() =>
+  import("@/features/settings/agents").then(({ Agents }) => ({ default: Agents })),
 );
 const ActiveChat = lazy(() =>
   import("@/features/conversations/activeChats").then(({ ActiveChat }) => ({ default: ActiveChat })),
@@ -129,7 +129,7 @@ export const router = createBrowserRouter([
                   { path: "role-n-access", element: <RoleAndAccess />, handle: { permission: "settings.profile.view" } satisfies RouteHandle },
                   { path: "plan", element: <PlanPage />, handle: { permission: "settings.plan.view" } satisfies RouteHandle },
                   { path: "payments", element: <Payments />, handle: { permission: "settings.payments.view" } satisfies RouteHandle },
-                  { path: "store", element: <Store />, handle: { permission: "settings.store.view" } satisfies RouteHandle },
+                  { path: "agents", element: <Agents />, handle: { permission: "settings.store.view" } satisfies RouteHandle },
                 ],
               },
               { path: "*", element: <NotFoundPage /> },

@@ -1,10 +1,10 @@
 import type z from "zod";
-import type { storeSchema } from "./storeSchema";
+import type { agentSchema } from "./agentSchema";
 
-export type StoreFormData = z.infer<typeof storeSchema>;
+export type AgentFormData = z.infer<typeof agentSchema>;
 
 
-export interface StoreData extends Record<string, unknown> {
+export interface AgentData extends Record<string, unknown> {
     id?: string;
     name: string;
     url: string;
@@ -15,14 +15,14 @@ export interface StoreData extends Record<string, unknown> {
 }
 
 
-export interface StoreResponse {
+export interface AgentResponse {
     data?: unknown;
-    stores?: unknown;
-    store?: unknown;
+    agents?: unknown;
+    agent?: unknown;
 }
 
-export interface StoreListResponse {
-    items: StoreData[];
+export interface AgentListResponse {
+    items: AgentData[];
     nextCursor: string | null;
     prevCursor: string | null;
     hasMore: boolean;

@@ -9,7 +9,7 @@ const settingsTabs: { id: string; label: string; path: string; permission: Permi
     { id: "role-n-access", label: "Role & access", path: "/settings/role-n-access", permission: "settings.profile.view" },
     { id: "plan", label: "Plan", path: "/settings/plan", permission: "settings.plan.view" },
     { id: "payments", label: "Payments", path: "/settings/payments", permission: "settings.payments.view" },
-    { id: "store", label: "Store", path: "/settings/store", permission: "settings.store.view" },
+    { id: "agents", label: "Agents", path: "/settings/agents", permission: "settings.store.view" },
 ];
 
 export default function SettingsPage() {

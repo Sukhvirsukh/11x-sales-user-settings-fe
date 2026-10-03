@@ -1,15 +1,15 @@
 import { parseDateRangeParams } from "@/lib/filterParams"
 
-export type StoreStatusFilter = "active" | "inactive"
+export type AgentStatusFilter = "active" | "inactive"
 
 /** Reads a single `status=active` / `status=inactive`; anything else means no filter. */
-function parseStatus(value: string | null): StoreStatusFilter | null {
+function parseStatus(value: string | null): AgentStatusFilter | null {
     const normalized = value?.toLowerCase()
 
     return normalized === "active" || normalized === "inactive" ? normalized : null
 }
 
-export function parseStoreFilters(params: URLSearchParams) {
+export function parseAgentFilters(params: URLSearchParams) {
     const [createdAtFrom, createdAtTo] = parseDateRangeParams(params, "createdAt")
 
     return {
@@ -20,4 +20,4 @@ export function parseStoreFilters(params: URLSearchParams) {
     }
 }
 
-export type StoreFilters = ReturnType<typeof parseStoreFilters>
+export type AgentFilters = ReturnType<typeof parseAgentFilters>
