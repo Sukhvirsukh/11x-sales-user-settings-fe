@@ -7,7 +7,7 @@ export default function ReportsPage() {
         <section className="h-full min-w-0">
             <PageHeader
                 title="Reports"
-                subtitle="Track your performance with detailed reports, usually after 10 conversation, reports gets generated."
+                subtitle="Download conversations, escalations and sales from chat for any date range."
             >
                 <PreviewSection>
                     <Reports />

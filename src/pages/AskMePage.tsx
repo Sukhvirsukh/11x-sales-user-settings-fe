@@ -6,7 +6,7 @@ export default function AskMePage() {
         <section className="h-full min-w-0">
             <PageHeader
                 title="Ask me"
-                subtitle="Get yourself cleared everything about the app"
+                subtitle="Ask anything about 11xSales or your store's numbers, in plain words."
             >
                 <AskAI />
             </PageHeader>

@@ -15,10 +15,20 @@ import { queryClient } from "@/lib/queryClient";
 
 interface StoreDropdownProps {
     className?: string;
+    /** "sidebar" is the full-width switcher at the top of the navigation. */
+    variant?: "compact" | "sidebar";
+}
+
+function StoreInitial({ name }: { name: string }) {
+    return (
+        <span className="flex size-6 shrink-0 items-center justify-center rounded-md bg-brand-soft font-display text-[12px] font-semibold text-brand">
+            {name.trim().charAt(0).toUpperCase() || "S"}
+        </span>
+    );
 }
 
 /** Switches the store (agent) the whole dashboard is showing. */
-export function StoreDropdown({ className }: StoreDropdownProps) {
+export function StoreDropdown({ className, variant = "compact" }: StoreDropdownProps) {
     const agents = useAgentStore((state) => state.agents);
     const currentAgentId = useAgentStore((state) => state.currentAgentId);
     const setAgents = useAgentStore((state) => state.setAgents);
@@ -39,22 +49,33 @@ export function StoreDropdown({ className }: StoreDropdownProps) {
 
     if (!agents.length) return null;
 
+    const currentName = agents.find((a) => a.id === currentAgentId)?.name ?? "Select store";
+
     return (
         <Select value={currentAgentId ?? undefined} onValueChange={handleChange}>
             <SelectTrigger
+                aria-label="Switch store"
                 className={cn(
-                    "p-2.5 text-base gap-1 bg-transparent border-content-muted text-content-muted rounded-[10px] min-w-21 max-w-48 h-9.75!",
+                    variant === "sidebar"
+                        ? "h-10! w-full gap-2 rounded-lg border-border bg-surface-raised px-2 text-base font-medium text-foreground shadow-panel hover:bg-control-hover"
+                        : "h-9! min-w-21 max-w-48 gap-1 rounded-lg border-border bg-surface-raised px-2.5 text-base text-foreground",
                     className
                 )}
             >
                 <SelectValue>
-                    {agents.find((a) => a.id === currentAgentId)?.name ?? "Select store"}
+                    <span className="flex min-w-0 items-center gap-2">
+                        {variant === "sidebar" && <StoreInitial name={currentName} />}
+                        <span className="truncate">{currentName}</span>
+                    </span>
                 </SelectValue>
             </SelectTrigger>
-            <SelectContent className="bg-background border-content-muted rounded-[10px]">
+            <SelectContent className="rounded-lg border-border bg-popover">
                 {agents.map((agent) => (
                     <SelectItem key={agent.id} value={agent.id}>
-                        {agent.name}
+                        <span className="flex min-w-0 items-center gap-2">
+                            <StoreInitial name={agent.name} />
+                            <span className="truncate">{agent.name}</span>
+                        </span>
                     </SelectItem>
                 ))}
             </SelectContent>

@@ -56,19 +56,19 @@ function AppLayout() {
     if (!user) {
         return (
             <div className="flex min-h-screen items-center justify-center bg-background">
-                <Spinner className="size-6 text-primary" />
+                <Spinner className="size-6 text-brand" />
             </div>
         );
     }
 
     if (shouldHideSidebar) {
         return (
-            <div className="flex h-screen gap-0 overflow-hidden bg-background p-5">
-                <main className="-m-5 flex min-w-0 flex-1 flex-col overflow-y-auto">
-                    <div className="p-5 pb-0 md:hidden">
+            <div className="flex h-screen overflow-hidden bg-background">
+                <main className="flex min-w-0 flex-1 flex-col overflow-y-auto px-4 pb-6 pt-18 md:px-8 md:pt-7">
+                    <div className="md:hidden">
                         <MobileTopbarWrapper />
                     </div>
-                    <div className="mt-5 flex min-h-0 flex-1 flex-col md:mt-0">
+                    <div className="mx-auto flex min-h-0 w-full max-w-[1320px] flex-1 flex-col">
                         <Outlet />
                     </div>
                 </main>
@@ -77,11 +77,13 @@ function AppLayout() {
     }
 
     return (
-        <div className="flex h-screen gap-0 overflow-hidden bg-background p-5 md:pr-0">
+        <div className="flex h-screen overflow-hidden bg-background">
             <Sidebar />
             <MobileTopbar />
-            <main className="-m-5 mt-5 md:-mt-5 flex min-w-0 flex-1 flex-col overflow-y-auto p-5 md:mx-0">
-                <Outlet />
+            <main className="flex min-w-0 flex-1 flex-col overflow-y-auto px-4 pt-18 md:px-8 md:pt-7">
+                <div className="mx-auto flex w-full max-w-[1320px] flex-1 flex-col">
+                    <Outlet />
+                </div>
             </main>
         </div>
     );

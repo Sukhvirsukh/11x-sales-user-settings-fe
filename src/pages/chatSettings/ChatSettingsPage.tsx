@@ -18,8 +18,8 @@ export default function ChatSettingsPage() {
     return (
         <section className="h-full min-w-0 mb-9">
             <PageHeader
-                title="Chat settings"
-                subtitle="Customize how your AI interact with your customer"
+                title="Chat setup"
+                subtitle="Where shoppers find your agent, and how it looks and behaves."
             >
                 <div className="relative min-w-0 rounded-[10px] border border-panel-accent-border/70 px-2.5 shadow-blue md:px-4">
                     <Accordion defaultValue={fromShopify ? ["integration"] : ["channels"]}>

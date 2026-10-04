@@ -25,14 +25,14 @@ export default function ContactPage() {
     return (
         <section className="h-full min-w-0">
             <PageHeader
-                title="Contact"
-                subtitle="View, manage, and organize all your user contacts and customer profiles."
+                title="Contacts"
+                subtitle="Shoppers who shared their email or phone in a chat, and the segments you build from them."
             >
                 <CustomTabs
                     tabs={mainTabs.map(({ id, label }) => ({ id, label }))}
                     value={activeTab}
                     onValueChange={handleTabChange}
-                    listClassName="pl-[4px]"
+                   
                     className="p-0!"
                 >
 
