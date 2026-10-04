@@ -75,7 +75,7 @@ export function Payments() {
                 <div className="flex w-full flex-wrap items-center justify-between gap-3">
                     <div>
                         <Heading size="lg">Payment method</Heading>
-                        <p className="mt-0.5 text-sm text-muted-foreground">Cards are stored and charged by Stripe; 11xSales never sees the full number.</p>
+                        <p className="mt-0.5 text-sm text-muted-foreground">Cards are stored and charged by Stripe; 11xsales.ai never sees the full number.</p>
                     </div>
                     {canManage && card && (
                         <Button variant="outline" size="sm" onClick={() => openBillingPortal().catch(() => undefined)}>

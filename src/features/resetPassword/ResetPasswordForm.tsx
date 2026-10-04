@@ -78,7 +78,7 @@ export default function ResetPasswordForm() {
             title="Choose a password"
             subtitle={
                 hasValidToken
-                    ? "Set the password you'll use to sign in to 11xSales."
+                    ? "Set the password you'll use to sign in to 11xsales.ai."
                     : "This link is invalid or incomplete. Ask for a new one below."
             }
             withSocials={false}

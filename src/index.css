@@ -3,6 +3,7 @@
 @import "shadcn/tailwind.css";
 @import "@fontsource-variable/inter";
 @import "@fontsource-variable/geist";
+@import "@fontsource-variable/unbounded";
 
 /* Disable system dark mode (prefers-color-scheme).
    Tailwind's default dark: uses the OS setting; override so dark: only
@@ -13,6 +14,8 @@
   --breakpoint-xs: 30rem;
 
   --font-geist: 'Geist Variable', 'Inter Variable', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  /* The brand face (wordmark, sign-in headline); wide and heavy, so used sparingly. */
+  --font-brand: 'Unbounded Variable', 'Geist Variable', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --font-display: 'Geist Variable', 'Inter Variable', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 
   --font-sans: 'Inter Variable', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -168,8 +171,8 @@
 
 @layer base {
   :root {
-    /* 11xSales — ink on warm paper, one signal-orange accent.
-       Primary actions are ink; orange marks where the eye should land
+    /* 11xsales.ai — ink on warm paper, one brand-blue accent.
+       Primary actions are ink; blue marks where the eye should land
        (brand mark, active navigation, focus, the main chart series). */
 
     /* Elevation */
@@ -218,13 +221,13 @@
     --primary: #16181D;
     --primary-hover: #2B2E35;
     --primary-foreground: #FFFFFF;
-    --brand: #F0562A;
-    --brand-strong: #D6431A;
-    --brand-soft: #FFEFE8;
+    --brand: #2F87FF;
+    --brand-strong: #1F6FE6;
+    --brand-soft: #EAF2FF;
     --secondary: #EEEEEA;
     --secondary-foreground: #16181D;
-    --link: #C2410C;
-    --brand-muted: #FFEFE8;
+    --link: #1F6FE6;
+    --brand-muted: #EAF2FF;
     --slider-track: #E6E6E1;
 
     /* Borders */
@@ -234,8 +237,8 @@
     --control-border-subtle: #DEDED8;
     --input: #D4D4CE;
     --border-subtle: #EFEFEA;
-    --ring: #F0562A;
-    --focus-ring: #F0562A;
+    --ring: #2F87FF;
+    --focus-ring: #2F87FF;
     --panel-accent-border: #E5E5E0;
     --border-strong: #CFCFC8;
 
@@ -289,7 +292,7 @@
     --plan-selected-shadow: 0 0 0 2px #16181D;
     --whatsapp-brand: #25D366;
     --instagram-brand: #E4405F;
-    --plan-promotion-background: #FFEFE8;
+    --plan-promotion-background: #EAF2FF;
     --plan-promotion-foreground: #16181D;
     --plan-feature: #4B4F57;
     --modal-close: #16181D;
@@ -330,9 +333,9 @@
     --primary: #EDEDEA;
     --primary-hover: #FFFFFF;
     --primary-foreground: #16181D;
-    --brand: #FF6A3D;
-    --brand-strong: #FF8A5C;
-    --brand-soft: #2A1A14;
+    --brand: #4D9AFF;
+    --brand-strong: #7AB4FF;
+    --brand-soft: #0F1D33;
     --danger: #F26B6B;
     --danger-surface: #2C1717;
     --danger-strong: #FF8A8A;
@@ -351,8 +354,8 @@
     --input: #3A3E44;
     --border-subtle: #222429;
     --border-strong: #4A4E55;
-    --ring: #FF6A3D;
-    --focus-ring: #FF6A3D;
+    --ring: #4D9AFF;
+    --focus-ring: #4D9AFF;
     --panel-accent-border: #2A2D32;
     --foreground: #EDEDEA;
     --muted-foreground: #9A9EA5;
@@ -362,8 +365,8 @@
     --placeholder: #6A6E76;
     --secondary: #24272B;
     --secondary-foreground: #EDEDEA;
-    --link: #FF8A5C;
-    --brand-muted: #2A1A14;
+    --link: #7AB4FF;
+    --brand-muted: #0F1D33;
 
     --interactive-active-background: #202227;
     --interactive-active-border: #2A2D32;
@@ -407,7 +410,7 @@
     --dialog-shadow: var(--elevation-2);
     --auth-card-shadow: var(--elevation-1);
     --plan-selected-shadow: 0 0 0 2px #EDEDEA;
-    --plan-promotion-background: #2A1A14;
+    --plan-promotion-background: #0F1D33;
     --plan-promotion-foreground: #EDEDEA;
     --plan-feature: #9A9EA5;
     --modal-close: #EDEDEA;

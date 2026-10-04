@@ -1,25 +1,56 @@
 import { cn } from "@/lib/utils";
 
-/** The 11xSales mark: two strokes for the "11" and a signal-orange multiplier. */
-export function BrandMark({ className }: { className?: string }) {
+/** The brand blue; the star is always this color, whatever the theme. */
+export const BRAND_BLUE = "#2F87FF";
+
+/**
+ * The 11xsales.ai mark: two slanted bars for "11" and a four-point star for "x".
+ * The bars take the current text color, so the mark works on light and dark grounds.
+ */
+export function BrandMark({ className, starColor = BRAND_BLUE }: { className?: string; starColor?: string }) {
     return (
-        <svg viewBox="0 0 32 32" fill="none" aria-hidden="true" className={cn("size-7 shrink-0", className)}>
-            <rect x="0.5" y="0.5" width="31" height="31" rx="8" fill="#16181D" stroke="#FFFFFF" strokeOpacity="0.08" />
-            <rect x="7" y="9" width="3" height="14" rx="1.5" fill="#FFFFFF" />
-            <rect x="12.5" y="9" width="3" height="14" rx="1.5" fill="#FFFFFF" />
-            <path d="M19 11.5L25 20.5M25 11.5L19 20.5" stroke="#F0562A" strokeWidth="3" strokeLinecap="round" />
+        <svg viewBox="0 0 352 211" fill="none" aria-hidden="true" className={cn("h-5 w-auto shrink-0", className)}>
+            <path d="M42 63H102L61 211H0L42 63Z" fill="currentColor" />
+            <path d="M142 0H203L149 211H88L142 0Z" fill="currentColor" />
+            <path d="M237 50Q294.5 92 352 50Q310 107.5 352 165Q294.5 123 237 165Q279 107.5 237 50Z" fill={starColor} />
         </svg>
     );
 }
 
-/** Mark plus wordmark, as used in the sidebar and on the sign-in screens. */
-export function BrandLogo({ className, markClassName }: { className?: string; markClassName?: string }) {
+/** The app icon: the mark in ink on a brand-blue tile. */
+export function BrandIcon({ className }: { className?: string }) {
     return (
-        <span className={cn("inline-flex items-center gap-2.5", className)}>
-            <BrandMark className={markClassName} />
-            <span className="font-display text-[17px] font-semibold tracking-[-0.02em] text-foreground">
-                11x<span className="text-brand">Sales</span>
-            </span>
+        <svg viewBox="0 0 64 64" aria-hidden="true" className={cn("size-8 shrink-0", className)}>
+            <rect width="64" height="64" rx="15" fill={BRAND_BLUE} />
+            <g transform="translate(9.5 18.25) scale(0.128)" fill="#0B0B0C">
+                <path d="M42 63H102L61 211H0L42 63Z" />
+                <path d="M142 0H203L149 211H88L142 0Z" />
+                <path d="M237 50Q294.5 92 352 50Q310 107.5 352 165Q294.5 123 237 165Q279 107.5 237 50Z" />
+            </g>
+        </svg>
+    );
+}
+
+/** The wordmark that follows the mark: "sales" in the text color, ".ai" in brand blue. */
+export function BrandWordmark({ className }: { className?: string }) {
+    return (
+        <span
+            className={cn(
+                "inline-block font-brand font-black leading-none tracking-[-0.03em] [transform:skewX(-8deg)]",
+                className,
+            )}
+        >
+            sales<span style={{ color: BRAND_BLUE }}>.ai</span>
+        </span>
+    );
+}
+
+/** Mark plus wordmark ("11x" + "sales.ai"), as used in the sidebar and on the sign-in screens. */
+export function BrandLogo({ className, markClassName, wordClassName }: { className?: string; markClassName?: string; wordClassName?: string }) {
+    return (
+        <span className={cn("inline-flex items-center gap-3 text-foreground", className)} aria-label="11xsales.ai" role="img">
+            <BrandMark className={cn("h-[22px]", markClassName)} />
+            <BrandWordmark className={cn("text-[17px]", wordClassName)} />
         </span>
     );
 }

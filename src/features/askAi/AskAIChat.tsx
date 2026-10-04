@@ -98,7 +98,7 @@ export default function AskAIChat({ threadId, onThreadChange }: AskAIChatProps) 
                         {thread.isLoading ? "Loading…" : "What would you like to know?"}
                     </Heading>
                     <p className="mt-1.5 max-w-md text-base text-muted-foreground">
-                        Ask how something works in 11xSales, or about your store's chats, orders and sales.
+                        Ask how something works in 11xsales.ai, or about your store's chats, orders and sales.
                     </p>
                     {!thread.isLoading && (
                         <div className="mt-6 flex max-w-2xl flex-wrap justify-center gap-2">

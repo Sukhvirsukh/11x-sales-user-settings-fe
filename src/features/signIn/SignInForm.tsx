@@ -26,7 +26,7 @@ export default function SignInForm() {
             toast.add({
                 type: "success",
                 title: "Signed in successfully",
-                description: "Welcome back to 11xSales.",
+                description: "Welcome back to 11xsales.ai.",
             });
             navigate("/");
         },
@@ -114,7 +114,7 @@ export default function SignInForm() {
                 </Button>
 
                 <p className="mt-6 text-center text-base text-muted-foreground">
-                    New to 11xSales?{" "}
+                    New to 11xsales.ai?{" "}
                     <Link to="/sign-up" className="font-medium text-foreground underline underline-offset-4">
                         Create an account
                     </Link>

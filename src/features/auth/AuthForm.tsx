@@ -1,6 +1,6 @@
 import type { AuthFormProps } from "./authTypes";
 import { Check } from "lucide-react";
-import { BrandLogo, BrandMark } from "@/components/brand/Brand";
+import { BrandIcon, BrandLogo } from "@/components/brand/Brand";
 import googleIcon from "@/assets/auth/google.svg";
 import facebookIcon from "@/assets/auth/facebook.svg";
 import shopifyIcon from "@/assets/auth/shopify.svg";
@@ -20,26 +20,22 @@ const proofPoints = [
 /** The brand side of the sign-in screens: what the product does, shown as a live exchange. */
 function BrandPanel() {
     return (
-        <aside className="relative hidden overflow-hidden bg-[#16181D] p-10 text-white lg:flex lg:flex-col lg:justify-between xl:p-14">
+        <aside className="relative hidden overflow-hidden bg-[#131215] p-10 text-white lg:flex lg:flex-col lg:justify-between xl:p-14">
             <div
                 aria-hidden="true"
-                className="pointer-events-none absolute -right-40 -top-40 size-[520px] rounded-full bg-[#F0562A] opacity-[0.16] blur-[120px]"
+                className="pointer-events-none absolute -right-40 -top-40 size-[520px] rounded-full bg-[#2F87FF] opacity-[0.18] blur-[120px]"
             />
-            <div className="relative flex items-center gap-2.5">
-                <BrandMark className="size-8" />
-                <span className="font-display text-lg font-semibold tracking-[-0.02em]">
-                    11x<span className="text-[#FF6A3D]">Sales</span>
-                </span>
-            </div>
+            <BrandLogo className="relative gap-3.5 text-white" markClassName="h-7" wordClassName="text-[22px]" />
 
             <div className="relative max-w-[440px]">
-                <h2 className="font-display text-[34px] leading-[42px] font-semibold tracking-[-0.03em] text-balance">
-                    Your best salesperson, on every chat.
+                <h2 className="font-brand text-[30px] leading-[40px] font-semibold tracking-[-0.03em] text-balance">
+                    <span className="text-white/60">Your pipeline,</span>{" "}
+                    <span className="font-extrabold">eleven times over.</span>
                 </h2>
                 <ul className="mt-6 flex flex-col gap-3">
                     {proofPoints.map((point) => (
                         <li key={point} className="flex items-start gap-3 text-[15px] leading-6 text-white/75">
-                            <span className="mt-1 flex size-4 shrink-0 items-center justify-center rounded-full bg-[#F0562A]/20 text-[#FF6A3D]">
+                            <span className="mt-1 flex size-4 shrink-0 items-center justify-center rounded-full bg-[#2F87FF]/20 text-[#5EA2FF]">
                                 <Check className="size-3" strokeWidth={3} />
                             </span>
                             {point}
@@ -54,13 +50,13 @@ function BrandPanel() {
                     Do the trail runners come in a size 10?
                 </p>
                 <div className="flex items-end gap-2">
-                    <BrandMark className="size-6" />
+                    <BrandIcon className="size-6 rounded-md" />
                     <div className="rounded-2xl rounded-bl-md bg-white/10 px-3.5 py-2 text-sm text-white/90">
                         Yes — 3 left in size 10. Want me to add a pair to your cart?
                     </div>
                 </div>
                 <div className="ml-8 flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.06] p-2.5">
-                    <span className="size-10 shrink-0 rounded-lg bg-gradient-to-br from-[#F0562A] to-[#7A2A12]" />
+                    <span className="size-10 shrink-0 rounded-lg bg-gradient-to-br from-[#2F87FF] to-[#123A73]" />
                     <span className="min-w-0 flex-1">
                         <span className="block truncate text-sm font-medium">Ridgeline Trail Runner</span>
                         <span className="block text-xs text-white/60">Size 10 · In stock</span>
@@ -118,7 +114,7 @@ export default function AuthForm({
                     )}
                 </div>
 
-                <p className="text-center text-sm text-muted-foreground lg:text-left">© {new Date().getFullYear()} 11xSales</p>
+                <p className="text-center text-sm text-muted-foreground lg:text-left">© {new Date().getFullYear()} 11xsales.ai</p>
             </section>
         </main>
     );

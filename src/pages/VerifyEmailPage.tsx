@@ -65,7 +65,7 @@ export default function VerifyEmailPage() {
 
     if (status === "verified") {
         return (
-            <AuthForm title="Email confirmed" subtitle="Thanks — your 11xSales account is fully set up.">
+            <AuthForm title="Email confirmed" subtitle="Thanks — your 11xsales.ai account is fully set up.">
                 <div className="flex items-start gap-3 rounded-xl border border-border bg-surface-raised p-4">
                     <CircleCheck className="mt-0.5 size-5 shrink-0 text-success" aria-hidden="true" />
                     <p className="text-base text-foreground">You can now invite your team and connect your store.</p>
