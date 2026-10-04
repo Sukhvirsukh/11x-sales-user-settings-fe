@@ -1,5 +1,6 @@
 import { agentApiConfigured } from "@/lib/agentApi";
-import { sendTestMessage, toRecommendation } from "./agentTestChat";
+import { rateTestReply, saveTestCorrection, sendTestMessage, toRecommendation } from "./agentTestChat";
+import { toast } from "@/components/ui/toast";
 import type { ProductRecommendationItem } from "./ProductRecommendation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ChatMessage, type ChatMessageData } from "./ChatMessage";
@@ -145,10 +146,12 @@ function LoadedChatBox({ fields, onClose, className = "", defaultMessages }: Cha
 
   function addBotMessage(
     message: { content: string } | { type: "product-recommendation"; content?: string; products: ProductRecommendationItem[] },
+    /** The agent's id for the reply, so it can be rated or corrected. */
+    id: string = crypto.randomUUID(),
   ) {
     setMessages((prev) => [
       ...prev,
-      { id: crypto.randomUUID(), sender: "bot", timestamp: new Date(), avatar: avatarUrl ?? undefined, ...message } as ChatMessageData,
+      { id, sender: "bot", timestamp: new Date(), avatar: avatarUrl ?? undefined, ...message } as ChatMessageData,
     ]);
   }
 
@@ -176,6 +179,7 @@ function LoadedChatBox({ fields, onClose, className = "", defaultMessages }: Cha
         products.length
           ? { type: "product-recommendation", content: text, products: products.map(toRecommendation) }
           : { content: text ?? "The agent didn't reply." },
+        result.reply ? String(result.reply.id) : undefined,
       );
     } catch (error) {
       addBotMessage({ content: error instanceof Error ? error.message : "The agent couldn't reply right now." });
@@ -183,20 +187,28 @@ function LoadedChatBox({ fields, onClose, className = "", defaultMessages }: Cha
   }
 
   function handleCorrect(messageId: string, correctedContent: string) {
+    const index = messages.findIndex((m) => m.id === messageId);
+    const question = [...messages.slice(0, Math.max(index, 0))].reverse().find((m) => m.sender === "user")?.content;
     setMessages((prev) =>
       prev.map((m) =>
         m.id === messageId ? { ...m, content: correctedContent } : m,
       ),
     );
+    const conversationId = testConversationRef.current;
+    if (!conversationId || !question || !/^\d+$/.test(messageId)) return;
+    saveTestCorrection(conversationId, question, correctedContent, messageId)
+      .then(() => toast.add({ type: "success", title: "Correction saved", description: "The agent will use this answer from the next message." }))
+      .catch(() => undefined);
   }
 
-  function handleLike(messageId: string) {
-    console.log("Liked message:", messageId);
+  function handleRate(messageId: string, rating: 1 | -1) {
+    rateTestReply(messageId, rating)
+      .then((saved) => saved && toast.add({ type: "success", title: rating === 1 ? "Marked as a good reply" : "Marked as a bad reply" }))
+      .catch(() => undefined);
   }
 
-  function handleDislike(messageId: string) {
-    console.log("Disliked message:", messageId);
-  }
+  const handleLike = (messageId: string) => handleRate(messageId, 1);
+  const handleDislike = (messageId: string) => handleRate(messageId, -1);
 
   return (
     <div className={`flex h-full w-full flex-col overflow-hidden rounded-[10px] bg-widget-surface shadow-xl ${className}`}>
