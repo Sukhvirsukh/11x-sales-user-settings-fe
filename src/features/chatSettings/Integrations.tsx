@@ -1,11 +1,18 @@
-import { memo, useCallback, useState } from "react";
+import { memo, useCallback, useEffect, useState } from "react";
+import { useSearchParams } from "react-router";
+import { useMutation } from "@tanstack/react-query";
 import { ToggleLeft, ToggleRight } from "lucide-react";
 import ActionCard from "@/components/shared/ActionCard";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import shopifyIcon from "@/assets/integrations/shopify.svg";
 import backendIcon from "@/assets/integrations/backend.svg";
-import { useIntegrationsQuery } from "./chatSettingsQuery";
+import { chatSettingsIntegrationsQueryKey, useIntegrationsQuery } from "./chatSettingsQuery";
+import { connectShopify, disconnectShopify } from "./chatSettingsApi";
+import Modal from "@/components/design/Modal";
+import { InputField } from "@/components/design/InputField";
+import { toast } from "@/components/ui/toast";
+import { queryClient } from "@/lib/queryClient";
 import { useCan } from "@/features/auth";
 
 const ShopifyIcon = memo(function ShopifyIcon() {
@@ -70,15 +77,49 @@ export default function Integrations() {
     const [backendActive, setBackendActive] = useState(false);
 
     const shopifyActive = data?.shopify?.connected || false;
+    const [searchParams, setSearchParams] = useSearchParams();
+    // Installed from inside Shopify's admin: the backend sends the merchant here to finish connecting.
+    const [shopDialogOpen, setShopDialogOpen] = useState(() => Boolean(searchParams.get("connectShopify")));
+    const [shop, setShop] = useState(() => searchParams.get("connectShopify") ?? "");
+
+    // Back from Shopify's approval screen: say how it went, then tidy the address bar.
+    useEffect(() => {
+        const outcome = searchParams.get("shopify");
+        if (!outcome) return;
+        const messages: Record<string, [ "success" | "error", string ]> = {
+            connected: ["success", "Your Shopify store is connected."],
+            cancelled: ["error", "Connecting Shopify was cancelled."],
+            expired: ["error", "That approval took too long. Please connect again."],
+            error: ["error", "Shopify didn't confirm the connection. Please try again."],
+        };
+        const [type, description] = messages[outcome] ?? messages.error;
+        toast.add({ type, title: "Shopify", description });
+        const next = new URLSearchParams(searchParams);
+        next.delete("shopify");
+        next.delete("connectShopify");
+        setSearchParams(next, { replace: true });
+    }, [searchParams, setSearchParams]);
+
+    const connectMutation = useMutation({
+        mutationFn: connectShopify,
+        onSuccess: ({ authorizeUrl }) => window.location.assign(authorizeUrl),
+    });
+
+    const disconnectMutation = useMutation({
+        mutationFn: disconnectShopify,
+        onSuccess: async () => {
+            await queryClient.invalidateQueries({ queryKey: chatSettingsIntegrationsQueryKey });
+            toast.add({ type: "success", title: "Shopify", description: "Your Shopify store is disconnected." });
+        },
+    });
 
     const toggleShopify = useCallback(() => {
         // Guard the action itself, not only the button, so a stray call can never
         // apply an integration without the grant.
         if (!canManageIntegrations) return;
-        if (!shopifyActive) {
-            window.open("https://www.shopify.com/", "_blank");
-        }
-    }, [canManageIntegrations, shopifyActive]);
+        if (shopifyActive) disconnectMutation.mutate();
+        else setShopDialogOpen(true);
+    }, [canManageIntegrations, shopifyActive, disconnectMutation]);
 
     const toggleBackend = useCallback(() => {
         if (!canManageIntegrations) return;
@@ -97,12 +138,46 @@ export default function Integrations() {
                     <ToggleAction
                         active={shopifyActive}
                         onToggle={toggleShopify}
-                        disabled={isLoading || !canManageIntegrations}
+                        disabled={isLoading || !canManageIntegrations || connectMutation.isPending || disconnectMutation.isPending}
                     />
                 }
                 contentClassName="flex-row items-center justify-between"
                 actionsClassName="self-end"
             />
+            {shopifyActive && data?.shopify?.shopDomain ? (
+                <p className="-mt-1 text-sm text-content-muted">Connected to {data.shopify.shopDomain}</p>
+            ) : null}
+            <Modal
+                open={shopDialogOpen}
+                onOpenChange={setShopDialogOpen}
+                title="Connect your Shopify store"
+                primaryAction={{
+                    label: "Continue to Shopify",
+                    onClick: () => connectMutation.mutate(shop),
+                    disabled: !shop.trim() || connectMutation.isPending,
+                }}
+                closeAction={{ label: "Cancel", disabled: connectMutation.isPending }}
+            >
+                <form
+                    noValidate
+                    onSubmit={(event) => {
+                        event.preventDefault();
+                        if (shop.trim()) connectMutation.mutate(shop);
+                    }}
+                >
+                    <InputField
+                        label="Shopify store address"
+                        placeholder="your-store.myshopify.com"
+                        labelClassName="text-sm font-medium"
+                        value={shop}
+                        onChange={(event) => setShop(event.target.value)}
+                        autoFocus
+                    />
+                    <p className="mt-2 text-sm text-content-muted">
+                        You'll approve the 11x Sales app in your Shopify admin, then come back here.
+                    </p>
+                </form>
+            </Modal>
             <div className="separator" />
             <ActionCard
                 variant="bare"

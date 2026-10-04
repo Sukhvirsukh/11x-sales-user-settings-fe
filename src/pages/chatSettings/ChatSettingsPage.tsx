@@ -1,3 +1,4 @@
+import { useSearchParams } from "react-router";
 import { PageHeader } from "@/components/shared/PageHeader";
 import {
     Accordion,
@@ -10,6 +11,10 @@ import Configurations from "@/features/chatSettings/configurations/Configuration
 import Integrations from "@/features/chatSettings/Integrations";
 
 export default function ChatSettingsPage() {
+    const [searchParams] = useSearchParams();
+    // Coming back from Shopify (or sent here to finish connecting it): open the Integration section.
+    const fromShopify = searchParams.has("shopify") || searchParams.has("connectShopify");
+
     return (
         <section className="h-full min-w-0 mb-9">
             <PageHeader
@@ -17,7 +22,7 @@ export default function ChatSettingsPage() {
                 subtitle="Customize how your AI interact with your customer"
             >
                 <div className="relative min-w-0 rounded-[10px] border border-panel-accent-border/70 px-2.5 shadow-blue md:px-4">
-                    <Accordion defaultValue={["channels"]}>
+                    <Accordion defaultValue={fromShopify ? ["integration"] : ["channels"]}>
                         <AccordionItem value="channels">
                             <AccordionTrigger>Channels</AccordionTrigger>
                             <AccordionContent>
