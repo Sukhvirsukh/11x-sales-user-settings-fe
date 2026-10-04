@@ -74,7 +74,7 @@ export function AgentsDropdown({
                 alignItemWithTrigger={false}
                 align="start"
                 side="bottom"
-                className="w-max min-w-(--anchor-width) max-w-[min(90vw,28rem)] bg-background border-content-muted rounded-[10px]"
+                className="w-max min-w-(--anchor-width) max-w-[min(90vw,28 rem)] bg-background border-content-muted rounded-[10px]"
             >
                 {options.map((agent) => (
                     <SelectItem key={agent.value} value={agent.value}>
