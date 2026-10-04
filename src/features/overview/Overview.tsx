@@ -22,12 +22,12 @@ function headlineMetrics(data: OverviewResponse | undefined, isLoading: boolean)
 
     return [
         {
-            title: "Total replies",
+            title: "AI replies this month",
             numbers: metric(stats?.totalReplies.value),
             icon: <MessageSquareReply size={20} />,
         },
         {
-            title: "Dispute chat",
+            title: "Escalated to your team",
             numbers: metric(stats?.disputeChat.value),
             icon: <MailWarning size={20} />,
         },

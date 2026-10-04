@@ -123,7 +123,7 @@ export function PromptTools() {
                                     >
                                         <p className="text-sm font-medium mb-1">Learn how to use prompt tools</p>
                                         <ul className="list-disc space-y-1 text-sm text-content-muted pl-2.5">
-                                            <li className="text-sm text-content-muted"   >Your name is Karl ai</li>
+                                            <li className="text-sm text-content-muted"   >Your name is Ava</li>
                                             <li className="text-sm text-content-muted"   >Your goal is to aware the user to know about the product variants</li>
                                             <li className="text-sm text-content-muted"   >Stay on brand related copy</li>
                                             <li className="text-sm text-content-muted"   >Defend the brand loyalty</li>
@@ -137,29 +137,29 @@ export function PromptTools() {
             </AppSection>
 
             <AppSection>
-                <Heading size="lg">Tools of empower</Heading>
+                <Heading size="lg">What the agent can do</Heading>
                 <div className="grid w-full grid-cols-1 gap-3 md:grid-cols-2">
                     <ActionCard
                         heading="Knowledge search"
-                        content="Give Vitalb the ability to perform the functionality"
+                        content="Search your knowledge base — pages, products and documents — before answering"
                         isChecked={watch("knowledgeSearchEnabled")}
                         onToggle={(enabled) => setValue("knowledgeSearchEnabled", enabled, { shouldDirty: true })}
                     />
                     <ActionCard
                         heading="Escalate conversations"
-                        content="Give Vitalb access to escalate conversations to your support team when needed"
+                        content="Hand a conversation to your team when the shopper needs a person"
                         isChecked={watch("escalateConversationsEnabled")}
                         onToggle={(enabled) => setValue("escalateConversationsEnabled", enabled, { shouldDirty: true })}
                     />
                     <ActionCard
                         heading="Order lookup with custom API"
-                        content="Give Vitalb the ability to provide information for the product order and delivery"
+                        content="Look up order status and delivery for shoppers who ask"
                         isChecked={watch("orderLookupEnabled")}
                         onToggle={(enabled) => setValue("orderLookupEnabled", enabled, { shouldDirty: true })}
                     />
                     <ActionCard
-                        heading="Skip Conversation"
-                        content="Give Vitalb the ability to skip coversation"
+                        heading="Skip conversations"
+                        content="Stay quiet on spam and messages that don't need a reply"
                         isChecked={watch("skipConversationEnabled")}
                         onToggle={(enabled) => setValue("skipConversationEnabled", enabled, { shouldDirty: true })}
                     />

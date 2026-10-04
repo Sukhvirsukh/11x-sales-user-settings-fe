@@ -35,13 +35,14 @@ export function toChartData(series: TrendPoint[]): ChartPoint[] {
 
 /** Y-axis bounds and ticks that always fit the series. */
 export function scaleFor(values: number[]): Scale {
-    const min = Math.min(...values);
-    const max = Math.max(...values);
+    const min = values.length ? Math.min(...values) : 0;
+    const max = values.length ? Math.max(...values) : 0;
     // Pad the range so the line never touches the edges. When every point is the
     // same, pad by the value itself so the axis still has a height.
     const padding = (max - min || max) * 0.1;
     const from = Math.max(0, min - padding);
-    const to = max + padding;
+    // An all-zero series (a new store) still needs distinct ticks: 0, 1, 2, …
+    const to = Math.max(max + padding, from + Y_TICKS - 1);
     const step = (to - from) / (Y_TICKS - 1);
 
     return { from, to, ticks: Array.from({ length: Y_TICKS }, (_, index) => from + step * index) };

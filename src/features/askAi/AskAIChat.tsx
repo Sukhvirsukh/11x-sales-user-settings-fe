@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Sparkles } from "lucide-react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import Heading from "@/components/design/Heading";
 import { ChatInput, ChatMessage } from "@/components/shared/chatBox";
@@ -12,6 +13,14 @@ type Message = {
     content: string;
     sender: "user" | "bot";
 };
+
+/** Starter questions: one about the product, the rest about the store's own numbers. */
+const SUGGESTIONS = [
+    "How do I connect Shopify?",
+    "How much did chat sell in the last 30 days?",
+    "What are shoppers asking about most?",
+    "Why isn't my agent replying?",
+];
 
 const NO_PERMISSION = "Sorry! You don't have permission to use this feature. Please ask your administrator.";
 
@@ -81,19 +90,37 @@ export default function AskAIChat({ threadId, onThreadChange }: AskAIChatProps) 
                     </div>
                 </div>
             ) : (
-                <div className="flex flex-1 flex-col items-center justify-center text-center">
-                    <Heading size="2xl" className="text-2xl md:text-3xl">
-                        {thread.isLoading ? "Loading…" : "Hi there, How can I help you?"}
+                <div className="flex flex-1 flex-col items-center justify-center px-2 py-8 text-center">
+                    <span className="flex size-11 items-center justify-center rounded-xl bg-brand-soft text-brand">
+                        <Sparkles className="size-5" aria-hidden="true" />
+                    </span>
+                    <Heading size="xlg" className="mt-4">
+                        {thread.isLoading ? "Loading…" : "What would you like to know?"}
                     </Heading>
-                    <p className="mt-6 max-w-182 text-sm text-content-muted">
-                        How do I connect Shopify? How do I add a WhatsApp integration? Why isn't my chatbot responding? How do I invite another team member?
+                    <p className="mt-1.5 max-w-md text-base text-muted-foreground">
+                        Ask how something works in 11xSales, or about your store's chats, orders and sales.
                     </p>
+                    {!thread.isLoading && (
+                        <div className="mt-6 flex max-w-2xl flex-wrap justify-center gap-2">
+                            {SUGGESTIONS.map((question) => (
+                                <button
+                                    key={question}
+                                    type="button"
+                                    onClick={() => handleSend(question)}
+                                    disabled={!canAsk || askMutation.isPending}
+                                    className="rounded-full border border-border bg-surface-raised px-3.5 py-1.5 text-sm text-foreground shadow-panel transition-colors hover:border-border-strong hover:bg-control-hover disabled:opacity-50"
+                                >
+                                    {question}
+                                </button>
+                            ))}
+                        </div>
+                    )}
                 </div>
             )}
 
             <ChatInput
                 onSend={handleSend}
-                placeholder="Search or type your question..."
+                placeholder="Ask a question…"
                 variant="default"
                 disabled={!canAsk || askMutation.isPending}
             />

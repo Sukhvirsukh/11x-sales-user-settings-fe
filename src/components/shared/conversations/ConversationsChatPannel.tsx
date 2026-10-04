@@ -1,5 +1,5 @@
 import { Fragment, useMemo, useState } from "react"
-import { ChevronRight } from "lucide-react"
+import { ChevronRight, MessagesSquare } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ChatInput } from "@/components/shared/chatBox"
 import CopyField from "@/components/shared/CopyField"
@@ -31,8 +31,18 @@ function formatTime(iso: string | null) {
         : date.toLocaleDateString([], { day: "2-digit", month: "short" })
 }
 
-function EmptyState({ children }: { children: React.ReactNode }) {
-    return <p className="p-6 text-center text-sm text-muted-foreground">{children}</p>
+function EmptyState({ children, hint }: { children: React.ReactNode; hint?: string }) {
+    return (
+        <div className="flex w-full flex-col items-center justify-center gap-2 px-6 py-14 text-center">
+            {hint && (
+                <span className="flex size-10 items-center justify-center rounded-full bg-brand-soft text-brand">
+                    <MessagesSquare className="size-5" aria-hidden="true" />
+                </span>
+            )}
+            <p className={hint ? "text-base font-medium text-foreground" : "text-sm text-muted-foreground"}>{children}</p>
+            {hint && <p className="max-w-sm text-sm text-muted-foreground">{hint}</p>}
+        </div>
+    )
 }
 
 function ConversationList({ conversations, selectedId, onSelect }: {
@@ -224,7 +234,7 @@ export function ConversationsChatPannel({ tab = "active", alwaysShowChatInput = 
     if (!agentApiConfigured) return <EmptyState>The AI agent isn't connected yet.</EmptyState>
     if (list.isLoading) return <EmptyState>Loading conversations…</EmptyState>
     if (list.isError) return <EmptyState>Couldn't load conversations. {list.error.message}</EmptyState>
-    if (!conversations.length) return <EmptyState>No conversations here yet.</EmptyState>
+    if (!conversations.length) return <EmptyState hint="Chats show up here as shoppers message your agent. Test chats stay out of this list.">No conversations here yet.</EmptyState>
 
     return (
         <div className="grid h-full min-w-0 grid-cols-1 gap-4 lg:grid-cols-[minmax(180px,1fr)_minmax(0,3fr)_minmax(176px,1fr)] lg:gap-3.5">

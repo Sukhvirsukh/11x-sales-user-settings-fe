@@ -95,7 +95,7 @@ export default function Preview({
                                 defaultMessages={[
                                     {
                                         id: "welcome",
-                                        content: "Welcome to Karl ai shop, how can I help you",
+                                        content: "Welcome! How can I help you today?",
                                         sender: "bot",
                                         timestamp: new Date(),
                                     },
