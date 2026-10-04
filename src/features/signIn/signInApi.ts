@@ -5,7 +5,7 @@ import type { SignInFormValues } from "./signInTypes";
 export function signInRequest(
   values: SignInFormValues,
 ): Promise<AuthResponse> {
-  return authRequest("/auth/login", {
+  return authRequest("/users/login", {
     email: values.email.trim().toLowerCase(),
     password: values.password,
   });

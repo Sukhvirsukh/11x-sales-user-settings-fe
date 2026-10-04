@@ -31,8 +31,42 @@ export interface AuthUser {
   phone?: string;
 }
 
+export type AgentRole = "owner" | "editor" | "member";
+
+/** An agent (one store) the user can access, with their role on it — from the 11xSales backend. */
+export interface ApiAgent {
+  id: string;
+  name: string;
+  slug: string;
+  status: string;
+  role: AgentRole;
+  widgetKey?: string;
+  widgetConfig?: Record<string, unknown>;
+  defaultLanguage?: string;
+}
+
+/** The user object the 11xSales backend returns. */
+export interface ApiUser {
+  id: string;
+  name: string;
+  email: string;
+  phone?: string | null;
+  adminId?: string | null;
+  isVerified?: boolean;
+}
+
+/** Login, signup, refresh and GET /auth/me all describe the session this way. */
+export interface ApiSession {
+  user: ApiUser;
+  agents: ApiAgent[];
+  currentAgent: ApiAgent | null;
+  accessToken?: string;
+  refreshToken?: string;
+}
+
 export interface AuthResponse {
   accessToken: string;
+  refreshToken?: string;
   user?: AuthUser;
 }
 

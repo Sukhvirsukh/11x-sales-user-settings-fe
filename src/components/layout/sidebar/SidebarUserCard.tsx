@@ -1,5 +1,7 @@
 import { getInitials } from "@/lib/utils";
 import { clearAuthToken } from "@/features/auth/authStorage";
+import { useAgentStore } from "@/features/agents/agentStore";
+import { queryClient } from "@/lib/queryClient";
 import { useAuthStore } from "@/features/auth";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
@@ -25,6 +27,8 @@ export default function SidebarUserCard({ isCollapsed, name, email, avatarUrl }:
     const handleLogout = () => {
         clearAuthToken();
         clearUser();
+        useAgentStore.getState().clear();
+        queryClient.clear();
         navigate("/sign-in", { replace: true });
     };
 

@@ -21,7 +21,7 @@ export default function SignInForm() {
     const signInMutation = useMutation({
         mutationFn: signInRequest,
         onSuccess: (auth) => {
-            storeAuthToken(auth.accessToken);
+            storeAuthToken(auth.accessToken, auth.refreshToken);
             setUser(auth.user);
             toast.add({
                 type: "success",
