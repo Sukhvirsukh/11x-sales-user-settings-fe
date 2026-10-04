@@ -5,12 +5,12 @@ export interface LabelProps extends LabelHTMLAttributes<HTMLLabelElement> {
     children: ReactNode;
 }
 
-/** Form field label — 14px, medium */
+/** Form field label — 12px, medium */
 function Label({ children, className, ...props }: LabelProps) {
     return (
         <label
             className={cn(
-                "text-base font-medium text-field-text",
+                "text-[13px] leading-5 font-medium text-field-text",
                 className
             )}
             {...props}
