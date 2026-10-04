@@ -45,7 +45,19 @@ export async function getPlans(): Promise<PlanResponse> {
             shopDomain: null,
             shopifySubscriptionId: null,
         },
+        billing: {
+            status: billing.current.status,
+            currentPeriodEnd: billing.current.currentPeriodEnd,
+            canManageBilling: billing.current.canManageBilling,
+            billingEnabled: billing.billingEnabled,
+        },
     };
+}
+
+/** Stripe's billing portal: card, invoices, cancelling. */
+export async function openBillingPortal() {
+    const { url } = await apiFetch<{ url: string }>("/billing/portal", { method: "POST" });
+    window.location.assign(url);
 }
 
 /**

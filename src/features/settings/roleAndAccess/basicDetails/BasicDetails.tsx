@@ -5,27 +5,37 @@ import { getInitials } from "@/lib/utils";
 import DetailContainer, { DetailGroup, DetailItem } from "@/components/design/DetailContainer";
 import BasicDetailsForm from "./BasicDetailsForm";
 import { useAuthStore, useCan } from "@/features/auth";
+import { useAgentStore } from "@/features/agents/agentStore";
+import { usePlanQuery } from "@/features/settings/plan/planQuery";
+import { capitalize } from "@/lib/utils";
+
+/** Billing belongs to the account owner, so only they load the plan. */
+function PlanName() {
+    const { data, isLoading } = usePlanQuery();
+    if (isLoading) return <>…</>;
+    return <>{data?.currentSubscription.plan.name ?? "—"}</>;
+}
 
 export function BasicDetails() {
     const avatarUrl: string | undefined = undefined;
     const user = useAuthStore(data => data.user);
     const canEditBasicDetails = useCan("settings.profile.create");
     const name = user?.name || '';
+    const canSeePlan = useCan("settings.plan.view");
+    const storeName = useAgentStore((state) => state.agents.find((agent) => agent.id === state.currentAgentId)?.name);
 
     return (
         <AppSection>
-            <Heading size="lg" className="font-medium">
-                Basic details
-            </Heading>
+            <Heading size="lg">Your profile</Heading>
             <AppCard>
 
                 <DetailContainer
                     leading={
-                        <div className="flex size-[60px] shrink-0 items-center justify-center overflow-hidden rounded-full bg-section-background font-medium text-primary">
+                        <div className="flex size-14 shrink-0 items-center justify-center overflow-hidden rounded-full bg-muted font-display font-semibold text-foreground">
                             {avatarUrl ? (
                                 <img src={avatarUrl} className="size-full object-cover" alt="Profile" />
                             ) : (
-                                <span className="text-2xl">{getInitials(name)}</span>
+                                <span className="text-xl">{getInitials(name)}</span>
                             )}
                         </div>
                     }
@@ -37,14 +47,11 @@ export function BasicDetails() {
                     </DetailGroup>
                     <DetailGroup>
                         <DetailItem label="Phone" value={user?.phone || '-'} />
-                        <DetailItem label="Role" value={user?.role} />
+                        <DetailItem label="Role" value={user?.role ? capitalize(user.role.toLowerCase()) : "-"} />
                     </DetailGroup>
                     <DetailGroup>
-                        <DetailItem label="Plan name" value="Basic" />
-                        <DetailItem label="Points used" value="127/ 990" />
-                    </DetailGroup>
-                    <DetailGroup>
-                        <DetailItem label="Version" value="V12" />
+                        <DetailItem label="Store" value={storeName ?? "-"} />
+                        {canSeePlan && <DetailItem label="Plan" value={<PlanName />} />}
                     </DetailGroup>
                 </DetailContainer>
             </AppCard>

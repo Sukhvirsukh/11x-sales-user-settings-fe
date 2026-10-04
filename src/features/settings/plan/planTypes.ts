@@ -34,5 +34,12 @@ export interface currentSubscription {
 
 export interface PlanResponse {
     plans: Plan[],
-    currentSubscription: currentSubscription
+    currentSubscription: currentSubscription,
+    /** What the billing provider reports for the account. */
+    billing: {
+        status: string,
+        currentPeriodEnd: string | null,
+        canManageBilling: boolean,
+        billingEnabled: boolean,
+    },
 }
