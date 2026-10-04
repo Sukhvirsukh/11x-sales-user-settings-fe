@@ -1,4 +1,5 @@
 import { apiFetch } from "@/lib/api";
+import { agentPath } from "@/features/agents/agentStore";
 import type { VisibilityFields } from "./visibilityTypes";
 
 type VisibilitySaveFields = Omit<VisibilityFields, "chatFace"> & {
@@ -10,11 +11,6 @@ type ChatDesignResponse = VisibilitySaveFields & {
     userId?: string;
 };
 
-type ChatDesignApiResponse = {
-    success: boolean;
-    message: string;
-    data: ChatDesignResponse;
-};
 
 const CHAT_FACE_TYPES = new Set(["image/png", "image/jpeg"]);
 const CHAT_FACE_MAX_BYTES = 100 * 1024;
@@ -67,8 +63,8 @@ function toVisibilityFields(response: ChatDesignResponse): VisibilityFields {
 }
 
 export async function getVisibility(): Promise<VisibilityFields> {
-    const response = await apiFetch<ChatDesignApiResponse>("/chat-design");
-    return toVisibilityFields(response.data);
+    const response = await apiFetch<ChatDesignResponse>(agentPath("/chat-design"));
+    return toVisibilityFields(response);
 }
 
 export async function uploadChatFace(image: File): Promise<string> {
@@ -82,7 +78,7 @@ export async function uploadChatFace(image: File): Promise<string> {
     const formData = new FormData();
     formData.append("image", image);
 
-    const response = await apiFetch<unknown>("/chat-design/upload-image", {
+    const response = await apiFetch<unknown>(agentPath("/chat-design/upload-image"), {
         method: "POST",
         body: formData,
     });
@@ -96,20 +92,20 @@ export async function uploadChatFace(image: File): Promise<string> {
 }
 
 export async function saveVisibility(values: VisibilitySaveFields): Promise<VisibilityFields> {
-    const response = await apiFetch<ChatDesignApiResponse>("/chat-design", {
+    const response = await apiFetch<ChatDesignResponse>(agentPath("/chat-design"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(toVisibilityFields(values)),
     });
 
-    return toVisibilityFields(response.data);
+    return toVisibilityFields(response);
 }
 
 
 export async function resetToDefault() {
-    const response = await apiFetch<ChatDesignApiResponse>("/chat-design/reset", {
+    const response = await apiFetch<ChatDesignResponse>(agentPath("/chat-design/reset"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
     });
-    return toVisibilityFields(response.data);
+    return toVisibilityFields(response);
 }

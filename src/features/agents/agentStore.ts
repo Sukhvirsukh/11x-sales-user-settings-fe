@@ -27,3 +27,10 @@ export const useAgentStore = create<AgentStore>((set) => ({
 export function getCurrentAgentId() {
     return useAgentStore.getState().currentAgentId;
 }
+
+/** "/agents/<current agent>/<path>": endpoints scoped to the store the dashboard is showing. */
+export function agentPath(path: string) {
+    const agentId = getCurrentAgentId();
+    if (!agentId) throw new Error("No store selected.");
+    return `/agents/${encodeURIComponent(agentId)}${path}`;
+}
