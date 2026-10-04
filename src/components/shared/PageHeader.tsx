@@ -2,7 +2,7 @@ import { useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode }
 import { useNavigate, type NavigateProps } from "react-router";
 import { ChevronLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { StoreDropdown } from "./StoreDropdown";
+import { AgentsDropdown } from "@/features/settings/agents/AgentsDropdown";
 import { ChatBox } from "@/components/shared/chatBox";
 import { useTestChatStore } from "@/stores/testChatStore";
 
@@ -82,7 +82,7 @@ export function PageHeader({
                         Test chat
                     </Button>
 
-                    <StoreDropdown />
+                    <AgentsDropdown />
                 </div>
             </header>
 

@@ -5,16 +5,16 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { FormGroup } from "@/components/design/FormGroup";
 import { InputField } from "@/components/design/InputField";
 import Modal from "@/components/design/Modal";
-import { createStore, updateStore } from "./storeApi";
-import { storeQueryKey } from "./storeQuery";
+import { createAgent, updateAgent } from "./agentsApi";
+import { agentsQueryKey } from "./agentsQuery";
 import { toast } from "@/components/ui/toast";
 import { SelectField } from "@/components/design/SelectField";
-import type { StoreFormData } from "./storeType";
-import { storeSchema } from "./storeSchema";
+import type { AgentFormData } from "./agentType";
+import { agentSchema } from "./agentSchema";
 import { Checkbox } from "@/components/ui/checkbox";
 import Label from "@/components/design/Label";
 
-type StoreRow = Record<string, unknown>;
+type AgentRow = Record<string, unknown>;
 
 const ownerOptions = [
     { value: "Admin", label: "Admin" },
@@ -23,10 +23,10 @@ const ownerOptions = [
     { value: "Member", label: "Member" },
 ];
 
-interface AddStoreProps {
+interface AddAgentProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
-    store?: StoreRow | null;
+    agent?: AgentRow | null;
 }
 
 
@@ -38,20 +38,20 @@ function booleanValue(value: unknown, fallback: boolean): boolean {
     return typeof value === "boolean" ? value : fallback;
 }
 
-function initialValues(store?: StoreRow | null): StoreFormData {
-    const owner = stringValue(store?.owner) || "Admin";
+function initialValues(agent?: AgentRow | null): AgentFormData {
+    const owner = stringValue(agent?.owner) || "Admin";
 
     return {
-        name: stringValue(store?.name),
-        url: stringValue(store?.url),
+        name: stringValue(agent?.name),
+        url: stringValue(agent?.url),
         owner,
-        isDefault: booleanValue(store?.isDefault, false),
-        status: booleanValue(store?.status, true),
+        isDefault: booleanValue(agent?.isDefault, false),
+        status: booleanValue(agent?.status, true),
     };
 }
 
-export default function AddStore({ open, onOpenChange, store }: AddStoreProps) {
-    const isEditing = Boolean(store);
+export default function AddAgent({ open, onOpenChange, agent }: AddAgentProps) {
+    const isEditing = Boolean(agent);
     const queryClient = useQueryClient();
     const {
         register,
@@ -59,18 +59,18 @@ export default function AddStore({ open, onOpenChange, store }: AddStoreProps) {
         reset,
         control,
         formState: { errors },
-    } = useForm<StoreFormData>({
-        resolver: zodResolver(storeSchema),
-        defaultValues: initialValues(store),
+    } = useForm<AgentFormData>({
+        resolver: zodResolver(agentSchema),
+        defaultValues: initialValues(agent),
     });
 
     useEffect(() => {
-        if (open) reset(initialValues(store));
-    }, [open, reset, store]);
+        if (open) reset(initialValues(agent));
+    }, [open, reset, agent]);
 
-    const saveStoreMutation = useMutation({
-        mutationFn: (values: StoreFormData) => {
-            const id = typeof store?.id === "string" ? store.id : undefined;
+    const saveAgentMutation = useMutation({
+        mutationFn: (values: AgentFormData) => {
+            const id = typeof agent?.id === "string" ? agent.id : undefined;
             const payload = {
                 name: values.name,
                 url: values.url,
@@ -80,62 +80,62 @@ export default function AddStore({ open, onOpenChange, store }: AddStoreProps) {
                 startDate: values.startDate?.toISOString(),
             };
 
-            return id ? updateStore(id, payload) : createStore(payload);
+            return id ? updateAgent(id, payload) : createAgent(payload);
         },
         onSuccess: async () => {
-            await queryClient.invalidateQueries({ queryKey: storeQueryKey });
+            await queryClient.invalidateQueries({ queryKey: agentsQueryKey });
             onOpenChange(false);
             toast.add({
                 type: "success",
-                title: isEditing ? "Store updated" : "Store added",
+                title: isEditing ? "Agent updated" : "Agent added",
                 description: isEditing
-                    ? "The store has been updated successfully."
-                    : "The store has been added successfully.",
+                    ? "The agent has been updated successfully."
+                    : "The agent has been added successfully.",
             });
         },
         onError: () => {
             toast.add({
                 type: "error",
-                title: isEditing ? "Unable to update store" : "Unable to add store",
+                title: isEditing ? "Unable to update agent" : "Unable to add agent",
                 description: "Please try again.",
             });
         },
     });
 
-    function saveStore(values: StoreFormData) {
-        saveStoreMutation.mutate(values);
+    function saveAgent(values: AgentFormData) {
+        saveAgentMutation.mutate(values);
     }
 
     return (
         <Modal
             open={open}
             onOpenChange={onOpenChange}
-            title={isEditing ? "Edit store" : "Add store"}
+            title={isEditing ? "Edit agent" : "Add agent"}
             primaryAction={{
                 label: isEditing
-                    ? saveStoreMutation.isPending
+                    ? saveAgentMutation.isPending
                         ? "Saving..."
                         : "Save changes"
-                    : saveStoreMutation.isPending
+                    : saveAgentMutation.isPending
                         ? "Adding..."
-                        : "Add store",
-                onClick: handleSubmit(saveStore),
-                disabled: saveStoreMutation.isPending,
+                        : "Add agent",
+                onClick: handleSubmit(saveAgent),
+                disabled: saveAgentMutation.isPending,
             }}
-            closeAction={{ label: "Cancel", disabled: saveStoreMutation.isPending }}
+            closeAction={{ label: "Cancel", disabled: saveAgentMutation.isPending }}
         >
-            <form onSubmit={handleSubmit(saveStore)} noValidate>
+            <form onSubmit={handleSubmit(saveAgent)} noValidate>
                 <FormGroup gap="sm">
                     <InputField
-                        label="Store Name"
-                        placeholder="Enter store name"
+                        label="Agent Name"
+                        placeholder="Enter agent name"
                         labelClassName="text-sm font-medium"
                         error={errors.name?.message}
                         {...register("name")}
                     />
                     <InputField
                         label="Store URL"
-                        placeholder="https://your-store.myshopify.com"
+                        placeholder="Enter store URL here"
                         labelClassName="text-sm font-medium"
                         error={errors.url?.message}
                         {...register("url")}
@@ -147,7 +147,7 @@ export default function AddStore({ open, onOpenChange, store }: AddStoreProps) {
                         defaultValue="Admin"
                         render={({ field }) => (
                             <SelectField
-                                label="Store Owner"
+                                label="Agent Owner"
                                 placeholder="Select owner"
                                 error={errors.owner?.message}
                                 value={field.value}

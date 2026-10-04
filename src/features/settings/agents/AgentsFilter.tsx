@@ -7,9 +7,9 @@ import SearchField from "@/components/shared/SearchField"
 import SingleSelectFilter from "@/components/shared/SingleSelectFilter"
 import { useDebounce } from "@/hooks/useDebounce"
 import { useUrlFilters } from "@/hooks/useUrlFilters"
-import { parseStoreFilters, type StoreStatusFilter } from "./storeFilters"
+import { parseAgentFilters, type AgentStatusFilter } from "./agentsFilters"
 
-const statuses: { value: StoreStatusFilter; label: string }[] = [
+const statuses: { value: AgentStatusFilter; label: string }[] = [
     { value: "active", label: "Active" },
     { value: "inactive", label: "Inactive" },
 ]
@@ -22,13 +22,13 @@ function toDateParams(value: DateRange | undefined) {
     }
 }
 
-export default function StoreFilter() {
+export default function AgentsFilter() {
     const {
         filters: { status, createdAtFrom, createdAtTo },
         setFilters,
-    } = useUrlFilters(parseStoreFilters)
+    } = useUrlFilters(parseAgentFilters)
     const [isOpen, setIsOpen] = useState(false)
-    const [draftStatus, setDraftStatus] = useState<StoreStatusFilter | null>(status)
+    const [draftStatus, setDraftStatus] = useState<AgentStatusFilter | null>(status)
     const appliedRange = createdAtFrom || createdAtTo ? {
         from: createdAtFrom ? parseISO(createdAtFrom) : undefined,
         to: createdAtTo ? parseISO(createdAtTo) : undefined,
@@ -49,7 +49,7 @@ export default function StoreFilter() {
     return (
         <>
             <SearchField
-                label="Search stores"
+                label="Search agents"
                 onSearchChange={handleSearchChange}
                 filterCount={appliedCount}
                 onFilterClick={(event) => {

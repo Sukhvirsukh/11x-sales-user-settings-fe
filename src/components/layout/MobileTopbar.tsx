@@ -2,7 +2,7 @@ import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useMobileSidebarStore } from "@/stores/mobileSidebarStore";
 import { useTestChatStore } from "@/stores/testChatStore";
-import { StoreDropdown } from "../shared/StoreDropdown";
+import { AgentsDropdown } from "@/features/settings/agents/AgentsDropdown";
 
 export default function MobileTopbar() {
     const open = useMobileSidebarStore((state) => state.open);
@@ -33,7 +33,7 @@ export default function MobileTopbar() {
                         Test chat
                     </Button>
 
-                    <StoreDropdown className="h-auto! w-auto! min-w-0 px-2.5 py-1.5 text-base" />
+                    <AgentsDropdown className="h-auto! w-auto! min-w-0 px-2.5 py-1.5 text-base" />
 
                     <button
                         type="button"
