@@ -66,20 +66,20 @@ export default function ResetPasswordForm() {
             aria-label={visibilityLabel}
         >
             {showPasswords ? (
-                <Eye className="size-4.5" aria-hidden="true" />
+                <Eye className="size-4" aria-hidden="true" />
             ) : (
-                <EyeOff className="size-4.5" aria-hidden="true" />
+                <EyeOff className="size-4" aria-hidden="true" />
             )}
         </button>
     );
 
     return (
         <AuthForm
-            title="Reset your password"
+            title="Choose a password"
             subtitle={
                 hasValidToken
-                    ? "Choose a new password for your Vitalb account."
-                    : "This password reset link is invalid or incomplete."
+                    ? "Set the password you'll use to sign in to 11xSales."
+                    : "This link is invalid or incomplete. Ask for a new one below."
             }
             withSocials={false}
         >
@@ -88,16 +88,15 @@ export default function ResetPasswordForm() {
                 onSubmit={handleSubmit((values) => resetPasswordMutation.mutate(values))}
                 noValidate
             >
-                <div className="flex flex-col gap-2.5">
+                <div className="flex flex-col gap-4">
                     <InputField
                         type={passwordType}
                         label="New password"
-                        labelClassName="text-sm"
                         placeholder="New password"
                         autoComplete="new-password"
                         maxLength={128}
                         error={errors.password?.message}
-                        startIcon={<LockKeyhole className="size-3" aria-hidden="true" />}
+                        startIcon={<LockKeyhole aria-hidden="true" />}
                         endIcon={visibilityControl}
                         {...register("password")}
                     />
@@ -105,35 +104,34 @@ export default function ResetPasswordForm() {
                     <InputField
                         type={passwordType}
                         label="Confirm password"
-                        labelClassName="text-sm"
                         placeholder="Confirm password"
                         autoComplete="new-password"
                         maxLength={128}
                         error={errors.confirmPassword?.message}
-                        startIcon={<LockKeyhole className="size-3" aria-hidden="true" />}
+                        startIcon={<LockKeyhole aria-hidden="true" />}
                         endIcon={visibilityControl}
                         {...register("confirmPassword")}
                     />
-                    <div className="flex justify-end items-center">
-                        <p className="text-right text-sm text-content-muted">
-                            Have an account?{" "}
-                            <Link
-                                to="/sign-in"
-                                className="font-medium text-content-muted underline underline-offset-2"
-                            >
-                                Sign in
-                            </Link>
-                        </p>
-                    </div>
                 </div>
 
                 <Button
                     type="submit"
-                    className="mt-7.5 w-full"
+                    size="full"
+                    className="mt-6"
                     disabled={!hasValidToken || resetPasswordMutation.isPending}
                 >
-                    {resetPasswordMutation.isPending ? "Resetting password..." : "Reset password"}
+                    {resetPasswordMutation.isPending ? "Saving…" : "Save password"}
                 </Button>
+
+                <p className="mt-6 text-center text-base text-muted-foreground">
+                    {hasValidToken ? "Have an account? " : "Need a new link? "}
+                    <Link
+                        to={hasValidToken ? "/sign-in" : "/forgot-password"}
+                        className="font-medium text-foreground underline underline-offset-4"
+                    >
+                        {hasValidToken ? "Sign in" : "Send me one"}
+                    </Link>
+                </p>
             </form>
         </AuthForm>
     );

@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
-import { Eye, EyeOff, Mail, User } from "lucide-react";
+import { Eye, EyeOff, LockKeyhole, Mail } from "lucide-react";
 import { AuthForm } from "@/features/auth";
 import { InputField } from "@/components/design/InputField";
 import { Button } from "@/components/ui/button";
@@ -26,7 +26,7 @@ export default function SignInForm() {
             toast.add({
                 type: "success",
                 title: "Signed in successfully",
-                description: "Welcome back to Vitalb.",
+                description: "Welcome back to 11xSales.",
             });
             navigate("/");
         },
@@ -48,34 +48,32 @@ export default function SignInForm() {
 
     return (
         <AuthForm
-            title="Welcome back to Vitalb"
-            subtitle="Sign in to manage your AI agents, databases, and workspace."
+            title="Sign in"
+            subtitle="Welcome back. Pick up where your sales agent left off."
         >
             <form
                 onSubmit={handleSubmit(signIn)}
                 className="flex flex-col"
                 noValidate
             >
-                <div className="flex flex-col gap-2.5">
+                <div className="flex flex-col gap-4">
                     <InputField
                         type="email"
                         label="Email"
-                        labelClassName="text-sm"
-                        placeholder="Email"
+                        placeholder="you@store.com"
                         autoComplete="email"
                         error={errors.email?.message}
-                        startIcon={<Mail className="size-3" />}
+                        startIcon={<Mail />}
                         {...register("email")}
                     />
 
                     <InputField
                         type={showPassword ? "text" : "password"}
-                        placeholder="Password"
+                        placeholder="Your password"
                         label="Password"
-                        labelClassName="text-sm"
                         autoComplete="current-password"
                         error={errors.password?.message}
-                        startIcon={<User className="size-3" />}
+                        startIcon={<LockKeyhole />}
                         endIcon={
                             <button
                                 type="button"
@@ -88,38 +86,39 @@ export default function SignInForm() {
                                 }
                             >
                                 {showPassword ? (
-                                    <Eye className="size-4.5" />
+                                    <Eye className="size-4" />
                                 ) : (
-                                    <EyeOff className="size-4.5" />
+                                    <EyeOff className="size-4" />
                                 )}
                             </button>
                         }
                         {...register("password")}
                     />
-                    <div className="flex items-center justify-between">
-                        <Button variant="link" size="sm" onClick={() => navigate("/forgot-password")}>
-                            Forgot Password
-                        </Button>
-
-                        <p className="text-right text-sm text-content-muted">
-                            New here?{" "}
-                            <Link
-                                to="/sign-up"
-                                className="font-medium text-content-muted underline underline-offset-2"
-                            >
-                                Sign up
-                            </Link>
-                        </p>
+                    <div className="flex justify-end">
+                        <Link
+                            to="/forgot-password"
+                            className="text-sm font-medium text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
+                        >
+                            Forgot password?
+                        </Link>
                     </div>
                 </div>
 
                 <Button
                     type="submit"
-                    className="mt-7.5 w-full"
+                    size="full"
+                    className="mt-6"
                     disabled={signInMutation.isPending}
                 >
-                    {signInMutation.isPending ? "Signing in..." : "Proceed"}
+                    {signInMutation.isPending ? "Signing in…" : "Sign in"}
                 </Button>
+
+                <p className="mt-6 text-center text-base text-muted-foreground">
+                    New to 11xSales?{" "}
+                    <Link to="/sign-up" className="font-medium text-foreground underline underline-offset-4">
+                        Create an account
+                    </Link>
+                </p>
             </form>
         </AuthForm>
     );

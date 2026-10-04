@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
-import { Eye, EyeOff, Mail, User } from "lucide-react";
+import { Eye, EyeOff, LockKeyhole, Mail, User } from "lucide-react";
 import { AuthForm } from "@/features/auth";
 import { InputField } from "@/components/design/InputField";
 import { Button } from "@/components/ui/button";
@@ -26,7 +26,7 @@ export default function SignUpForm() {
             toast.add({
                 type: "success",
                 title: "Account created",
-                description: "Your Vitalb account is ready to use.",
+                description: "We sent you a link to confirm your email.",
             });
             navigate("/");
         },
@@ -48,45 +48,42 @@ export default function SignUpForm() {
 
     return (
         <AuthForm
-            title="Build smarter AI with Vitalb"
-            subtitle="Sign up in seconds to start building and training your AI agents."
+            title="Create your account"
+            subtitle="Set up an AI sales agent for your store in a few minutes."
         >
             <form
                 onSubmit={handleSubmit(signUp)}
                 className="flex flex-col"
                 noValidate
             >
-                <div className="flex flex-col gap-2.5">
+                <div className="flex flex-col gap-4">
                     <InputField
                         type="text"
-                        labelClassName="text-sm"
                         label="Name"
-                        placeholder="Name"
+                        placeholder="Your name"
                         autoComplete="name"
                         error={errors.name?.message}
-                        startIcon={<User className="size-3" />}
+                        startIcon={<User />}
                         {...register("name")}
                     />
 
                     <InputField
                         type="email"
                         label="Email"
-                        labelClassName="text-sm"
-                        placeholder="Email"
+                        placeholder="you@store.com"
                         autoComplete="email"
                         error={errors.email?.message}
-                        startIcon={<Mail className="size-3" />}
+                        startIcon={<Mail />}
                         {...register("email")}
                     />
 
                     <InputField
                         label="Password"
-                        labelClassName="text-sm"
                         type={showPassword ? "text" : "password"}
-                        placeholder="Password"
+                        placeholder="At least 8 characters"
                         autoComplete="new-password"
                         error={errors.password?.message}
-                        startIcon={<User className="size-3" />}
+                        startIcon={<LockKeyhole />}
                         endIcon={
                             <button
                                 type="button"
@@ -99,33 +96,32 @@ export default function SignUpForm() {
                                 }
                             >
                                 {showPassword ? (
-                                    <Eye className="size-4.5" />
+                                    <Eye className="size-4" />
                                 ) : (
-                                    <EyeOff className="size-4.5" />
+                                    <EyeOff className="size-4" />
                                 )}
                             </button>
                         }
                         {...register("password")}
                     />
 
-                    <p className="text-right text-sm text-content-muted">
-                        Already have an account?{" "}
-                        <Link
-                            to="/sign-in"
-                            className="font-medium text-content-muted underline underline-offset-2"
-                        >
-                            Sign in
-                        </Link>
-                    </p>
                 </div>
 
                 <Button
                     type="submit"
-                    className="mt-7.5 w-full"
+                    size="full"
+                    className="mt-6"
                     disabled={signUpMutation.isPending}
                 >
-                    {signUpMutation.isPending ? "Creating account..." : "Proceed"}
+                    {signUpMutation.isPending ? "Creating account…" : "Create account"}
                 </Button>
+
+                <p className="mt-6 text-center text-base text-muted-foreground">
+                    Already have an account?{" "}
+                    <Link to="/sign-in" className="font-medium text-foreground underline underline-offset-4">
+                        Sign in
+                    </Link>
+                </p>
             </form>
         </AuthForm>
     );
