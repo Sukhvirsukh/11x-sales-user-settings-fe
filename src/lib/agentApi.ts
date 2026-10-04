@@ -1,7 +1,8 @@
 import { toast } from "@/components/ui/toast";
+import { getCurrentAgentId } from "@/features/agents/agentStore";
 
 // The AI agent service. It accepts the same sign-in token as the main API
-// and works on the signed-in user's store ("me").
+// and works on the store selected in the switcher.
 const AGENT_API_BASE_URL = (import.meta.env.VITE_AGENT_API_BASE_URL ?? "").replace(/\/$/, "");
 const AUTH_TOKEN_STORAGE_KEY = "vitalb.jwt";
 
@@ -22,7 +23,9 @@ async function agentRequest(path: string, options: AgentFetchOptions = {}): Prom
   if (token) headers.set("Authorization", `Bearer ${token}`);
   if (body !== undefined) headers.set("Content-Type", "application/json");
 
-  const response = await fetch(`${AGENT_API_BASE_URL}/admin/api/me${path}`, {
+  // The store selected in the switcher ("me" = the user's current store).
+  const agentId = encodeURIComponent(getCurrentAgentId() ?? "me");
+  const response = await fetch(`${AGENT_API_BASE_URL}/admin/api/${agentId}${path}`, {
     ...init,
     headers,
     body: body === undefined ? undefined : JSON.stringify(body),
