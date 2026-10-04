@@ -8,6 +8,9 @@ const AUTH_TOKEN_STORAGE_KEY = "vitalb.jwt";
 
 export const agentApiConfigured = AGENT_API_BASE_URL !== "";
 
+/** Public address of the agent service (chat page, widget script). */
+export const agentPublicUrl = AGENT_API_BASE_URL;
+
 interface AgentFetchOptions extends Omit<RequestInit, "body"> {
   body?: unknown;
   /** Show a toast when the request fails (default: true). */

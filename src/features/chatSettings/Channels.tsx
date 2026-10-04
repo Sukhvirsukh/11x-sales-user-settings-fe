@@ -1,111 +1,117 @@
-import { memo } from "react";
-import { Download, QrCode, SquarePen } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import CopyField from "@/components/shared/CopyField";
-import ActionCard from "@/components/shared/ActionCard";
+import { useQuery } from "@tanstack/react-query";
+import { Download, ExternalLink, Globe, SquarePen } from "lucide-react";
+import QRCode from "qrcode";
 import { useNavigate } from "react-router";
 import AppCard from "@/components/design/AppCard";
+import CopyField from "@/components/shared/CopyField";
+import { Button } from "@/components/ui/button";
+import { useAgentStore } from "@/features/agents/agentStore";
+import { agentPublicUrl } from "@/lib/agentApi";
 
-
-const VitaChatIcon = memo(function VitaChatIcon() {
-    return (
-        <div className="flex items-center justify-center relative">
-            <div className="relative size-9 shrink-0 overflow-hidden rounded-full border border-content-strong/15 bg-surface-raised md:size-10">
-                <div className="absolute inset-x-0 bottom-0 h-1/2 bg-primary" />
-            </div>
-            <span className="absolute top-1 right-0.5 size-2 rounded-full bg-status-online-accent" />
-        </div>
-    );
-});
-
-const VisibilityAction = memo(function VisibilityAction() {
-
-    const navigate = useNavigate();
-
-    return (
-        <Button className="gap-2 border-0! px-2 py-1.5 md:py-2.5" onClick={() => navigate('/chat-settings/visibility')}>
-            Visibility
-            <SquarePen className="h-4 w-4" />
-        </Button>
-    );
-});
-
+/** The chat's own page, the widget snippet for any website, and a QR code for the page. */
 export default function Channels() {
-    const chatLink = "<iframe=src'hhpss....=";
-    const embedCode = "<iframe=src'hhpss....=";
+    const navigate = useNavigate();
+    const agentId = useAgentStore((state) => state.currentAgentId);
+    const storeName = useAgentStore((state) => state.agents.find((agent) => agent.id === state.currentAgentId)?.name);
+
+    const chatLink = agentId && agentPublicUrl ? `${agentPublicUrl}/c/${agentId}` : "";
+    const embedCode = agentId && agentPublicUrl
+        ? `<script src="${agentPublicUrl}/widget.js" data-agent="${agentId}" async></script>`
+        : "";
+
+    const { data: qr = null } = useQuery({
+        queryKey: ["chatSettings", "qr", chatLink],
+        queryFn: () => QRCode.toDataURL(chatLink, { width: 512, margin: 1, color: { dark: "#16181D", light: "#FFFFFF" } }),
+        enabled: Boolean(chatLink),
+        staleTime: Infinity,
+    });
+
+    function downloadQr() {
+        if (!qr) return;
+        const link = document.createElement("a");
+        link.href = qr;
+        link.download = `${(storeName ?? "store").replace(/[^\w-]+/g, "-").toLowerCase()}-chat-qr.png`;
+        link.click();
+    }
 
     return (
-        <div className="flex min-w-0 flex-col gap-2.5 md:gap-4">
-
-            <ActionCard
-                variant="bare"
-                icon={<VitaChatIcon />}
-                title="Vita chat"
-                subtitle="Talk to Vita lab directly on site"
-                actions={<VisibilityAction />}
-                contentClassName="flex-row items-center justify-between"
-                actionsClassName="self-center"
-            />
+        <div className="flex min-w-0 flex-col gap-4">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+                <div className="flex min-w-0 items-center gap-3">
+                    <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-brand-soft text-brand">
+                        <Globe className="size-5" aria-hidden="true" />
+                    </span>
+                    <div className="min-w-0">
+                        <p className="text-base font-medium text-foreground">Website chat</p>
+                        <p className="text-sm text-muted-foreground">Shoppers talk to your AI agent right on your site.</p>
+                    </div>
+                </div>
+                <Button variant="outline" onClick={() => navigate("/chat-settings/visibility")}>
+                    <SquarePen className="size-4" />
+                    Design &amp; visibility
+                </Button>
+            </div>
 
             <AppCard>
-                <div className="flex min-w-0 flex-col gap-5 lg:flex-row lg:gap-5">
-                    <div className="flex min-w-0 flex-1 flex-col gap-3 md:gap-5">
+                <div className="flex min-w-0 flex-col gap-6 lg:flex-row">
+                    <div className="flex min-w-0 flex-1 flex-col gap-5">
                         <div className="min-w-0">
-                            <p className="text-base font-semibold text-foreground md:text-lg">
-                                Link to chat
-                            </p>
-                            <p className="mt-1 text-sm md:text-base text-content-muted">
-                                Use the following link to the standalone chat page
+                            <div className="flex items-center justify-between gap-3">
+                                <p className="text-base font-medium text-foreground">Chat page link</p>
+                                {chatLink && (
+                                    <a
+                                        href={chatLink}
+                                        target="_blank"
+                                        rel="noreferrer"
+                                        className="inline-flex items-center gap-1 text-sm font-medium text-muted-foreground hover:text-foreground"
+                                    >
+                                        Open <ExternalLink className="size-3.5" aria-hidden="true" />
+                                    </a>
+                                )}
+                            </div>
+                            <p className="mt-0.5 text-sm text-muted-foreground">
+                                A full-page chat you can share anywhere — emails, social bios, receipts.
                             </p>
                             <div className="mt-2 min-w-0">
-                                <CopyField
-                                    value={chatLink}
-                                    variant='light'
-                                />
+                                <CopyField value={chatLink || "Available once your store is selected"} />
                             </div>
                         </div>
 
                         <div className="min-w-0">
-                            <p className="text-base font-semibold text-foreground md:text-lg">
-                                Embedded chat (iframe)
-                            </p>
-                            <p className="mt-1 text-sm md:text-base text-content-muted">
-                                Add the following code into the HTML code of your page
+                            <p className="text-base font-medium text-foreground">Add to any website</p>
+                            <p className="mt-0.5 text-sm text-muted-foreground">
+                                Paste this before <code className="rounded bg-muted px-1 py-0.5 text-[12px]">&lt;/body&gt;</code> on every page.
+                                On Shopify, use the app embed under Integrations instead.
                             </p>
                             <div className="mt-2 min-w-0">
-                                <CopyField
-                                    value={embedCode}
-                                    variant='light'
-                                />
+                                <CopyField value={embedCode || "Available once your store is selected"} />
                             </div>
                         </div>
                     </div>
 
                     <div className="hidden w-px shrink-0 bg-divider lg:block" />
 
-                    <div className="min-w-0 border-t border-divider pt-2.5 lg:w-[min(100%,280px)] lg:shrink-0 lg:border-t-0 lg:pt-0">
-                        <p className="text-base font-semibold text-foreground md:text-lg">
-                            QR code
-                        </p>
-                        <p className="mt-0.5 text-sm text-muted-foreground">
-                            Scanning this QR code will lead customers to a standalone
-                            chat page
-                        </p>
-                        <div className="mt-3 size-16 text-foreground">
-                            <QrCode className="size-full" strokeWidth={1.2} />
+                    <div className="flex min-w-0 items-start gap-4 border-t border-divider pt-5 lg:w-[260px] lg:shrink-0 lg:flex-col lg:border-t-0 lg:pt-0">
+                        <div className="flex size-28 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-border bg-white p-1.5">
+                            {qr ? (
+                                <img src={qr} alt="QR code for the chat page" className="size-full" />
+                            ) : (
+                                <span className="text-center text-xs text-muted-foreground">QR code</span>
+                            )}
                         </div>
-                        <Button
-                            variant="secondary"
-                            className="mt-2"
-                            size="sm"
-                        >
-                            Download QR
-                            <Download className="size-3.5 ml-1" />
-                        </Button>
+                        <div className="min-w-0">
+                            <p className="text-base font-medium text-foreground">QR code</p>
+                            <p className="mt-0.5 text-sm text-muted-foreground">
+                                Print it on packaging or in-store signs; it opens the chat page.
+                            </p>
+                            <Button variant="outline" size="sm" className="mt-3" onClick={downloadQr} disabled={!qr}>
+                                <Download className="size-3.5" />
+                                Download PNG
+                            </Button>
+                        </div>
                     </div>
                 </div>
             </AppCard>
-
         </div>
     );
 }
