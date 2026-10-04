@@ -9,29 +9,67 @@ import { debounce } from "@/lib/utils"
 import { Download, Plus, Trash } from "lucide-react"
 import { useRef, useState } from "react"
 import { useSearchParams } from "react-router"
+import { format as formatDate } from "date-fns"
+import { downloadSegment } from "./contactsApi"
 import DeleteContacts from "./DeleteContacts"
 import { useSegmentsQuery } from "./contactQuery"
-import type { Segment } from "./contactType"
+import type { Segment, SegmentRules } from "./contactType"
 import AddSegment from "./AddSegment"
 
 
+const WHO_LABEL: Record<SegmentRules["who"], string> = {
+    everyone: "Everyone",
+    customers: "Customers",
+    leads: "Leads",
+}
+
+/** One line describing a segment's rules, e.g. "Customers · chatted in 30 days · asked about returns". */
+function describeRules(rules?: SegmentRules): string {
+    if (!rules) return ""
+    const parts = [WHO_LABEL[rules.who] ?? "Everyone"]
+    if (rules.activeWithinDays) parts.push(`chatted in ${rules.activeWithinDays} days`)
+    if (rules.askedAbout) parts.push(`asked about “${rules.askedAbout}”`)
+    if (rules.consentOnly) parts.push("marketing consent")
+    return parts.join(" · ")
+}
+
+function formatDay(value: unknown): string {
+    if (!value) return "—"
+    const date = new Date(String(value))
+    return Number.isNaN(date.getTime()) ? "—" : formatDate(date, "MMM d, yyyy")
+}
+
 const columns: Column[] = [
-    { key: "name", header: "Name", width: "280px" },
+    {
+        key: "name",
+        header: "Segment",
+        width: "340px",
+        render: (value, row) => (
+            <span className="flex min-w-0 flex-col">
+                <span className="truncate font-medium text-foreground">{String(value)}</span>
+                <span className="truncate text-sm text-muted-foreground">{describeRules((row as Segment).rules)}</span>
+            </span>
+        ),
+    },
     {
         key: "status",
         header: "Status",
-        align: "center",
-        render: (value) => {
-            const status = String(value)
+        render: (value, row) => {
+            const active = value === "Active"
             return (
-                <Badge variant={status ? "default" : "destructive"}>
-                    {status ? "Active" : "Inactive"}
+                <Badge variant={active ? "default" : "warning"}>
+                    {active ? "Active" : `Starts ${formatDay((row as Segment).activeSchedule)}`}
                 </Badge>
             )
         },
     },
-    { key: "createdAt", header: "Created date", align: "right" },
-    { key: "activeUsers", header: "Active Users", align: "right" },
+    {
+        key: "activeUsers",
+        header: "Contacts",
+        align: "right",
+        render: (value) => <span className="tabular font-medium">{Number(value ?? 0).toLocaleString()}</span>,
+    },
+    { key: "createdAt", header: "Created", align: "right", render: (value) => formatDay(value) },
 ]
 
 export default function Segments() {
@@ -100,7 +138,8 @@ export default function Segments() {
     return (
         <>
             <CustomTable
-                title="All segaments"
+                title="Segments"
+                description="Saved groups of contacts. Counts update as people chat and buy."
                 columns={columns}
                 data={segments}
                 selectable={canDeleteSegments}
@@ -112,8 +151,8 @@ export default function Segments() {
                         Delete selected
                     </Button>
                 )) : undefined}
-                emptyMessage={search ? "No matching segaments found" : "No segaments found"}
-                emptyDescription={search ? "Try a different search term." : "Segaments you create will appear here."}
+                emptyMessage={search ? "No matching segments" : "No segments yet"}
+                emptyDescription={search ? "Try a different search term." : "Group contacts by what they bought, asked about or when they last chatted."}
                 emptyState={isLoading ? (
                     <TableSkeleton columns={4} showHeader={false} />
                 ) : undefined}
@@ -122,20 +161,20 @@ export default function Segments() {
                         <SearchField onSearchChange={handleSearchChange} />
                         {canCreateSegments && (
                             <Button variant="primary" onClick={() => setIsAddOpen(true)}>
-                                Add segment
-                                <Plus className="ml-0.5 size-2 md:ml-2 md:size-4" />
+                                <Plus className="size-4" />
+                                New segment
                             </Button>
                         )}
                     </div>
                 }
                 rowActions={(row) => (
                     <div className="flex items-center gap-2">
-                        <Button variant="bare" size="sm" onClick={() => { }} aria-label="Download segment">
-                            <Download className="size-4 text-content-muted" />
+                        <Button variant="ghost" size="icon" className="size-8" onClick={() => downloadSegment(row.id).catch(() => undefined)} aria-label={`Download ${row.name} as CSV`} title="Download CSV">
+                            <Download className="size-4" />
                         </Button>
                         {canDeleteSegments && (
-                            <Button variant="bare" size="sm" onClick={() => requestDelete([row])} aria-label="Delete segment">
-                                <Trash className="size-4 text-content-muted" />
+                            <Button variant="ghost" size="icon" className="size-8 hover:text-danger" onClick={() => requestDelete([row])} aria-label={`Delete ${row.name}`} title="Delete">
+                                <Trash className="size-4" />
                             </Button>
                         )}
                     </div>

@@ -1,5 +1,5 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { getSegaments, getUserProfiles } from "./contactsApi";
+import { getSegments, getUserProfiles } from "./contactsApi";
 
 export const userProfilesQueryKey = ["contacts", "userProfiles"];
 export const segmentsQueryKey = ["contacts", "segments"];
@@ -14,7 +14,7 @@ export function useUserProfilesQuery() {
 export function useSegmentsQuery(page: number, search = "") {
     return useQuery({
         queryKey: [...segmentsQueryKey, page, search],
-        queryFn: () => getSegaments(page, search),
+        queryFn: () => getSegments(page, search),
         placeholderData: keepPreviousData,
     });
 }
