@@ -48,6 +48,7 @@ export default function SignInForm() {
 
     return (
         <AuthForm
+            withSocials
             title="Sign in"
             subtitle="Welcome back. Pick up where your sales agent left off."
         >

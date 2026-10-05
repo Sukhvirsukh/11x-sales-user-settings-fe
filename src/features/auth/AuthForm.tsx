@@ -1,15 +1,7 @@
 import type { AuthFormProps } from "./authTypes";
 import { Check } from "lucide-react";
 import { BrandIcon, BrandLogo } from "@/components/brand/Brand";
-import googleIcon from "@/assets/auth/google.svg";
-import facebookIcon from "@/assets/auth/facebook.svg";
-import shopifyIcon from "@/assets/auth/shopify.svg";
-
-const socialProviders = [
-    { name: "Google", icon: googleIcon },
-    { name: "Facebook", icon: facebookIcon },
-    { name: "Shopify", icon: shopifyIcon },
-] as const;
+import SocialSignIn from "./SocialSignIn";
 
 const proofPoints = [
     "Answers shoppers from your catalog, policies and orders",
@@ -89,29 +81,10 @@ export default function AuthForm({
                     </h1>
                     <p className="mt-2 text-base text-muted-foreground">{subtitle}</p>
 
-                    <div className="mt-8">{children}</div>
-
-                    {withSocials && (
-                        <div className="mt-8 flex flex-col gap-4">
-                            <div className="flex w-full items-center gap-3">
-                                <span className="h-px flex-1 bg-border" />
-                                <span className="shrink-0 text-sm text-muted-foreground">Or continue with</span>
-                                <span className="h-px flex-1 bg-border" />
-                            </div>
-                            <div className="grid grid-cols-3 gap-2">
-                                {socialProviders.map((provider) => (
-                                    <button
-                                        key={provider.name}
-                                        type="button"
-                                        aria-label={`Continue with ${provider.name}`}
-                                        className="flex h-10 items-center justify-center rounded-lg border border-border bg-surface-raised transition-colors hover:bg-control-hover"
-                                    >
-                                        <img src={provider.icon} alt="" width={18} height={18} className="size-4.5 object-contain" />
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
-                    )}
+                    <div className="mt-8 flex flex-col gap-5">
+                        {withSocials && <SocialSignIn />}
+                        <div>{children}</div>
+                    </div>
                 </div>
 
                 <p className="text-center text-sm text-muted-foreground lg:text-left">© {new Date().getFullYear()} 11xsales.ai</p>

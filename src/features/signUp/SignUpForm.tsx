@@ -48,6 +48,7 @@ export default function SignUpForm() {
 
     return (
         <AuthForm
+            withSocials
             title="Create your account"
             subtitle="Set up an AI sales agent for your store in a few minutes."
         >

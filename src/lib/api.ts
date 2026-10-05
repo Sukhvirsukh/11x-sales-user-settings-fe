@@ -47,6 +47,11 @@ function refreshSession(): Promise<boolean> {
   return pendingRefresh;
 }
 
+/** Full address of a backend endpoint, for browser navigations (e.g. social sign-in). */
+export function apiUrl(endpoint: string): string {
+  return `${API_BASE_URL}${API_PREFIX}${endpoint}`;
+}
+
 export async function apiFetch<T>(endpoint: string, options?: ApiFetchOptions): Promise<T> {
   const { auth = true, notifyOnError = true, ...init } = options ?? {};
 

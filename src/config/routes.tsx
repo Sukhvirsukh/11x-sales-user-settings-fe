@@ -10,6 +10,7 @@ const SignUpPage = lazy(() => import("@/pages/SignUpPage"));
 const ForgotPassword = lazy(() => import("@/pages/ForgotPassword"));
 const ResetPasswordPage = lazy(() => import("@/pages/ResetPasswordPage"));
 const VerifyEmailPage = lazy(() => import("@/pages/VerifyEmailPage"));
+const OAuthCallbackPage = lazy(() => import("@/pages/OAuthCallbackPage"));
 const OverviewPage = lazy(() => import("@/pages/OverviewPage"));
 const NotFoundPage = lazy(() => import("@/pages/NotFoundPage"));
 const ContactsPage = lazy(() => import("@/pages/ContactPage"));
@@ -57,6 +58,8 @@ export const router = createBrowserRouter([
     children: [
       // Opened from the confirmation email, signed in or not.
       { path: "/verify-email", element: <VerifyEmailPage /> },
+      // Google / Facebook / Shopify sign-in returns here.
+      { path: "/auth/callback", element: <OAuthCallbackPage /> },
       {
         element: <GuestOnlyRoute />,
         children: [
