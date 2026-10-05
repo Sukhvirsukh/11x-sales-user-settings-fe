@@ -10,6 +10,7 @@ const SignInPage = lazy(() => import("@/pages/SignInPage"));
 const SignUpPage = lazy(() => import("@/pages/SignUpPage"));
 const ForgotPassword = lazy(() => import("@/pages/ForgotPassword"));
 const ResetPasswordPage = lazy(() => import("@/pages/ResetPasswordPage"));
+const EmailVerificationPage = lazy(() => import("@/pages/EmailVerificationPage"));
 const OverviewPage = lazy(() => import("@/pages/OverviewPage"));
 const NotFoundPage = lazy(() => import("@/pages/NotFoundPage"));
 const ContactsPage = lazy(() => import("@/pages/ContactPage"));
@@ -77,6 +78,7 @@ export const router = createBrowserRouter([
             element: <RouteGuard />,
             children: [
               { path: '/onboarding', element: <OnBoardingPage /> },
+              { path: "/verify-email", element: <EmailVerificationPage /> },
               { path: "/", element: <OverviewPage />, handle: { permission: "overview.view" } satisfies RouteHandle },
               {
                 path: "/contacts",

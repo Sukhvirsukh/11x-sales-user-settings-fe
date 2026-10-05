@@ -1,4 +1,4 @@
-const hiddenSidebarPaths = ["/chat-settings/visibility"];
+const hiddenSidebarPaths = ["/chat-settings/visibility", "/verify-email"];
 
 export function isSidebarHidden(pathname: string) {
     return hiddenSidebarPaths.some(

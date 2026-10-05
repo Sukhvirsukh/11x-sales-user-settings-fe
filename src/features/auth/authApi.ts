@@ -34,6 +34,7 @@ function getUser(
       permissions: user.permissions,
       phone: user.phone,
       isOnBoarding: user.isOnBoarding,
+      isEmailVerified: user.isEmailVerified,
     };
 }
 

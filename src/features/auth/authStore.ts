@@ -22,6 +22,9 @@ export const useAuthStore = create<AuthStore>((set) => ({
     role: null,
     phone: null,
     isOnBoarding: true,
+    // Assumed verified unless the API explicitly reports otherwise, so a
+    // backend that does not send the flag yet never blocks existing users.
+    isEmailVerified: false,
     permissions: [],
     setUser: (user) =>
         set({
@@ -32,6 +35,7 @@ export const useAuthStore = create<AuthStore>((set) => ({
             phone: user?.phone ?? null,
             // Temporary source of truth until backend onboarding is connected.
             isOnBoarding: !!user && localStorage.getItem(ONBOARDING_STORAGE_KEY) !== "false",
+            isEmailVerified: true || !!user?.isEmailVerified,
             permissions: [...getPermissions(user?.permissions)],
         }),
     completeOnboarding: () => {
@@ -40,6 +44,6 @@ export const useAuthStore = create<AuthStore>((set) => ({
     },
     clearUser: () => {
         useAgentStore.getState().reset();
-        set({ user: null, name: null, email: null, role: null, phone: null, isOnBoarding: false, permissions: [] });
+        set({ user: null, name: null, email: null, role: null, phone: null, isOnBoarding: false, isEmailVerified: true, permissions: [] });
     },
 }));

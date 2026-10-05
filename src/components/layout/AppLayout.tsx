@@ -21,6 +21,7 @@ function AppLayout() {
     const authToken = getAuthToken();
     const user = useAuthStore((state) => state.user);
     const isOnBoarding = useAuthStore((state) => state.isOnBoarding);
+    const isEmailVerified = useAuthStore((state) => state.isEmailVerified);
     const setUser = useAuthStore((state) => state.setUser);
     const clearUser = useAuthStore((state) => state.clearUser);
     const location = useLocation();
@@ -68,6 +69,19 @@ function AppLayout() {
             </div>
         );
     }
+
+    /*
+     * Email verification gates the whole app: an unverified account may only
+     * see the verification screen — never onboarding or the dashboard — while
+     * a verified account is sent away from that screen.
+     */
+    if (!isEmailVerified) {
+        return location.pathname === "/verify-email"
+            ? <Outlet />
+            : <Navigate to="/verify-email" replace />;
+    }
+
+    if (location.pathname === "/verify-email") return <Navigate to="/" replace />;
 
     if (isOnBoarding) {
         return location.pathname === "/onboarding"
