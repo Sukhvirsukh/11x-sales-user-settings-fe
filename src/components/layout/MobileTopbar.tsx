@@ -12,7 +12,7 @@ export default function MobileTopbar() {
     return (
         <div className="fixed inset-x-0 top-0 z-30 border-b border-border bg-sidebar/90 px-4 backdrop-blur md:hidden">
             <div className="flex h-14 w-full items-center justify-between gap-3">
-                <BrandLogo markClassName="size-7" />
+                <BrandLogo markClassName="h-[30px]" wordClassName="text-[17px]" className="gap-1.5" />
 
                 <div className="flex shrink-0 items-center gap-2">
                     <Button variant="outline" size="sm" onClick={toggleChat} aria-pressed={isChatOpen}>

@@ -20,22 +20,22 @@ const proofPoints = [
 /** The brand side of the sign-in screens: what the product does, shown as a live exchange. */
 function BrandPanel() {
     return (
-        <aside className="relative hidden overflow-hidden bg-[#131215] p-10 text-white lg:flex lg:flex-col lg:justify-between xl:p-14">
+        <aside className="relative hidden overflow-hidden bg-[#0B0B0C] p-10 text-white lg:flex lg:flex-col lg:justify-between xl:p-14">
             <div
                 aria-hidden="true"
-                className="pointer-events-none absolute -right-40 -top-40 size-[520px] rounded-full bg-[#2F87FF] opacity-[0.18] blur-[120px]"
+                className="pointer-events-none absolute -right-40 -top-40 size-[520px] rounded-full bg-[#2F86FF] opacity-[0.18] blur-[120px]"
             />
-            <BrandLogo className="relative gap-3.5 text-white" markClassName="h-7" wordClassName="text-[22px]" />
+            <BrandLogo className="relative gap-[9px] text-white" markClassName="h-[46px]" wordClassName="text-[26px]" />
 
             <div className="relative max-w-[440px]">
-                <h2 className="font-brand text-[30px] leading-[40px] font-semibold tracking-[-0.03em] text-balance">
-                    <span className="text-white/60">Your pipeline,</span>{" "}
-                    <span className="font-extrabold">eleven times over.</span>
+                <h2 className="font-brand text-[30px] leading-[40px] font-medium tracking-[0.02em] text-balance text-[#A1A1A6]">
+                    Your pipeline,{" "}
+                    <span className="font-extrabold text-white">eleven times over.</span>
                 </h2>
                 <ul className="mt-6 flex flex-col gap-3">
                     {proofPoints.map((point) => (
                         <li key={point} className="flex items-start gap-3 text-[15px] leading-6 text-white/75">
-                            <span className="mt-1 flex size-4 shrink-0 items-center justify-center rounded-full bg-[#2F87FF]/20 text-[#5EA2FF]">
+                            <span className="mt-1 flex size-4 shrink-0 items-center justify-center rounded-full bg-[#2F86FF]/20 text-[#5EA2FF]">
                                 <Check className="size-3" strokeWidth={3} />
                             </span>
                             {point}
@@ -56,7 +56,7 @@ function BrandPanel() {
                     </div>
                 </div>
                 <div className="ml-8 flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.06] p-2.5">
-                    <span className="size-10 shrink-0 rounded-lg bg-gradient-to-br from-[#2F87FF] to-[#123A73]" />
+                    <span className="size-10 shrink-0 rounded-lg bg-gradient-to-br from-[#2F86FF] to-[#123A73]" />
                     <span className="min-w-0 flex-1">
                         <span className="block truncate text-sm font-medium">Ridgeline Trail Runner</span>
                         <span className="block text-xs text-white/60">Size 10 · In stock</span>

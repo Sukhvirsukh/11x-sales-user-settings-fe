@@ -1,8 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <rect width="64" height="64" rx="15" fill="#2F87FF"/>
-  <g transform="translate(9.5 18.25) scale(0.128)" fill="#0B0B0C">
-    <path d="M42 63H102L61 211H0L42 63Z"/>
-    <path d="M142 0H203L149 211H88L142 0Z"/>
-    <path d="M237 50Q294.5 92 352 50Q310 107.5 352 165Q294.5 123 237 165Q279 107.5 237 50Z"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 152 152">
+  <rect width="152" height="152" rx="38" fill="#2F86FF"/>
+  <g transform="translate(17 40.5) scale(0.59)" fill="#0B0B0C">
+    <polygon points="8,112 38,112 58,40 28,40"/>
+    <polygon points="50,112 80,112 106,10 76,10"/>
+    <path d="M120,32 Q150,56 180,32 Q156,62 180,92 Q150,68 120,92 Q144,62 120,32 Z"/>
   </g>
 </svg>

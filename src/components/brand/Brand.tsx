@@ -1,56 +1,60 @@
 import { cn } from "@/lib/utils";
 
-/** The brand blue; the star is always this color, whatever the theme. */
-export const BRAND_BLUE = "#2F87FF";
+/** The brand blue from the 11xsales.ai logo sheet; the star is always this color. */
+export const BRAND_BLUE = "#2F86FF";
+
+/** The mark's shapes on the sheet's 200 × 120 canvas: two bars ("11") and a star ("x"). */
+const BAR_LEFT = "8,112 38,112 58,40 28,40";
+const BAR_RIGHT = "50,112 80,112 106,10 76,10";
+const STAR = "M120,32 Q150,56 180,32 Q156,62 180,92 Q150,68 120,92 Q144,62 120,32 Z";
 
 /**
- * The 11xsales.ai mark: two slanted bars for "11" and a four-point star for "x".
- * The bars take the current text color, so the mark works on light and dark grounds.
+ * The 11xsales.ai mark. The bars take the current text color (white on dark,
+ * ink on light, as on the sheet); the star is brand blue unless told otherwise.
  */
 export function BrandMark({ className, starColor = BRAND_BLUE }: { className?: string; starColor?: string }) {
     return (
-        <svg viewBox="0 0 352 211" fill="none" aria-hidden="true" className={cn("h-5 w-auto shrink-0", className)}>
-            <path d="M42 63H102L61 211H0L42 63Z" fill="currentColor" />
-            <path d="M142 0H203L149 211H88L142 0Z" fill="currentColor" />
-            <path d="M237 50Q294.5 92 352 50Q310 107.5 352 165Q294.5 123 237 165Q279 107.5 237 50Z" fill={starColor} />
+        <svg viewBox="0 0 200 120" fill="none" aria-hidden="true" className={cn("h-[34px] w-auto shrink-0", className)}>
+            <polygon points={BAR_LEFT} fill="currentColor" />
+            <polygon points={BAR_RIGHT} fill="currentColor" />
+            <path d={STAR} fill={starColor} />
         </svg>
     );
 }
 
-/** The app icon: the mark in ink on a brand-blue tile. */
+/** The app icon: the whole mark in ink on a brand-blue tile (25% corner radius). */
 export function BrandIcon({ className }: { className?: string }) {
     return (
-        <svg viewBox="0 0 64 64" aria-hidden="true" className={cn("size-8 shrink-0", className)}>
-            <rect width="64" height="64" rx="15" fill={BRAND_BLUE} />
-            <g transform="translate(9.5 18.25) scale(0.128)" fill="#0B0B0C">
-                <path d="M42 63H102L61 211H0L42 63Z" />
-                <path d="M142 0H203L149 211H88L142 0Z" />
-                <path d="M237 50Q294.5 92 352 50Q310 107.5 352 165Q294.5 123 237 165Q279 107.5 237 50Z" />
+        <svg viewBox="0 0 152 152" aria-hidden="true" className={cn("size-8 shrink-0", className)}>
+            <rect width="152" height="152" rx="38" fill={BRAND_BLUE} />
+            <g transform="translate(17 40.5) scale(0.59)" fill="#0B0B0C">
+                <polygon points={BAR_LEFT} />
+                <polygon points={BAR_RIGHT} />
+                <path d={STAR} />
             </g>
         </svg>
     );
 }
 
-/** The wordmark that follows the mark: "sales" in the text color, ".ai" in brand blue. */
+/** "sales.ai" set as on the sheet: Unbounded Black, −0.04em tracking, slanted 8°. */
 export function BrandWordmark({ className }: { className?: string }) {
     return (
-        <span
-            className={cn(
-                "inline-block font-brand font-black leading-none tracking-[-0.03em] [transform:skewX(-8deg)]",
-                className,
-            )}
-        >
+        <span className={cn("inline-block font-brand font-black leading-none tracking-[-0.04em] whitespace-nowrap [transform:skewX(-8deg)]", className)}>
             sales<span style={{ color: BRAND_BLUE }}>.ai</span>
         </span>
     );
 }
 
-/** Mark plus wordmark ("11x" + "sales.ai"), as used in the sidebar and on the sign-in screens. */
+/**
+ * The full lockup: mark, then "sales.ai" — read together as "11xsales.ai".
+ * Proportions follow the sheet (mark 50px tall : text 28px : gap 10px), so pass
+ * sizes in that ratio when scaling it.
+ */
 export function BrandLogo({ className, markClassName, wordClassName }: { className?: string; markClassName?: string; wordClassName?: string }) {
     return (
-        <span className={cn("inline-flex items-center gap-3 text-foreground", className)} aria-label="11xsales.ai" role="img">
-            <BrandMark className={cn("h-[22px]", markClassName)} />
-            <BrandWordmark className={cn("text-[17px]", wordClassName)} />
+        <span className={cn("inline-flex items-center gap-[7px] text-foreground", className)} aria-label="11xsales.ai" role="img">
+            <BrandMark className={markClassName} />
+            <BrandWordmark className={cn("text-[19px]", wordClassName)} />
         </span>
     );
 }

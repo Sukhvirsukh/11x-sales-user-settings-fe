@@ -180,7 +180,7 @@
     --elevation-2: 0 12px 32px rgb(22 24 29 / 0.10), 0 2px 6px rgb(22 24 29 / 0.05);
 
     /* Main Layout & Backgrounds */
-    --background: #F6F6F3;
+    --background: #F4F4EF;
     --popover: #FFFFFF;
     --popover-foreground: var(--foreground);
     --sidebar-bg: #FFFFFF;
@@ -221,7 +221,7 @@
     --primary: #16181D;
     --primary-hover: #2B2E35;
     --primary-foreground: #FFFFFF;
-    --brand: #2F87FF;
+    --brand: #2F86FF;
     --brand-strong: #1F6FE6;
     --brand-soft: #EAF2FF;
     --secondary: #EEEEEA;
@@ -237,8 +237,8 @@
     --control-border-subtle: #DEDED8;
     --input: #D4D4CE;
     --border-subtle: #EFEFEA;
-    --ring: #2F87FF;
-    --focus-ring: #2F87FF;
+    --ring: #2F86FF;
+    --focus-ring: #2F86FF;
     --panel-accent-border: #E5E5E0;
     --border-strong: #CFCFC8;
 
@@ -313,7 +313,7 @@
     --elevation-1: 0 1px 2px rgb(0 0 0 / 0.40);
     --elevation-2: 0 16px 40px rgb(0 0 0 / 0.45), 0 2px 6px rgb(0 0 0 / 0.30);
 
-    --background: #0F1012;
+    --background: #0B0B0C;
     --popover: #17191C;
     --popover-foreground: var(--foreground);
     --sidebar-bg: #131518;
