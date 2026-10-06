@@ -1,3 +1,5 @@
 overrides:
   # ajv (through @hookform/resolvers) pulls a fast-uri with known advisories.
   fast-uri: ^3.1.8
+  # postcss / tailwind pull a source-map-js with a known advisory.
+  source-map-js: ^1.2.2
