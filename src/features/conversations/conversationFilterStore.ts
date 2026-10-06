@@ -10,8 +10,9 @@ type ConversationFilterState = {
     clearFilters: () => void
 }
 
+// Every channel is shown until the team narrows it down.
 const defaultFilters: SelectedFilters = {
-    Channels: ["Website"],
+    Channels: ["Website", "WhatsApp", "Messenger", "Instagram", "Email"],
 }
 
 export const useConversationFilterStore = create<ConversationFilterState>((set) => ({

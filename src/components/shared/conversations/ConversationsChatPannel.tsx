@@ -1,4 +1,5 @@
-import { Fragment, useMemo, useState } from "react"
+import { Fragment, useState } from "react"
+import { useChatVisibilityQuery } from "@/features/visibility/visibilityQuery"
 import { ChevronRight, MessagesSquare } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ChatInput } from "@/components/shared/chatBox"
@@ -17,7 +18,9 @@ import {
 import { ConversationsMessage } from "./ConversationsMessages"
 
 // The filter sidebar's channel labels -> the agent's channel names.
-const CHANNELS: Record<string, string> = { Website: "web", WhatsApp: "whatsapp", Facebook: "messenger", Instagram: "instagram", Email: "email" }
+const CHANNELS: Record<string, string> = { Website: "web", WhatsApp: "whatsapp", Messenger: "messenger", Instagram: "instagram", Email: "email" }
+const CHANNEL_LABEL: Record<string, string> = { web: "Website", whatsapp: "WhatsApp", messenger: "Messenger", instagram: "Instagram", email: "Email", zendesk: "Zendesk", test: "Test chat" }
+const channelLabel = (channel: string) => CHANNEL_LABEL[channel] ?? channel
 
 const displayName = (c: AgentConversation) => c.customer_name || c.customer_email || c.customer_phone || "Visitor"
 const pagePath = (url: string | null) => (url ? url.replace(/^https?:\/\/[^/]+/, "") || "/" : "—")
@@ -71,7 +74,7 @@ function ConversationList({ conversations, selectedId, onSelect }: {
                     </div>
                     <p className="truncate text-sm text-muted-foreground">{(conversation.preview ?? "").replace(/\*\*(.+?)\*\*/g, "$1")}</p>
                     <p className="mt-1 flex flex-wrap gap-1.5 text-xs text-content-muted">
-                        <span className="capitalize">{conversation.channel}</span>
+                        <span>{channelLabel(conversation.channel)}</span>
                         {conversation.status === "escalated" && <span className="text-destructive">Escalated</span>}
                         {conversation.manual_mode && <span>Manual replies</span>}
                         {(conversation.orders ?? 0) > 0 && <span>Sale</span>}
@@ -89,6 +92,9 @@ function MessageHistory({ conversationId, conversation, messages, alwaysShowChat
     alwaysShowChatInput: boolean
 }) {
     const { action, reply, correct } = useConversationMutations(conversationId)
+    const { data: design } = useChatVisibilityQuery()
+    const agentAvatar = typeof design?.chatFace === "string" ? design.chatFace : undefined
+    const agentInitial = (design?.aiAgentName?.trim()[0] ?? "A").toUpperCase()
     const showChatInput = alwaysShowChatInput || conversation.manual_mode
     const visible = messages.filter((m) => m.role !== "system")
 
@@ -111,7 +117,7 @@ function MessageHistory({ conversationId, conversation, messages, alwaysShowChat
     return (
         <AppCard padding="sm" className="flex h-full min-h-0 flex-col" shadow={false}>
             <div className="flex flex-wrap items-center justify-between gap-3 border-b border-section-border pb-3">
-                <p className="text-lg font-medium text-foreground">Conversational history</p>
+                <p className="text-lg font-medium text-foreground">Conversation</p>
                 <div className="flex flex-wrap items-center gap-2">
                     <Button variant="bare" size="sm" disabled={action.isPending} onClick={() => action.mutate({ action: "unread", body: { unread: true } })}>
                         Mark unread
@@ -148,6 +154,8 @@ function MessageHistory({ conversationId, conversation, messages, alwaysShowChat
                             id={String(message.id)}
                             content={message.role === "human" ? `${message.sender ?? "Team"}: ${text}` : text}
                             sender={message.role === "user" ? "user" : "bot"}
+                            avatar={message.role === "assistant" ? agentAvatar : undefined}
+                            initial={message.role === "human" ? (message.sender ?? "T").trim()[0]?.toUpperCase() : agentInitial}
                             onCorrect={fromAi ? handleCorrect : undefined}
                         />
                     )
@@ -169,8 +177,8 @@ function CustomerDetails({ conversation, shareUrl }: { conversation: AgentConver
         { label: "Name", value: conversation.customer_name ?? "—" },
         { label: "Email", value: conversation.customer_email ?? "—" },
         { label: "Phone", value: conversation.customer_phone ?? "—" },
-        { label: "Channel", value: conversation.channel },
-        { label: "Started on", value: pagePath(conversation.start_page) },
+        { label: "Channel", value: channelLabel(conversation.channel) },
+        ...(conversation.start_page ? [{ label: "Started on", value: pagePath(conversation.start_page) }] : []),
         { label: "Assignee", value: conversation.assignee ?? "AI" },
     ]
 
@@ -218,13 +226,11 @@ interface ConversationsChatPannelProps {
 export function ConversationsChatPannel({ tab = "active", alwaysShowChatInput = false }: ConversationsChatPannelProps) {
     const searchQuery = useConversationFilterStore((state) => state.searchQuery)
     const channelFilters = useConversationFilterStore((state) => state.selectedFilters.Channels ?? [])
-    // One channel is filtered on the server; several are filtered here.
+    // The ticked channels are filtered on the server; all or none ticked means every channel.
     const channels = channelFilters.map((label) => CHANNELS[label]).filter(Boolean)
-    const list = useConversationsQuery(tab, searchQuery, channels.length === 1 ? channels[0] : undefined)
-    const conversations = useMemo(
-        () => (list.data?.conversations ?? []).filter((c) => channels.length <= 1 || channels.includes(c.channel)),
-        [list.data, channels],
-    )
+    const allChannels = channels.length === 0 || channels.length === Object.keys(CHANNELS).length
+    const list = useConversationsQuery(tab, searchQuery, allChannels ? undefined : [...channels].sort().join(","))
+    const conversations = list.data?.conversations ?? []
 
     const [chosenId, setSelectedId] = useState<string | null>(null)
     // Fall back to the newest conversation when nothing (or a conversation no longer listed) is chosen.

@@ -6,7 +6,6 @@ import ActionCard from "@/components/shared/ActionCard";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import shopifyIcon from "@/assets/integrations/shopify.svg";
-import backendIcon from "@/assets/integrations/backend.svg";
 import { chatSettingsIntegrationsQueryKey, useIntegrationsQuery } from "./chatSettingsQuery";
 import { connectShopify, disconnectShopify } from "./chatSettingsApi";
 import Modal from "@/components/design/Modal";
@@ -19,16 +18,6 @@ const ShopifyIcon = memo(function ShopifyIcon() {
     return (
         <img
             src={shopifyIcon}
-            alt=""
-            className="size-10 shrink-0 rounded md:size-11.75"
-        />
-    );
-});
-
-const BackendIcon = memo(function BackendIcon() {
-    return (
-        <img
-            src={backendIcon}
             alt=""
             className="size-10 shrink-0 rounded md:size-11.75"
         />
@@ -74,7 +63,6 @@ export default function Integrations() {
     // Connecting or disconnecting an integration is a change, so it follows the
     // section's `create` grant. Without it the buttons stay visible but inert.
     const canManageIntegrations = useCan("chatSettings.create");
-    const [backendActive, setBackendActive] = useState(false);
 
     const shopifyActive = data?.shopify?.connected || false;
     const [searchParams, setSearchParams] = useSearchParams();
@@ -121,18 +109,13 @@ export default function Integrations() {
         else setShopDialogOpen(true);
     }, [canManageIntegrations, shopifyActive, disconnectMutation]);
 
-    const toggleBackend = useCallback(() => {
-        if (!canManageIntegrations) return;
-        setBackendActive((prev) => !prev);
-    }, [canManageIntegrations]);
-
     return (
         <div className="flex min-w-0 flex-col gap-2.5 md:gap-4">
             <ActionCard
                 variant="bare"
                 icon={<ShopifyIcon />}
                 title="Shopify app"
-                subtitle="Enables advances shopify features"
+                subtitle="Product catalog, orders and checkout links from your Shopify store"
                 badge={<StatusBadge active={shopifyActive} />}
                 actions={
                     <ToggleAction
@@ -174,27 +157,10 @@ export default function Integrations() {
                         autoFocus
                     />
                     <p className="mt-2 text-sm text-content-muted">
-                        You'll approve the 11x Sales app in your Shopify admin, then come back here.
+                        You'll approve the 11xsales.ai app in your Shopify admin, then come back here.
                     </p>
                 </form>
             </Modal>
-            <div className="separator" />
-            <ActionCard
-                variant="bare"
-                icon={<BackendIcon />}
-                title="Backend API"
-                subtitle="Pull chatbot data from back end via API"
-                badge={<StatusBadge active={backendActive} />}
-                actions={
-                    <ToggleAction
-                        active={backendActive}
-                        onToggle={toggleBackend}
-                        disabled={isLoading || !canManageIntegrations}
-                    />
-                }
-                contentClassName="flex-row items-center justify-between"
-                actionsClassName="self-end"
-            />
         </div>
     );
 }

@@ -34,7 +34,7 @@ function AgentRow({ name, icon, status }: SystemStatusAgent) {
                 <span className="flex size-7 shrink-0 items-center justify-center rounded-md bg-muted text-muted-foreground">
                     <Icon size={15} />
                 </span>
-                <span className="truncate text-base text-foreground">{name}</span>
+                <span className="min-w-0 text-base leading-snug text-foreground">{name}</span>
             </div>
             <Badge variant={STATUS_VARIANTS[status] ?? FALLBACK_STATUS_VARIANT}>{status}</Badge>
         </div>

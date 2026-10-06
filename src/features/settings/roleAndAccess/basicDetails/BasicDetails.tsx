@@ -23,6 +23,8 @@ export function BasicDetails() {
     const name = user?.name || '';
     const canSeePlan = useCan("settings.plan.view");
     const storeName = useAgentStore((state) => state.agents.find((agent) => agent.id === state.currentAgentId)?.name);
+    // The role on this store (owner, editor, member), the same one the team table shows.
+    const storeRole = useAgentStore((state) => state.agents.find((agent) => agent.id === state.currentAgentId)?.role);
 
     return (
         <AppSection>
@@ -47,7 +49,7 @@ export function BasicDetails() {
                     </DetailGroup>
                     <DetailGroup>
                         <DetailItem label="Phone" value={user?.phone || '-'} />
-                        <DetailItem label="Role" value={user?.role ? capitalize(user.role.toLowerCase()) : "-"} />
+                        <DetailItem label="Role" value={storeRole ? capitalize(String(storeRole).toLowerCase()) : user?.role ? capitalize(user.role.toLowerCase()) : "-"} />
                     </DetailGroup>
                     <DetailGroup>
                         <DetailItem label="Store" value={storeName ?? "-"} />

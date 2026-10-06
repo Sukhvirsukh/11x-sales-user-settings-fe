@@ -13,6 +13,6 @@ export type FilterGroup = {
 export const filterGroups: FilterGroup[] = [
     {
         title: "Channels",
-        options: [{ label: "Website" }, { label: "WhatsApp" }, { label: "Facebook" }, { label: "Instagram" }, { label: "Email" }],
+        options: [{ label: "Website" }, { label: "WhatsApp" }, { label: "Messenger" }, { label: "Instagram" }, { label: "Email" }],
     },
 ]

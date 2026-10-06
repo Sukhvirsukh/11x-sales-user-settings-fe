@@ -121,12 +121,12 @@ export function PromptTools() {
                                         variant="info"
                                         className="p-2"
                                     >
-                                        <p className="text-sm font-medium mb-1">Learn how to use prompt tools</p>
+                                        <p className="text-sm font-medium mb-1">Example instructions</p>
                                         <ul className="list-disc space-y-1 text-sm text-content-muted pl-2.5">
-                                            <li className="text-sm text-content-muted"   >Your name is Ava</li>
-                                            <li className="text-sm text-content-muted"   >Your goal is to aware the user to know about the product variants</li>
-                                            <li className="text-sm text-content-muted"   >Stay on brand related copy</li>
-                                            <li className="text-sm text-content-muted"   >Defend the brand loyalty</li>
+                                            <li className="text-sm text-content-muted">Your name is Ava.</li>
+                                            <li className="text-sm text-content-muted">Mention the sizes and colours a product comes in.</li>
+                                            <li className="text-sm text-content-muted">Keep a warm, on-brand tone.</li>
+                                            <li className="text-sm text-content-muted">Never promise a delivery date.</li>
                                         </ul>
                                     </Banner>
                                 </div>
