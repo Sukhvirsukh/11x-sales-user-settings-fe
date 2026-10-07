@@ -41,7 +41,7 @@ export function ForgotPasswordForm() {
     return (
         <AuthForm
             title="Forgot your password?"
-            subtitle="Enter your email and we'll send you instructions to reset your password."
+            subtitle="Enter your email and we'll send you a link to choose a new one."
             withSocials={false}
         >
             <form
@@ -49,38 +49,34 @@ export function ForgotPasswordForm() {
                 className="flex flex-col"
                 noValidate
             >
-                <div className="flex flex-col gap-2.5">
+                <div className="flex flex-col gap-4">
                     <InputField
                         type="email"
                         label="Email"
-                        labelClassName="text-sm font-medium"
-                        placeholder="Email"
+                        placeholder="you@store.com"
                         autoComplete="email"
                         error={errors.email?.message}
-                        startIcon={<Mail className="size-3" />}
+                        startIcon={<Mail />}
                         {...register("email")}
                     />
 
-                    <p className="text-right text-sm text-content-muted">
-                        New here?{" "}
-                        <Link
-                            to="/sign-up"
-                            className="font-medium text-content-muted underline underline-offset-2"
-                        >
-                            Sign up
-                        </Link>
-                    </p>
                 </div>
 
                 <Button
                     type="submit"
-                    className="mt-7.5 w-full"
+                    size="full"
+                    className="mt-6"
                     disabled={forgotPasswordMutation.isPending}
                 >
-                    {forgotPasswordMutation.isPending
-                        ? "Sending instructions..."
-                        : "Send reset instructions"}
+                    {forgotPasswordMutation.isPending ? "Sending link…" : "Send reset link"}
                 </Button>
+
+                <p className="mt-6 text-center text-base text-muted-foreground">
+                    Remembered it?{" "}
+                    <Link to="/sign-in" className="font-medium text-foreground underline underline-offset-4">
+                        Back to sign in
+                    </Link>
+                </p>
             </form>
         </AuthForm>
     );

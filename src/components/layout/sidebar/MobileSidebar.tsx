@@ -1,7 +1,8 @@
 import { useEffect } from "react";
 import { X } from "lucide-react";
-import { useLocation, useNavigate } from "react-router";
-import { useNavItems } from "./sideNav";
+import { BrandLogo } from "@/components/brand/Brand";
+import { StoreDropdown } from "@/components/shared/StoreDropdown";
+import SidebarNav from "./SidebarNav";
 import SidebarUserCard from "./SidebarUserCard";
 import { useMobileSidebarStore } from "@/stores/mobileSidebarStore";
 import { useAuthStore } from "@/features/auth";
@@ -11,11 +12,8 @@ const MD_BREAKPOINT = 768;
 export default function MobileSidebar() {
     const isOpen = useMobileSidebarStore((state) => state.isOpen);
     const close = useMobileSidebarStore((state) => state.close);
-    const navigate = useNavigate();
-    const location = useLocation();
     const name = useAuthStore((state) => state.name);
     const email = useAuthStore((state) => state.email);
-    const navItems = useNavItems();
 
     // Close when switching to desktop widths
     useEffect(() => {
@@ -51,76 +49,40 @@ export default function MobileSidebar() {
                 type="button"
                 aria-label="Close menu"
                 onClick={close}
-                className={`absolute inset-0 bg-content-strong/40 backdrop-blur-xs transition-opacity duration-300 ease-out ${
+                className={`absolute inset-0 bg-black/40 backdrop-blur-[2px] transition-opacity duration-300 ease-out ${
                     isOpen ? "opacity-100" : "opacity-0"
                 }`}
             />
 
             {/* Panel — stays mounted so it can slide in from the left edge. */}
             <aside
-                className={`absolute inset-y-0 left-0 flex h-full w-full max-w-[320px] flex-col bg-sidebar p-2.5 shadow-blue transition-transform duration-300 ease-out sm:max-w-[360px] sm:p-4 ${
+                className={`absolute inset-y-0 left-0 flex h-full w-full max-w-[300px] flex-col border-r border-border bg-sidebar shadow-[var(--elevation-2)] transition-transform duration-300 ease-out ${
                     isOpen ? "translate-x-0" : "-translate-x-full"
                 }`}
             >
-                {/* Header */}
-                <div className="flex items-center justify-between border-b border-divider pb-2.5 sm:pb-4">
-                    <div className="flex min-w-0 items-center gap-2.5">
-                        <img
-                            src="/logo.svg"
-                            alt=""
-                            className="size-7 shrink-0 object-contain sm:size-8"
-                        />
-                        <span className="truncate text-lg font-semibold text-foreground">
-                            Vitalb
-                        </span>
-                    </div>
+                <div className="flex h-14 items-center justify-between px-4">
+                    <BrandLogo />
                     <button
                         type="button"
                         onClick={close}
-                        className="rounded-[10px] p-2 text-muted-foreground hover:bg-muted"
+                        className="rounded-lg p-2 text-muted-foreground hover:bg-control-hover hover:text-foreground"
                         aria-label="Close menu"
                     >
-                        <X className="size-5 sm:size-6" />
+                        <X className="size-5" />
                     </button>
                 </div>
 
-                {/* Navigation */}
-                <nav className="min-h-0 flex-1 space-y-1 overflow-y-auto py-2.5 sm:space-y-1.5 sm:py-4">
-                    {navItems.map((item) => {
-                        const Icon = item.icon;
-                        const isActive = location.pathname === item.link;
-                        return (
-                            <button
-                                key={item.label}
-                                type="button"
-                                onClick={() => {
-                                    navigate(item.link);
-                                    close();
-                                }}
-                                className={`flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-base font-medium transition-colors sm:gap-3 sm:px-3 sm:py-2.5 ${
-                                    isActive
-                                        ? "border border-interactive-active-border bg-interactive-active-background text-foreground shadow-2xs"
-                                        : "border border-transparent text-foreground hover:bg-interactive-active-background"
-                                }`}
-                            >
-                                <Icon
-                                    className={`size-4 shrink-0 sm:size-5 ${
-                                        isActive ? "text-primary" : "text-sidebar-navigation-icon"
-                                    }`}
-                                />
-                                <span className="truncate">{item.label}</span>
-                            </button>
-                        );
-                    })}
-                </nav>
+                <div className="px-3 pb-4">
+                    <p className="mb-1.5 px-1 text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground">Store</p>
+                    <StoreDropdown variant="sidebar" />
+                </div>
 
-                {/* Profile */}
-                <div className="pt-2.5 sm:pt-4">
-                    <SidebarUserCard
-                        name={name ?? "Account"}
-                        email={email ?? ""}
-                        isCollapsed={false}
-                    />
+                <div className="min-h-0 flex-1 overflow-y-auto px-3 pb-4">
+                    <SidebarNav onNavigate={close} />
+                </div>
+
+                <div className="border-t border-border p-3">
+                    <SidebarUserCard name={name ?? "Account"} email={email ?? ""} />
                 </div>
             </aside>
         </div>

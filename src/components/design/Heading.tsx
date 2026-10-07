@@ -2,7 +2,7 @@ import { memo, type ReactNode } from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
-const headingVariants = cva("text-foreground", {
+const headingVariants = cva("font-display tracking-[-0.01em] text-foreground", {
     variants: {
         size: {
             /** 24px, semi-bold */

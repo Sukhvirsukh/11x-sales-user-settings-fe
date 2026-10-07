@@ -1,79 +1,36 @@
-import { NavLink } from "react-router"
-import { useNavItems } from "./sideNav"
+import { BrandLogo } from "@/components/brand/Brand"
+import { StoreDropdown } from "@/components/shared/StoreDropdown"
+import { useAuthStore } from "@/features/auth"
+import SidebarNav from "./SidebarNav"
 import SidebarUserCard from "./SidebarUserCard"
 import { isSidebarHidden } from "./isSidebarHidden"
-import { useAuthStore } from "@/features/auth"
 
 export default function DesktopSidebar() {
-  const isCollapsed = false
   const name = useAuthStore((state) => state.name)
   const email = useAuthStore((state) => state.email)
-  const navItems = useNavItems()
 
   if (isSidebarHidden(location.pathname)) {
     return null;
   }
 
   return (
-    <aside
-      className={`relative hidden flex-col justify-between rounded-[10px] border border-section-border bg-sidebar p-4 shadow-blue transition-all duration-300 md:flex ${isCollapsed ? "w-[72px]" : "w-[187px]"
-        }`}
-    >
-      {/* Top Header & Toggle */}
-      <div>
-        <div className="flex items-center justify-between mb-10 px-1">
-          <div className="flex items-center gap-2.5">
-            <img
-              src="/logo.svg"
-              alt=""
-              className="size-7 shrink-0 object-contain"
-            />
-            {!isCollapsed && (
-              <span className="text-lg font-semibold tracking-tight text-foreground">
-                Vitalb
-              </span>
-            )}
-          </div>
-        </div>
-
-        {/* Navigation Items */}
-        <nav className="">
-          {navItems.map((item) => {
-            const Icon = item.icon
-            return (
-              <NavLink
-                key={item.label}
-                to={item.link}
-                title={isCollapsed ? item.label : undefined}
-                className={({ isActive }) =>
-                  `w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-base transition-all ${isActive
-                    ? "border border-interactive-active-border bg-interactive-active-background font-medium text-foreground shadow-2xs"
-                    : "border border-transparent text-foreground hover:bg-interactive-active-background"
-                  } ${isCollapsed ? "justify-center px-0" : ""}`
-                }
-              >
-                {({ isActive }) => (
-                  <>
-                    <Icon
-                      className={`size-5 shrink-0 ${isActive ? "text-primary" : "text-sidebar-navigation-icon"}`}
-                    />
-                    {!isCollapsed && (
-                      <span className="">{item.label}</span>
-                    )}
-                  </>
-                )}
-              </NavLink>
-            )
-          })}
-        </nav>
+    <aside className="hidden h-full w-60 shrink-0 flex-col border-r border-border bg-sidebar md:flex">
+      <div className="flex h-16 items-center px-5">
+        <BrandLogo />
       </div>
 
-      {/* Bottom Profile Section */}
-      <SidebarUserCard
-        name={name ?? "Account"}
-        email={email ?? ""}
-        isCollapsed={isCollapsed}
-      />
+      <div className="px-3 pb-4">
+        <p className="mb-1.5 px-1 text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground">Store</p>
+        <StoreDropdown variant="sidebar" />
+      </div>
+
+      <div className="min-h-0 flex-1 overflow-y-auto px-3 pb-4">
+        <SidebarNav />
+      </div>
+
+      <div className="border-t border-border p-3">
+        <SidebarUserCard name={name ?? "Account"} email={email ?? ""} />
+      </div>
     </aside>
   )
 }

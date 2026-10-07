@@ -203,7 +203,7 @@ export default function CustomTable<T extends Record<string, unknown>>({
                     {(title || description) && (
                         <div className="min-w-0">
                             {title && (
-                                <Heading size="md" className="text-[14px] md:text-[16px] leading-none">
+                                <Heading size="md" className="text-[15px] md:text-[16px] leading-6">
                                     {title}
                                 </Heading>
                             )}
@@ -217,7 +217,7 @@ export default function CustomTable<T extends Record<string, unknown>>({
             )}
 
             {/* Table */}
-            <div className="relative flex w-full flex-col items-start overflow-hidden md:rounded-lg md:border md:border-section-border md:bg-background">
+            <div className="relative flex w-full flex-col items-start overflow-hidden md:rounded-lg md:border md:border-border md:bg-surface-raised">
                 {selectable && bulkActions && selectedCount > 0 && (
                     <div
                         aria-label="Bulk actions"
@@ -242,7 +242,7 @@ export default function CustomTable<T extends Record<string, unknown>>({
                 )}
                 <Table className="block md:table">
                     <TableHeader className="hidden md:table-header-group [&_tr]:border-b-0">
-                        <TableRow className="bg-table-header-background hover:bg-section-background border-0 rounded-[10px]">
+                        <TableRow className="border-0 border-b! border-border bg-table-header-background hover:bg-table-header-background">
                             {selectable && (
                                 <TableHead className="w-14 px-5 py-2.5">
                                     <SelectAllCheckbox />
@@ -251,14 +251,14 @@ export default function CustomTable<T extends Record<string, unknown>>({
                             {columns.map((col) => (
                                 <TableHead
                                     key={col.key}
-                                    className={`text-[12px] font-normal px-5 py-2.5 ${col.align === "right" ? "text-right" : col.align === "center" ? "text-center" : "text-left"}`}
+                                    className={`h-10 px-5 py-2 text-[11px] font-medium uppercase tracking-[0.06em] text-muted-foreground ${col.align === "right" ? "text-right" : col.align === "center" ? "text-center" : "text-left"}`}
                                     style={col.width ? { width: col.width } : undefined}
                                 >
                                     {col.header}
                                 </TableHead>
                             ))}
                             {rowActions && (
-                                <TableHead className="text-[12px] font-normal px-5 py-2.5 text-right w-28.25">
+                                <TableHead className="h-10 w-28.25 px-5 py-2 text-right text-[11px] font-medium uppercase tracking-[0.06em] text-muted-foreground">
                                     Action
                                 </TableHead>
                             )}
@@ -269,7 +269,7 @@ export default function CustomTable<T extends Record<string, unknown>>({
                             <TableRow
                                 key={displayedRowIds[rowIndex]}
                                 style={mobileRowStyle}
-                                className="grid grid-cols-2 overflow-hidden rounded-lg border! border-section-border bg-surface-raised px-2 py-0 hover:bg-surface-raised md:table-row md:rounded-none md:border-0! md:bg-transparent md:p-0 md:hover:bg-transparent"
+                                className="grid grid-cols-2 overflow-hidden rounded-lg border! border-border bg-surface-raised px-2 py-0 hover:bg-surface-raised md:table-row md:rounded-none md:border-0! md:border-b! md:border-border-subtle! md:bg-transparent md:p-0 md:last:border-b-0! md:hover:bg-control-hover"
                             >
                                 {selectable && (
                                     <TableCell className="hidden md:table-cell md:border-0 md:px-5">
@@ -283,7 +283,7 @@ export default function CustomTable<T extends Record<string, unknown>>({
                                 {columns.map((col) => (
                                     <TableCell
                                         key={col.key}
-                                        className={`${col.key === "select" ? "hidden" : "block"} min-w-0 whitespace-normal break-words ${mobileColumns.indexOf(col) < lastMobileRowStart ? "border-b" : "border-b-0"} border-section-border px-1 py-2 text-left text-[14px] font-normal text-content-strong md:table-cell md:border-0 md:whitespace-nowrap md:px-5 ${col.align === "right" ? "md:text-right" : col.align === "center" ? "md:text-center" : "md:text-left"}`}
+                                        className={`${col.key === "select" ? "hidden" : "block"} min-w-0 whitespace-normal break-words ${mobileColumns.indexOf(col) < lastMobileRowStart ? "border-b" : "border-b-0"} border-section-border px-1 py-2 text-left text-[14px] font-normal text-content-strong md:table-cell md:border-0 md:whitespace-nowrap md:px-5 md:py-3 ${col.align === "right" ? "md:text-right" : col.align === "center" ? "md:text-center" : "md:text-left"}`}
                                     >
                                         {col.header && (
                                             <span className="mb-1 block font-semibold md:hidden">
@@ -370,8 +370,8 @@ export default function CustomTable<T extends Record<string, unknown>>({
                 {/* Empty state */}
                 {data.length === 0 && (
                     emptyState ?? (
-                        <div className="flex w-full flex-col items-center justify-center gap-2 rounded-lg border border-section-border bg-surface-raised px-4 py-10 text-center md:rounded-none md:border-0 md:py-16">
-                            <span className="flex size-10 items-center justify-center rounded-full bg-section-background text-primary">
+                        <div className="flex w-full flex-col items-center justify-center gap-2 rounded-lg border border-border bg-surface-raised px-4 py-10 text-center md:rounded-none md:border-0 md:py-14">
+                            <span className="flex size-10 items-center justify-center rounded-full bg-brand-soft text-brand">
                                 <Inbox aria-hidden="true" className="size-5" />
                             </span>
                             <p className="text-sm font-medium text-content-strong">{emptyMessage}</p>

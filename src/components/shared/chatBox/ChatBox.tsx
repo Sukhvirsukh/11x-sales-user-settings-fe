@@ -1,3 +1,7 @@
+import { agentApiConfigured } from "@/lib/agentApi";
+import { rateTestReply, saveTestCorrection, sendTestMessage, toRecommendation } from "./agentTestChat";
+import { toast } from "@/components/ui/toast";
+import type { ProductRecommendationItem } from "./ProductRecommendation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ChatMessage, type ChatMessageData } from "./ChatMessage";
 import { ChatInput } from "./ChatInput";
@@ -138,7 +142,21 @@ function LoadedChatBox({ fields, onClose, className = "", defaultMessages }: Cha
     });
   }, [messages]);
 
-  function handleSend(content: string) {
+  const testConversationRef = useRef<string | null>(null);
+
+  function addBotMessage(
+    message: { content: string } | { type: "product-recommendation"; content?: string; products: ProductRecommendationItem[] },
+    /** The agent's id for the reply, so it can be rated or corrected. */
+    id: string = crypto.randomUUID(),
+  ) {
+    setMessages((prev) => [
+      ...prev,
+      { id, sender: "bot", timestamp: new Date(), avatar: avatarUrl ?? undefined, ...message } as ChatMessageData,
+    ]);
+  }
+
+  // The preview talks to the store's real AI agent when it's connected.
+  async function handleSend(content: string) {
     const userMessage: ChatMessageData = {
       id: crypto.randomUUID(),
       content,
@@ -147,35 +165,50 @@ function LoadedChatBox({ fields, onClose, className = "", defaultMessages }: Cha
     };
     setMessages((prev) => [...prev, userMessage]);
 
-    window.setTimeout(() => {
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: crypto.randomUUID(),
-          content: "Thanks for your message! How else can I help?",
-          sender: "bot",
-          timestamp: new Date(),
-          avatar: avatarUrl ?? undefined,
-        },
-      ]);
-    }, 500);
+    if (!agentApiConfigured) {
+      window.setTimeout(() => addBotMessage({ content: "Thanks for your message! How else can I help?" }), 500);
+      return;
+    }
+    try {
+      const result = await sendTestMessage(content, testConversationRef.current);
+      testConversationRef.current = result.conversationId;
+      const products = result.reply?.cards?.products ?? [];
+      // The chat bubble shows plain text, so drop the agent's **bold** markers.
+      const text = result.reply?.content.replace(/\*\*(.+?)\*\*/g, "$1");
+      addBotMessage(
+        products.length
+          ? { type: "product-recommendation", content: text, products: products.map(toRecommendation) }
+          : { content: text ?? "The agent didn't reply." },
+        result.reply ? String(result.reply.id) : undefined,
+      );
+    } catch (error) {
+      addBotMessage({ content: error instanceof Error ? error.message : "The agent couldn't reply right now." });
+    }
   }
 
   function handleCorrect(messageId: string, correctedContent: string) {
+    const index = messages.findIndex((m) => m.id === messageId);
+    const question = [...messages.slice(0, Math.max(index, 0))].reverse().find((m) => m.sender === "user")?.content;
     setMessages((prev) =>
       prev.map((m) =>
         m.id === messageId ? { ...m, content: correctedContent } : m,
       ),
     );
+    const conversationId = testConversationRef.current;
+    if (!conversationId || !question || !/^\d+$/.test(messageId)) return;
+    saveTestCorrection(conversationId, question, correctedContent, messageId)
+      .then(() => toast.add({ type: "success", title: "Correction saved", description: "The agent will use this answer from the next message." }))
+      .catch(() => undefined);
   }
 
-  function handleLike(messageId: string) {
-    console.log("Liked message:", messageId);
+  function handleRate(messageId: string, rating: 1 | -1) {
+    rateTestReply(messageId, rating)
+      .then((saved) => saved && toast.add({ type: "success", title: rating === 1 ? "Marked as a good reply" : "Marked as a bad reply" }))
+      .catch(() => undefined);
   }
 
-  function handleDislike(messageId: string) {
-    console.log("Disliked message:", messageId);
-  }
+  const handleLike = (messageId: string) => handleRate(messageId, 1);
+  const handleDislike = (messageId: string) => handleRate(messageId, -1);
 
   return (
     <div className={`flex h-full w-full flex-col overflow-hidden rounded-[10px] bg-widget-surface shadow-xl ${className}`}>

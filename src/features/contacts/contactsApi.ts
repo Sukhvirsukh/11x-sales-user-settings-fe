@@ -1,58 +1,61 @@
 import { format as formatDate } from "date-fns"
-import { delay } from "@/lib/utils"
-import type { Segment, SegmentFormValues, SegmentsResponse, UserProfile } from "./contactType"
-import { userProfiles } from "./mockContacts"
-import { apiFetch } from "@/lib/api"
+import type { SegmentFormValues, SegmentRules, SegmentsResponse, UserProfile } from "./contactType"
+import { agentApiConfigured, agentDownload, agentFetch } from "@/lib/agentApi"
 
 
+/** Shoppers who left their email or phone number in the chat. */
 export async function getUserProfiles(): Promise<UserProfile[]> {
-    // const response = await apiFetch<ContactsResponse>("/contacts");
-    const response = await delay(2000).then(() => [...userProfiles])
-
-    return response
+    if (!agentApiConfigured) return []
+    const profiles = await agentFetch<UserProfile[]>("/contacts")
+    return profiles.map((profile) => ({ ...profile, startDate: formatDate(new Date(profile.startDate), "yyyy-MM-dd") }))
 }
 
 
-export async function getSegaments(page = 1, search = ""): Promise<SegmentsResponse> {
-    const params = new URLSearchParams({ page: String(page) });
-    if (search) params.set("search", search);
-
-    return apiFetch<SegmentsResponse>(`/contacts/segments?${params.toString()}`);
+export async function getSegments(page = 1, search = ""): Promise<SegmentsResponse> {
+    if (!agentApiConfigured) return { items: [], page, pageSize: 10, total: 0 }
+    const params = new URLSearchParams({ page: String(page) })
+    if (search) params.set("search", search)
+    return agentFetch<SegmentsResponse>(`/segments?${params.toString()}`)
 }
 
 
-export async function createSegament(values: SegmentFormValues): Promise<Segment> {
-    return apiFetch<Segment>("/contacts/segments", {
+/** How many contacts the rules match right now (shown live while building a segment). */
+export async function previewSegment(rules: SegmentRules): Promise<number> {
+    const { count } = await agentFetch<{ count: number }>("/segments/preview", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-            name: values.name,
-            activeSchedule: formatDate(values.activeSchedule, "yyyy-MM-dd"),
-        }),
+        body: { rules },
+        notifyOnError: false,
     })
+    return count
+}
+
+
+export async function createSegment(values: SegmentFormValues): Promise<{ id: string; activeUsers: number }> {
+    return agentFetch("/segments", {
+        method: "POST",
+        body: {
+            name: values.name,
+            activeSchedule: values.activeSchedule ? formatDate(values.activeSchedule, "yyyy-MM-dd") : null,
+            rules: values.rules,
+        },
+    })
+}
+
+
+/** The segment's contacts as a CSV file. */
+export function downloadSegment(id: string): Promise<void> {
+    return agentDownload(`/segments/${encodeURIComponent(id)}/export`)
 }
 
 
 export async function deleteUserProfiles(ids: string[]): Promise<string[]> {
-    // await apiFetch("/contacts/bulk", { method: "DELETE", body: JSON.stringify({ ids }) });
-    await delay(500)
-
-    ids.forEach((id) => {
-        const index = userProfiles.findIndex((profile) => profile.id === id)
-        if (index !== -1) userProfiles.splice(index, 1)
-    })
-
+    await agentFetch("/contacts", { method: "DELETE", body: { ids } })
     return ids
 }
 
 
-/** Deletes one or many segments through the bulk endpoint. */
-export async function deleteSegaments(ids: string[]): Promise<string[]> {
-    await apiFetch("/contacts/segments/bulk", {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ids }),
-    })
-
+/** Deletes one or many segments. */
+export async function deleteSegments(ids: string[]): Promise<string[]> {
+    await agentFetch("/segments", { method: "DELETE", body: { ids } })
     return ids
 }

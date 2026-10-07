@@ -6,40 +6,76 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
+import { toast } from "@/components/ui/toast";
+import { openAgent } from "@/features/agents/agentsApi";
+import { useAgentStore } from "@/features/agents/agentStore";
+import { roleForAgent } from "@/features/auth/authApi";
+import { useAuthStore } from "@/features/auth/authStore";
+import { queryClient } from "@/lib/queryClient";
 
 interface StoreDropdownProps {
-    stores?: { label: string; value: string }[];
-    defaultValue?: string;
-    onValueChange?: (value: string | null) => void;
     className?: string;
+    /** "sidebar" is the full-width switcher at the top of the navigation. */
+    variant?: "compact" | "sidebar";
 }
 
-const defaultStores = [
-    { label: "Store1", value: "store1" },
-    { label: "Store2", value: "store2" },
-    { label: "Store3", value: "store3" },
-];
-
-export function StoreDropdown({
-    stores = defaultStores,
-    defaultValue = "store1",
-    onValueChange,
-    className,
-}: StoreDropdownProps) {
+function StoreInitial({ name }: { name: string }) {
     return (
-        <Select defaultValue={defaultValue} onValueChange={onValueChange}>
+        <span className="flex size-6 shrink-0 items-center justify-center rounded-md bg-brand-soft font-display text-[12px] font-semibold text-brand">
+            {name.trim().charAt(0).toUpperCase() || "S"}
+        </span>
+    );
+}
+
+/** Switches the store (agent) the whole dashboard is showing. */
+export function StoreDropdown({ className, variant = "compact" }: StoreDropdownProps) {
+    const agents = useAgentStore((state) => state.agents);
+    const currentAgentId = useAgentStore((state) => state.currentAgentId);
+    const setAgents = useAgentStore((state) => state.setAgents);
+
+    async function handleChange(agentId: string | null) {
+        if (!agentId || agentId === currentAgentId) return;
+        try {
+            // Opening it also makes it the user's default store next time they sign in.
+            const agent = await openAgent(agentId);
+            setAgents(agents.map((a) => (a.id === agent.id ? agent : a)), agent.id);
+            const { user, setUser } = useAuthStore.getState();
+            if (user) setUser({ ...user, role: roleForAgent(agent) });
+            await queryClient.invalidateQueries();
+        } catch {
+            toast.add({ type: "error", title: "Couldn't switch store", description: "Please try again." });
+        }
+    }
+
+    if (!agents.length) return null;
+
+    const currentName = agents.find((a) => a.id === currentAgentId)?.name ?? "Select store";
+
+    return (
+        <Select value={currentAgentId ?? undefined} onValueChange={handleChange}>
             <SelectTrigger
+                aria-label="Switch store"
                 className={cn(
-                    "p-2.5 text-base gap-1 bg-transparent border-content-muted text-content-muted rounded-[10px] w-21! h-9.75!",
+                    variant === "sidebar"
+                        ? "h-10! w-full gap-2 rounded-lg border-border bg-surface-raised px-2 text-base font-medium text-foreground shadow-panel hover:bg-control-hover"
+                        : "h-9! min-w-21 max-w-48 gap-1 rounded-lg border-border bg-surface-raised px-2.5 text-base text-foreground",
                     className
                 )}
             >
-                <SelectValue />
+                <SelectValue>
+                    <span className="flex min-w-0 items-center gap-2">
+                        {variant === "sidebar" && <StoreInitial name={currentName} />}
+                        <span className="truncate">{currentName}</span>
+                    </span>
+                </SelectValue>
             </SelectTrigger>
-            <SelectContent className="bg-background border-content-muted rounded-[10px]">
-                {stores.map((store) => (
-                    <SelectItem key={store.value} value={store.value}>
-                        {store.label}
+            <SelectContent className="rounded-lg border-border bg-popover">
+                {agents.map((agent) => (
+                    <SelectItem key={agent.id} value={agent.id}>
+                        <span className="flex min-w-0 items-center gap-2">
+                            <StoreInitial name={agent.name} />
+                            <span className="truncate">{agent.name}</span>
+                        </span>
                     </SelectItem>
                 ))}
             </SelectContent>

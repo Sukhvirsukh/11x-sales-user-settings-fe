@@ -2,6 +2,8 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 @import "@fontsource-variable/inter";
+@import "@fontsource-variable/geist";
+@import "@fontsource-variable/unbounded";
 
 /* Disable system dark mode (prefers-color-scheme).
    Tailwind's default dark: uses the OS setting; override so dark: only
@@ -11,38 +13,41 @@
 @theme {
   --breakpoint-xs: 30rem;
 
-  --font-geist: var(--font-geist);
+  --font-geist: 'Geist Variable', 'Inter Variable', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  /* The brand face (wordmark, sign-in headline); wide and heavy, so used sparingly. */
+  --font-brand: 'Unbounded Variable', 'Geist Variable', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-display: 'Geist Variable', 'Inter Variable', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 
   --font-sans: 'Inter Variable', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 
   /* Font Scale Definitions */
   --text-xs: 0.625rem;
   /* 10px */
-  --text-xs--line-height: 1.0625rem;
+  --text-xs--line-height: 0.875rem;
   /* 17px */
   --text-sm: 0.75rem;
   /* 12px */
-  --text-sm--line-height: 1.0625rem;
+  --text-sm--line-height: 1rem;
   /* 17px */
   --text-base: 0.875rem;
   /* 14px - Base size */
-  --text-base--line-height: 1.0625rem;
+  --text-base--line-height: 1.25rem;
   /* 17px */
   --text-lg: 1rem;
   /* 16px */
-  --text-lg--line-height: 1.25rem;
+  --text-lg--line-height: 1.5rem;
   /* 20px */
   --text-xl: 1.125rem;
   /* 18px */
-  --text-xl--line-height: 1.375rem;
+  --text-xl--line-height: 1.625rem;
   /* 22px */
   --text-2xl: 1.25rem;
   /* 20px */
-  --text-2xl--line-height: 1.5rem;
+  --text-2xl--line-height: 1.75rem;
   /* 24px */
   --text-3xl: 1.5rem;
   /* 24px */
-  --text-3xl--line-height: 1.75rem;
+  --text-3xl--line-height: 2rem;
   /* 28px */
 
   /* Semantic color utilities */
@@ -88,6 +93,10 @@
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
   --color-link: var(--link);
+  --color-brand: var(--brand);
+  --color-brand-strong: var(--brand-strong);
+  --color-brand-soft: var(--brand-soft);
+  --color-sidebar-active: var(--sidebar-active);
   --color-brand-muted: var(--brand-muted);
 
   --color-border: var(--border);
@@ -150,14 +159,10 @@
   --color-message-bot: var(--message-bot);
 
   /* Shadows */
-  --shadow-blue: 0 2px 6px rgba(55, 118, 243, 0.15), 0 6px 18px rgba(55, 118, 243, 0.10);
+  --shadow-blue: var(--elevation-1);
   /* Auth card — soft bluish shadow under the card only */
-  --shadow-auth:
-    0 10px 24px rgba(53, 118, 243, 0.08),
-    0 20px 40px rgba(53, 118, 243, 0.10);
-  --shadow-panel:
-    0 1px 3px rgba(0, 0, 0, 0.03),
-    0 8px 24px rgba(0, 0, 0, 0.04);
+  --shadow-auth: var(--elevation-2);
+  --shadow-panel: var(--elevation-1);
   --shadow-toast: var(--toast-shadow);
   --shadow-dialog: var(--dialog-shadow);
   --shadow-plan-selected: var(--plan-selected-shadow);
@@ -166,119 +171,131 @@
 
 @layer base {
   :root {
+    /* 11xsales.ai — ink on warm paper, one brand-blue accent.
+       Primary actions are ink; blue marks where the eye should land
+       (brand mark, active navigation, focus, the main chart series). */
+
+    /* Elevation */
+    --elevation-1: 0 1px 2px rgb(22 24 29 / 0.04), 0 1px 1px rgb(22 24 29 / 0.02);
+    --elevation-2: 0 12px 32px rgb(22 24 29 / 0.10), 0 2px 6px rgb(22 24 29 / 0.05);
+
     /* Main Layout & Backgrounds */
-    --background: #FFF;
-    --popover: #FFF;
+    --background: #F4F4EF;
+    --popover: #FFFFFF;
     --popover-foreground: var(--foreground);
-    --sidebar-bg: #ffffff;
-    --sidebar-navigation-icon: #18181b;
-    --sidebar-user-name: #27272a;
-    --sidebar-user-email: #a1a1aa;
-    --surface-raised: #ffffff;
-    --surface-subtle: #F7F8FB;
-    --app-section-background: rgba(232, 238, 251, 0.50);
-    --preview-section-background: #ffffff;
-    --preview-canvas-background: #E9E9E9;
-    --app-card-background: #ffffff;
-    --muted: #F1F1F1;
-    --card: #ffffff;
+    --sidebar-bg: #FFFFFF;
+    --sidebar-active: #F1F1EC;
+    --sidebar-navigation-icon: #6A6E76;
+    --sidebar-user-name: #16181D;
+    --sidebar-user-email: #6A6E76;
+    --surface-raised: #FFFFFF;
+    --surface-subtle: #F7F7F4;
+    --app-section-background: #FFFFFF;
+    --preview-section-background: #FFFFFF;
+    --preview-canvas-background: #EFEFEA;
+    --app-card-background: #FFFFFF;
+    --muted: #F0F0EC;
+    --card: #FFFFFF;
 
     /* Content */
-    --foreground: #0f172a;
-    --muted-foreground: #64748b;
-    --content-strong: #000;
-    --content-muted: #808080;
-    --field-text: #1e293b;
-    --placeholder: #94a3b8;
+    --foreground: #16181D;
+    --muted-foreground: #6A6E76;
+    --content-strong: #16181D;
+    --content-muted: #6A6E76;
+    --field-text: #16181D;
+    --placeholder: #9A9EA5;
 
     /* Feedback */
-    --danger: #FF7B7E;
-    --danger-surface: #FFDBDB;
-    --danger-strong: #FF0000;
-    --success: #47941E;
-    --success-surface: #E4F5E6;
-    --warning: #A16207;
-    --warning-surface: #FEF9C3;
-    --validation-border: #f87171;
-    --validation-text: #ef4444;
-    --success-strong: #127557;
+    --danger: #D93F3F;
+    --danger-surface: #FDECEC;
+    --danger-strong: #B42323;
+    --success: #1E8A55;
+    --success-surface: #E6F5EC;
+    --warning: #A15C07;
+    --warning-surface: #FEF3DC;
+    --validation-border: #E5484D;
+    --validation-text: #CD2B31;
+    --success-strong: #146B41;
 
-    /* Brand Primary Colors */
-    --primary: #3576F3;
-    --primary-hover: #236efa;
-    --primary-foreground: #ffffff;
-    --secondary: #e2e8f0;
-    --secondary-foreground: #0f172a;
-    --link: #2563eb;
-    --brand-muted: #E8EEFB;
-    --slider-track: #CDDDFB;
+    /* Brand */
+    --primary: #16181D;
+    --primary-hover: #2B2E35;
+    --primary-foreground: #FFFFFF;
+    --brand: #2F86FF;
+    --brand-strong: #1F6FE6;
+    --brand-soft: #EAF2FF;
+    --secondary: #EEEEEA;
+    --secondary-foreground: #16181D;
+    --link: #1F6FE6;
+    --brand-muted: #EAF2FF;
+    --slider-track: #E6E6E1;
 
     /* Borders */
-    --border: #e2e8f0;
-    --divider: #e6e6e8;
-    --field-border: rgba(0, 0, 0, 0.21);
-    --control-border-subtle: rgba(0, 0, 0, 0.21);
-    --input: #c7c7cc;
-    --border-subtle: #edf2f7;
-    --ring: #2f6df3;
-    --focus-ring: #60a5fa;
-    --panel-accent-border: #dbeafe;
-    --border-strong: #c7c7cc;
+    --border: #E5E5E0;
+    --divider: #ECECE7;
+    --field-border: #CFCFC8;
+    --control-border-subtle: #DEDED8;
+    --input: #D4D4CE;
+    --border-subtle: #EFEFEA;
+    --ring: #2F86FF;
+    --focus-ring: #2F86FF;
+    --panel-accent-border: #E5E5E0;
+    --border-strong: #CFCFC8;
 
     /* Interactive states */
-    --interactive-active-background: #f0f7ff;
-    --interactive-active-border: #dbeafe;
-    --control-hover: #fafafa;
-    --control-hover-strong: #f4f4f5;
-    --field-subtle-background: #F7F8FB;
-    --slider-neutral-track: #cbd5e1;
-    --tab-active-border: #DADADA;
+    --interactive-active-background: #F1F1EC;
+    --interactive-active-border: #E5E5E0;
+    --control-hover: #F5F5F1;
+    --control-hover-strong: #EEEEEA;
+    --field-subtle-background: #FFFFFF;
+    --slider-neutral-track: #DCDCD6;
+    --tab-active-border: #16181D;
 
     /* Badges & Status Indicators */
-    --badge-active-background: #E5FFD8;
-    --badge-inactive-background: #FFDBDB;
-    --badge-active-text: #808080;
-    --badge-active-dot: #127557;
-    --badge-inactive-dot: #B42318;
-    --status-online-accent: #D1EFC0;
-    --badge-warning-background: #FFF4D2;
+    --badge-active-background: #E6F5EC;
+    --badge-inactive-background: #FDECEC;
+    --badge-active-text: #146B41;
+    --badge-active-dot: #1E8A55;
+    --badge-inactive-dot: #D93F3F;
+    --status-online-accent: #CDEFD9;
+    --badge-warning-background: #FEF3DC;
 
     /* Structured content */
-    --section-border: rgba(53, 118, 243, 0.20);
-    --section-background: rgba(232, 238, 251, 0.50);
-    --table-header-background: #E8EEFB;
+    --section-border: #E5E5E0;
+    --section-background: #FAFAF7;
+    --table-header-background: #F7F7F4;
 
     /**** ChatBox message colors ****/
-    --message-user: #9F9F9F;
-    --message-bot: #EEEEEE;
+    --message-user: #3A3D44;
+    --message-bot: #F0F0EC;
 
     /* Data visualisation */
-    --chart-axis: #858585;
-    --chart-grid: #a1a1aa;
-    --chart-high-marker: #4b9d22;
-    --chart-low-marker: #636363;
-    --chart-marker-border: #171717;
-    --chart-tooltip-border: #d4d4d8;
-    --chart-tooltip-background: #ffffff;
-    --chart-tooltip-foreground: #27272a;
-    --chart-tooltip-high: #15803d;
-    --chart-tooltip-low: #52525b;
+    --chart-axis: #8A8E95;
+    --chart-grid: #E5E5E0;
+    --chart-high-marker: #1E8A55;
+    --chart-low-marker: #6A6E76;
+    --chart-marker-border: #16181D;
+    --chart-tooltip-border: #E5E5E0;
+    --chart-tooltip-background: #FFFFFF;
+    --chart-tooltip-foreground: #16181D;
+    --chart-tooltip-high: #146B41;
+    --chart-tooltip-low: #6A6E76;
 
     /* Component-specific presentation colors */
-    --toast-border: #e4e4e7;
-    --toast-foreground: #27272a;
-    --toast-muted: #a1a1aa;
-    --toast-action: #71717a;
-    --toast-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
-    --dialog-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
-    --auth-card-shadow: 0 0 4px rgb(0 0 0 / 0.12);
-    --plan-selected-shadow: 0 0 18px 4px rgba(53, 118, 243, 0.25);
+    --toast-border: #E5E5E0;
+    --toast-foreground: #16181D;
+    --toast-muted: #6A6E76;
+    --toast-action: #6A6E76;
+    --toast-shadow: var(--elevation-2);
+    --dialog-shadow: var(--elevation-2);
+    --auth-card-shadow: var(--elevation-1);
+    --plan-selected-shadow: 0 0 0 2px #16181D;
     --whatsapp-brand: #25D366;
     --instagram-brand: #E4405F;
-    --plan-promotion-background: #F5FFBB;
-    --plan-promotion-foreground: #1E1E1E;
-    --plan-feature: #4D4D4D;
-    --modal-close: #1E1E1E;
+    --plan-promotion-background: #EAF2FF;
+    --plan-promotion-foreground: #16181D;
+    --plan-feature: #4B4F57;
+    --modal-close: #16181D;
 
     /* Storefront widget preview stays independent from the admin theme. */
     --widget-surface: #ffffff;
@@ -293,107 +310,110 @@
   .dark {
     color-scheme: dark;
 
-    /* Deep navy surfaces with clear elevation between the app layers. */
-    --background: #070B14;
-    --popover: #111C2F;
+    --elevation-1: 0 1px 2px rgb(0 0 0 / 0.40);
+    --elevation-2: 0 16px 40px rgb(0 0 0 / 0.45), 0 2px 6px rgb(0 0 0 / 0.30);
+
+    --background: #0B0B0C;
+    --popover: #17191C;
     --popover-foreground: var(--foreground);
-    --sidebar-bg: #0B1322;
-    --sidebar-navigation-icon: #A5B5CC;
-    --sidebar-user-name: #EDF3FC;
-    --sidebar-user-email: #A5B5CC;
-    --surface-raised: #111C2F;
-    --surface-subtle: #0D1728;
-    --app-section-background: #101F36;
-    --preview-section-background: #0C1626;
-    --preview-canvas-background: #0D1728;
-    --app-card-background: #172A46;
-    --muted: #19263C;
-    --card: #111C2F;
+    --sidebar-bg: #131518;
+    --sidebar-active: #202227;
+    --sidebar-navigation-icon: #9A9EA5;
+    --sidebar-user-name: #EDEDEA;
+    --sidebar-user-email: #9A9EA5;
+    --surface-raised: #17191C;
+    --surface-subtle: #1B1D21;
+    --app-section-background: #17191C;
+    --preview-section-background: #17191C;
+    --preview-canvas-background: #1B1D21;
+    --app-card-background: #17191C;
+    --muted: #202227;
+    --card: #17191C;
 
-    /* Brighter brand and feedback colors against the deeper canvas. */
-    --primary: #5B8CFF;
-    --primary-hover: #74A0FF;
-    --primary-foreground: #ffffff;
-    --danger: #FF8290;
-    --danger-surface: #3A1C2A;
-    --danger-strong: #FF5D70;
-    --success: #62D9A2;
-    --success-surface: #14352C;
-    --warning: #F5C96A;
-    --warning-surface: #3A2E17;
-    --validation-border: #F87171;
-    --validation-text: #FCA5A5;
-    --success-strong: #62D9A2;
+    --primary: #EDEDEA;
+    --primary-hover: #FFFFFF;
+    --primary-foreground: #16181D;
+    --brand: #4D9AFF;
+    --brand-strong: #7AB4FF;
+    --brand-soft: #0F1D33;
+    --danger: #F26B6B;
+    --danger-surface: #2C1717;
+    --danger-strong: #FF8A8A;
+    --success: #4CC38A;
+    --success-surface: #13261C;
+    --warning: #E8B04B;
+    --warning-surface: #2A2214;
+    --validation-border: #F26B6B;
+    --validation-text: #FF9592;
+    --success-strong: #4CC38A;
 
-    /* Borders & typography */
-    --border: #263A59;
-    --divider: #20324D;
-    --field-border: #3A5275;
-    --control-border-subtle: #1E293B;
-    --input: #536D94;
-    --border-subtle: #182842;
-    --border-strong: #5B7196;
-    --ring: #8CB2FF;
-    --focus-ring: #60A5FA;
-    --panel-accent-border: #3D67A3;
-    --foreground: #EDF3FC;
-    --muted-foreground: #A5B5CC;
+    --border: #2A2D32;
+    --divider: #24272B;
+    --field-border: #3A3E44;
+    --control-border-subtle: #2A2D32;
+    --input: #3A3E44;
+    --border-subtle: #222429;
+    --border-strong: #4A4E55;
+    --ring: #4D9AFF;
+    --focus-ring: #4D9AFF;
+    --panel-accent-border: #2A2D32;
+    --foreground: #EDEDEA;
+    --muted-foreground: #9A9EA5;
     --content-strong: #FFFFFF;
-    --content-muted: #9AABC4;
-    --field-text: #E2E8F0;
-    --placeholder: #64748B;
-    --secondary: #263A59;
-    --secondary-foreground: #EDF3FC;
-    --link: #60A5FA;
-    --brand-muted: #142B4D;
+    --content-muted: #9A9EA5;
+    --field-text: #EDEDEA;
+    --placeholder: #6A6E76;
+    --secondary: #24272B;
+    --secondary-foreground: #EDEDEA;
+    --link: #7AB4FF;
+    --brand-muted: #0F1D33;
 
-    /* Navigation, tables, and section surfaces carry a restrained blue tint. */
-    --interactive-active-background: #142B4D;
-    --interactive-active-border: #3D67A3;
-    --control-hover: #19263C;
-    --control-hover-strong: #20324D;
-    --field-subtle-background: #1E293B;
-    --slider-neutral-track: #475569;
-    --tab-active-border: #3A5780;
-    --section-border: rgb(91 140 255 / 0.28);
-    --section-background: rgb(18 31 52 / 0.88);
-    --table-header-background: #162640;
-    --slider-track: #29446F;
+    --interactive-active-background: #202227;
+    --interactive-active-border: #2A2D32;
+    --control-hover: #1E2024;
+    --control-hover-strong: #24272B;
+    --field-subtle-background: #131518;
+    --slider-neutral-track: #3A3E44;
+    --tab-active-border: #EDEDEA;
+    --section-border: #2A2D32;
+    --section-background: #1B1D21;
+    --table-header-background: #1B1D21;
+    --slider-track: #2A2D32;
 
-    --badge-active-background: #16392F;
-    --badge-inactive-background: #3A202B;
-    --badge-active-text: #A5EBC9;
-    --badge-active-dot: #62D9A2;
-    --badge-inactive-dot: #FF8290;
-    --status-online-accent: #245943;
+    --badge-active-background: #13261C;
+    --badge-inactive-background: #2C1717;
+    --badge-active-text: #8FE3B5;
+    --badge-active-dot: #4CC38A;
+    --badge-inactive-dot: #F26B6B;
+    --status-online-accent: #1E4A33;
+    --badge-warning-background: #2A2214;
 
-    /* Data visualisation */
-    --chart-axis: #8FA3C1;
-    --chart-grid: #3A5275;
-    --chart-high-marker: #62D9A2;
-    --chart-low-marker: #8FA3C1;
-    --chart-marker-border: #D9E5F7;
-    --chart-tooltip-border: #263A59;
-    --chart-tooltip-background: #111C2F;
-    --chart-tooltip-foreground: #EDF3FC;
-    --chart-tooltip-high: #62D9A2;
-    --chart-tooltip-low: #9AABC4;
+    --message-user: #3A3E44;
+    --message-bot: #202227;
 
-    --toast-border: #263A59;
-    --toast-foreground: #FFFFFF;
-    --toast-muted: #9AABC4;
-    --toast-action: #A5B5CC;
-    --toast-shadow: 0 14px 36px rgb(0 5 16 / 0.30);
-    --dialog-shadow: 0 14px 36px rgb(0 5 16 / 0.30);
-    --auth-card-shadow: 0 16px 36px rgb(0 5 16 / 0.36), 0 28px 64px rgb(0 5 16 / 0.28);
-    --plan-selected-shadow: 0 0 22px 4px rgb(91 140 255 / 0.22);
-    --plan-feature: #9AABC4;
-    --modal-close: #FFFFFF;
+    --chart-axis: #8A8E95;
+    --chart-grid: #2A2D32;
+    --chart-high-marker: #4CC38A;
+    --chart-low-marker: #9A9EA5;
+    --chart-marker-border: #EDEDEA;
+    --chart-tooltip-border: #2A2D32;
+    --chart-tooltip-background: #17191C;
+    --chart-tooltip-foreground: #EDEDEA;
+    --chart-tooltip-high: #4CC38A;
+    --chart-tooltip-low: #9A9EA5;
 
-    /* Blue-black depth helps raised panels stand out without a harsh glow. */
-    --shadow-blue: 0 0 0 1px rgb(91 140 255 / 0.06), 0 12px 30px rgb(0 5 16 / 0.32);
-    --shadow-auth: 0 16px 36px rgb(0 5 16 / 0.36), 0 28px 64px rgb(0 5 16 / 0.28);
-    --shadow-panel: 0 1px 2px rgb(0 5 16 / 0.38), 0 14px 36px rgb(0 5 16 / 0.30);
+    --toast-border: #2A2D32;
+    --toast-foreground: #EDEDEA;
+    --toast-muted: #9A9EA5;
+    --toast-action: #9A9EA5;
+    --toast-shadow: var(--elevation-2);
+    --dialog-shadow: var(--elevation-2);
+    --auth-card-shadow: var(--elevation-1);
+    --plan-selected-shadow: 0 0 0 2px #EDEDEA;
+    --plan-promotion-background: #0F1D33;
+    --plan-promotion-foreground: #EDEDEA;
+    --plan-feature: #9A9EA5;
+    --modal-close: #EDEDEA;
   }
 
   /* Set default font size (14px) and family globally */
@@ -401,15 +421,30 @@
     font-family: var(--font-sans);
     font-size: 0.875rem;
     /* 14px */
-    line-height: 1.0625rem;
-    /* 17px */
+    line-height: 1.25rem;
+    /* 20px */
     font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+    font-feature-settings: "cv11", "ss01";
     color: var(--foreground);
     background-color: var(--background);
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    letter-spacing: -0.01em;
+  }
+
+  ::selection {
+    background: color-mix(in srgb, var(--brand) 22%, transparent);
   }
 }
 
 @layer utilities {
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+
   .separator {
     width: 100%;
     height: 1px;

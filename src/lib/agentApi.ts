@@ -1,0 +1,62 @@
+import { toast } from "@/components/ui/toast";
+import { getCurrentAgentId } from "@/features/agents/agentStore";
+
+// The AI agent service. It accepts the same sign-in token as the main API
+// and works on the store selected in the switcher.
+const AGENT_API_BASE_URL = (import.meta.env.VITE_AGENT_API_BASE_URL ?? "").replace(/\/$/, "");
+const AUTH_TOKEN_STORAGE_KEY = "vitalb.jwt";
+
+export const agentApiConfigured = AGENT_API_BASE_URL !== "";
+
+/** Public address of the agent service (chat page, widget script). */
+export const agentPublicUrl = AGENT_API_BASE_URL;
+
+interface AgentFetchOptions extends Omit<RequestInit, "body"> {
+  body?: unknown;
+  /** Show a toast when the request fails (default: true). */
+  notifyOnError?: boolean;
+}
+
+async function agentRequest(path: string, options: AgentFetchOptions = {}): Promise<Response> {
+  const { body, notifyOnError = true, ...init } = options;
+  if (!agentApiConfigured) throw new Error("The AI agent service isn't configured (VITE_AGENT_API_BASE_URL).");
+
+  const headers = new Headers(init.headers);
+  const token = localStorage.getItem(AUTH_TOKEN_STORAGE_KEY);
+  if (token) headers.set("Authorization", `Bearer ${token}`);
+  if (body !== undefined) headers.set("Content-Type", "application/json");
+
+  // The store selected in the switcher ("me" = the user's current store).
+  const agentId = encodeURIComponent(getCurrentAgentId() ?? "me");
+  const response = await fetch(`${AGENT_API_BASE_URL}/admin/api/${agentId}${path}`, {
+    ...init,
+    headers,
+    body: body === undefined ? undefined : JSON.stringify(body),
+  });
+
+  if (!response.ok) {
+    const data = await response.json().catch(() => ({}));
+    const message = (data && typeof data === "object" && "error" in data && String(data.error)) || `Request failed (${response.status})`;
+    if (notifyOnError) toast.add({ type: "error", title: "AI agent", description: message });
+    throw new Error(message);
+  }
+
+  return response;
+}
+
+export async function agentFetch<T>(path: string, options: AgentFetchOptions = {}): Promise<T> {
+  const response = await agentRequest(path, options);
+  return (await response.json()) as T;
+}
+
+/** Downloads a file from the agent service, named as the server suggests. */
+export async function agentDownload(path: string): Promise<void> {
+  const response = await agentRequest(path);
+  const filename = /filename="?([^";]+)"?/.exec(response.headers.get("Content-Disposition") ?? "")?.[1] ?? "download";
+  const url = URL.createObjectURL(await response.blob());
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = filename;
+  link.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}

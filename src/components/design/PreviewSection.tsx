@@ -1,11 +1,10 @@
 import type { ReactNode } from "react";
 
+/** Content area under a page's tabs. Panels sit straight on the canvas, so this only spaces them. */
 export default function PreviewSection({ children }: { children: ReactNode }) {
     return (
-        <div className="flex flex-col items-start gap-3.5 pb-5 pt-2">
-            <div className="flex w-full flex-col items-start gap-3.5 overflow-hidden rounded-[10px] border border-section-border bg-preview-section-background p-4 shadow-blue">
-                {children}
-            </div>
+        <div className="flex w-full flex-col items-start gap-4 pb-6 pt-1">
+            {children}
         </div>
     )
 }

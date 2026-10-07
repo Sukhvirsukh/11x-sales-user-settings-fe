@@ -26,13 +26,13 @@ export default function ConversationsPage() {
         <section className="h-full min-w-0">
             <PageHeader
                 title="Conversations"
-                subtitle="Track ongoing customer chats, agent responsiveness, and automated resolutions."
+                subtitle="Every chat your agent is handling, and the ones that need you."
             >
                 <CustomTabs
                     tabs={mainTabs.map(({ id, label }) => ({ id, label }))}
                     value={activeTab}
                     onValueChange={handleTabChange}
-                    listClassName="pl-[4px]"
+                   
                     className="p-0!"
                 >
                     <PreviewSection>

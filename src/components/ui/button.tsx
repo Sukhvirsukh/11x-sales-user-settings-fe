@@ -4,26 +4,25 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  // Base styles: pill shape (rounded-xl/2xl), font adjustments, transitions
-  "inline-flex shrink-0 items-center justify-center cursor-pointer rounded-xl border border-transparent font-medium whitespace-nowrap transition-colors outline-none select-none focus-visible:ring-2 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50",
+  "inline-flex shrink-0 items-center justify-center gap-1.5 cursor-pointer rounded-lg border border-transparent font-medium whitespace-nowrap transition-[background-color,border-color,color,box-shadow] outline-none select-none focus-visible:ring-2 focus-visible:ring-focus-ring/40 focus-visible:ring-offset-1 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
-        // Primary Blue (as seen in "Generate" & "Submit")
+        // Ink: the one main action on a screen.
         primary:
-          "bg-primary text-primary-contrast hover:bg-primary-hover",
+          "bg-primary text-primary-contrast shadow-[inset_0_1px_0_rgb(255_255_255/0.08)] hover:bg-primary-hover",
 
-        // Dark Outline / Black Border (as seen in middle "Generate")
+        // Bordered surface button for secondary actions.
         outline:
-          "border-content-strong bg-transparent text-content-strong hover:bg-control-hover-strong",
+          "border-border bg-surface-raised text-foreground shadow-panel hover:border-border-strong hover:bg-control-hover",
 
-        // Gray outline
+        // Quieter bordered action.
         secondary:
-          "border-content-muted bg-transparent text-content-muted hover:bg-control-hover",
+          "border-border bg-transparent text-muted-foreground hover:bg-control-hover hover:text-foreground",
 
-        // Same as secondary
+        // Borderless, for toolbars and dense rows.
         ghost:
-          "border-content-muted bg-transparent text-content-muted hover:bg-control-hover",
+          "bg-transparent text-muted-foreground hover:bg-control-hover-strong hover:text-foreground",
 
         // No border, no background — just children
         bare:
@@ -37,28 +36,26 @@ const buttonVariants = cva(
         link:
           "text-link underline-offset-4 hover:underline",
 
-        // Underlined action used for inline card actions such as "Show all".
+        // Inline card actions such as "Show all".
         action:
-          "h-auto rounded-none text-content-muted underline underline-offset-2 hover:bg-transparent hover:text-foreground",
+          "h-auto rounded-none p-0! text-muted-foreground hover:bg-transparent hover:text-foreground",
 
-        // destructive
         destructive:
-          "bg-danger text-primary-contrast hover:bg-danger-strong",
-
+          "bg-danger text-white hover:bg-danger-strong",
       },
       size: {
         icon: "size-9 p-0 md:p-0",
-        xsm: "rounded-[10px] px-2 py-1.5 text-sm",
+        xsm: "h-7 px-2.5 text-sm",
         xs: "h-7 rounded-md px-2 text-[11px]",
-        sm: "rounded-[10px] px-2.5 py-1.5 text-sm md:p-2",
-        default: "rounded-[10px] px-2 py-1.5 text-sm md:px-4 md:py-[9px] md:text-base",
-        full: "w-full rounded-[10px] px-2.5 py-1.5 text-sm md:h-10 md:px-5 md:py-0 md:text-base",
+        sm: "h-8 px-3 text-sm",
+        default: "h-9 px-3.5 text-sm md:text-base",
+        full: "h-10 w-full px-5 text-base",
       },
     },
     compoundVariants: [
       {
         variant: "bare",
-        className: "p-0 md:p-0",
+        className: "h-auto p-0 md:p-0",
       },
     ],
     defaultVariants: {

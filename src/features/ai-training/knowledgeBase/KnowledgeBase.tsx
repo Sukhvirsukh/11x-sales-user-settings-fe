@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import { useSearchParams } from "react-router";
-import { Plus, SquarePen, Trash } from "lucide-react";
+import { Plus, RotateCw, SquarePen, Trash } from "lucide-react";
+import { useMutation } from "@tanstack/react-query";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -8,7 +9,10 @@ import CustomTable, { type Column } from "@/components/design/CustomTable";
 import TableSkeleton from "@/components/shared/skeletons/TableSkeletons";
 
 import AddKnowledge from "./AddKnowledge";
-import { useKnowledgeBaseQuery } from "./useKnowledgeBaseQuery";
+import { knowledgeBaseQueryKey, useKnowledgeBaseQuery } from "./useKnowledgeBaseQuery";
+import { refreshKnowledge } from "./knowledgeBaseApi";
+import { queryClient } from "@/lib/queryClient";
+import { toast } from "@/components/ui/toast";
 import { dateFormater, debounce } from "@/lib/utils";
 import type { KnowledgeBase } from "./knowledgeBaseTypes";
 import DeleteKnowledgeBase from "./DeleteKnowledgeBase";
@@ -21,25 +25,48 @@ function toDateValue(value: unknown): string | Date | null {
 }
 
 
+const STATUS_BADGE = {
+    ready: { label: "Ready", variant: "default" },
+    processing: { label: "Processing", variant: "warning" },
+    failed: { label: "Failed", variant: "destructive" },
+} as const;
+
+const FORMAT_LABEL: Record<string, string> = {
+    Link: "Page",
+    Website: "Website",
+    Sitemap: "Sitemap",
+    Pdf: "PDF",
+    Doc: "Word",
+    Csv: "CSV",
+    Text: "Text",
+    Store: "Shopify store",
+};
+
 const columns: Column[] = [
     {
-        key: "name", header: "Name", width: "280px",
+        key: "name", header: "Name", width: "320px",
         render: (value, row) => {
-            const url = typeof row.url === "string" ? row.url : "";
-            const name = String(value ?? "").trim();
-            const label = name || url
-            return url ? (
-                <a
-                    href={url}
-                    title={label}
-                    target="_blank"
-                    className="block max-w-full truncate text-primary hover:underline"
-                >
-                    {label}
-                </a>
-            ) : (
-                <span title={label} className="block max-w-full truncate">
-                    {label}
+            const item = row as KnowledgeBase;
+            const name = String(value ?? "").trim() || item.url;
+            const detail = item.status === "failed" && item.error
+                ? item.error
+                : (item.format === "Website" || item.format === "Sitemap") && item.pages
+                    ? `${item.pages} page${item.pages === 1 ? "" : "s"} read`
+                    : item.synced ? "Kept in sync with your store" : "";
+            return (
+                <span className="flex min-w-0 flex-col">
+                    {item.url ? (
+                        <a href={item.url} title={item.url} target="_blank" rel="noreferrer" className="truncate font-medium text-foreground hover:underline">
+                            {name}
+                        </a>
+                    ) : (
+                        <span title={name} className="truncate font-medium">{name}</span>
+                    )}
+                    {detail && (
+                        <span title={detail} className={`truncate text-sm ${item.status === "failed" ? "text-danger" : "text-muted-foreground"}`}>
+                            {detail}
+                        </span>
+                    )}
                 </span>
             );
         },
@@ -47,19 +74,13 @@ const columns: Column[] = [
     {
         key: "status",
         header: "Status",
-        align: "center",
         render: (value) => {
-            const status = String(value)
-            return (
-                <Badge variant={status === "active" ? "default" : "destructive"}>
-                    {status?.toUpperCase()}
-                </Badge>
-            )
+            const badge = STATUS_BADGE[value as keyof typeof STATUS_BADGE] ?? STATUS_BADGE.processing;
+            return <Badge variant={badge.variant}>{badge.label}</Badge>;
         },
     },
-    { key: "createdAt", header: "Create date", render: (value) => dateFormater(toDateValue(value)) },
-    { key: "lastRefreshAt", header: "Last refresh", align: "right", render: (value) => dateFormater(toDateValue(value)) },
-    { key: "format", header: "Format", align: "right" },
+    { key: "format", header: "Type", render: (value) => FORMAT_LABEL[String(value)] ?? String(value) },
+    { key: "lastRefreshAt", header: "Last updated", align: "right", render: (value) => dateFormater(toDateValue(value)) },
 ]
 
 
@@ -81,6 +102,13 @@ export function KnowledgeBase() {
         onDeleted?: (ids: string[]) => void;
     } | null>(null);
     const { data, isLoading, error } = useKnowledgeBaseQuery(page, search.trim());
+    const refreshMutation = useMutation({
+        mutationFn: (item: KnowledgeBase) => refreshKnowledge(item.id),
+        onSuccess: async (_result, item) => {
+            await queryClient.invalidateQueries({ queryKey: knowledgeBaseQueryKey });
+            toast.add({ type: "success", title: "Refreshing", description: `Reading “${item.name}” again.` });
+        },
+    });
     const items = data?.items ?? [];
     const total = data?.total ?? 0;
     const pageSize = data?.pageSize ?? 10;
@@ -137,12 +165,13 @@ export function KnowledgeBase() {
         <>
             <CustomTable
                 title="Knowledge base"
+                description="What your agent answers from: your website, documents and notes."
                 columns={columns}
                 data={items || []}
                 pagination={{ page, pageSize, total, onPageChange: handlePageChange }}
                 emptyState={isLoading ? <TableSkeleton columns={6} showHeader={false} /> : undefined}
-                emptyMessage={search.trim() ? "No matching knowledge found" : undefined}
-                emptyDescription={search.trim() ? "Try a different search term." : undefined}
+                emptyMessage={search.trim() ? "No matching knowledge found" : "Nothing here yet"}
+                emptyDescription={search.trim() ? "Try a different search term." : "Add your website first: your agent learns your products, policies and pages from it."}
                 selectable={canDeleteKnowledge}
                 getRowId={(row) => String(row.id)}
                 bulkActions={canDeleteKnowledge ? ((rows, deselectRows) => (
@@ -160,36 +189,36 @@ export function KnowledgeBase() {
                             onSearchChange={handleSearchChange}
                         />
                         {canCreateKnowledge && (
-                            <Button
-                                variant="primary"
-                                onClick={() => setIsAddModalOpen(true)}
-                            >
+                            <Button variant="primary" onClick={() => setIsAddModalOpen(true)}>
+                                <Plus className="size-4" />
                                 Add knowledge
-                                <Plus className="md:ml-2 ml-0.5 md:size-4 size-2" />
                             </Button>
                         )}
                     </div>
                 }
                 rowActions={canCreateKnowledge || canDeleteKnowledge ? (row) => (
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1">
                         {canCreateKnowledge && (
                             <Button
-                                variant="bare"
-                                size="sm"
-                                onClick={() => onEdit(row)}
-                                aria-label="Edit knowledge"
+                                variant="ghost"
+                                size="icon"
+                                className="size-8"
+                                disabled={row.status === "processing" || (refreshMutation.isPending && refreshMutation.variables?.id === row.id)}
+                                onClick={() => refreshMutation.mutate(row)}
+                                aria-label={`Refresh ${row.name}`}
+                                title="Read again now"
                             >
-                                <SquarePen className="size-4 text-content-muted" />
+                                <RotateCw className={`size-4 ${row.status === "processing" ? "animate-spin" : ""}`} />
+                            </Button>
+                        )}
+                        {canCreateKnowledge && !row.synced && (
+                            <Button variant="ghost" size="icon" className="size-8" onClick={() => onEdit(row)} aria-label={`Edit ${row.name}`} title="Edit">
+                                <SquarePen className="size-4" />
                             </Button>
                         )}
                         {canDeleteKnowledge && (
-                            <Button
-                                variant="bare"
-                                size="sm"
-                                onClick={() => onDelete([row])}
-                                aria-label="Delete knowledge"
-                            >
-                                <Trash className="size-4 text-content-muted" />
+                            <Button variant="ghost" size="icon" className="size-8 hover:text-danger" onClick={() => onDelete([row])} aria-label={`Delete ${row.name}`} title="Delete">
+                                <Trash className="size-4" />
                             </Button>
                         )}
                     </div>

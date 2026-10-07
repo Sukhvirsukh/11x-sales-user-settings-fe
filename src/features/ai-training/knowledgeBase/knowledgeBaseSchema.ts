@@ -2,16 +2,16 @@ import z from "zod";
 
 export const knowledgeBaseSchema = z.object({
     name: z.string().min(1, { message: "Name is required" }),
-    format: z.enum(["Link", "Doc", "Pdf", "Csv", "Text"], { message: "Format is required" }),
+    format: z.enum(["Link", "Website", "Sitemap", "Doc", "Pdf", "Csv", "Text", "Store"], { message: "Format is required" }),
     url: z.string(),
     file: z.union([z.instanceof(File), z.string()]).nullable().optional(),
     text: z.string(),
 }).superRefine(({ format, url, file, text }, context) => {
-    if (format === "Link" && !z.string().url().safeParse(url).success) {
+    if (["Link", "Website", "Sitemap"].includes(format) && !/^https?:\/\/.+\..+/.test(url.trim())) {
         context.addIssue({
             code: "custom",
             path: ["url"],
-            message: url ? "Enter a valid URL" : "URL is required",
+            message: url ? "Enter a full address, starting with https://" : "URL is required",
         });
     }
 

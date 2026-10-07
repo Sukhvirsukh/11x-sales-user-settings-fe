@@ -7,7 +7,7 @@ import {
     TabsContent,
 } from "@/components/ui/tabs"
 
-/* ─── Pixel-perfect tab item ─── */
+/* ─── Tab item ─── */
 export interface CustomTabItem {
     id: string
     label: string
@@ -37,15 +37,10 @@ export interface CustomTabsProps {
 }
 
 /**
- * A reusable, pixel-perfect tab bar.
+ * A reusable tab bar.
  *
- * Design tokens (derived from screenshots):
- *  – Pill shape: rounded-md (6 px)
- *  – Height: 27 px
- *  – Active state: bordered pill without a bottom indicator
- *  – Shadow: subtle blue-tinted drop-shadow on active state
- *  – Font: 14 px, font-medium, black text
- *  – Padding: 7 px horizontal
+ * Underlined tabs on a hairline: inactive tabs are muted text, the active
+ * one is ink with a 2 px signal-orange rule sitting on the hairline.
  */
 export function CustomTabs({
     tabs,
@@ -89,14 +84,13 @@ export function CustomTabs({
                         key={tab.id}
                         value={tab.id}
                         className={cn(
-                            /* ── Pixel-perfect pill ── */
-                            "flex h-[27px] cursor-pointer items-center justify-center rounded-[6px] px-[5px]",
-                            "border border-transparent bg-transparent",
-                            "text-sm font-normal text-foreground",
-                            "transition-all duration-150",
-                            "hover:bg-control-hover",
-                            /* Active state – must override base tabs styles */
-                            "after:hidden data-active:!border-tab-active-border data-active:!bg-surface-raised data-active:!font-medium data-active:!text-foreground data-active:!shadow-panel",
+                            /* Underlined tab: muted until active, then ink with a signal-orange rule. */
+                            "relative flex h-10 flex-none cursor-pointer items-center justify-center rounded-none px-0.5",
+                            "border-0 bg-transparent",
+                            "text-base font-medium text-muted-foreground",
+                            "transition-colors duration-150 hover:text-foreground",
+                            "after:!absolute after:!inset-x-0 after:!-bottom-px after:!h-0.5 after:!rounded-full after:!bg-brand after:!opacity-0",
+                            "data-active:!bg-transparent data-active:!text-foreground data-active:!shadow-none data-active:after:!opacity-100",
                             /* Icons */
                             "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg]:size-3.5",
                             triggerClassName,

@@ -1,6 +1,6 @@
 import InfoModal from "@/components/shared/InfoModal";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { deleteSegaments, deleteUserProfiles } from "./contactsApi";
+import { deleteSegments, deleteUserProfiles } from "./contactsApi";
 import { segmentsQueryKey, userProfilesQueryKey } from "./contactQuery";
 import { toast } from "@/components/ui/toast";
 
@@ -16,7 +16,7 @@ const CONTACT_LABELS: Record<ContactKind, {
         singular: "segment",
         plural: "segments",
         queryKey: segmentsQueryKey,
-        remove: deleteSegaments,
+        remove: deleteSegments,
     },
     userProfile: {
         singular: "user profile",

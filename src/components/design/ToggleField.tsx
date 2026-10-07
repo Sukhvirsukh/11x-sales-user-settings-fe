@@ -39,10 +39,8 @@ export function ToggleField({
     // Renders the icon for the current state (falls back to ToggleRight/ToggleLeft)
     const ActiveIcon = pressed ? CheckedIcon : UncheckedIcon
 
-    const text = showText
-        ? pressed
-            ? "Deactivate" : "Activate"
-        : undefined
+    // The label says the current state, like a switch: "On" (pressed) or "Off".
+    const text = showText ? (pressed ? "On" : "Off") : undefined
 
     return (
         <Toggle
