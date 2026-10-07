@@ -6,7 +6,7 @@ import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router";
 import { InputField } from "@/components/design/InputField";
 import { Button } from "@/components/ui/button";
-import { toast } from "@/components/ui/toast";
+import { toast } from "@/components/ui/toast-manager";
 import { AuthForm } from "@/features/auth";
 import { resetPasswordRequest } from "./resetPasswordApi";
 import {

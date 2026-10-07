@@ -7,7 +7,7 @@ import { Eye, EyeOff, LockKeyhole, Mail } from "lucide-react";
 import { AuthForm } from "@/features/auth";
 import { InputField } from "@/components/design/InputField";
 import { Button } from "@/components/ui/button";
-import { toast } from "@/components/ui/toast";
+import { toast } from "@/components/ui/toast-manager";
 import { signInSchema } from "./signInSchema";
 import type { SignInFormValues } from "./signInTypes";
 import { signInRequest } from "./signInApi";

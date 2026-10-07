@@ -1,4 +1,4 @@
-import { toast } from "@/components/ui/toast";
+import { toast } from "@/components/ui/toast-manager";
 import { getCurrentAgentId } from "@/features/agents/agentStore";
 
 // The AI agent service. It accepts the same sign-in token as the main API

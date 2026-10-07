@@ -7,7 +7,7 @@ import { FormGroup } from "@/components/design/FormGroup";
 import { InputField } from "@/components/design/InputField";
 import Modal from "@/components/design/Modal";
 import { SelectField } from "@/components/design/SelectField";
-import { toast } from "@/components/ui/toast";
+import { toast } from "@/components/ui/toast-manager";
 import { useCan } from "@/features/auth";
 
 import { createRole, updateRole } from "./roleHistoryApi";

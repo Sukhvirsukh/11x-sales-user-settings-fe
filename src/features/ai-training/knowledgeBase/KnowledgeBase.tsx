@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router";
 import { Plus, RotateCw, SquarePen, Trash } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
@@ -12,8 +12,8 @@ import AddKnowledge from "./AddKnowledge";
 import { knowledgeBaseQueryKey, useKnowledgeBaseQuery } from "./useKnowledgeBaseQuery";
 import { refreshKnowledge } from "./knowledgeBaseApi";
 import { queryClient } from "@/lib/queryClient";
-import { toast } from "@/components/ui/toast";
-import { dateFormater, debounce } from "@/lib/utils";
+import { toast } from "@/components/ui/toast-manager";
+import { dateFormater } from "@/lib/utils";
 import type { KnowledgeBase } from "./knowledgeBaseTypes";
 import DeleteKnowledgeBase from "./DeleteKnowledgeBase";
 import SearchField from "@/components/shared/SearchField";
@@ -24,6 +24,8 @@ function toDateValue(value: unknown): string | Date | null {
     return value instanceof Date || typeof value === "string" ? value : null;
 }
 
+
+const SEARCH_DEBOUNCE_MS = 300;
 
 const STATUS_BADGE = {
     ready: { label: "Ready", variant: "default" },
@@ -90,7 +92,9 @@ export function KnowledgeBase() {
     const canDeleteKnowledge = useCan("aiTraining.delete");
     const [searchParams, setSearchParams] = useSearchParams();
     const setSearchParamsRef = useRef(setSearchParams);
-    setSearchParamsRef.current = setSearchParams;
+    useEffect(() => {
+        setSearchParamsRef.current = setSearchParams;
+    }, [setSearchParams]);
     const search = searchParams.get("search") ?? "";
     const pageParam = Number(searchParams.get("page"));
     const page = Number.isInteger(pageParam) && pageParam > 0 ? pageParam : 1;
@@ -113,8 +117,12 @@ export function KnowledgeBase() {
     const total = data?.total ?? 0;
     const pageSize = data?.pageSize ?? 10;
 
-    const handleSearchChange = useRef(
-        debounce((value: string) => {
+    const searchTimerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
+
+    // Debounced: only the last keystroke within SEARCH_DEBOUNCE_MS updates the URL.
+    function handleSearchChange(value: string) {
+        clearTimeout(searchTimerRef.current);
+        searchTimerRef.current = setTimeout(() => {
             setSearchParamsRef.current((currentParams) => {
                 const nextParams = new URLSearchParams(currentParams);
                 if (value) nextParams.set("search", value);
@@ -122,8 +130,8 @@ export function KnowledgeBase() {
                 nextParams.delete("page");
                 return nextParams;
             }, { replace: true });
-        }),
-    ).current;
+        }, SEARCH_DEBOUNCE_MS);
+    }
 
     const handlePageChange = (nextPage: number) => {
         setSearchParams((currentParams) => {

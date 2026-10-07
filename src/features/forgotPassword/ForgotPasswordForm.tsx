@@ -3,7 +3,7 @@ import { AuthForm } from "../auth";
 import { Mail } from "lucide-react";
 import { Link } from "react-router";
 import { Button } from "@/components/ui/button";
-import { toast } from "@/components/ui/toast";
+import { toast } from "@/components/ui/toast-manager";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";

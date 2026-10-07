@@ -5,9 +5,8 @@ import TableSkeleton from "@/components/shared/skeletons/TableSkeletons"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { useCan } from "@/features/auth"
-import { debounce } from "@/lib/utils"
 import { Download, Plus, Trash } from "lucide-react"
-import { useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useSearchParams } from "react-router"
 import { format as formatDate } from "date-fns"
 import { downloadSegment } from "./contactsApi"
@@ -16,6 +15,8 @@ import { useSegmentsQuery } from "./contactQuery"
 import type { Segment, SegmentRules } from "./contactType"
 import AddSegment from "./AddSegment"
 
+
+const SEARCH_DEBOUNCE_MS = 300
 
 const WHO_LABEL: Record<SegmentRules["who"], string> = {
     everyone: "Everyone",
@@ -81,7 +82,9 @@ export default function Segments() {
     const canDeleteSegments = useCan("contacts.delete")
     const [searchParams, setSearchParams] = useSearchParams()
     const setSearchParamsRef = useRef(setSearchParams)
-    setSearchParamsRef.current = setSearchParams
+    useEffect(() => {
+        setSearchParamsRef.current = setSearchParams
+    }, [setSearchParams])
     const search = searchParams.get("search") ?? ""
     const pageParam = Number(searchParams.get("page"))
     const page = Number.isInteger(pageParam) && pageParam > 0 ? pageParam : 1
@@ -100,8 +103,12 @@ export default function Segments() {
 
     if (error) throw error
 
-    const handleSearchChange = useRef(
-        debounce((value: string) => {
+    const searchTimerRef = useRef<ReturnType<typeof setTimeout>>(undefined)
+
+    // Debounced: only the last keystroke within SEARCH_DEBOUNCE_MS updates the URL.
+    function handleSearchChange(value: string) {
+        clearTimeout(searchTimerRef.current)
+        searchTimerRef.current = setTimeout(() => {
             setSearchParamsRef.current((currentParams) => {
                 const nextParams = new URLSearchParams(currentParams)
                 if (value) nextParams.set("search", value)
@@ -109,8 +116,8 @@ export default function Segments() {
                 nextParams.delete("page")
                 return nextParams
             }, { replace: true })
-        }),
-    ).current
+        }, SEARCH_DEBOUNCE_MS)
+    }
 
     function handlePageChange(nextPage: number) {
         setSearchParams((currentParams) => {

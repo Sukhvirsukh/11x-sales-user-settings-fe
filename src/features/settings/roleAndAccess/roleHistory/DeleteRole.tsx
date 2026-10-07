@@ -2,7 +2,7 @@ import InfoModal from "@/components/shared/InfoModal";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteRole, deleteRoles } from "./roleHistoryApi";
 import { roleHistoryQueryKey } from "./roleHistoryQuery";
-import { toast } from "@/components/ui/toast";
+import { toast } from "@/components/ui/toast-manager";
 import { useCan } from "@/features/auth";
 import type { RoleRow } from "./roleHistoryType";
 

@@ -1,6 +1,6 @@
 import { agentApiConfigured } from "@/lib/agentApi";
 import { rateTestReply, saveTestCorrection, sendTestMessage, toRecommendation } from "./agentTestChat";
-import { toast } from "@/components/ui/toast";
+import { toast } from "@/components/ui/toast-manager";
 import type { ProductRecommendationItem } from "./ProductRecommendation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ChatMessage, type ChatMessageData } from "./ChatMessage";

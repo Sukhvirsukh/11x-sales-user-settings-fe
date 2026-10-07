@@ -6,7 +6,7 @@ import { useNavigate, useSearchParams } from "react-router";
 import CopyField from "@/components/shared/CopyField";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { toast } from "@/components/ui/toast";
+import { toast } from "@/components/ui/toast-manager";
 import { useAgentStore } from "@/features/agents/agentStore";
 import { useCan } from "@/features/auth";
 import { agentPublicUrl } from "@/lib/agentApi";

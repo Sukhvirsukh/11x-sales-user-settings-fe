@@ -7,7 +7,7 @@ import { InputField } from "@/components/design/InputField";
 import Modal from "@/components/design/Modal";
 import { createStore, updateStore } from "./storeApi";
 import { storeQueryKey } from "./storeQuery";
-import { toast } from "@/components/ui/toast";
+import { toast } from "@/components/ui/toast-manager";
 import { SelectField } from "@/components/design/SelectField";
 import type { StoreFormData } from "./storeType";
 import { storeSchema } from "./storeSchema";

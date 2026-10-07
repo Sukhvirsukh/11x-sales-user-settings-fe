@@ -6,7 +6,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import { toast } from "@/components/ui/toast";
+import { toast } from "@/components/ui/toast-manager";
 import { openAgent } from "@/features/agents/agentsApi";
 import { useAgentStore } from "@/features/agents/agentStore";
 import { roleForAgent } from "@/features/auth/authApi";

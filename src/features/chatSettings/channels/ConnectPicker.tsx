@@ -3,7 +3,7 @@ import { Check } from "lucide-react";
 import { useState } from "react";
 import Modal from "@/components/design/Modal";
 import { Spinner } from "@/components/ui/spinner";
-import { toast } from "@/components/ui/toast";
+import { toast } from "@/components/ui/toast-manager";
 import { queryClient } from "@/lib/queryClient";
 import { cn } from "@/lib/utils";
 import { channelsQueryKey, finishConnect, getConnectSession } from "./channelsApi";

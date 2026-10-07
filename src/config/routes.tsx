@@ -1,56 +1,39 @@
-import { lazy } from "react";
-import { createBrowserRouter, Navigate, Outlet } from "react-router";
+import { createBrowserRouter, Navigate } from "react-router";
 import ErrorPage from "@/pages/ErrorPage";
 import AppLayout from "../components/layout/AppLayou";
-import { getAuthToken } from "@/features/auth/authStorage";
 import RouteGuard, { type RouteHandle } from "@/features/auth/RouteGuard";
-
-const SignInPage = lazy(() => import("@/pages/SignInPage"));
-const SignUpPage = lazy(() => import("@/pages/SignUpPage"));
-const ForgotPassword = lazy(() => import("@/pages/ForgotPassword"));
-const ResetPasswordPage = lazy(() => import("@/pages/ResetPasswordPage"));
-const VerifyEmailPage = lazy(() => import("@/pages/VerifyEmailPage"));
-const OAuthCallbackPage = lazy(() => import("@/pages/OAuthCallbackPage"));
-const OverviewPage = lazy(() => import("@/pages/OverviewPage"));
-const NotFoundPage = lazy(() => import("@/pages/NotFoundPage"));
-const ContactsPage = lazy(() => import("@/pages/ContactPage"));
-const ConversationsPage = lazy(() => import("@/pages/ConversationsPage"));
-const ReportsPage = lazy(() => import("@/pages/ReportsPage"));
-const ChatSettingsPage = lazy(() => import("@/pages/chatSettings/ChatSettingsPage"));
-const VisibilityPage = lazy(() => import("@/pages/chatSettings/VisibilityPage"));
-const AskMePage = lazy(() => import("@/pages/AskMePage"));
-const SettingsPage = lazy(() => import("@/pages/SettingsPage"));
-const KnowledgeBaseTab = lazy(() => import("@/pages/aiTraining/tabs/KnowledgeBaseTab"));
-const CorrectionsTab = lazy(() => import("@/pages/aiTraining/tabs/CorrectionsTab"));
-const PromptToolsTab = lazy(() => import("@/pages/aiTraining/tabs/PromptToolsTab"));
-const AiTrainingPage = lazy(() =>
-  import("@/pages/aiTraining").then(({ AiTrainingPage }) => ({ default: AiTrainingPage })),
-);
-const RoleAndAccess = lazy(() =>
-  import("@/features/settings/roleAndAccess").then(({ RoleAndAccess }) => ({ default: RoleAndAccess })),
-);
-const Plan = lazy(() =>
-  import("@/features/settings/plan").then(({ Plan }) => ({ default: Plan })),
-);
-const Payments = lazy(() =>
-  import("@/features/settings/payments").then(({ Payments }) => ({ default: Payments })),
-);
-const Store = lazy(() =>
-  import("@/features/settings/store").then(({ Store }) => ({ default: Store })),
-);
-const ActiveChat = lazy(() =>
-  import("@/features/conversations/activeChats").then(({ ActiveChat }) => ({ default: ActiveChat })),
-);
-const Escalated = lazy(() => import("@/features/conversations/escalated"));
-const AssignedToMe = lazy(() => import("@/features/conversations/assignedToMe"));
-const Archived = lazy(() => import("@/features/conversations/archived"));
-
-const UserProfileDetails = lazy(() => import("@/features/contacts/UserProfileDetails"));
-const Segments = lazy(() => import("@/features/contacts/Segments"));
-
-function GuestOnlyRoute() {
-  return getAuthToken() ? <Navigate to="/" replace /> : <Outlet />;
-}
+import {
+  SignInPage,
+  SignUpPage,
+  ForgotPassword,
+  ResetPasswordPage,
+  VerifyEmailPage,
+  OAuthCallbackPage,
+  OverviewPage,
+  NotFoundPage,
+  ContactsPage,
+  ConversationsPage,
+  ReportsPage,
+  ChatSettingsPage,
+  VisibilityPage,
+  AskMePage,
+  SettingsPage,
+  KnowledgeBaseTab,
+  CorrectionsTab,
+  PromptToolsTab,
+  AiTrainingPage,
+  RoleAndAccess,
+  Plan,
+  Payments,
+  Store,
+  ActiveChat,
+  Escalated,
+  AssignedToMe,
+  Archived,
+  UserProfileDetails,
+  Segments,
+  GuestOnlyRoute,
+} from "./routePages";
 
 export const router = createBrowserRouter([
   {

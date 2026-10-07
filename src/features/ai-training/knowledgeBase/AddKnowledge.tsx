@@ -2,15 +2,16 @@ import Modal from "@/components/design/Modal";
 import type { KnowledgeBase } from "./knowledgeBaseTypes";
 import { FormGroup } from "@/components/design/FormGroup";
 import { InputField } from "@/components/design/InputField";
-import { Controller, useForm } from "react-hook-form";
-import ImageUploader, { CSV_ACCEPT, DOCUMENT_ACCEPT, PDF_ACCEPT } from "@/components/design/ImageUploader";
+import { Controller, useForm, useWatch } from "react-hook-form";
+import ImageUploader from "@/components/design/ImageUploader";
+import { CSV_ACCEPT, DOCUMENT_ACCEPT, PDF_ACCEPT } from "@/components/design/uploadAccept";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { knowledgeBaseSchema, type KnowledgeBaseFormValues } from "./knowledgeBaseSchema";
 import { useMutation } from "@tanstack/react-query";
 import { updateKnowledgeBase } from "./knowledgeBaseApi";
 import { queryClient } from "@/lib/queryClient";
 import { knowledgeBaseQueryKey } from "./useKnowledgeBaseQuery";
-import { toast } from "@/components/ui/toast";
+import { toast } from "@/components/ui/toast-manager";
 import { useEffect, useMemo } from "react";
 import { SelectField } from "@/components/design/SelectField";
 import { TextAreaField } from "@/components/design/TextAreaField";
@@ -62,7 +63,7 @@ function initialValues(data: KnowledgeBase | null): KnowledgeBaseFormValues {
 
 export default function AddKnowledge({ isOpen, handleModalOpenChange, data }: AddKnowledgeProps) {
 
-    const { register, handleSubmit, watch, reset, setValue, clearErrors, control, formState: { errors } } = useForm<KnowledgeBaseFormValues>({
+    const { register, handleSubmit, reset, setValue, clearErrors, control, formState: { errors } } = useForm<KnowledgeBaseFormValues>({
         resolver: zodResolver(knowledgeBaseSchema),
         defaultValues: initialValues(data),
     })
@@ -97,18 +98,21 @@ export default function AddKnowledge({ isOpen, handleModalOpenChange, data }: Ad
         saveKnowledgeMutation.mutate(values);
     }
 
-    const format = watch("format");
+    const format = useWatch({ control, name: "format" });
     const isAddress = format === "Link" || format === "Website" || format === "Sitemap";
     const formatHint = FORMAT_OPTIONS.find((option) => option.value === format)?.hint;
     const fileUploadConfig = format in FILE_UPLOAD_CONFIG
         ? FILE_UPLOAD_CONFIG[format as keyof typeof FILE_UPLOAD_CONFIG]
         : null;
+    const existingFile = data?.file;
+    const existingFormat = data?.format;
+    const existingUrl = data?.url;
     const existingFileUrl = useMemo(() => {
-        const isFileFormat = data?.format === "Doc" || data?.format === "Pdf" || data?.format === "Csv";
-        if (isFileFormat && data?.url) return data.url;
-        if (typeof data?.file === "string") return data.file;
-        return data?.file ? URL.createObjectURL(data.file) : null;
-    }, [data?.file, data?.format, data?.url]);
+        const isFileFormat = existingFormat === "Doc" || existingFormat === "Pdf" || existingFormat === "Csv";
+        if (isFileFormat && existingUrl) return existingUrl;
+        if (typeof existingFile === "string") return existingFile;
+        return existingFile ? URL.createObjectURL(existingFile) : null;
+    }, [existingFile, existingFormat, existingUrl]);
 
     useEffect(() => {
         return () => {

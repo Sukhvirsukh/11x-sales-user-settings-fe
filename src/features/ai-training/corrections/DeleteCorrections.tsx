@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import InfoModal from "@/components/shared/InfoModal";
-import { toast } from "@/components/ui/toast";
+import { toast } from "@/components/ui/toast-manager";
 
 import { deleteCorrections } from "./correctionsApi";
 import { correctionsQueryKey } from "./correctionsQuery";

@@ -39,8 +39,8 @@ export function UnSavedChangesBar({
   primaryColor,
 }: UnSavedChangesBarProps) {
   const [isSaving, setIsSaving] = useState(false);
-  const [mounted, setMounted] = useState(false);
   const [isEntered, setIsEntered] = useState(false);
+  const [wasDirty, setWasDirty] = useState(isDirty);
   const busy = saving || isSaving;
   const resolvedEdge = edge ?? (placement === "fixed" ? "top" : "bottom");
   const isFixed = placement === "fixed";
@@ -50,16 +50,15 @@ export function UnSavedChangesBar({
   const slidesFromTop = resolvedEdge === "top";
   const { isBlocking, proceed, cancel } = useUnsavedChangesWarning({ isDirty });
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  // Reset the slide-in when the bar hides, so it animates again next time it appears.
+  if (wasDirty !== isDirty) {
+    setWasDirty(isDirty);
+    if (!isDirty) setIsEntered(false);
+  }
 
   // Slide the bar in from the edge it is anchored to whenever it appears.
   useEffect(() => {
-    if (!isDirty) {
-      setIsEntered(false);
-      return;
-    }
+    if (!isDirty) return;
 
     const frame = requestAnimationFrame(() => setIsEntered(true));
     return () => cancelAnimationFrame(frame);
@@ -137,11 +136,7 @@ export function UnSavedChangesBar({
 
   return (
     <>
-      {isFixed
-        ? mounted
-          ? createPortal(bar, document.body)
-          : null
-        : bar}
+      {isFixed ? createPortal(bar, document.body) : bar}
 
       <UnsavedChangesDialog
         open={isBlocking}

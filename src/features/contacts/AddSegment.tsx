@@ -10,7 +10,7 @@ import Label from "@/components/design/Label";
 import Modal from "@/components/design/Modal";
 import { SelectField } from "@/components/design/SelectField";
 import { Checkbox } from "@/components/ui/checkbox";
-import { toast } from "@/components/ui/toast";
+import { toast } from "@/components/ui/toast-manager";
 import { cn } from "@/lib/utils";
 import { segmentFormSchema } from "./contactSchema";
 import { createSegment, previewSegment } from "./contactsApi";

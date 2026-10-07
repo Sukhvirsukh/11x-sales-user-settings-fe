@@ -10,7 +10,7 @@ import { chatSettingsIntegrationsQueryKey, useIntegrationsQuery } from "./chatSe
 import { connectShopify, disconnectShopify } from "./chatSettingsApi";
 import Modal from "@/components/design/Modal";
 import { InputField } from "@/components/design/InputField";
-import { toast } from "@/components/ui/toast";
+import { toast } from "@/components/ui/toast-manager";
 import { queryClient } from "@/lib/queryClient";
 import { useCan } from "@/features/auth";
 

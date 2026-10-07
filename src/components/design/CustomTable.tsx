@@ -164,18 +164,16 @@ export default function CustomTable<T extends Record<string, unknown>>({
         else setLocalPage(nextPage)
     }
 
-    function SelectAllCheckbox() {
-        return (
-            <Checkbox
-                aria-label="Select all rows"
-                checked={allSelected}
-                indeterminate={partiallySelected}
-                disabled={displayedData.length === 0}
-                onCheckedChange={(checked) => selectRows(displayedRowIds, checked)}
-                className="data-indeterminate:border-primary data-indeterminate:bg-primary"
-            />
-        )
-    }
+    const selectAllCheckbox = (
+        <Checkbox
+            aria-label="Select all rows"
+            checked={allSelected}
+            indeterminate={partiallySelected}
+            disabled={displayedData.length === 0}
+            onCheckedChange={(checked) => selectRows(displayedRowIds, checked)}
+            className="data-indeterminate:border-primary data-indeterminate:bg-primary"
+        />
+    )
     const mobileColumns = columns.filter((col) => col.key !== "select")
     const mobileCellCount = mobileColumns.length + (rowActions ? 1 : 0)
     const lastMobileRowStart = Math.floor((mobileCellCount - 1) / 2) * 2
@@ -226,7 +224,7 @@ export default function CustomTable<T extends Record<string, unknown>>({
                     >
                         <div className="flex items-center gap-3">
                             <span className="hidden md:inline-flex">
-                                <SelectAllCheckbox />
+                                {selectAllCheckbox}
                             </span>
                             <span className="text-sm font-medium" aria-live="polite">
                                 {selectedCount} selected
@@ -245,7 +243,7 @@ export default function CustomTable<T extends Record<string, unknown>>({
                         <TableRow className="border-0 border-b! border-border bg-table-header-background hover:bg-table-header-background">
                             {selectable && (
                                 <TableHead className="w-14 px-5 py-2.5">
-                                    <SelectAllCheckbox />
+                                    {selectAllCheckbox}
                                 </TableHead>
                             )}
                             {columns.map((col) => (

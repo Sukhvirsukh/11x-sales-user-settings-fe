@@ -2,7 +2,7 @@ import InfoModal from "@/components/shared/InfoModal";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteSegments, deleteUserProfiles } from "./contactsApi";
 import { segmentsQueryKey, userProfilesQueryKey } from "./contactQuery";
-import { toast } from "@/components/ui/toast";
+import { toast } from "@/components/ui/toast-manager";
 
 export type ContactKind = "segment" | "userProfile";
 

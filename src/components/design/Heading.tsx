@@ -1,28 +1,7 @@
 import { memo, type ReactNode } from "react";
-import { cva, type VariantProps } from "class-variance-authority";
+import { type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
-
-const headingVariants = cva("font-display tracking-[-0.01em] text-foreground", {
-    variants: {
-        size: {
-            /** 24px, semi-bold */
-            "2xl": "text-3xl font-semibold",
-            /** 20px, semi-bold */
-            xlg: "text-2xl font-semibold",
-            /** 16px, semi-bold */
-            lg: "text-lg font-semibold",
-            /** 14px, medium */
-            md: "text-base font-medium",
-            /** 12px, medium */
-            sm: "text-sm font-medium",
-            /** 10px, medium */
-            xs: "text-xs font-medium",
-        },
-    },
-    defaultVariants: {
-        size: "lg",
-    },
-});
+import { headingVariants } from "./headingVariants";
 
 export interface HeadingProps extends VariantProps<typeof headingVariants> {
     as?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "p" | "span";
@@ -44,4 +23,3 @@ function Heading({
 }
 
 export default memo(Heading);
-export { headingVariants };

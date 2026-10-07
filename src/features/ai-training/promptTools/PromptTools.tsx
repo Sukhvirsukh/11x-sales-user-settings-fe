@@ -6,11 +6,11 @@ import Heading from "@/components/design/Heading";
 import { TextAreaField } from "@/components/design/TextAreaField";
 import { ToggleField } from "@/components/design/ToggleField";
 import { UnSavedChangesBar } from "@/components/shared/unsavedChangesBar";
-import { toast } from "@/components/ui/toast";
+import { toast } from "@/components/ui/toast-manager";
 import { useCan } from "@/features/auth";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { promptToolsQueryKey, usePromptToolsQuery } from "./promptQuery";
 import { savePromptTools } from "./promptToolsApi";
 import type { PromptToolsFormValues, PromptToolsResponse } from "./promptType";
@@ -68,7 +68,16 @@ export function PromptTools() {
     const form = useForm<PromptToolsFormValues>({
         defaultValues: DEFAULT_VALUES,
     });
-    const { register, reset, setValue, watch } = form;
+    const { register, reset, setValue, control } = form;
+    const [
+        knowledgeSearchEnabled,
+        escalateConversationsEnabled,
+        orderLookupEnabled,
+        skipConversationEnabled,
+    ] = useWatch({
+        control,
+        name: ["knowledgeSearchEnabled", "escalateConversationsEnabled", "orderLookupEnabled", "skipConversationEnabled"],
+    });
     const saveMutation = useMutation({
         mutationFn: (values: PromptToolsFormValues) => {
             if (!canSavePromptTools) {
@@ -142,25 +151,25 @@ export function PromptTools() {
                     <ActionCard
                         heading="Knowledge search"
                         content="Search your knowledge base — pages, products and documents — before answering"
-                        isChecked={watch("knowledgeSearchEnabled")}
+                        isChecked={knowledgeSearchEnabled}
                         onToggle={(enabled) => setValue("knowledgeSearchEnabled", enabled, { shouldDirty: true })}
                     />
                     <ActionCard
                         heading="Escalate conversations"
                         content="Hand a conversation to your team when the shopper needs a person"
-                        isChecked={watch("escalateConversationsEnabled")}
+                        isChecked={escalateConversationsEnabled}
                         onToggle={(enabled) => setValue("escalateConversationsEnabled", enabled, { shouldDirty: true })}
                     />
                     <ActionCard
                         heading="Order lookup with custom API"
                         content="Look up order status and delivery for shoppers who ask"
-                        isChecked={watch("orderLookupEnabled")}
+                        isChecked={orderLookupEnabled}
                         onToggle={(enabled) => setValue("orderLookupEnabled", enabled, { shouldDirty: true })}
                     />
                     <ActionCard
                         heading="Skip conversations"
                         content="Stay quiet on spam and messages that don't need a reply"
-                        isChecked={watch("skipConversationEnabled")}
+                        isChecked={skipConversationEnabled}
                         onToggle={(enabled) => setValue("skipConversationEnabled", enabled, { shouldDirty: true })}
                     />
                 </div>

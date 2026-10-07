@@ -1,4 +1,4 @@
-import { toast } from "@/components/ui/toast";
+import { toast } from "@/components/ui/toast-manager";
 import { clearAuthToken, getAuthToken, getRefreshToken, storeAuthToken } from "@/features/auth/authStorage";
 
 // The 11xSales backend. Every response is an envelope:

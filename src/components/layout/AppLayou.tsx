@@ -41,7 +41,7 @@ function AppLayout() {
         return () => {
             isActive = false;
         };
-    }, [authToken, clearUser, setUser, user]);
+    }, [authToken, clearUser, navigate, setUser, user]);
 
     if (!authToken) {
         return (
