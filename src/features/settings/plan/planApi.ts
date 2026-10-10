@@ -6,21 +6,23 @@ import type { Plan, PlanResponse } from "./planTypes";
 interface ApiPlan {
     code: string;
     name: string;
-    priceInr: number;
+    priceUsd: number;
     isMostPopular: boolean;
-    conversationLimit: number;
+    replyLimit: number;
     features: string[];
     sortOrder: number;
 }
 
 interface ApiBilling {
     plans: ApiPlan[];
+    extraReplyUsd: number;
     current: { plan: ApiPlan; status: string; currentPeriodEnd: string | null; canManageBilling: boolean };
+    usage: PlanResponse["usage"];
     billingEnabled: boolean;
 }
 
 function toPlan(plan: ApiPlan): Plan {
-    return { ...plan, id: plan.code, priceInr: plan.priceInr.toFixed(2) };
+    return { ...plan, id: plan.code };
 }
 
 export async function getPlans(): Promise<PlanResponse> {
@@ -36,7 +38,7 @@ export async function getPlans(): Promise<PlanResponse> {
             currentPeriodEnd: billing.current.currentPeriodEnd as null,
             // The free plan has no billing period; its usage resets monthly from today.
             currentPeriodStart: new Date().toISOString(),
-            conversationsUsed: 0,
+            conversationsUsed: billing.usage.replies,
             createdAt: "",
             updatedAt: "",
             userId: "",
@@ -45,6 +47,8 @@ export async function getPlans(): Promise<PlanResponse> {
             shopDomain: null,
             shopifySubscriptionId: null,
         },
+        usage: billing.usage,
+        extraReplyUsd: billing.extraReplyUsd,
         billing: {
             status: billing.current.status,
             currentPeriodEnd: billing.current.currentPeriodEnd,
@@ -62,10 +66,10 @@ export async function openBillingPortal() {
 
 /**
  * Paid plans go through Stripe Checkout (or switch straight away when already
- * subscribed). Going back to Basic means cancelling in Stripe's billing portal.
+ * subscribed). Going back to Free means cancelling in Stripe's billing portal.
  */
 export async function upgradePlan(planId: string) {
-    if (planId === "basic") {
+    if (planId === "free") {
         const { url } = await apiFetch<{ url: string }>("/billing/portal", { method: "POST" });
         window.location.assign(url);
         return;

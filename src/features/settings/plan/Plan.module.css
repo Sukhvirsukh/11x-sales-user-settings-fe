@@ -19,7 +19,8 @@
     scroll-snap-align: center;
 }
 
-@media (min-width: 1024px) {
+/* Five plans side by side need the full desktop width; below that they scroll. */
+@media (min-width: 1280px) {
     .carousel {
         width: 100%;
         margin-inline: 0;

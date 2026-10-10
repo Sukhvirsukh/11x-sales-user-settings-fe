@@ -11,7 +11,8 @@ import { useCan } from "@/features/auth";
 import styles from "./Plan.module.css";
 import { cn, dateFormater } from "@/lib/utils";
 import { planQueryKey, usePlanQuery } from "./planQuery";
-import type { Plan as PlanData } from "./planTypes";
+import type { Plan as PlanData, PlanResponse } from "./planTypes";
+import { WEBSITE } from "@/config/website";
 import { openBillingPortal, upgradePlan } from "./planApi";
 
 const STATUS_LABEL: Record<string, string> = {
@@ -33,7 +34,7 @@ interface PlanCardProps {
 const EMPTY_PLANS: PlanData[] = [];
 
 function PlanCard({ plan, isCurrent, canUpgrade, isUpgradePending, isUpgrading, onUpgrade }: PlanCardProps) {
-    const { name, features, isMostPopular, priceInr } = plan;
+    const { name, features, isMostPopular, priceUsd } = plan;
 
     return (
         <article
@@ -54,18 +55,21 @@ function PlanCard({ plan, isCurrent, canUpgrade, isUpgradePending, isUpgrading, 
                 )}
             >
                 <div className="min-w-0">
-                    <h3 className={cn("text-sm font-normal", isMostPopular ? "text-content-strong" : "text-content-muted")}>
-                        {name}
-                    </h3>
-                    <p className="mt-1 font-display text-lg font-semibold text-content-strong">
-                        {Number(priceInr) === 0 ? "Free" : <>₹{Number(priceInr).toLocaleString("en-IN")}<span className="text-base font-normal text-muted-foreground"> / month</span></>}
+                    <div className="flex flex-wrap items-center gap-2">
+                        <h3 className={cn("text-sm font-normal", isMostPopular ? "text-content-strong" : "text-content-muted")}>
+                            {name}
+                        </h3>
+                        {isMostPopular && (
+                            <Badge indicator={false} className="rounded-full bg-brand-soft text-brand">
+                                Most popular
+                            </Badge>
+                        )}
+                    </div>
+                    <p className="mt-1 whitespace-nowrap font-display text-lg font-semibold text-content-strong">
+                        {priceUsd === 0 ? "$0" : <>${priceUsd.toLocaleString("en-US")}</>}
+                        <span className="text-base font-normal text-muted-foreground"> / month</span>
                     </p>
                 </div>
-                {isMostPopular && (
-                    <Badge indicator={false} className="rounded-full bg-brand-soft text-brand">
-                        Most popular
-                    </Badge>
-                )}
             </div>
             <div className="flex flex-1 flex-col px-5 pb-5 pt-4">
                 <ul className="flex flex-col gap-4">
@@ -86,12 +90,56 @@ function PlanCard({ plan, isCurrent, canUpgrade, isUpgradePending, isUpgrading, 
                                 if (canUpgrade) onUpgrade(plan.id);
                             }}
                         >
-                            {isCurrent ? "Current plan" : isUpgrading ? "Opening checkout…" : plan.id === "basic" ? "Switch to Basic" : `Upgrade to ${name.replace(/ plan$/i, "")}`}
+                            {isCurrent ? "Current plan" : isUpgrading ? "Opening checkout…" : plan.id === "free" ? "Switch to Free" : `Choose ${name}`}
                         </Button>
                     )}
                 </div>
             </div>
         </article>
+    );
+}
+
+/** This month's AI replies against the plan, and the extra replies a paid plan has used. */
+function UsageSection({ data }: { data: PlanResponse }) {
+    const { replies, limit, extra, extraUsd, period } = data.usage;
+    const free = data.currentSubscription.plan.id === "free";
+    const share = limit > 0 ? Math.min(100, Math.round((replies / limit) * 100)) : 0;
+    const month = new Date(`${period}-01T00:00:00Z`).toLocaleDateString(undefined, { month: "long", year: "numeric", timeZone: "UTC" });
+    const full = replies >= limit;
+    return (
+        <AppSection className="w-full">
+            <Heading size="lg">Usage</Heading>
+            <AppCard>
+                <div className="flex flex-wrap items-baseline justify-between gap-2">
+                    <p className="text-base text-foreground">
+                        <span className="font-display text-2xl font-semibold tabular-nums">{replies.toLocaleString("en-US")}</span>
+                        <span className="text-muted-foreground"> of {limit.toLocaleString("en-US")} AI replies used in {month}</span>
+                    </p>
+                    {extra > 0 && (
+                        <p className="text-sm text-muted-foreground tabular-nums">
+                            + {extra.toLocaleString("en-US")} extra replies · ${extraUsd.toFixed(2)}
+                        </p>
+                    )}
+                </div>
+                <div
+                    className="mt-3 h-2 w-full overflow-hidden rounded-full bg-muted"
+                    role="progressbar"
+                    aria-label="AI replies used this month"
+                    aria-valuemin={0}
+                    aria-valuemax={limit}
+                    aria-valuenow={Math.min(replies, limit)}
+                >
+                    <div className={cn("h-full rounded-full", full && free ? "bg-destructive" : share >= 80 ? "bg-warning" : "bg-brand")} style={{ width: `${share}%` }} />
+                </div>
+                <p className="mt-3 text-sm text-muted-foreground">
+                    {free
+                        ? full
+                            ? "Your free replies for this month are used up. New chats go to your team in Conversations › Escalated until next month, or choose a paid plan to keep the AI answering."
+                            : "On the Free plan the AI stops at 50 replies a month and new chats go to your team. Paid plans keep answering."
+                        : "Replies reset on the 1st of each month. Extra replies are billed at the end of your billing period."}
+                </p>
+            </AppCard>
+        </AppSection>
     );
 }
 
@@ -120,7 +168,7 @@ export function Plan() {
     useEffect(() => {
         const carousel = carouselRef.current;
         const popularIndex = plans.findIndex((plan) => plan.isMostPopular);
-        if (!carousel || popularIndex < 0 || window.matchMedia("(min-width: 1024px)").matches) return;
+        if (!carousel || popularIndex < 0 || window.matchMedia("(min-width: 1280px)").matches) return;
         const card = carousel.children[popularIndex] as HTMLElement | undefined;
         if (card) carousel.scrollLeft = card.offsetLeft - (carousel.clientWidth - card.clientWidth) / 2;
     }, [plans]);
@@ -152,7 +200,7 @@ export function Plan() {
             <AppSection className="w-full min-w-0 gap-0! overflow-hidden">
                 <div className="flex w-full items-center justify-between">
                     <Heading size="lg">Plan</Heading>
-                    <div className="flex items-center gap-2 lg:hidden">
+                    <div className="flex items-center gap-2 xl:hidden">
                         <Button variant="secondary" size="sm" className="size-6 rounded-md bg-surface-raised p-0!" aria-label="Show previous plan" onClick={() => showPlan(-1)}>
                             <ChevronLeft aria-hidden="true" className="size-3.5" />
                         </Button>
@@ -177,7 +225,14 @@ export function Plan() {
                         ))
                     }
                 </div>
+                <p className="mt-2 text-sm text-muted-foreground">
+                    A reply is one answer the AI sends a shopper; test chats are free. Paid plans keep answering past their
+                    replies, at ${data?.extraReplyUsd?.toFixed(2) ?? "0.04"} for each extra one. Need more than 18,000 a month?{" "}
+                    <a href={`${WEBSITE}/#contact-email-field`} className="font-medium text-foreground underline underline-offset-4">Talk to us about Enterprise</a>.
+                </p>
             </AppSection>
+
+            {data && <UsageSection data={data} />}
 
             {currentSubscription && data && <AppSection className="w-full">
                 <div className="flex w-full flex-wrap items-center justify-between gap-3">
@@ -191,7 +246,7 @@ export function Plan() {
                 <AppCard>
                     <DetailContainer fullWidth={true} equalWidth={true}>
                         <DetailGroup>
-                            <DetailItem label="Plan" value={currentSubscription.plan?.name || "Basic plan"} />
+                            <DetailItem label="Plan" value={currentSubscription.plan?.name || "Free"} />
                         </DetailGroup>
                         <DetailGroup>
                             <DetailItem label="Status" value={STATUS_LABEL[data.billing.status] ?? data.billing.status} />
