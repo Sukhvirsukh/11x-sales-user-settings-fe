@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { Eye, EyeOff, LockKeyhole, Mail, User } from "lucide-react";
 import { AuthForm } from "@/features/auth";
+import { WEBSITE } from "@/config/website";
 import { InputField } from "@/components/design/InputField";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/toast-manager";
@@ -116,6 +117,13 @@ export default function SignUpForm() {
                 >
                     {signUpMutation.isPending ? "Creating account…" : "Create account"}
                 </Button>
+
+                <p className="mt-4 text-center text-sm text-muted-foreground">
+                    By creating an account you agree to the{" "}
+                    <a href={`${WEBSITE}/terms`} target="_blank" rel="noreferrer" className="underline underline-offset-4 hover:text-foreground">Terms</a>
+                    {" "}and{" "}
+                    <a href={`${WEBSITE}/privacy`} target="_blank" rel="noreferrer" className="underline underline-offset-4 hover:text-foreground">Privacy Policy</a>.
+                </p>
 
                 <p className="mt-6 text-center text-base text-muted-foreground">
                     Already have an account?{" "}

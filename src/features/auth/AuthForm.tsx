@@ -1,6 +1,7 @@
 import type { AuthFormProps } from "./authTypes";
 import { Check } from "lucide-react";
 import { BrandIcon, BrandLogo } from "@/components/brand/Brand";
+import { WEBSITE } from "@/config/website";
 import SocialSignIn from "./SocialSignIn";
 
 const proofPoints = [
@@ -87,7 +88,12 @@ export default function AuthForm({
                     </div>
                 </div>
 
-                <p className="text-center text-sm text-muted-foreground lg:text-left">© {new Date().getFullYear()} 11xsales.ai</p>
+                <p className="flex flex-wrap justify-center gap-x-4 gap-y-1 text-sm text-muted-foreground lg:justify-start">
+                    <span>© {new Date().getFullYear()} 11xsales.ai</span>
+                    <a href={WEBSITE} className="hover:text-foreground">Website</a>
+                    <a href={`${WEBSITE}/terms`} className="hover:text-foreground">Terms</a>
+                    <a href={`${WEBSITE}/privacy`} className="hover:text-foreground">Privacy</a>
+                </p>
             </section>
         </main>
     );

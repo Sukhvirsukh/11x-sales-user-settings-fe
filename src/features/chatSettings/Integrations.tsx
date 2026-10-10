@@ -80,11 +80,12 @@ export default function Integrations() {
             expired: ["error", "That approval took too long. Please connect again."],
             error: ["error", "Shopify didn't confirm the connection. Please try again."],
         };
-        const [type, description] = messages[outcome] ?? messages.error;
-        toast.add({ type, title: "Shopify", description });
+        const [type, fallback] = messages[outcome] ?? messages.error;
+        // On a failed connection the backend says why (e.g. "This approval is for a different store").
+        const reason = outcome === "error" ? searchParams.get("message")?.slice(0, 200) : null;
+        toast.add({ type, title: "Shopify", description: reason || fallback });
         const next = new URLSearchParams(searchParams);
-        next.delete("shopify");
-        next.delete("connectShopify");
+        for (const key of ["shopify", "connectShopify", "message", "syncConnectionId"]) next.delete(key);
         setSearchParams(next, { replace: true });
     }, [searchParams, setSearchParams]);
 
