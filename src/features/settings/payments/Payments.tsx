@@ -54,7 +54,7 @@ const columns: Column[] = [
     },
 ];
 
-/** Settings > Payments: what Stripe has billed, and the card it charges. Changes happen in Stripe. */
+/** Settings > Payments: Shopify-billed accounts are pointed to Shopify; Stripe ones see invoices and the card. */
 export function Payments() {
     const { data, isLoading, isError } = usePaymentsQuery();
     const canManage = useCan("settings.payments.create");
@@ -65,6 +65,42 @@ export function Payments() {
             <AppSection>
                 <Heading size="lg">Payments</Heading>
                 <p className="text-base text-muted-foreground">Only the account owner can see invoices and payment details.</p>
+            </AppSection>
+        );
+    }
+
+    if (data?.provider === "shopify") {
+        return (
+            <AppSection>
+                <div className="flex w-full flex-wrap items-center justify-between gap-3">
+                    <div>
+                        <Heading size="lg">Payments</Heading>
+                        <p className="mt-0.5 text-sm text-muted-foreground">
+                            Your plan and extra replies are billed by Shopify, on your store&rsquo;s regular Shopify invoice.
+                        </p>
+                    </div>
+                    {canManage && data.shopDomain && (
+                        <Button variant="outline" size="sm" onClick={() => openBillingPortal().catch(() => undefined)}>
+                            Open Shopify billing
+                            <ExternalLink className="size-3.5" />
+                        </Button>
+                    )}
+                </div>
+                <div className="flex w-full items-center gap-3 rounded-lg border border-border-subtle bg-surface-subtle p-4">
+                    <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-surface-raised text-muted-foreground shadow-panel">
+                        <CreditCard className="size-5" aria-hidden="true" />
+                    </span>
+                    <span className="flex flex-col">
+                        <span className="text-base font-medium text-foreground">
+                            {data.shopDomain ? `Billed to ${data.shopDomain}` : "No paid plan yet"}
+                        </span>
+                        <span className="text-sm text-muted-foreground">
+                            {data.shopDomain
+                                ? "Invoices and the card on file are in your Shopify admin under Settings › Billing."
+                                : "Choose a plan in the Plan tab; you approve the charge in Shopify."}
+                        </span>
+                    </span>
+                </div>
             </AppSection>
         );
     }

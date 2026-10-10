@@ -41,6 +41,12 @@ export interface PlanResponse {
     usage: { period: string, replies: number, limit: number, extra: number, extraUsd: number },
     /** Price of each reply beyond a paid plan's included replies. */
     extraReplyUsd: number,
+    /** Who takes payment: Shopify (the merchant's Shopify bill) or Stripe. */
+    provider: "shopify" | "stripe",
+    /** Shopify billing: the connected store the plan is billed to (null until one is connected). */
+    shopifyStore: string | null,
+    /** Whether this server can bill through Shopify yet (the Shopify app is set up). */
+    shopifyAvailable: boolean,
     /** What the billing provider reports for the account. */
     billing: {
         status: string,

@@ -18,6 +18,9 @@ interface ApiBilling {
     extraReplyUsd: number;
     current: { plan: ApiPlan; status: string; currentPeriodEnd: string | null; canManageBilling: boolean };
     usage: PlanResponse["usage"];
+    provider: PlanResponse["provider"];
+    shopifyStore: string | null;
+    shopifyAvailable?: boolean;
     billingEnabled: boolean;
 }
 
@@ -49,6 +52,9 @@ export async function getPlans(): Promise<PlanResponse> {
         },
         usage: billing.usage,
         extraReplyUsd: billing.extraReplyUsd,
+        provider: billing.provider ?? "stripe",
+        shopifyStore: billing.shopifyStore ?? null,
+        shopifyAvailable: Boolean(billing.shopifyAvailable),
         billing: {
             status: billing.current.status,
             currentPeriodEnd: billing.current.currentPeriodEnd,
@@ -65,13 +71,15 @@ export async function openBillingPortal() {
 }
 
 /**
- * Paid plans go through Stripe Checkout (or switch straight away when already
- * subscribed). Going back to Free means cancelling in Stripe's billing portal.
+ * Paid plans open the payment provider's approval page: Shopify's (the charge
+ * goes on the store's Shopify bill) or Stripe Checkout. Going back to Free
+ * cancels the subscription.
  */
 export async function upgradePlan(planId: string) {
     if (planId === "free") {
-        const { url } = await apiFetch<{ url: string }>("/billing/portal", { method: "POST" });
-        window.location.assign(url);
+        // Shopify cancels straight away (url null); Stripe cancels in its portal.
+        const { url } = await apiFetch<{ url: string | null }>("/billing/cancel", { method: "POST" });
+        if (url) window.location.assign(url);
         return;
     }
     const { url } = await apiFetch<{ url: string | null }>("/billing/change-plan", {

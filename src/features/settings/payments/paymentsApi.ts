@@ -21,6 +21,9 @@ export interface SavedCard {
 }
 
 export interface PaymentsResponse {
+    /** "shopify": charges are on the store's Shopify bill, so there are no invoices here. */
+    provider?: "shopify" | "stripe";
+    shopDomain?: string | null;
     invoices: Invoice[];
     paymentMethod: SavedCard | null;
 }

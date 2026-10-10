@@ -5,6 +5,8 @@ import Heading from "@/components/design/Heading";
 import { Button } from "@/components/ui/button";
 import { Check, ChevronLeft, ChevronRight, Loader } from "lucide-react";
 import { useEffect, useRef } from "react";
+import { useSearchParams } from "react-router";
+import { toast } from "@/components/ui/toast-manager";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Badge } from "@/components/ui/badge";
 import { useCan } from "@/features/auth";
@@ -159,7 +161,28 @@ export function Plan() {
             await queryClient.invalidateQueries({ queryKey: planQueryKey });
         },
     });
+    // Back from Shopify's (or Stripe's) approval page: say how it went, then tidy the address bar.
+    const [searchParams, setSearchParams] = useSearchParams();
+    useEffect(() => {
+        const outcome = searchParams.get("billing");
+        if (!outcome) return;
+        const messages: Record<string, ["success" | "error", string]> = {
+            success: ["success", "Your new plan is active."],
+            cancelled: ["error", "The plan wasn't approved, so nothing changed."],
+            error: ["error", "We couldn't confirm the plan. Please try again."],
+        };
+        const [type, description] = messages[outcome] ?? messages.error;
+        toast.add({ type, title: "Plan", description });
+        void queryClient.invalidateQueries({ queryKey: planQueryKey });
+        const next = new URLSearchParams(searchParams);
+        next.delete("billing");
+        setSearchParams(next, { replace: true });
+    }, [searchParams, setSearchParams, queryClient]);
+
     const plans = data?.plans ?? EMPTY_PLANS;
+    const viaShopify = data?.provider === "shopify";
+    // Paid plans need a way to pay: with Shopify billing, a connected store.
+    const canChoosePaid = Boolean(data?.billing.billingEnabled);
     const currentSubscription = data?.currentSubscription;
     const currentPlanId = data?.currentSubscription?.planId;
 
@@ -217,7 +240,7 @@ export function Plan() {
                                 key={plan.id}
                                 plan={plan}
                                 isCurrent={plan.id === currentPlanId}
-                                canUpgrade={canUpgradePlan}
+                                canUpgrade={canUpgradePlan && (plan.id === "free" || canChoosePaid)}
                                 isUpgradePending={upgradeMutation.isPending}
                                 isUpgrading={upgradeMutation.isPending && upgradeMutation.variables === plan.id}
                                 onUpgrade={upgradeMutation.mutate}
@@ -225,6 +248,15 @@ export function Plan() {
                         ))
                     }
                 </div>
+                {viaShopify && (
+                    <p className="mt-1 w-full rounded-lg border border-border-subtle bg-surface-subtle px-3 py-2 text-sm text-muted-foreground">
+                        {!data?.shopifyAvailable
+                            ? <>Paid plans open soon. They&rsquo;ll be billed by Shopify, on your store&rsquo;s Shopify invoice.</>
+                            : data?.shopifyStore
+                                ? <>Plans are billed by Shopify, on the Shopify invoice of <span className="font-medium text-foreground">{data.shopifyStore}</span>. You&rsquo;ll approve the charge in Shopify.</>
+                                : <>Plans are billed by Shopify. <a href="/chat-settings?connectShopify=" className="font-medium text-foreground underline underline-offset-4">Connect your Shopify store</a> (Chat setup › Integration) to choose a paid plan.</>}
+                    </p>
+                )}
                 <p className="mt-2 text-sm text-muted-foreground">
                     A reply is one answer the AI sends a shopper; test chats are free. Paid plans keep answering past their
                     replies, at ${data?.extraReplyUsd?.toFixed(2) ?? "0.04"} for each extra one. Need more than 18,000 a month?{" "}
@@ -239,7 +271,7 @@ export function Plan() {
                     <Heading size="lg">Billing</Heading>
                     {canUpgradePlan && data.billing.canManageBilling && data.billing.billingEnabled && (
                         <Button variant="outline" size="sm" onClick={() => openBillingPortal().catch(() => undefined)}>
-                            Manage billing
+                            {viaShopify ? "Manage in Shopify" : "Manage billing"}
                         </Button>
                     )}
                 </div>
@@ -258,7 +290,12 @@ export function Plan() {
                             />
                         </DetailGroup>
                         <DetailGroup>
-                            <DetailItem label="Payments" value={data.billing.billingEnabled ? "Card, through Stripe" : "Not set up yet"} />
+                            <DetailItem
+                                label="Payments"
+                                value={viaShopify
+                                    ? data.shopifyStore ? "On your Shopify bill" : "Connect Shopify to pay"
+                                    : data.billing.billingEnabled ? "Card, through Stripe" : "Not set up yet"}
+                            />
                         </DetailGroup>
                     </DetailContainer>
                 </AppCard>
