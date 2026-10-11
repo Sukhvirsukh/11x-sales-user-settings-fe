@@ -5,7 +5,7 @@ export interface LabelProps extends LabelHTMLAttributes<HTMLLabelElement> {
     children: ReactNode;
 }
 
-/** Form field label — 12px, medium */
+/** Form field label - 12px, medium */
 function Label({ children, className, ...props }: LabelProps) {
     return (
         <label

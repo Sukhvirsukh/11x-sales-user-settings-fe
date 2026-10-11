@@ -33,7 +33,7 @@ export interface AuthUser {
 
 export type AgentRole = "owner" | "editor" | "member";
 
-/** An agent (one store) the user can access, with their role on it — from the 11xSales backend. */
+/** An agent (one store) the user can access, with their role on it - from the 11xSales backend. */
 export interface ApiAgent {
   id: string;
   name: string;

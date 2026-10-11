@@ -43,7 +43,7 @@ function friendlyError(error: string | null): string | null {
     return error;
 }
 
-/** The agent's statuses (ready, failed, refreshing, pending…) as the three the screen shows. */
+/** The agent's statuses (ready, failed, refreshing, pending...) as the three the screen shows. */
 function toStatus(status: string): KnowledgeBase["status"] {
     if (status === "ready") return "ready";
     if (status === "failed") return "failed";

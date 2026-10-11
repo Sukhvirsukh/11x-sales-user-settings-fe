@@ -21,7 +21,7 @@ export const buttonVariants = cva(
         ghost:
           "bg-transparent text-muted-foreground hover:bg-control-hover-strong hover:text-foreground",
 
-        // No border, no background — just children
+        // No border, no background - just children
         bare:
           "border-transparent bg-transparent hover:bg-control-hover",
 

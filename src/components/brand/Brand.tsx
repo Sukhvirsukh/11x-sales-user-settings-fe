@@ -46,7 +46,7 @@ export function BrandWordmark({ className }: { className?: string }) {
 }
 
 /**
- * The full lockup: mark, then "sales.ai" — read together as "11xsales.ai".
+ * The full lockup: mark, then "sales.ai" - read together as "11xsales.ai".
  * Proportions follow the sheet (mark 50px tall : text 28px : gap 10px), so pass
  * sizes in that ratio when scaling it.
  */

@@ -41,7 +41,7 @@ export function scaleFor(values: number[]): Scale {
     // same, pad by the value itself so the axis still has a height.
     const padding = (max - min || max) * 0.1;
     const from = Math.max(0, min - padding);
-    // An all-zero series (a new store) still needs distinct ticks: 0, 1, 2, …
+    // An all-zero series (a new store) still needs distinct ticks: 0, 1, 2, ...
     const to = Math.max(max + padding, from + Y_TICKS - 1);
     const step = (to - from) / (Y_TICKS - 1);
 
