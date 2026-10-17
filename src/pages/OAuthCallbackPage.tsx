@@ -42,7 +42,9 @@ export default function OAuthCallbackPage() {
     const [params] = useState(() => new URLSearchParams(window.location.hash.slice(1)));
     const code = params.get("code");
     const provider = params.get("provider") ?? "";
-    const [error, setError] = useState<string | null>(() => (code ? null : params.get("error") ?? "failed"));
+    // The email already has an account: the backend emailed a link that joins the two (no error).
+    const linkSent = !code && params.get("status") === "link_sent";
+    const [error, setError] = useState<string | null>(() => (code || linkSent ? null : params.get("error") ?? "failed"));
 
     useEffect(() => {
         // The code is single-use and shouldn't linger in history or be shared by copying the URL.
@@ -56,6 +58,24 @@ export default function OAuthCallbackPage() {
             })
             .catch(() => setError("expired"));
     }, [code, navigate, provider, setUser]);
+
+    if (linkSent) {
+        const name = PROVIDER_NAMES[provider] ?? "This account";
+        return (
+            <AuthForm title="Check your email" subtitle="Your email already has an 11xsales.ai account.">
+                <div className="flex items-start gap-3 rounded-xl border border-border bg-surface-raised p-4">
+                    <CircleAlert className="mt-0.5 size-5 shrink-0 text-brand" aria-hidden="true" />
+                    <p className="text-base text-foreground">
+                        We sent a link to that address. Open it within 30 minutes to connect {name} to your account; after that,
+                        {" "}{name} signs you straight in.
+                    </p>
+                </div>
+                <Button size="full" className="mt-6" nativeButton={false} render={<Link to="/sign-in" replace />}>
+                    Back to sign in
+                </Button>
+            </AuthForm>
+        );
+    }
 
     if (!error) {
         return (
