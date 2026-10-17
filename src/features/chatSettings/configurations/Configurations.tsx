@@ -8,7 +8,7 @@ import type { Configuration } from "../chatSettingsType";
 import { saveConfigurations } from "../chatSettingsApi";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { UnSavedChangesBar } from "@/components/shared/unsavedChangesBar";
-import { toast } from "@/components/ui/toast";
+import { toast } from "@/components/ui/toast-manager";
 import { useCan } from "@/features/auth";
 
 export type ConfigurationFormValues = Omit<Configuration, "rateLimit" | "rateLimitPerPeriod" | "messageWhenLimitReached"> & {

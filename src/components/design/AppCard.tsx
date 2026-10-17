@@ -17,14 +17,16 @@ export default function AppCard({ children, className, header, headingSize = "md
     return (
         <div
             className={cn(
-                "w-full rounded-[10px] border border-section-border bg-app-card-background",
-                padding === "sm" ? "p-2.5" : "p-2.5 md:p-4",
-                shadow && "shadow-blue",
+                "w-full rounded-xl border border-section-border bg-app-card-background",
+                // Inside a section panel a card becomes a quiet tile rather than a box in a box.
+                "in-data-[slot=app-section]:rounded-lg in-data-[slot=app-section]:border-border-subtle in-data-[slot=app-section]:bg-surface-subtle in-data-[slot=app-section]:shadow-none",
+                padding === "sm" ? "p-3" : "p-3 md:p-4",
+                shadow ? "shadow-panel" : "",
                 className,
             )}
         >
             {(header || actions) && (
-                <div className="mb-2.5 flex items-center     justify-between gap-4">
+                <div className="mb-3 flex items-center justify-between gap-4">
                     {header && <Heading size={headingSize}>{header}</Heading>}
                     {actions && <div className="flex shrink-0 items-center gap-2">{actions}</div>}
                 </div>

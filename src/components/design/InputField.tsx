@@ -59,23 +59,22 @@ const InputField = React.forwardRef<HTMLInputElement, InputFieldProps>(
         }
 
         return (
-            <div className="flex w-full flex-col gap-2">
+            <div className="flex w-full flex-col gap-1.5">
                 {label ? <Label className={labelClassName} htmlFor={inputId}>{label}</Label> : null}
 
                 {/* Input Outer Container (Handles borders, icons, pill background) */}
                 <div
                     className={cn(
-                        "relative flex h-8.75 w-full items-center rounded-xl border border-control-border-subtle px-3.5 transition-all [--input-autofill-bg:var(--surface-raised)] focus-within:border-field-border focus-within:ring-2 focus-within:ring-focus-ring/20",
-                        "bg-surface-raised focus-within:bg-surface-raised",
+                        "relative flex h-10 w-full items-center rounded-lg border border-field-border bg-surface-raised px-3 shadow-panel transition-[border-color,box-shadow] [--input-autofill-bg:var(--surface-raised)] hover:border-border-strong focus-within:border-foreground/60 focus-within:ring-3 focus-within:ring-focus-ring/15",
                         variant === "light"
-                            ? "bg-field-subtle-background border-section-border [--input-autofill-bg:var(--field-subtle-background)] focus-within:bg-field-subtle-background focus-within:border-section-border"
+                            ? "bg-field-subtle-background [--input-autofill-bg:var(--field-subtle-background)] focus-within:bg-field-subtle-background"
                             : "",
                         containerClassName,
                         error && "border-danger focus-within:border-danger"
                     )}
                 >
                     {startIcon && (
-                        <div className="mr-2.5 flex items-center justify-center text-content-muted">
+                        <div className="mr-2 flex items-center justify-center text-muted-foreground [&_svg]:size-4">
                             {startIcon}
                         </div>
                     )}

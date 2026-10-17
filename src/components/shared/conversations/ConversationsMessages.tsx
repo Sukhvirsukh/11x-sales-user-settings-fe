@@ -7,6 +7,8 @@ export interface ConversationsMessageProps {
     sender: "user" | "bot";
     timestamp?: Date;
     avatar?: string;
+    /** Shown in the bot's avatar when there's no picture: the agent name's first letter. */
+    initial?: string;
     primaryColor?: string;
     onCorrect?: (messageId: string, correctedContent: string) => void;
     onDebug?: (messageId: string) => void;
@@ -23,6 +25,7 @@ export function ConversationsMessage({
     content,
     sender,
     avatar,
+    initial = "A",
     primaryColor = "var(--widget-primary)",
     onCorrect,
     onDebug,
@@ -65,7 +68,7 @@ export function ConversationsMessage({
                         aria-hidden
                         className="flex h-[30px] w-[30px] shrink-0 items-center justify-center rounded-full border border-primary bg-primary p-0.5 text-[16px] font-extrabold leading-none text-primary-contrast"
                     >
-                        V
+                        {initial}
                     </span>
                 ))}
 

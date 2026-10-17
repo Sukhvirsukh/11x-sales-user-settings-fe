@@ -1,4 +1,4 @@
-import { useState, useEffect, type ChangeEvent } from "react";
+import { useState, type ChangeEvent } from "react";
 import { cn } from "@/lib/utils";
 import { InputField } from "./InputField";
 import { FieldError } from "@/components/ui/field";
@@ -69,16 +69,19 @@ export function ColorSelector({
     error,
 }: CustomColorSelectorProps) {
     const [uncontrolledValue, setUncontrolledValue] = useState(defaultValue);
-    const [inputValue, setInputValue] = useState(defaultValue);
 
     // Use controlled or uncontrolled value
     const color = controlledValue ?? uncontrolledValue;
     const setColor = controlledValue !== undefined ? onValueChange : setUncontrolledValue;
 
+    const [inputValue, setInputValue] = useState(color);
+    const [syncedColor, setSyncedColor] = useState(color);
+
     // Sync the input field value when the color changes externally (picker, preset, controlled prop)
-    useEffect(() => {
+    if (syncedColor !== color) {
+        setSyncedColor(color);
         setInputValue(color);
-    }, [color]);
+    }
 
     // Validate hex color format
     const isValidHex = (hex: string): boolean => {

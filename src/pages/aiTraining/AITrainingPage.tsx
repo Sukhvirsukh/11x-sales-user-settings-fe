@@ -26,14 +26,14 @@ export function AiTrainingPage() {
     return (
         <section className="h-full min-w-0">
             <PageHeader
-                title="Ai training"
-                subtitle="Train your AI to better understand your business"
+                title="AI training"
+                subtitle="What your agent knows, and how it should answer."
             >
                 <CustomTabs
                     tabs={mainTabs.map(({ id, label }) => ({ id, label }))}
                     value={activeTab}
                     onValueChange={handleTabChange}
-                    listClassName="pl-[4px]"
+                   
                     className="gap-5 p-0!"
                 >
                     <PreviewSection>

@@ -44,7 +44,7 @@ export default function CopyField({
                     aria-label={copied ? "Copied" : "Copy to clipboard"}
                 >
                     {copied ? (
-                        <Check className="size-4 text-status-online-accent" />
+                        <Check className="size-4 text-success" />
                     ) : (
                         <Copy className="size-4" />
                     )}

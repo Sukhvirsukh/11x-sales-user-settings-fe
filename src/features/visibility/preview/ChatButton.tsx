@@ -202,7 +202,3 @@ export function ChatBubbleButton({
             return <TypeBarButton placeholder={resolvedPlaceholder} {...props} />;
     }
 }
-
-export function isBarBubbleType(type: ChatBubbleType) {
-    return type === "type-bar" || type === "classic-bar" || type === "custom";
-}

@@ -1,49 +1,8 @@
-<svg
-  width="48"
-  height="48"
-  viewBox="0 0 512 512"
-  fill="none"
-  xmlns="http://www.w3.org/2000/svg"
->
-  <path
-    d="M70 125 L178 384 Q185 402 202 402"
-    stroke="#3576F3"
-    stroke-width="64"
-    stroke-linecap="round"
-    stroke-linejoin="round"
-  />
-  <path
-    d="M202 402 Q220 402 227 384 L295 125"
-    stroke="#3576F3"
-    stroke-width="36"
-    stroke-linecap="round"
-    stroke-linejoin="round"
-  />
-  <path
-    d="M360 125 H380 C424 125 445 158 445 207 V313 C445 362 420 395 376 395 H320"
-    stroke="#3576F3"
-    stroke-width="40"
-    stroke-linecap="round"
-    stroke-linejoin="round"
-  />
-  <path
-    d="M380 125 V80"
-    stroke="#3576F3"
-    stroke-width="40"
-    stroke-linecap="round"
-  />
-  <circle cx="380" cy="66" r="22" fill="#3576F3" />
-  <path
-    d="M445 224 H458 C471 224 480 235 480 248 V282 C480 295 471 306 458 306 H445"
-    stroke="#3576F3"
-    stroke-width="40"
-    stroke-linejoin="round"
-  />
-  <rect x="375" y="229" width="30" height="50" rx="15" fill="#3576F3" />
-  <path
-    d="M347 326 C358 338 376 338 388 326"
-    stroke="#3576F3"
-    stroke-width="24"
-    stroke-linecap="round"
-  />
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 152 152">
+  <rect width="152" height="152" rx="38" fill="#2F86FF"/>
+  <g transform="translate(17 40.5) scale(0.59)" fill="#0B0B0C">
+    <polygon points="8,112 38,112 58,40 28,40"/>
+    <polygon points="50,112 80,112 106,10 76,10"/>
+    <path d="M120,32 Q150,56 180,32 Q156,62 180,92 Q150,68 120,92 Q144,62 120,32 Z"/>
+  </g>
 </svg>

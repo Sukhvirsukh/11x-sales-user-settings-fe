@@ -60,15 +60,15 @@ function AccordionTrigger({
 }
 
 function AccordionContent({
-  className,
   children,
   ...props
 }: AccordionPrimitive.Panel.Props) {
+  // The panel's className comes after the spread, so a caller's className never overrides it.
   return (
     <AccordionPrimitive.Panel
       data-slot="accordion-content"
-      className="overflow-hidden text-body data-ending-style:h-0 data-starting-style:h-0 data-open:h-auto"
       {...props}
+      className="overflow-hidden text-body data-ending-style:h-0 data-starting-style:h-0 data-open:h-auto"
     >
       <AppSection
         data-slot="accordion-content-section"

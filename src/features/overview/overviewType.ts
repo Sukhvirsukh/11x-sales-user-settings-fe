@@ -17,7 +17,7 @@ export interface TrendPanel {
 
 /** A single line in the average order value breakdown. */
 export interface OrderValueBreakdown {
-    /** What the number counts, e.g. "total order received by Vitalb". */
+    /** What the number counts, e.g. "total orders received through chat". */
     label: string;
     value: number;
 }

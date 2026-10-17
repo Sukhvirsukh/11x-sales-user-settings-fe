@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import GenerateReport from "./GenerateReport";
+import { downloadReport } from "./reportApi";
 import SearchField from "@/components/shared/SearchField";
 
 const columns: Column[] = [
@@ -14,16 +15,14 @@ const columns: Column[] = [
         key: "status",
         header: "Status",
         align: "center",
-        render: (value) => {
-            const status = String(value)
-            return (
-                <Badge variant={status ? "default" : "destructive"}>
-                    {status ? "Active" : "Inactive"}
-                </Badge>
-            )
-        },
+        render: (value) => (
+            <Badge variant={value ? "default" : "destructive"}>
+                {value ? "Ready" : "Not ready"}
+            </Badge>
+        ),
     },
     { key: "createdDate", header: "Created date", align: "right" },
+    { key: "startDate", header: "Start date", align: "right" },
     { key: "endDate", header: "End date", align: "right" },
 ]
 
@@ -44,8 +43,8 @@ export function Reports() {
             columns={columns}
             data={data}
             getRowId={(row) => String(row.id)}
-            emptyMessage={isLoading ? "Loading.. role history" : search ? "No matching roles found" : "No role history found"}
-            emptyDescription={isLoading ? "" : search ? "Try a different search term." : "Roles assigned to your team will appear here."}
+            emptyMessage={isLoading ? "Loading reports…" : search ? "No matching reports found" : "No reports yet"}
+            emptyDescription={isLoading ? "" : search ? "Try a different search term." : "Generate a report to see how your AI agent performed over a date range."}
             emptyState={isLoading ? (
                 <div className="flex w-full items-center justify-center py-16">
                     <Spinner className="size-6 text-primary" />
@@ -57,9 +56,9 @@ export function Reports() {
                     {canCreateReport && <GenerateReport />}
                 </div>
             }
-            rowActions={() => (
+            rowActions={(row) => (
                 <div className="flex items-center gap-2">
-                    <Button variant="bare" className='underline' size="sm" onClick={() => ''}>
+                    <Button variant="bare" className='underline' size="sm" disabled={!row.status} onClick={() => downloadReport(row.id).catch(() => {})}>
                         Download
                     </Button>
                 </div>

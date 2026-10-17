@@ -39,8 +39,8 @@ export default function CrawlSettings() {
                             />
 
                             <HelperText>
-                                Vitlab will not take into consideration of any
-                                products that are out of stocks
+                                Your AI agent won't recommend products that are
+                                out of stock
                             </HelperText>
                         </div>
 

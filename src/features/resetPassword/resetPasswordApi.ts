@@ -12,7 +12,7 @@ interface ResetPasswordRequest {
 export function resetPasswordRequest(
     values: ResetPasswordRequest,
 ): Promise<ResetPasswordResponse> {
-    return apiFetch<ResetPasswordResponse>("/reset-password", {
+    return apiFetch<ResetPasswordResponse>("/auth/reset-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(values),

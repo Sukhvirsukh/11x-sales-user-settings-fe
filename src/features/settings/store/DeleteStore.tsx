@@ -2,7 +2,7 @@ import InfoModal from "@/components/shared/InfoModal";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteStore, deleteStores } from "./storeApi";
 import { storeQueryKey } from "./storeQuery";
-import { toast } from "@/components/ui/toast";
+import { toast } from "@/components/ui/toast-manager";
 
 interface DeleteStoreProps {
     open: boolean;

@@ -1,5 +1,5 @@
 import InfoModal from "@/components/shared/InfoModal";
-import { toast } from "@/components/ui/toast";
+import { toast } from "@/components/ui/toast-manager";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteKnowledgeBase } from "./knowledgeBaseApi";
 import { knowledgeBaseQueryKey } from "./useKnowledgeBaseQuery";

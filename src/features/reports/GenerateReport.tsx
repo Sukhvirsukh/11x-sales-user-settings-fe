@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Plus } from "lucide-react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { DatePicker } from "@/components/design/DatePicker";
@@ -14,7 +14,7 @@ import { useMutation } from "@tanstack/react-query";
 import { addReport } from "./reportApi";
 import { queryClient } from "@/lib/queryClient";
 import { reportQueryKey } from "./reportQuery";
-import { toast } from "@/components/ui/toast";
+import { toast } from "@/components/ui/toast-manager";
 import { useCan } from "@/features/auth";
 
 export default function GenerateReport() {
@@ -22,9 +22,10 @@ export default function GenerateReport() {
     // Report" affordance can never leak in a view that forgets to gate it.
     const canCreateReport = useCan("reports.create")
     const [isOpen, setIsOpen] = useState(false);
-    const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm<ReportFormValues>({
+    const { register, handleSubmit, setValue, control, formState: { errors } } = useForm<ReportFormValues>({
         resolver: zodResolver(reportFormSchema)
     })
+    const [startDate, endDate] = useWatch({ control, name: ["startDate", "endDate"] })
 
 
     const generateReportMutation = useMutation({
@@ -92,7 +93,7 @@ export default function GenerateReport() {
                             label="Start date"
                             placeholder="Pick a date"
                             labelClassName="text-sm font-medium"
-                            value={watch("startDate")}
+                            value={startDate}
                             error={errors.startDate?.message}
                             onChange={(startDate) => {
                                 if (startDate) setValue("startDate", startDate, { shouldValidate: true });
@@ -102,7 +103,7 @@ export default function GenerateReport() {
                             label="End date"
                             placeholder="Pick a date"
                             labelClassName="text-sm font-medium"
-                            value={watch("endDate")}
+                            value={endDate}
                             error={errors.endDate?.message}
                             onChange={(endDate) => {
                                 if (endDate) setValue("endDate", endDate, { shouldValidate: true });

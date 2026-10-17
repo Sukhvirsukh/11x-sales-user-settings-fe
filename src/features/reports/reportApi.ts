@@ -1,45 +1,40 @@
-import { dateFormater, delay } from "@/lib/utils"
+import { format as formatDate, parseISO } from "date-fns"
+import { agentApiConfigured, agentDownload, agentFetch } from "@/lib/agentApi"
+import { dateFormater } from "@/lib/utils"
 import type { Report, ReportFormValues } from "./reportType"
 
-const data: Report[] = [
-    {
-        source: "Chat for Jan 2026",
-        status: true,
-        createdDate: "10/02/26",
-        endDate: "10/02/26",
-    },
-    {
-        source: "Chat for Feb 2026",
-        status: true,
-        createdDate: "10/02/26",
-        endDate: "10/02/26",
-    },
-    {
-        source: "Chat for Mar 2026",
-        status: false,
-        createdDate: "10/02/26",
-        endDate: "10/02/26",
-    },
-]
-
-
-export async function getReports() {
-    const response = await delay(2000).then(() => data)
-
-    return response
+interface AgentReport {
+    id: string
+    source: string
+    status: boolean
+    createdDate: string
+    startDate: string
+    endDate: string
 }
 
+// Start and end are calendar days (yyyy-MM-dd); parseISO reads them as local dates, so they never shift a day.
+const toReport = (report: AgentReport): Report => ({
+    ...report,
+    createdDate: dateFormater(report.createdDate),
+    startDate: dateFormater(parseISO(report.startDate)),
+    endDate: dateFormater(parseISO(report.endDate)),
+})
 
-export async function addReport(values: ReportFormValues) {
-    const report: Report = {
-        source: values.source,
-        status: true,
-        createdDate: dateFormater(new Date()),
-        endDate: dateFormater(values.endDate),
-    }
+export async function getReports(): Promise<Report[]> {
+    if (!agentApiConfigured) return []
+    const reports = await agentFetch<AgentReport[]>("/reports")
+    return reports.map(toReport)
+}
 
-    await delay(2000)
-    data.push(report)
+export async function addReport(values: ReportFormValues): Promise<Report> {
+    const report = await agentFetch<AgentReport>("/reports", {
+        method: "POST",
+        body: { source: values.source, startDate: formatDate(values.startDate, "yyyy-MM-dd"), endDate: formatDate(values.endDate, "yyyy-MM-dd") },
+    })
+    return toReport(report)
+}
 
-    return report
+/** Saves the report's figures as a CSV file. */
+export function downloadReport(id: string) {
+    return agentDownload(`/reports/${encodeURIComponent(id)}/download`)
 }

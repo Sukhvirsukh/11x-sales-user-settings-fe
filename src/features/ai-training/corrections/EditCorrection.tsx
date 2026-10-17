@@ -1,14 +1,14 @@
 import { useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 
 import { FormGroup } from "@/components/design/FormGroup";
 import { InputField } from "@/components/design/InputField";
 import Modal from "@/components/design/Modal";
 import { SelectField } from "@/components/design/SelectField";
 import { TextAreaField } from "@/components/design/TextAreaField";
-import { toast } from "@/components/ui/toast";
+import { toast } from "@/components/ui/toast-manager";
 
 import { updateCorrection } from "./correctionsApi";
 import { correctionsQueryKey } from "./correctionsQuery";
@@ -43,12 +43,13 @@ export default function EditCorrection({ open, onOpenChange, correction }: EditC
         handleSubmit,
         reset,
         setValue,
-        watch,
+        control,
         formState: { errors },
     } = useForm<CorrectionFormValues>({
         resolver: zodResolver(correctionFormSchema),
         defaultValues: DEFAULT_VALUES,
     });
+    const status = useWatch({ control, name: "status" });
 
     useEffect(() => {
         if (open) reset(toFormValues(correction));
@@ -112,7 +113,7 @@ export default function EditCorrection({ open, onOpenChange, correction }: EditC
                     <SelectField
                         label="Status"
                         labelClassName="text-sm font-medium"
-                        value={watch("status")}
+                        value={status}
                         onValueChange={(status) => {
                             if (status === "Active" || status === "Inactive") {
                                 setValue("status", status, { shouldDirty: true, shouldValidate: true });

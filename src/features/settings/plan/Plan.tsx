@@ -4,15 +4,25 @@ import DetailContainer, { DetailGroup, DetailItem } from "@/components/design/De
 import Heading from "@/components/design/Heading";
 import { Button } from "@/components/ui/button";
 import { Check, ChevronLeft, ChevronRight, Loader } from "lucide-react";
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useRef } from "react";
+import { useSearchParams } from "react-router";
+import { toast } from "@/components/ui/toast-manager";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Badge } from "@/components/ui/badge";
 import { useCan } from "@/features/auth";
 import styles from "./Plan.module.css";
 import { cn, dateFormater } from "@/lib/utils";
 import { planQueryKey, usePlanQuery } from "./planQuery";
-import type { Plan as PlanData } from "./planTypes";
-import { upgradePlan } from "./planApi";
+import type { Plan as PlanData, PlanResponse } from "./planTypes";
+import { WEBSITE } from "@/config/website";
+import { openBillingPortal, upgradePlan } from "./planApi";
+
+const STATUS_LABEL: Record<string, string> = {
+    active: "Active",
+    trialing: "Trial",
+    past_due: "Payment due",
+    canceled: "Cancelled",
+};
 
 interface PlanCardProps {
     plan: PlanData;
@@ -26,7 +36,7 @@ interface PlanCardProps {
 const EMPTY_PLANS: PlanData[] = [];
 
 function PlanCard({ plan, isCurrent, canUpgrade, isUpgradePending, isUpgrading, onUpgrade }: PlanCardProps) {
-    const { name, features, isMostPopular, priceInr } = plan;
+    const { name, features, isMostPopular, priceUsd } = plan;
 
     return (
         <article
@@ -34,7 +44,7 @@ function PlanCard({ plan, isCurrent, canUpgrade, isUpgradePending, isUpgrading, 
                 styles.card,
                 "flex min-w-0 flex-col",
                 isMostPopular
-                    ? "relative z-10 rounded-[10px] bg-surface-raised shadow-plan-selected"
+                    ? "relative z-10 rounded-xl bg-surface-raised shadow-plan-selected"
                     : "py-0.5"
             )}
         >
@@ -42,27 +52,32 @@ function PlanCard({ plan, isCurrent, canUpgrade, isUpgradePending, isUpgrading, 
                 className={cn(
                     "flex min-h-15 items-center justify-between px-5 py-2.5",
                     isMostPopular
-                        ? "border-b rounded-t-[9px] border-transparent bg-table-header-background px-5"
+                        ? "border-b rounded-t-[11px] border-border bg-table-header-background px-5"
                         : "mx-5 border-b border-border px-0"
                 )}
             >
                 <div className="min-w-0">
-                    <h3 className={cn("text-sm font-normal", isMostPopular ? "text-content-strong" : "text-content-muted")}>
-                        {name}
-                    </h3>
-                    <p className="mt-1 text-lg font-medium text-content-strong">Starting at INR {priceInr}</p>
+                    <div className="flex flex-wrap items-center gap-2">
+                        <h3 className={cn("text-sm font-normal", isMostPopular ? "text-content-strong" : "text-content-muted")}>
+                            {name}
+                        </h3>
+                        {isMostPopular && (
+                            <Badge indicator={false} className="rounded-full bg-brand-soft text-brand">
+                                Most popular
+                            </Badge>
+                        )}
+                    </div>
+                    <p className="mt-1 whitespace-nowrap font-display text-lg font-semibold text-content-strong">
+                        {priceUsd === 0 ? "$0" : <>${priceUsd.toLocaleString("en-US")}</>}
+                        <span className="text-base font-normal text-muted-foreground"> / month</span>
+                    </p>
                 </div>
-                {isMostPopular && (
-                    <Badge indicator={false} className="rounded-full bg-plan-promotion-background text-plan-promotion-foreground">
-                        Most popular
-                    </Badge>
-                )}
             </div>
             <div className="flex flex-1 flex-col px-5 pb-5 pt-4">
                 <ul className="flex flex-col gap-4">
                     {features.map((feature) => (
                         <li key={feature} className="flex items-start gap-2 text-base text-plan-feature">
-                            <Check aria-hidden="true" className="size-4 shrink-0 text-content-muted" />
+                            <Check aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-success" />
                             <span>{feature}</span>
                         </li>
                     ))}
@@ -77,14 +92,56 @@ function PlanCard({ plan, isCurrent, canUpgrade, isUpgradePending, isUpgrading, 
                                 if (canUpgrade) onUpgrade(plan.id);
                             }}
                         >
-                            {isCurrent ? "Current plan" : isUpgrading ? "Upgrading..." : isMostPopular ? (
-                                <span>Upgrade today and get <strong>10% OFF</strong></span>
-                            ) : "Upgrade"}
+                            {isCurrent ? "Current plan" : isUpgrading ? "Opening checkout…" : plan.id === "free" ? "Switch to Free" : `Choose ${name}`}
                         </Button>
                     )}
                 </div>
             </div>
         </article>
+    );
+}
+
+/** This month's AI replies against the plan, and the extra replies a paid plan has used. */
+function UsageSection({ data }: { data: PlanResponse }) {
+    const { replies, limit, extra, extraUsd, period } = data.usage;
+    const free = data.currentSubscription.plan.id === "free";
+    const share = limit > 0 ? Math.min(100, Math.round((replies / limit) * 100)) : 0;
+    const month = new Date(`${period}-01T00:00:00Z`).toLocaleDateString(undefined, { month: "long", year: "numeric", timeZone: "UTC" });
+    const full = replies >= limit;
+    return (
+        <AppSection className="w-full">
+            <Heading size="lg">Usage</Heading>
+            <AppCard>
+                <div className="flex flex-wrap items-baseline justify-between gap-2">
+                    <p className="text-base text-foreground">
+                        <span className="font-display text-2xl font-semibold tabular-nums">{replies.toLocaleString("en-US")}</span>
+                        <span className="text-muted-foreground"> of {limit.toLocaleString("en-US")} AI replies used in {month}</span>
+                    </p>
+                    {extra > 0 && (
+                        <p className="text-sm text-muted-foreground tabular-nums">
+                            + {extra.toLocaleString("en-US")} extra replies · ${extraUsd.toFixed(2)}
+                        </p>
+                    )}
+                </div>
+                <div
+                    className="mt-3 h-2 w-full overflow-hidden rounded-full bg-muted"
+                    role="progressbar"
+                    aria-label="AI replies used this month"
+                    aria-valuemin={0}
+                    aria-valuemax={limit}
+                    aria-valuenow={Math.min(replies, limit)}
+                >
+                    <div className={cn("h-full rounded-full", full && free ? "bg-destructive" : share >= 80 ? "bg-warning" : "bg-brand")} style={{ width: `${share}%` }} />
+                </div>
+                <p className="mt-3 text-sm text-muted-foreground">
+                    {free
+                        ? full
+                            ? "Your free replies for this month are used up. New chats go to your team in Conversations › Escalated until next month, or choose a paid plan to keep the AI answering."
+                            : "On the Free plan the AI stops at 50 replies a month and new chats go to your team. Paid plans keep answering."
+                        : "Replies reset on the 1st of each month. Extra replies are billed at the end of your billing period."}
+                </p>
+            </AppCard>
+        </AppSection>
     );
 }
 
@@ -104,7 +161,28 @@ export function Plan() {
             await queryClient.invalidateQueries({ queryKey: planQueryKey });
         },
     });
+    // Back from Shopify's (or Stripe's) approval page: say how it went, then tidy the address bar.
+    const [searchParams, setSearchParams] = useSearchParams();
+    useEffect(() => {
+        const outcome = searchParams.get("billing");
+        if (!outcome) return;
+        const messages: Record<string, ["success" | "error", string]> = {
+            success: ["success", "Your new plan is active."],
+            cancelled: ["error", "The plan wasn't approved, so nothing changed."],
+            error: ["error", "We couldn't confirm the plan. Please try again."],
+        };
+        const [type, description] = messages[outcome] ?? messages.error;
+        toast.add({ type, title: "Plan", description });
+        void queryClient.invalidateQueries({ queryKey: planQueryKey });
+        const next = new URLSearchParams(searchParams);
+        next.delete("billing");
+        setSearchParams(next, { replace: true });
+    }, [searchParams, setSearchParams, queryClient]);
+
     const plans = data?.plans ?? EMPTY_PLANS;
+    const viaShopify = data?.provider === "shopify";
+    // Paid plans need a way to pay: with Shopify billing, a connected store.
+    const canChoosePaid = Boolean(data?.billing.billingEnabled);
     const currentSubscription = data?.currentSubscription;
     const currentPlanId = data?.currentSubscription?.planId;
 
@@ -113,7 +191,7 @@ export function Plan() {
     useEffect(() => {
         const carousel = carouselRef.current;
         const popularIndex = plans.findIndex((plan) => plan.isMostPopular);
-        if (!carousel || popularIndex < 0 || window.matchMedia("(min-width: 1024px)").matches) return;
+        if (!carousel || popularIndex < 0 || window.matchMedia("(min-width: 1280px)").matches) return;
         const card = carousel.children[popularIndex] as HTMLElement | undefined;
         if (card) carousel.scrollLeft = card.offsetLeft - (carousel.clientWidth - card.clientWidth) / 2;
     }, [plans]);
@@ -134,23 +212,10 @@ export function Plan() {
         });
     };
 
-    const calculateEndDate = useMemo(() => {
-        if (!currentSubscription) return null;
-
-        if (currentSubscription.currentPeriodEnd) {
-            return new Date(currentSubscription.currentPeriodEnd);
-        }
-
-        const startDate = new Date(currentSubscription.currentPeriodStart);
-        const endDate = new Date(currentSubscription.currentPeriodStart);
-        endDate.setMonth(startDate.getMonth() + 1);
-        return endDate;
-    }, [currentSubscription?.currentPeriodEnd, currentSubscription?.currentPeriodStart]);
-
-    if (isLoading) return <Loader />
+    if (isLoading) return <Loader className="size-5 animate-spin text-muted-foreground" />
 
     if (error) {
-        return <p className="text-sm text-danger">Unable to load plans. Please try again.</p>;
+        return <p className="text-base text-danger">Only the account owner can see billing. If that’s you, refresh and try again.</p>;
     }
 
     return (
@@ -158,7 +223,7 @@ export function Plan() {
             <AppSection className="w-full min-w-0 gap-0! overflow-hidden">
                 <div className="flex w-full items-center justify-between">
                     <Heading size="lg">Plan</Heading>
-                    <div className="flex items-center gap-2 lg:hidden">
+                    <div className="flex items-center gap-2 xl:hidden">
                         <Button variant="secondary" size="sm" className="size-6 rounded-md bg-surface-raised p-0!" aria-label="Show previous plan" onClick={() => showPlan(-1)}>
                             <ChevronLeft aria-hidden="true" className="size-3.5" />
                         </Button>
@@ -175,7 +240,7 @@ export function Plan() {
                                 key={plan.id}
                                 plan={plan}
                                 isCurrent={plan.id === currentPlanId}
-                                canUpgrade={canUpgradePlan}
+                                canUpgrade={canUpgradePlan && (plan.id === "free" || canChoosePaid)}
                                 isUpgradePending={upgradeMutation.isPending}
                                 isUpgrading={upgradeMutation.isPending && upgradeMutation.variables === plan.id}
                                 onUpgrade={upgradeMutation.mutate}
@@ -183,28 +248,54 @@ export function Plan() {
                         ))
                     }
                 </div>
+                {viaShopify && (
+                    <p className="mt-1 w-full rounded-lg border border-border-subtle bg-surface-subtle px-3 py-2 text-sm text-muted-foreground">
+                        {!data?.shopifyAvailable
+                            ? <>Paid plans open soon. They&rsquo;ll be billed by Shopify, on your store&rsquo;s Shopify invoice.</>
+                            : data?.shopifyStore
+                                ? <>Plans are billed by Shopify, on the Shopify invoice of <span className="font-medium text-foreground">{data.shopifyStore}</span>. You&rsquo;ll approve the charge in Shopify.</>
+                                : <>Plans are billed by Shopify. <a href="/chat-settings?connectShopify=" className="font-medium text-foreground underline underline-offset-4">Connect your Shopify store</a> (Chat setup › Integration) to choose a paid plan.</>}
+                    </p>
+                )}
+                <p className="mt-2 text-sm text-muted-foreground">
+                    A reply is one answer the AI sends a shopper; test chats are free. Paid plans keep answering past their
+                    replies, at ${data?.extraReplyUsd?.toFixed(2) ?? "0.04"} for each extra one. Need more than 18,000 a month?{" "}
+                    <a href={`${WEBSITE}/#contact-email-field`} className="font-medium text-foreground underline underline-offset-4">Talk to us about Enterprise</a>.
+                </p>
             </AppSection>
 
-            {currentSubscription && <AppSection
-                className="w-full"
-            >
-                <Heading size="lg">Other details</Heading>
+            {data && <UsageSection data={data} />}
+
+            {currentSubscription && data && <AppSection className="w-full">
+                <div className="flex w-full flex-wrap items-center justify-between gap-3">
+                    <Heading size="lg">Billing</Heading>
+                    {canUpgradePlan && data.billing.canManageBilling && data.billing.billingEnabled && (
+                        <Button variant="outline" size="sm" onClick={() => openBillingPortal().catch(() => undefined)}>
+                            {viaShopify ? "Manage in Shopify" : "Manage billing"}
+                        </Button>
+                    )}
+                </div>
                 <AppCard>
                     <DetailContainer fullWidth={true} equalWidth={true}>
                         <DetailGroup>
-                            <DetailItem label="Start date" value={dateFormater(currentSubscription?.currentPeriodStart, 'long')} />
+                            <DetailItem label="Plan" value={currentSubscription.plan?.name || "Free"} />
                         </DetailGroup>
                         <DetailGroup>
-                            <DetailItem label="End date" value={dateFormater(calculateEndDate, 'long')} />
+                            <DetailItem label="Status" value={STATUS_LABEL[data.billing.status] ?? data.billing.status} />
                         </DetailGroup>
                         <DetailGroup>
-                            <DetailItem label="Plan" value={currentSubscription?.plan?.name || 'Basic'} />
+                            <DetailItem
+                                label={data.billing.status === "canceled" ? "Ends" : "Renews"}
+                                value={data.billing.currentPeriodEnd ? dateFormater(data.billing.currentPeriodEnd, "long") : "—"}
+                            />
                         </DetailGroup>
                         <DetailGroup>
-                            <DetailItem label="Point used" value="127/990" />
-                        </DetailGroup>
-                        <DetailGroup>
-                            <DetailItem label="Next cycle" value={dateFormater(calculateEndDate, 'long')} />
+                            <DetailItem
+                                label="Payments"
+                                value={viaShopify
+                                    ? data.shopifyStore ? "On your Shopify bill" : "Connect Shopify to pay"
+                                    : data.billing.billingEnabled ? "Card, through Stripe" : "Not set up yet"}
+                            />
                         </DetailGroup>
                     </DetailContainer>
                 </AppCard>

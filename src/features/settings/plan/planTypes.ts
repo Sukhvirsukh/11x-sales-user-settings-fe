@@ -6,9 +6,11 @@ export interface Plan {
     id: string,
     code: string,
     name: string,
-    priceInr: string,
+    /** Monthly price in US dollars (0 for Free). */
+    priceUsd: number,
     isMostPopular: boolean,
-    conversationLimit: number,
+    /** AI replies included each month. */
+    replyLimit: number,
     features: Feature,
     sortOrder: number,
 }
@@ -34,5 +36,22 @@ export interface currentSubscription {
 
 export interface PlanResponse {
     plans: Plan[],
-    currentSubscription: currentSubscription
+    currentSubscription: currentSubscription,
+    /** AI replies used this calendar month (UTC), across all of the account's stores. */
+    usage: { period: string, replies: number, limit: number, extra: number, extraUsd: number },
+    /** Price of each reply beyond a paid plan's included replies. */
+    extraReplyUsd: number,
+    /** Who takes payment: Shopify (the merchant's Shopify bill) or Stripe. */
+    provider: "shopify" | "stripe",
+    /** Shopify billing: the connected store the plan is billed to (null until one is connected). */
+    shopifyStore: string | null,
+    /** Whether this server can bill through Shopify yet (the Shopify app is set up). */
+    shopifyAvailable: boolean,
+    /** What the billing provider reports for the account. */
+    billing: {
+        status: string,
+        currentPeriodEnd: string | null,
+        canManageBilling: boolean,
+        billingEnabled: boolean,
+    },
 }

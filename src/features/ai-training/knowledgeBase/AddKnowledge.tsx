@@ -2,24 +2,42 @@ import Modal from "@/components/design/Modal";
 import type { KnowledgeBase } from "./knowledgeBaseTypes";
 import { FormGroup } from "@/components/design/FormGroup";
 import { InputField } from "@/components/design/InputField";
-import { Controller, useForm } from "react-hook-form";
-import ImageUploader, { CSV_ACCEPT, DOCUMENT_ACCEPT, PDF_ACCEPT } from "@/components/design/ImageUploader";
+import { Controller, useForm, useWatch } from "react-hook-form";
+import ImageUploader from "@/components/design/ImageUploader";
+import { CSV_ACCEPT, DOCUMENT_ACCEPT, PDF_ACCEPT } from "@/components/design/uploadAccept";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { knowledgeBaseSchema, type KnowledgeBaseFormValues } from "./knowledgeBaseSchema";
 import { useMutation } from "@tanstack/react-query";
 import { updateKnowledgeBase } from "./knowledgeBaseApi";
 import { queryClient } from "@/lib/queryClient";
 import { knowledgeBaseQueryKey } from "./useKnowledgeBaseQuery";
-import { toast } from "@/components/ui/toast";
+import { toast } from "@/components/ui/toast-manager";
 import { useEffect, useMemo } from "react";
 import { SelectField } from "@/components/design/SelectField";
 import { TextAreaField } from "@/components/design/TextAreaField";
 import { Download } from "lucide-react";
 
 const FILE_UPLOAD_CONFIG = {
-    Doc: { label: "Attach document file", accept: DOCUMENT_ACCEPT },
-    Pdf: { label: "Attach PDF file", accept: PDF_ACCEPT },
-    Csv: { label: "Attach CSV file", accept: CSV_ACCEPT },
+    Doc: { label: "Word document (.docx)", accept: DOCUMENT_ACCEPT },
+    Pdf: { label: "PDF file", accept: PDF_ACCEPT },
+    Csv: { label: "CSV file (FAQs, product notes…)", accept: CSV_ACCEPT },
+};
+
+/** What the agent learns from, with a hint for the address each one needs. */
+const FORMAT_OPTIONS = [
+    { value: "Website", label: "Whole website", hint: "We read the site's pages (up to your crawl limit) and keep them up to date." },
+    { value: "Link", label: "Single page", hint: "Just this one page, for example your returns policy." },
+    { value: "Sitemap", label: "Sitemap", hint: "Every page listed in a sitemap.xml file." },
+    { value: "Pdf", label: "PDF" },
+    { value: "Doc", label: "Word document" },
+    { value: "Csv", label: "CSV" },
+    { value: "Text", label: "Text" },
+];
+
+const ADDRESS_PLACEHOLDER: Record<string, string> = {
+    Website: "https://your-store.com",
+    Link: "https://your-store.com/pages/returns",
+    Sitemap: "https://your-store.com/sitemap.xml",
 };
 
 type AddKnowledgeProps = {
@@ -45,7 +63,7 @@ function initialValues(data: KnowledgeBase | null): KnowledgeBaseFormValues {
 
 export default function AddKnowledge({ isOpen, handleModalOpenChange, data }: AddKnowledgeProps) {
 
-    const { register, handleSubmit, watch, reset, setValue, clearErrors, control, formState: { errors } } = useForm<KnowledgeBaseFormValues>({
+    const { register, handleSubmit, reset, setValue, clearErrors, control, formState: { errors } } = useForm<KnowledgeBaseFormValues>({
         resolver: zodResolver(knowledgeBaseSchema),
         defaultValues: initialValues(data),
     })
@@ -54,15 +72,21 @@ export default function AddKnowledge({ isOpen, handleModalOpenChange, data }: Ad
         mutationFn: (values: KnowledgeBaseFormValues) => {
             return updateKnowledgeBase({ ...values, id: data?.id })
         },
-        onSuccess: async () => {
+        onSuccess: async (_result, values) => {
             await queryClient.invalidateQueries({ queryKey: knowledgeBaseQueryKey });
             handleModalOpenChange(false);
+            const reading = values.format === "Website" || values.format === "Sitemap";
             toast.add({
                 type: "success",
-                title: "Knowledge added",
-                description: "The knowledge has been added successfully.",
+                title: data ? "Knowledge updated" : "Knowledge added",
+                description: reading
+                    ? "We're reading the pages now; the list updates when they're ready."
+                    : "Your agent can use it from the next message.",
             })
-        }
+        },
+        onError: (error) => {
+            toast.add({ type: "error", title: "Couldn't save", description: error instanceof Error ? error.message : "Please try again." });
+        },
     })
 
     useEffect(() => {
@@ -74,16 +98,21 @@ export default function AddKnowledge({ isOpen, handleModalOpenChange, data }: Ad
         saveKnowledgeMutation.mutate(values);
     }
 
-    const format = watch("format");
+    const format = useWatch({ control, name: "format" });
+    const isAddress = format === "Link" || format === "Website" || format === "Sitemap";
+    const formatHint = FORMAT_OPTIONS.find((option) => option.value === format)?.hint;
     const fileUploadConfig = format in FILE_UPLOAD_CONFIG
         ? FILE_UPLOAD_CONFIG[format as keyof typeof FILE_UPLOAD_CONFIG]
         : null;
+    const existingFile = data?.file;
+    const existingFormat = data?.format;
+    const existingUrl = data?.url;
     const existingFileUrl = useMemo(() => {
-        const isFileFormat = data?.format === "Doc" || data?.format === "Pdf" || data?.format === "Csv";
-        if (isFileFormat && data?.url) return data.url;
-        if (typeof data?.file === "string") return data.file;
-        return data?.file ? URL.createObjectURL(data.file) : null;
-    }, [data?.file, data?.format, data?.url]);
+        const isFileFormat = existingFormat === "Doc" || existingFormat === "Pdf" || existingFormat === "Csv";
+        if (isFileFormat && existingUrl) return existingUrl;
+        if (typeof existingFile === "string") return existingFile;
+        return existingFile ? URL.createObjectURL(existingFile) : null;
+    }, [existingFile, existingFormat, existingUrl]);
 
     useEffect(() => {
         return () => {
@@ -95,7 +124,7 @@ export default function AddKnowledge({ isOpen, handleModalOpenChange, data }: Ad
         <Modal
             open={isOpen}
             onOpenChange={handleModalOpenChange}
-            title="Edit details"
+            title={data ? "Edit knowledge" : "Add knowledge"}
             primaryAction={{
                 label: saveKnowledgeMutation.isPending ? "Saving..." : "Save",
                 onClick: handleSubmit(saveKnowledge),
@@ -110,13 +139,13 @@ export default function AddKnowledge({ isOpen, handleModalOpenChange, data }: Ad
                 <FormGroup gap="sm">
                     <InputField
                         label="Name"
-                        placeholder="Enter Name"
+                        placeholder="e.g. Shipping & returns"
                         labelClassName="text-sm font-medium"
                         error={errors.name?.message}
                         {...register("name")}
                     />
                     <SelectField
-                        label="Format"
+                        label="What to add"
                         labelClassName="text-sm font-medium"
                         placeholder="Select format"
                         value={format}
@@ -130,19 +159,16 @@ export default function AddKnowledge({ isOpen, handleModalOpenChange, data }: Ad
                             setValue("url", "");
                             clearErrors(["file", "text", "url"]);
                         }}
-                        options={[
-                            { value: "Link", label: "Link" },
-                            { value: "Doc", label: "Document" },
-                            { value: "Pdf", label: "Pdf" },
-                            { value: "Csv", label: "Csv" },
-                            { value: "Text", label: "Text" },
-                        ]}
+                        hint={data ? "The type can't change after adding; add it again to switch." : formatHint}
+                        disabled={Boolean(data)}
+                        options={FORMAT_OPTIONS.map(({ value, label }) => ({ value, label }))}
                     />
-                    {format === "Link" ?
+                    {isAddress ?
                         <InputField
-                            label="URL"
-                            placeholder="Enter URL"
+                            label="Address"
+                            placeholder={ADDRESS_PLACEHOLDER[format] ?? "https://"}
                             labelClassName="text-sm font-medium"
+                            inputMode="url"
                             error={errors.url?.message}
                             {...register("url")}
                         />
@@ -175,7 +201,7 @@ export default function AddKnowledge({ isOpen, handleModalOpenChange, data }: Ad
                             :
                             <TextAreaField
                                 label="Text"
-                                placeholder="Enter text"
+                                placeholder="Facts your agent should know: policies, sizing, opening hours…"
                                 labelClassName="text-sm font-medium"
                                 error={errors.text?.message}
                                 {...register("text")}

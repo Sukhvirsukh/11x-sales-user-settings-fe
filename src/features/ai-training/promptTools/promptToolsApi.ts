@@ -1,14 +1,15 @@
-import { apiFetch } from "@/lib/api";
+import { agentFetch } from "@/lib/agentApi";
 import type { PromptToolsFormValues, PromptToolsResponse } from "./promptType";
 
+// Prompt tools belong to the AI agent's own settings.
+type AgentSettings = { promptTools: PromptToolsResponse };
+
 export async function getPromptTools() {
-    return apiFetch<PromptToolsResponse>("/training/prompt-tools");
+    const settings = await agentFetch<AgentSettings>("/settings");
+    return settings.promptTools;
 }
 
 export async function savePromptTools(values: PromptToolsFormValues) {
-    return apiFetch<PromptToolsResponse>("/training/prompt-tools", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values),
-    });
+    const settings = await agentFetch<AgentSettings>("/settings", { method: "PUT", body: { promptTools: values } });
+    return settings.promptTools;
 }

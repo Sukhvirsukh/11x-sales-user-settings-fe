@@ -38,7 +38,7 @@ export default function SettingsPage() {
         <section className="h-full min-w-0">
             <PageHeader
                 title="Settings"
-                subtitle="Configure your chat behavior, integration defaults, and account profile."
+                subtitle="Your profile, team, plan and stores."
             >
                 {/* A single reachable tab has nothing to switch between, so the bar is dropped
                     and the tab's content renders on its own. */}
@@ -47,7 +47,7 @@ export default function SettingsPage() {
                         tabs={mainTabs.map(({ id, label }) => ({ id, label }))}
                         value={activeTab}
                         onValueChange={handleTabChange}
-                        listClassName="pl-[4px]"
+                       
                         className="p-0!"
                     >
                         {content}

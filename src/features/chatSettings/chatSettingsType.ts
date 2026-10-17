@@ -1,6 +1,9 @@
 export interface IntegrationResponse {
     shopify?: {
         connected?: boolean;
+        status?: "connected" | "disconnected" | "error";
+        shopDomain?: string | null;
+        connectedAt?: string | null;
     };
 }
 

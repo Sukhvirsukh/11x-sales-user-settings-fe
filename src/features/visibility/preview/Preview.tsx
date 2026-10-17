@@ -4,7 +4,8 @@ import { Button } from "@/components/ui/button";
 import { useVisibilityForm } from "../VisibilityFormContext";
 import { useState, type CSSProperties } from "react";
 import { Maximize2, Minimize2 } from "lucide-react";
-import { ChatBubbleButton, isBarBubbleType } from "./ChatButton";
+import { ChatBubbleButton } from "./ChatButton";
+import { isBarBubbleType } from "./isBarBubbleType";
 
 type ChatBoxStyle = CSSProperties & Record<
     | "--chat-box-bottom"
@@ -95,7 +96,7 @@ export default function Preview({
                                 defaultMessages={[
                                     {
                                         id: "welcome",
-                                        content: "Welcome to Karl ai shop, how can I help you",
+                                        content: "Welcome! How can I help you today?",
                                         sender: "bot",
                                         timestamp: new Date(),
                                     },

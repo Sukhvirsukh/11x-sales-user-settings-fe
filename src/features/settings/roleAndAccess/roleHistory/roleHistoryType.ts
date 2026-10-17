@@ -24,7 +24,8 @@ export interface RoleRow extends Record<string, unknown> {
     name: string;
     email: string;
     role: string;
-    status: boolean;
+    /** What the Status column shows: invited people are "pending" until they set a password. */
+    status: "active" | "pending" | "inactive";
     createdAt: string;
     createdAtValue: Date | null;
 }
