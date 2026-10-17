@@ -101,7 +101,8 @@ export async function openBillingPortal() {
  * goes on the store's Shopify bill) or Stripe Checkout. Going back to Free
  * cancels the subscription.
  */
-export async function upgradePlan(planId: string) {
+/** `acceptTerms`: the owner ticked the box agreeing to the trial and billing terms (the backend requires it). */
+export async function upgradePlan(planId: string, acceptTerms = false) {
     if (planId === "free") {
         // Shopify cancels straight away (url null); Stripe cancels in its portal.
         const { url } = await apiFetch<{ url: string | null }>("/billing/cancel", { method: "POST" });
@@ -111,7 +112,7 @@ export async function upgradePlan(planId: string) {
     const { url } = await apiFetch<{ url: string | null }>("/billing/change-plan", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ plan: planId }),
+        body: JSON.stringify({ plan: planId, acceptTerms }),
     });
     if (url) window.location.assign(url);
 }

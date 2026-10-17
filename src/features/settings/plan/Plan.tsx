@@ -5,11 +5,12 @@ import DetailContainer, { DetailGroup, DetailItem } from "@/components/design/De
 import Heading from "@/components/design/Heading";
 import { Button } from "@/components/ui/button";
 import { Check, ChevronLeft, ChevronRight, Loader } from "lucide-react";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router";
 import { toast } from "@/components/ui/toast-manager";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useCan } from "@/features/auth";
 import styles from "./Plan.module.css";
 import { cn, dateFormater } from "@/lib/utils";
@@ -212,12 +213,18 @@ export function Plan() {
     const { data, isLoading, error } = usePlanQuery();
     const canUpgradePlan = useCan("settings.plan.create");
     const queryClient = useQueryClient();
+    // Paid plans need an explicit yes to the trial and recurring billing terms first.
+    const [acceptedTerms, setAcceptedTerms] = useState(false);
     const upgradeMutation = useMutation({
         mutationFn: (planId: string) => {
             if (!canUpgradePlan) {
                 return Promise.reject(new Error("You do not have permission to upgrade the plan."));
             }
-            return upgradePlan(planId);
+            if (planId !== "free" && !acceptedTerms) {
+                toast.add({ type: "error", title: "Plan", description: "Tick the box to accept the trial and billing terms first." });
+                return Promise.resolve();
+            }
+            return upgradePlan(planId, planId !== "free" && acceptedTerms);
         },
         onSuccess: async () => {
             await queryClient.invalidateQueries({ queryKey: planQueryKey });
@@ -321,6 +328,26 @@ export function Plan() {
                         ))
                     }
                 </div>
+                {canUpgradePlan && canChoosePaid && (
+                    <label className="mt-1 flex w-full cursor-pointer items-start gap-2.5 rounded-lg border border-border-subtle bg-surface-raised px-3 py-2.5 text-sm text-foreground">
+                        <Checkbox
+                            className="mt-0.5"
+                            checked={acceptedTerms}
+                            onCheckedChange={(checked) => setAcceptedTerms(checked === true)}
+                            aria-label="I accept the trial and billing terms"
+                        />
+                        <span>
+                            I agree to the{" "}
+                            <a href={`${WEBSITE}/terms`} target="_blank" rel="noreferrer" className="font-medium underline underline-offset-4">
+                                billing terms
+                            </a>
+                            :{" "}
+                            {trialDays ? `the first ${trialDays} days are free, then ` : ""}
+                            the plan renews every 30 days{viaShopify ? " on my Shopify bill" : ""} until I cancel, and extra replies
+                            cost ${data?.extraReplyUsd?.toFixed(2) ?? "0.06"} each up to the monthly cap.
+                        </span>
+                    </label>
+                )}
                 {viaShopify && (
                     <p className="mt-1 w-full rounded-lg border border-border-subtle bg-surface-subtle px-3 py-2 text-sm text-muted-foreground">
                         {!data?.shopifyAvailable
