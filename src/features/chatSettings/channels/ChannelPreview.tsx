@@ -1,3 +1,4 @@
+import { SOCIAL_CHANNELS_ENABLED } from "@/config/features";
 import { ArrowLeft, ArrowUp, Camera, CheckCheck, ChevronLeft, Lock, Mic, MoreVertical, Phone, Plus, Smile, Video } from "lucide-react";
 import { Fragment, useEffect, useMemo, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { ChatBox } from "@/components/shared/chatBox";
@@ -299,12 +300,13 @@ const THEMES: Record<MetaChannel, { screen: string; statusBar: string; thread: s
     },
 };
 
-const TABS: { id: PreviewChannel; label: string }[] = [
+const ALL_TABS: { id: PreviewChannel; label: string }[] = [
     { id: "website", label: "Website" },
     { id: "whatsapp", label: "WhatsApp" },
     { id: "instagram", label: "Instagram" },
     { id: "messenger", label: "Messenger" },
 ];
+const TABS = SOCIAL_CHANNELS_ENABLED ? ALL_TABS : ALL_TABS.filter((tab) => tab.id === "website");
 
 interface ChannelPreviewProps {
     channel: PreviewChannel;
@@ -322,7 +324,7 @@ export default function ChannelPreview({ channel, onChannelChange, connections }
                 <p className="text-sm font-medium text-foreground">Preview</p>
                 <p className="text-xs text-muted-foreground">Test chats use your real agent</p>
             </div>
-            <div role="tablist" aria-label="Preview channel" className="grid grid-cols-4 gap-1 rounded-lg bg-muted p-1">
+            {TABS.length > 1 && <div role="tablist" aria-label="Preview channel" className="grid grid-cols-4 gap-1 rounded-lg bg-muted p-1">
                 {TABS.map((tab) => (
                     <button
                         key={tab.id}
@@ -338,7 +340,7 @@ export default function ChannelPreview({ channel, onChannelChange, connections }
                         {tab.label}
                     </button>
                 ))}
-            </div>
+            </div>}
             {channel === "website" ? (
                 <div className="mx-auto h-[600px] w-full max-w-[360px]">
                     <ChatBox className="h-full" />

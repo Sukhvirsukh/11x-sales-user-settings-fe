@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router";
+import { Link, useNavigate, useSearchParams } from "react-router";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
@@ -18,6 +18,9 @@ import { useAuthStore } from "@/features/auth/authStore";
 export default function SignUpForm() {
     const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
+    // The website's "Start free trial" button links here with ?plan=trial.
+    const [searchParams] = useSearchParams();
+    const wantsTrial = searchParams.get("plan") === "trial";
     const setUser = useAuthStore((state) => state.setUser);
     const signUpMutation = useMutation({
         mutationFn: signUpRequest,
@@ -27,9 +30,11 @@ export default function SignUpForm() {
             toast.add({
                 type: "success",
                 title: "Account created",
-                description: "We sent you a link to confirm your email.",
+                description: wantsTrial
+                    ? "Choose a plan to start your 7-day free trial."
+                    : "We sent you a link to confirm your email.",
             });
-            navigate("/");
+            navigate(wantsTrial ? "/settings/plan" : "/");
         },
 
     });

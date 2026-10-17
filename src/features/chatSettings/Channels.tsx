@@ -1,3 +1,4 @@
+import { SOCIAL_CHANNELS_ENABLED } from "@/config/features";
 import { useQuery } from "@tanstack/react-query";
 import { Download, ExternalLink, SquarePen } from "lucide-react";
 import QRCode from "qrcode";
@@ -116,7 +117,7 @@ export default function Channels() {
     const [searchParams, setSearchParams] = useSearchParams();
     const fromParam = searchParams.get("channel");
     const [preview, setPreview] = useState<PreviewChannel>(
-        fromParam && (META_CHANNELS as string[]).includes(fromParam) ? (fromParam as MetaChannel) : "website",
+        SOCIAL_CHANNELS_ENABLED && fromParam && (META_CHANNELS as string[]).includes(fromParam) ? (fromParam as MetaChannel) : "website",
     );
     const sessionId = searchParams.get("connect");
 
@@ -144,7 +145,7 @@ export default function Channels() {
         <div className="grid min-w-0 grid-cols-1 gap-5 xl:grid-cols-[minmax(0,1fr)_340px]">
             <div className="flex min-w-0 flex-col gap-3">
                 <WebsiteChannelCard selected={preview === "website"} onSelect={() => setPreview("website")} />
-                {META_CHANNELS.map((ch) => (
+                {SOCIAL_CHANNELS_ENABLED && META_CHANNELS.map((ch) => (
                     <MetaChannelCard
                         key={ch}
                         channel={ch}
@@ -155,14 +156,14 @@ export default function Channels() {
                         onSelect={() => setPreview(ch)}
                     />
                 ))}
-                {channels.isError && (
+                {SOCIAL_CHANNELS_ENABLED && channels.isError && (
                     <p className="text-sm text-destructive">Couldn't load your messaging channels. {(channels.error as Error).message}</p>
                 )}
             </div>
             <aside aria-label="Channel preview" className="min-w-0 xl:sticky xl:top-4 xl:self-start">
                 <ChannelPreview channel={preview} onChannelChange={setPreview} connections={connections} />
             </aside>
-            {sessionId && <ConnectPicker sessionId={sessionId} onDone={closePicker} />}
+            {SOCIAL_CHANNELS_ENABLED && sessionId && <ConnectPicker sessionId={sessionId} onDone={closePicker} />}
         </div>
     );
 }

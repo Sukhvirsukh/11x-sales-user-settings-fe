@@ -1,3 +1,4 @@
+import { SOCIAL_CHANNELS_ENABLED } from "@/config/features";
 export type FilterOption = {
     label: string
     /** Outlined star rating shown on the right of the option. */
@@ -10,9 +11,10 @@ export type FilterGroup = {
 }
 
 // Only filters the conversations API supports are offered.
-export const filterGroups: FilterGroup[] = [
+// With only the website chat there is nothing to filter by channel.
+export const filterGroups: FilterGroup[] = SOCIAL_CHANNELS_ENABLED ? [
     {
         title: "Channels",
         options: [{ label: "Website" }, { label: "WhatsApp" }, { label: "Messenger" }, { label: "Instagram" }, { label: "Email" }],
     },
-]
+] : []

@@ -16,7 +16,17 @@ interface ApiPlan {
 interface ApiBilling {
     plans: ApiPlan[];
     extraReplyUsd: number;
-    current: { plan: ApiPlan; status: string; currentPeriodEnd: string | null; canManageBilling: boolean };
+    current: {
+        plan: ApiPlan;
+        status: string;
+        currentPeriodEnd: string | null;
+        canManageBilling: boolean;
+        extraRepliesCapUsd?: number | null;
+    };
+    trial?: PlanResponse["trial"];
+    limits?: PlanResponse["limits"];
+    enterprise?: PlanResponse["enterprise"];
+    cardSubscriptionEndsOnShopifyApproval?: boolean;
     usage: PlanResponse["usage"];
     provider: PlanResponse["provider"];
     shopifyStore: string | null;
@@ -60,7 +70,23 @@ export async function getPlans(): Promise<PlanResponse> {
             currentPeriodEnd: billing.current.currentPeriodEnd,
             canManageBilling: billing.current.canManageBilling,
             billingEnabled: billing.billingEnabled,
+            extraRepliesCapUsd: billing.current.extraRepliesCapUsd ?? null,
         },
+        // Older servers don't send these; read them as "no trial, no limits shown".
+        trial: billing.trial ?? { days: 7, available: false, active: false, endsAt: null },
+        limits: billing.limits ?? {
+            stores: { used: 0, limit: null, over: false },
+            seats: { used: 0, limit: null, over: false },
+            knowledgePages: { limit: null },
+        },
+        enterprise: billing.enterprise ?? {
+            name: "Enterprise",
+            price: "Custom",
+            description: "For more than 18,000 replies a month or needs beyond the plans.",
+            features: [],
+            contactUrl: "",
+        },
+        cardSubscriptionEndsOnShopifyApproval: Boolean(billing.cardSubscriptionEndsOnShopifyApproval),
     };
 }
 
