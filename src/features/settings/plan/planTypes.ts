@@ -34,6 +34,9 @@ export interface currentSubscription {
 }
 
 
+/** null means unlimited. */
+export interface LimitUsage { used: number, limit: number | null, over: boolean }
+
 export interface PlanResponse {
     plans: Plan[],
     currentSubscription: currentSubscription,
@@ -53,5 +56,18 @@ export interface PlanResponse {
         currentPeriodEnd: string | null,
         canManageBilling: boolean,
         billingEnabled: boolean,
+        /** The most extra replies can cost in a month (null on Free and during the trial). */
+        extraRepliesCapUsd: number | null,
     },
+    /** The free days of the first paid plan: on offer (`available`) or running (`active`, until `endsAt`). */
+    trial: { days: number, available: boolean, active: boolean, endsAt: string | null },
+    /** Stores and team seats used against the plan's limits. */
+    limits: {
+        stores: LimitUsage,
+        seats: LimitUsage,
+        knowledgePages: { limit: number | null },
+    },
+    enterprise: { name: string, price: string, description: string, features: string[], contactUrl: string },
+    /** Paying by card but now a Shopify merchant: approving a Shopify plan ends the card subscription. */
+    cardSubscriptionEndsOnShopifyApproval: boolean,
 }
