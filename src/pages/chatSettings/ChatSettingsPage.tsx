@@ -1,3 +1,4 @@
+import { SOCIAL_CHANNELS_ENABLED } from "@/config/features";
 import { useSearchParams } from "react-router";
 import { PageHeader } from "@/components/shared/PageHeader";
 import {
@@ -24,7 +25,7 @@ export default function ChatSettingsPage() {
                 <div className="relative min-w-0 rounded-[10px] border border-panel-accent-border/70 px-2.5 shadow-blue md:px-4">
                     <Accordion defaultValue={fromShopify ? ["integration"] : ["channels"]}>
                         <AccordionItem value="channels">
-                            <AccordionTrigger>Channels</AccordionTrigger>
+                            <AccordionTrigger>{SOCIAL_CHANNELS_ENABLED ? "Channels" : "Website chat"}</AccordionTrigger>
                             <AccordionContent>
                                 <Channels />
                             </AccordionContent>

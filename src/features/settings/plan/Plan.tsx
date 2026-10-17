@@ -1,3 +1,4 @@
+import { SOCIAL_CHANNELS_ENABLED } from "@/config/features";
 import AppCard from "@/components/design/AppCard";
 import AppSection from "@/components/design/AppSectoin";
 import DetailContainer, { DetailGroup, DetailItem } from "@/components/design/DetailContainer";
@@ -39,7 +40,9 @@ const EMPTY_PLANS: PlanData[] = [];
 
 function PlanCard({ plan, isCurrent, canUpgrade, isUpgradePending, isUpgrading, trialDays, onUpgrade }: PlanCardProps) {
     const startsTrial = Boolean(trialDays) && plan.id !== "free" && !isCurrent;
-    const { name, features, isMostPopular, priceUsd } = plan;
+    const { name, isMostPopular, priceUsd } = plan;
+    // The social channels are hidden for now, so their plan line is too.
+    const features = SOCIAL_CHANNELS_ENABLED ? plan.features : plan.features.filter((f) => !/whatsapp|instagram|messenger/i.test(f));
 
     return (
         <article

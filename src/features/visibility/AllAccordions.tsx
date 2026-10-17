@@ -1,3 +1,4 @@
+import { SOCIAL_CHANNELS_ENABLED } from "@/config/features";
 import type { AccordionTab } from "./visibilityTypes";
 
 import LookNFeel from "./fields/LookNFeel";
@@ -28,4 +29,5 @@ const allAccordions: AccordionTab[] = [
     },
 ];
 
-export default allAccordions;
+// The WhatsApp / Instagram buttons in the chat need the social channels.
+export default SOCIAL_CHANNELS_ENABLED ? allAccordions : allAccordions.filter((tab) => tab.id !== "social-button");
