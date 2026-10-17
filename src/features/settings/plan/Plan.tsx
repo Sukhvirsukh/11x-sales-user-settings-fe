@@ -13,7 +13,7 @@ import { useCan } from "@/features/auth";
 import styles from "./Plan.module.css";
 import { cn, dateFormater } from "@/lib/utils";
 import { planQueryKey, usePlanQuery } from "./planQuery";
-import type { Plan as PlanData, PlanResponse } from "./planTypes";
+import type { LimitUsage, Plan as PlanData, PlanResponse } from "./planTypes";
 import { WEBSITE } from "@/config/website";
 import { openBillingPortal, upgradePlan } from "./planApi";
 
@@ -30,12 +30,15 @@ interface PlanCardProps {
     canUpgrade: boolean;
     isUpgradePending: boolean;
     isUpgrading: boolean;
+    /** Free days this plan would start with (the first paid plan only), else null. */
+    trialDays: number | null;
     onUpgrade: (planId: string) => void;
 }
 
 const EMPTY_PLANS: PlanData[] = [];
 
-function PlanCard({ plan, isCurrent, canUpgrade, isUpgradePending, isUpgrading, onUpgrade }: PlanCardProps) {
+function PlanCard({ plan, isCurrent, canUpgrade, isUpgradePending, isUpgrading, trialDays, onUpgrade }: PlanCardProps) {
+    const startsTrial = Boolean(trialDays) && plan.id !== "free" && !isCurrent;
     const { name, features, isMostPopular, priceUsd } = plan;
 
     return (
@@ -92,12 +95,66 @@ function PlanCard({ plan, isCurrent, canUpgrade, isUpgradePending, isUpgrading, 
                                 if (canUpgrade) onUpgrade(plan.id);
                             }}
                         >
-                            {isCurrent ? "Current plan" : isUpgrading ? "Opening checkout…" : plan.id === "free" ? "Switch to Free" : `Choose ${name}`}
+                            {isCurrent
+                                ? "Current plan"
+                                : isUpgrading
+                                    ? "Opening checkout…"
+                                    : plan.id === "free"
+                                        ? "Switch to Free"
+                                        : startsTrial
+                                            ? `Start ${trialDays}-day free trial`
+                                            : `Choose ${name}`}
                         </Button>
+                    )}
+                    {Boolean(trialDays) && (
+                        // Same height on every card, so the buttons line up.
+                        <p
+                            className={cn("mt-2 text-center text-xs text-muted-foreground", !(startsTrial && canUpgrade) && "invisible")}
+                            aria-hidden={!(startsTrial && canUpgrade)}
+                        >
+                            Then ${priceUsd.toLocaleString("en-US")}/month. Cancel before the trial ends to pay nothing.
+                        </p>
                     )}
                 </div>
             </div>
         </article>
+    );
+}
+
+function limitText({ used, limit }: LimitUsage) {
+    return limit === null ? `${used.toLocaleString("en-US")} · unlimited` : `${used.toLocaleString("en-US")} of ${limit.toLocaleString("en-US")}`;
+}
+
+/** Stores and team seats against the plan; over a limit after a downgrade, nothing new can be added. */
+function LimitsSection({ data }: { data: PlanResponse }) {
+    const { stores, seats, knowledgePages } = data.limits;
+    const over = stores.over || seats.over;
+    return (
+        <AppSection className="w-full">
+            <Heading size="lg">Plan limits</Heading>
+            <AppCard>
+                <DetailContainer fullWidth={true} equalWidth={true}>
+                    <DetailGroup>
+                        <DetailItem label="Stores" value={limitText(stores)} />
+                    </DetailGroup>
+                    <DetailGroup>
+                        <DetailItem label="Team seats" value={limitText(seats)} />
+                    </DetailGroup>
+                    <DetailGroup>
+                        <DetailItem
+                            label="Knowledge pages"
+                            value={knowledgePages.limit === null ? "Unlimited" : `Up to ${knowledgePages.limit.toLocaleString("en-US")}`}
+                        />
+                    </DetailGroup>
+                </DetailContainer>
+                {over && (
+                    <p className="mt-3 text-sm text-warning">
+                        You have more {stores.over ? "stores" : "team members"} than your plan includes. Everything keeps
+                        working, but you can&rsquo;t add more until you upgrade or remove some.
+                    </p>
+                )}
+            </AppCard>
+        </AppSection>
     );
 }
 
@@ -138,7 +195,9 @@ function UsageSection({ data }: { data: PlanResponse }) {
                         ? full
                             ? "Your free replies for this month are used up. New chats go to your team in Conversations › Escalated until next month, or choose a paid plan to keep the AI answering."
                             : "On the Free plan the AI stops at 50 replies a month and new chats go to your team. Paid plans keep answering."
-                        : "Replies reset on the 1st of each month. Extra replies are billed at the end of your billing period."}
+                        : data.trial.active
+                            ? `During your free trial the AI answers up to ${limit.toLocaleString("en-US")} replies, with nothing charged. After the trial, extra replies are billed.`
+                            : `Replies reset on the 1st of each month. Extra replies are billed at the end of your billing period${data.billing.extraRepliesCapUsd ? `, up to $${data.billing.extraRepliesCapUsd.toLocaleString("en-US")} a month` : ""}.`}
                 </p>
             </AppCard>
         </AppSection>
@@ -212,6 +271,9 @@ export function Plan() {
         });
     };
 
+    // The first paid plan starts with free days (never during or after a trial).
+    const trialDays = data?.trial.available ? data.trial.days : null;
+
     if (isLoading) return <Loader className="size-5 animate-spin text-muted-foreground" />
 
     if (error) {
@@ -220,6 +282,13 @@ export function Plan() {
 
     return (
         <>
+            {data?.trial.active && data.trial.endsAt && (
+                <p className="w-full rounded-lg border border-border-subtle bg-brand-soft px-3 py-2 text-sm text-foreground" role="status">
+                    Your free trial of <span className="font-medium">{data.currentSubscription.plan.name}</span> ends on{" "}
+                    <span className="font-medium">{dateFormater(data.trial.endsAt, "long")}</span>. Nothing is charged until then;
+                    switch to Free before that date to pay nothing.
+                </p>
+            )}
             <AppSection className="w-full min-w-0 gap-0! overflow-hidden">
                 <div className="flex w-full items-center justify-between">
                     <Heading size="lg">Plan</Heading>
@@ -243,6 +312,7 @@ export function Plan() {
                                 canUpgrade={canUpgradePlan && (plan.id === "free" || canChoosePaid)}
                                 isUpgradePending={upgradeMutation.isPending}
                                 isUpgrading={upgradeMutation.isPending && upgradeMutation.variables === plan.id}
+                                trialDays={trialDays}
                                 onUpgrade={upgradeMutation.mutate}
                             />
                         ))
@@ -255,16 +325,23 @@ export function Plan() {
                             : data?.shopifyStore
                                 ? <>Plans are billed by Shopify, on the Shopify invoice of <span className="font-medium text-foreground">{data.shopifyStore}</span>. You&rsquo;ll approve the charge in Shopify.</>
                                 : <>Plans are billed by Shopify. <a href="/chat-settings?connectShopify=" className="font-medium text-foreground underline underline-offset-4">Connect your Shopify store</a> (Chat setup › Integration) to choose a paid plan.</>}
+                        {data?.cardSubscriptionEndsOnShopifyApproval && (
+                            <> Your card subscription ends when you approve a plan in Shopify, so you&rsquo;re never billed twice.</>
+                        )}
                     </p>
                 )}
                 <p className="mt-2 text-sm text-muted-foreground">
                     A reply is one answer the AI sends a shopper; test chats are free. Paid plans keep answering past their
-                    replies, at ${data?.extraReplyUsd?.toFixed(2) ?? "0.04"} for each extra one. Need more than 18,000 a month?{" "}
-                    <a href={`${WEBSITE}/#contact-email-field`} className="font-medium text-foreground underline underline-offset-4">Talk to us about Enterprise</a>.
+                    replies, at ${data?.extraReplyUsd?.toFixed(2) ?? "0.06"} for each extra one, up to a monthly cap of twice the
+                    plan price.{trialDays ? ` Your first paid plan starts with ${trialDays} days free; you approve the payment method now.` : ""}{" "}
+                    Need more than 18,000 a month?{" "}
+                    <a href={data?.enterprise.contactUrl || `${WEBSITE}/#contact-email-field`} className="font-medium text-foreground underline underline-offset-4">Talk to us about Enterprise</a>.
                 </p>
             </AppSection>
 
             {data && <UsageSection data={data} />}
+
+            {data && <LimitsSection data={data} />}
 
             {currentSubscription && data && <AppSection className="w-full">
                 <div className="flex w-full flex-wrap items-center justify-between gap-3">
@@ -284,10 +361,12 @@ export function Plan() {
                             <DetailItem label="Status" value={STATUS_LABEL[data.billing.status] ?? data.billing.status} />
                         </DetailGroup>
                         <DetailGroup>
-                            <DetailItem
-                                label={data.billing.status === "canceled" ? "Ends" : "Renews"}
-                                value={data.billing.currentPeriodEnd ? dateFormater(data.billing.currentPeriodEnd, "long") : "—"}
-                            />
+                            {data.trial.active && data.trial.endsAt
+                                ? <DetailItem label="Trial ends" value={dateFormater(data.trial.endsAt, "long")} />
+                                : <DetailItem
+                                    label={data.billing.status === "canceled" ? "Ends" : "Renews"}
+                                    value={data.billing.currentPeriodEnd ? dateFormater(data.billing.currentPeriodEnd, "long") : "—"}
+                                />}
                         </DetailGroup>
                         <DetailGroup>
                             <DetailItem
